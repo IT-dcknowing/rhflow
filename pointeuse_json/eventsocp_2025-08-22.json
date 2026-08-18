@@ -1,0 +1,143 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	11,
+		"totalMatches":	11,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T07:24:03-00:00",
+				"cardType":	1,
+				"name":	"Diby Affoue Ines",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"0006",
+				"serialNo":	23070,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T07:32:12-00:00",
+				"cardType":	1,
+				"name":	"Maho Amougnan Emmanuella Audrey",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"0008",
+				"serialNo":	23071,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:20:59-00:00",
+				"cardType":	1,
+				"name":	"Akouté Audrey Rachelle",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"011",
+				"serialNo":	23072,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:21:06-00:00",
+				"cardType":	1,
+				"name":	"Diallo Tidiane",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"017",
+				"serialNo":	23073,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:26:10-00:00",
+				"cardType":	1,
+				"name":	"Dan Gueu Epiphane Junior",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"010",
+				"serialNo":	23074,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:30:20-00:00",
+				"cardType":	1,
+				"name":	"Tchoman Josée Dorcas",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"022",
+				"serialNo":	23075,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:37:57-00:00",
+				"cardType":	1,
+				"name":	"Keita Alimatou Yaye",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"009",
+				"serialNo":	23076,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:46:52-00:00",
+				"cardType":	1,
+				"name":	"Diallo Mamadou Aliou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"0005",
+				"serialNo":	23077,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T08:51:16-00:00",
+				"cardType":	1,
+				"name":	"Assoko Aurore - Carmel Saphyr",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"023",
+				"serialNo":	23078,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T09:01:33-00:00",
+				"cardNo":	"2611528918",
+				"cardType":	1,
+				"name":	"Yohou Ory Fulgence",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"002",
+				"serialNo":	23079,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-08-22T09:40:29-00:00",
+				"cardNo":	"2611624278",
+				"cardType":	1,
+				"name":	"Kouamé Djissa Ghislain",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"003",
+				"serialNo":	23080,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}]
+	}
+}

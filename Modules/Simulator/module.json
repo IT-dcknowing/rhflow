@@ -1,0 +1,11 @@
+{
+    "name": "Simulator",
+    "alias": "simulator",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Simulator\\Providers\\SimulatorServiceProvider"
+    ],
+    "files": []
+}

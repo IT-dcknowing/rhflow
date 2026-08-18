@@ -1,0 +1,95 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	7,
+		"totalMatches":	7,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T07:45:20-00:00",
+				"cardNo":	"2612192870",
+				"cardType":	1,
+				"name":	"Jean Gabin ORI",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"007",
+				"serialNo":	3076,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T08:07:18-00:00",
+				"cardNo":	"2611481366",
+				"cardType":	1,
+				"name":	"Maxeme Douho",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"005",
+				"serialNo":	3081,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T08:45:08-00:00",
+				"cardType":	1,
+				"name":	"Laura Daligou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"011",
+				"serialNo":	3083,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T09:28:01-00:00",
+				"cardType":	1,
+				"name":	"Maimouna Coulibaly",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"010",
+				"serialNo":	3085,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T09:43:27-00:00",
+				"cardType":	1,
+				"name":	"Aymard Koffi",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"008",
+				"serialNo":	3086,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T14:58:20-00:00",
+				"cardType":	1,
+				"name":	"Christian Gohou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"006",
+				"serialNo":	3087,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-22T17:44:29-00:00",
+				"cardType":	1,
+				"name":	"Christian Gohou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"006",
+				"serialNo":	3088,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}]
+	}
+}

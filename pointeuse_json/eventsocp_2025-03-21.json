@@ -1,0 +1,120 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	10,
+		"totalMatches":	10,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	49,
+				"time":	"2025-03-21T07:12:51-00:00",
+				"cardType":	1,
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"serialNo":	20308,
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T07:12:53-00:00",
+				"cardType":	1,
+				"name":	"Mariame Katienin",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"020",
+				"serialNo":	20309,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T07:49:15-00:00",
+				"cardType":	1,
+				"name":	"Isaac Kouassi ",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"018",
+				"serialNo":	20310,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T08:36:33-00:00",
+				"cardType":	1,
+				"name":	"Tidiane Diallo",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"017",
+				"serialNo":	20311,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T08:40:50-00:00",
+				"cardType":	1,
+				"name":	"Sephora  N'GORAN",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"019",
+				"serialNo":	20312,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T08:41:15-00:00",
+				"cardType":	1,
+				"name":	"Aymard Koffi",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"008",
+				"serialNo":	20313,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T08:49:50-00:00",
+				"cardType":	1,
+				"name":	"Traoré Fatoumata",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"014",
+				"serialNo":	20314,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	49,
+				"time":	"2025-03-21T09:24:31-00:00",
+				"cardType":	1,
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"serialNo":	20329,
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-03-21T09:26:28-00:00",
+				"cardType":	1,
+				"name":	"Assoko Saphyr Carmel",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"023",
+				"serialNo":	20332,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	49,
+				"time":	"2025-03-21T14:57:37-00:00",
+				"cardType":	1,
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"serialNo":	20539,
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}]
+	}
+}

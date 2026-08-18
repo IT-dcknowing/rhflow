@@ -1,0 +1,280 @@
+/* ================================================
+   RH FLOW - COULEURS PERSONNALISÉES
+   ================================================
+   Définition des couleurs personnalisées utilisées dans l'application RH Flow
+   ================================================ */
+
+/* ================================================
+   PALETTE DE COULEURS PRINCIPALE
+   ================================================ */
+:root {
+  /* Couleurs principales RH Flow */
+  --rh-primary-50: #f0f2ff;
+  --rh-primary-100: #e1e5ff;  
+  --rh-primary-200: #c3d0ff;
+  --rh-primary-300: #a5bbff;
+  --rh-primary-400: #87a6ff;
+  --rh-primary-500: #253e87;
+  --rh-primary-600: #1e336b;
+  --rh-primary-700: #17284f;
+  --rh-primary-800: #101d33;
+  --rh-primary-900: #0a1217;
+
+  /* Couleurs de succès */
+  --rh-success-50: #f1fdf7;
+  --rh-success-100: #e3fce7;
+  --rh-success-200: #c7f9d0;
+  --rh-success-300: #aaf5b9;
+  --rh-success-400: #8ef2a3;
+  --rh-success-500: #71dd37;
+  --rh-success-600: #61c62e;
+  --rh-success-700: #50a824;
+  --rh-success-800: #3e8a1b;
+  --rh-success-900: #2d6c13;
+
+  /* Couleurs d'information */
+  --rh-info-50: #f0fdff;
+  --rh-info-100: #e0fbff;
+  --rh-info-200: #c2f7ff;
+  --rh-info-300: #a3f3ff;
+  --rh-info-400: #85efff;
+  --rh-info-500: #03c3ec;
+  --rh-info-600: #03a8d4;
+  --rh-info-700: #028bb5;
+  --rh-info-800: #026e96;
+  --rh-info-900: #015177;
+
+  /* Couleurs d'avertissement */
+  --rh-warning-50: #fffbf0;
+  --rh-warning-100: #fff7e0;
+  --rh-warning-200: #fff0c2;
+  --rh-warning-300: #ffe8a3;
+  --rh-warning-400: #ffe185;
+  --rh-warning-500: #ffab00;
+  --rh-warning-600: #e69a00;
+  --rh-warning-700: #cc8800;
+  --rh-warning-800: #b37600;
+  --rh-warning-900: #996400;
+
+  /* Couleurs de danger */
+  --rh-danger-50: #fff5f5;
+  --rh-danger-100: #ffebeb;
+  --rh-danger-200: #ffd6d6;
+  --rh-danger-300: #ffc0c0;
+  --rh-danger-400: #ffabab;
+  --rh-danger-500: #ff3e1d;
+  --rh-danger-600: #e6371a;
+  --rh-danger-700: #cc2f17;
+  --rh-danger-800: #b32814;
+  --rh-danger-900: #992010;
+
+  /* Couleurs neutres */
+  --rh-gray-50: #f8f9fa;
+  --rh-gray-100: #e9ecef;
+  --rh-gray-200: #dee2e6;
+  --rh-gray-300: #ced4da;
+  --rh-gray-400: #adb5bd;
+  --rh-gray-500: #8592a3;
+  --rh-gray-600: #566a7f;
+  --rh-gray-700: #495057;
+  --rh-gray-800: #343a40;
+  --rh-gray-900: #212529;
+}
+
+/* ================================================
+   VARIABLES POUR COMPATIBILITÉ
+   ================================================ */
+:root {
+  /* Alias pour les variables principales utilisées dans le système */
+  --rh-primary: var(--rh-primary-500);
+  --rh-primary-rgb: 37, 62, 135;
+  --rh-secondary: var(--rh-gray-500);
+  --rh-success: var(--rh-success-500);
+  --rh-info: var(--rh-info-500);
+  --rh-warning: var(--rh-warning-500);
+  --rh-danger: var(--rh-danger-500);
+  --rh-light: #fcfdfd;
+  --rh-dark: #233446;
+
+  /* Couleurs de fond */
+  --rh-bg-body: var(--rh-gray-50);
+  --rh-bg-card: #ffffff;
+  --rh-bg-navbar: rgba(255, 255, 255, 0.9);
+  --rh-bg-sidebar: #ffffff;
+
+  /* Couleurs de texte */
+  --rh-text-primary: var(--rh-gray-600);
+  --rh-text-secondary: var(--rh-gray-500);
+  --rh-text-muted: var(--rh-gray-400);
+
+  /* Bordures */
+  --rh-border-color: var(--rh-gray-300);
+  --rh-border-light: var(--rh-gray-200);
+
+  /* Ombres */
+  --rh-shadow-sm: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
+  --rh-shadow: 0 0.25rem 0.5rem rgba(165, 163, 174, 0.3);
+  --rh-shadow-lg: 0 0.5rem 1rem rgba(165, 163, 174, 0.3);
+}
+
+/* ================================================
+   CLASSES UTILITAIRES POUR LES COULEURS
+   ================================================ */
+
+/* Couleurs de texte */
+.text-primary { color: var(--rh-primary) !important; }
+.text-secondary { color: var(--rh-secondary) !important; }
+.text-success { color: var(--rh-success) !important; }
+.text-info { color: var(--rh-info) !important; }
+.text-warning { color: var(--rh-warning) !important; }
+.text-danger { color: var(--rh-danger) !important; }
+.text-muted { color: var(--rh-text-muted) !important; }
+
+/* Couleurs de fond */
+.bg-primary { background-color: var(--rh-primary) !important; }
+.bg-secondary { background-color: var(--rh-secondary) !important; }
+.bg-success { background-color: var(--rh-success) !important; }
+.bg-info { background-color: var(--rh-info) !important; }
+.bg-warning { background-color: var(--rh-warning) !important; }
+.bg-danger { background-color: var(--rh-danger) !important; }
+.bg-light { background-color: var(--rh-light) !important; }
+.bg-dark { background-color: var(--rh-dark) !important; }
+
+/* Bordures */
+.border-primary { border-color: var(--rh-primary) !important; }
+.border-secondary { border-color: var(--rh-secondary) !important; }
+.border-success { border-color: var(--rh-success) !important; }
+.border-info { border-color: var(--rh-info) !important; }
+.border-warning { border-color: var(--rh-warning) !important; }
+.border-danger { border-color: var(--rh-danger) !important; }
+
+/* ================================================
+   COULEURS SPÉCIALES POUR L'APPLICATION RH FLOW
+   ================================================ */
+
+/* Couleurs pour les statuts */
+.status-active { color: var(--rh-success) !important; }
+.status-inactive { color: var(--rh-danger) !important; }
+.status-pending { color: var(--rh-warning) !important; }
+.status-suspended { color: var(--rh-danger) !important; }
+
+/* Couleurs pour les types d'utilisateurs */
+.user-admin { color: var(--rh-primary) !important; }
+.user-hr { color: var(--rh-info) !important; }
+.user-employee { color: var(--rh-success) !important; }
+.user-company { color: var(--rh-warning) !important; }
+
+/* Couleurs pour les niveaux de plan */
+.plan-basic { color: var(--rh-gray-500) !important; }
+.plan-standard { color: var(--rh-info) !important; }
+.plan-premium { color: var(--rh-primary) !important; }
+.plan-enterprise { color: var(--rh-warning) !important; }
+
+/* ================================================
+   GRADIENTS PERSONNALISÉS
+   ================================================ */
+
+/* Gradient principal RH Flow */
+.bg-rh-gradient {
+  background: linear-gradient(135deg, var(--rh-primary) 0%, #5a67d8 100%) !important;
+}
+
+/* Gradient pour les headers */
+.bg-header-gradient {
+  background: linear-gradient(135deg, var(--rh-primary-600) 0%, var(--rh-primary-800) 100%) !important;
+}
+
+/* Gradient pour les boutons */
+.bg-button-gradient {
+  background: linear-gradient(135deg, var(--rh-primary) 0%, var(--rh-primary-700) 100%) !important;
+}
+
+/* ================================================
+   SUPPORT DU MODE SOMBRE
+   ================================================ */
+
+/* Variables pour le mode sombre */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rh-bg-body: #1f1f2e;
+    --rh-bg-card: #2b2d42;
+    --rh-bg-navbar: rgba(43, 45, 66, 0.9);
+    --rh-bg-sidebar: #1f1f2e;
+
+    --rh-text-primary: #c7c8cc;
+    --rh-text-secondary: #8b8d98;
+    --rh-text-muted: #6c6f82;
+
+    --rh-border-color: #3a3b5c;
+    --rh-border-light: #3a3b5c;
+  }
+}
+
+/* Classes pour le mode sombre */
+[data-bs-theme="dark"] {
+  --rh-bg-body: #1f1f2e !important;
+  --rh-bg-card: #2b2d42 !important;
+  --rh-bg-navbar: rgba(43, 45, 66, 0.9) !important;
+  --rh-bg-sidebar: #1f1f2e !important;
+
+  --rh-text-primary: #c7c8cc !important;
+  --rh-text-secondary: #8b8d98 !important;
+  --rh-text-muted: #6c6f82 !important;
+
+  --rh-border-color: #3a3b5c !important;
+  --rh-border-light: #3a3b5c !important;
+}
+
+/* ================================================
+   ANIMATIONS AVEC COULEURS RH FLOW
+   ================================================ */
+
+/* Animation pulse pour les notifications */
+@keyframes rh-pulse-primary {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(var(--rh-primary-rgb), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--rh-primary-rgb), 0);
+  }
+}
+
+.rh-pulse-primary {
+  animation: rh-pulse-primary 2s infinite;
+}
+
+/* Animation de succès */
+@keyframes rh-success-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.rh-success-bounce {
+  animation: rh-success-bounce 1s ease-in-out;
+}
+
+/* ================================================
+   RESPONSIVE POUR LES COULEURS
+   ================================================ */
+
+/* Ajustements pour mobile */
+@media (max-width: 768px) {
+  .btn {
+    min-height: 44px; /* Touch target minimum */
+  }
+
+  /* Contraste amélioré sur mobile */
+  .card {
+    border-width: 1px;
+  }
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Leaves",
+    "alias": "leaves",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Leaves\\Providers\\LeavesServiceProvider"
+    ],
+    "files": []
+}

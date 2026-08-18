@@ -1,0 +1,20 @@
+{
+    "User": true,
+    "Time": true,
+    "ConfigImpot": false,
+    "Impot": true,
+    "Employees": true,
+    "Pointeuses": true,
+    "Contracts": true,
+    "PaieSalaries": true,
+    "Evenements": true,
+    "Settings": true,
+    "Leaves": true,
+    "Ruptures": true,
+    "Loans": true,
+    "NatureAvantage": true,
+    "Simulator": true,
+    "Declarations": true,
+    "LandingPage": true,
+    "Chatbot": true
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Loans",
+    "alias": "loans",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Loans\\Providers\\LoansServiceProvider"
+    ],
+    "files": []
+}

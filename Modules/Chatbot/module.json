@@ -1,0 +1,11 @@
+{
+    "name": "Chatbot",
+    "alias": "chatbot",
+    "description": "Assistant IA de paie mensuelle",
+    "keywords": ["chatbot", "ia", "paie", "assistant"],
+    "priority": 0,
+    "providers": [
+        "Modules\\Chatbot\\Providers\\ChatbotServiceProvider"
+    ],
+    "files": []
+}

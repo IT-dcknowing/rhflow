@@ -1,0 +1,101 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	8,
+		"totalMatches":	8,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	49,
+				"time":	"2024-08-23T07:57:46-00:00",
+				"cardType":	1,
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"serialNo":	3095,
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-23T07:57:52-00:00",
+				"cardType":	1,
+				"name":	"Laura Daligou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"011",
+				"serialNo":	3096,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-23T08:05:01-00:00",
+				"cardNo":	"2612532006",
+				"cardType":	1,
+				"name":	"Eli Bohui",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"004",
+				"serialNo":	3097,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-23T08:07:19-00:00",
+				"cardNo":	"2612192870",
+				"cardType":	1,
+				"name":	"Jean Gabin ORI",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"007",
+				"serialNo":	3098,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-23T08:07:43-00:00",
+				"cardType":	1,
+				"name":	"Christian Gohou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"006",
+				"serialNo":	3099,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	49,
+				"time":	"2024-08-23T08:36:39-00:00",
+				"cardType":	1,
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"serialNo":	3100,
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-23T08:36:42-00:00",
+				"cardType":	1,
+				"name":	"Aymard Koffi",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"008",
+				"serialNo":	3101,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-08-23T09:27:56-00:00",
+				"cardType":	1,
+				"name":	"Maimouna Coulibaly",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"010",
+				"serialNo":	3102,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}]
+	}
+}

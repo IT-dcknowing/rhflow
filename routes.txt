@@ -1,0 +1,740 @@
+﻿
+  GET|HEAD        / ................... landingpage ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@index
+  GET|HEAD        allowance-options ........................ allowance-options.index ÔÇ║ AllowanceOptionController@index
+  POST            allowance-options ........................ allowance-options.store ÔÇ║ AllowanceOptionController@store
+  GET|HEAD        allowance-options/create ............... allowance-options.create ÔÇ║ AllowanceOptionController@create
+  PUT|PATCH       allowance-options/{allowance_option} ... allowance-options.update ÔÇ║ AllowanceOptionController@update
+  DELETE          allowance-options/{allowance_option} . allowance-options.destroy ÔÇ║ AllowanceOptionController@destroy
+  GET|HEAD        allowance-options/{allowance_option}/edit .. allowance-options.edit ÔÇ║ AllowanceOptionController@edit
+  GET|HEAD        allowances ............................................ allowances.index ÔÇ║ AllowanceController@index
+  POST            allowances ............................................ allowances.store ÔÇ║ AllowanceController@store
+  GET|HEAD        allowances/create ................................... allowances.create ÔÇ║ AllowanceController@create
+  GET|HEAD        allowances/employee/{employeeId} ........ allowances.by-employee ÔÇ║ AllowanceController@getByEmployee
+  PUT|PATCH       allowances/{allowance} .............................. allowances.update ÔÇ║ AllowanceController@update
+  DELETE          allowances/{allowance} ............................ allowances.destroy ÔÇ║ AllowanceController@destroy
+  GET|HEAD        allowances/{allowance}/edit ............................. allowances.edit ÔÇ║ AllowanceController@edit
+  GET|HEAD        allowances/{allowance}/print .......................... allowances.print ÔÇ║ AllowanceController@print
+  GET|HEAD        api/CountHeuresAbsence ......................................... ApiAppController@CountHeuresAbsence
+  GET|HEAD        api/CountLoans ......................................................... ApiAppController@CountLoans
+  GET|HEAD        api/CountTimesheetApprv ....................................... ApiAppController@CountTimesheetApprv
+  GET|HEAD        api/CountTimesheetEmp/{id} ...................................... ApiAppController@CountTimesheetEmp
+  GET|HEAD        api/CountTimesheetPend ......................................... ApiAppController@CountTimesheetPend
+  GET|HEAD        api/CountTimesheetRejc ......................................... ApiAppController@CountTimesheetRejc
+  GET|HEAD        api/CountleaveApprv ............................................... ApiAppController@CountleaveApprv
+  GET|HEAD        api/CountleaveEmp/{id} .............................................. ApiAppController@CountleaveEmp
+  GET|HEAD        api/CountleavePend ................................................. ApiAppController@CountleavePend
+  GET|HEAD        api/CountleaveRejc ................................................. ApiAppController@CountleaveRejc
+  GET|HEAD        api/announcements-events ........................................ ApiAppController@indexAnnoucements
+  GET|HEAD        api/announcementsEvents ....................................... ApiAppController@announcementsEvents
+  POST            api/changePassword/{id} ............................................ ApiAppController@changePassword
+  POST            api/changePasswordCompany/{id} .............................. ApiAppController@changePasswordCompany
+  POST            api/check-user-type ................................................. ApiAppController@checkUserType
+  GET|HEAD        api/companyData ....................................................... ApiAppController@companyData
+  POST            api/companyUpdate/{id} .............................................. ApiAppController@companyUpdate
+  GET|HEAD        api/dashboardCompany/{id} ........................................ ApiAppController@dashboardCompany
+  GET|HEAD        api/demandeRequestCompany ................................... ApiAppController@demandeRequestCompany
+  GET|HEAD        api/demandes ....................................................... ApiAppController@demandeRequest
+  POST            api/document/store-base64 ..................................... ApiAppController@storeDocumentBase64
+  GET|HEAD        api/documents ................................................... ApiAppController@documentsEmployee
+  DELETE          api/documents/{id} ................................................. ApiAppController@deleteDocument
+  GET|HEAD        api/documents/{id}/download ...................................... ApiAppController@downloadDocument
+  GET|HEAD        api/empData ............................................................... ApiAppController@empData
+  POST            api/empUpdate/{id} ...................................................... ApiAppController@empUpdate
+  POST            api/empUpdateAvatar ........................... emp.update.avatar ÔÇ║ ApiAppController@empUpdateAvatar
+  GET|HEAD        api/employeesRewards .......................................... ApiAppController@getEmployeesRewards
+  POST            api/forgot-password/{email} ........................................ ApiAppController@forgotPassword
+  POST            api/generate-temporary-token .... generate.temporary.token ÔÇ║ ApiAppController@generateTemporaryToken
+  POST            api/geniuspay/webhook api.geniuspay.webhook ÔÇ║ Modules\LandingPage\Http\Controllers\PaymentControlleÔÇª
+  GET|HEAD        api/getCotisationCompany/{date} .............................. ApiAppController@getCotisationCompany
+  GET|HEAD        api/getDossiersCompany/{id} .................................... ApiAppController@getDossiersCompany
+  GET|HEAD        api/getDossiersEmp/{id} ............................................ ApiAppController@getDossiersEmp
+  GET|HEAD        api/getEmployeesInfo ............................................. ApiAppController@getEmployeesInfo
+  GET|HEAD        api/getMassNetSalary ............................................. ApiAppController@getMassNetSalary
+  GET|HEAD        api/getMonthTrait ...................................................... ApiAppController@MonthTrait
+  GET|HEAD        api/getPayslips/{id} .................................................. ApiAppController@getPayslips
+  GET|HEAD        api/getPayslipsCompany ......................................... ApiAppController@getPayslipsCompany
+  GET|HEAD        api/getPayslipsLive ............................................... ApiAppController@getPayslipsLive
+  GET|HEAD        api/getPointageLive ............................................... ApiAppController@getPointageLive
+  GET|HEAD        api/getShowPointage ............................................... ApiAppController@getShowPointage
+  GET|HEAD        api/getShowPointageCompany/{id} ............................ ApiAppController@getShowPointageCompany
+  GET|HEAD        api/getlastPayslipsCompany ................................. ApiAppController@getlastPayslipsCompany
+  GET|HEAD        api/leave .............................................................. ApiAppController@indexleave
+  POST            api/leave/create ............................................... ApiAppController@createLeaveRequest
+  GET|HEAD        api/leave/history ......................................... ApiAppController@getEmployeeLeaveHistory
+  GET|HEAD        api/leave/show/{id} .......................................................... ApiAppController@show
+  GET|HEAD        api/leave/types ..................................................... ApiAppController@getLeaveTypes
+  DELETE          api/leave/{id?} ........................................................... ApiAppController@destroy
+  GET|HEAD        api/leave/{id?}/edit ......................................................... ApiAppController@edit
+  PUT             api/leave/{id} ............................................................. ApiAppController@update
+  POST            api/login ................................................................... ApiAppController@login
+  POST            api/login-with-code ..................................................... ApiAppController@loginCode
+  POST            api/login/employee .......................................................... ApiAppController@login
+  GET|HEAD        api/logout ................................................................. ApiAppController@logout
+  GET|HEAD        api/monthTraitCompany ........................................... ApiAppController@MonthTraitCompany
+  GET|HEAD        api/notifCompany ..................................................... ApiAppController@notifCompany
+  GET|HEAD        api/notifEmployee ................................................... ApiAppController@notifEmployee
+  POST            api/notifications ............................................... ApiAppController@storeNotification
+  POST            api/notifications/mark-all-as-read-com ........................... ApiAppController@markAllAsReadCom
+  POST            api/notifications/mark-all-as-read-emp ........................... ApiAppController@markAllAsReadEmp
+  GET|HEAD        api/notifications/unread-count-com .............................. ApiAppController@getUnreadCountCom
+  GET|HEAD        api/notifications/unread-count-emp .............................. ApiAppController@getUnreadCountEmp
+  POST            api/notifications/{id}/read ............................................ ApiAppController@markAsRead
+  GET|HEAD        api/payslip/GeneratePdf/{id}/{monthpaie?} ............................. ApiAppController@generatePdf
+  GET|HEAD        api/payslip/viewBulletin/{id}/{monthpaie?} ........................... ApiAppController@viewBulletin
+  POST            api/pointage/scanner .............................................. ApiAppController@scannerPointage
+  POST            api/pointages/employee/{employee_id} ............................... ApiAppController@createPointage
+  GET|HEAD        api/pointages/{date} ........................................... ApiAppController@getPointagesByDate
+  GET|HEAD        api/profilCompany ................................................... ApiAppController@profilCompany
+  GET|HEAD        api/profile ....................................................... ApiAppController@profileEmployee
+  POST            api/profile/update-avatar ........................ update.account ÔÇ║ ApiAppController@updateTheAvatar
+  POST            api/rewardEmployee/{employee_id}/{awardtype_id} ............. ApiAppController@createEmployeeRewards
+  GET|HEAD        api/settings/location-suggestions api.settings.location.suggestions ÔÇ║ Modules\Settings\Http\ControlÔÇª
+  GET|HEAD        api/showAvatarUpdateForm ........... show.update.avatar.form ÔÇ║ ApiAppController@showAvatarUpdateForm
+  GET|HEAD        api/timesheet ...................................................... ApiAppController@indexTimesheet
+  POST            api/timesheet/store ................................................ ApiAppController@storeTimeSheet
+  POST            api/timesheet/store-base64 ................................... ApiAppController@storeTimeSheetBase64
+  DELETE          api/timesheet/{id?} ....................................................... ApiAppController@destroy
+  GET|HEAD        api/timesheet/{id?}/edit ..................................................... ApiAppController@edit
+  PUT             api/timesheet/{id} ......................................................... ApiAppController@update
+  GET|HEAD        api/typeRewards .................................................... ApiAppController@getTypeRewards
+  POST            api/updateRequestStatus/{id} .................................. ApiAppController@updateRequestStatus
+  POST            api/upload ................................................................. ApiAppController@upload
+  POST            api/user/avatar ...................................................... ApiAppController@updateAvatar
+  GET|HEAD        api/userData ............................................................. ApiAppController@userData
+  GET|HEAD        api/v1/contracts api.contracts.index ÔÇ║ Modules\Contracts\Http\Controllers\ContractsController@index
+  POST            api/v1/contracts api.contracts.store ÔÇ║ Modules\Contracts\Http\Controllers\ContractsController@store
+  GET|HEAD        api/v1/contracts/{contract} api.contracts.show ÔÇ║ Modules\Contracts\Http\Controllers\ContractsControÔÇª
+  PUT|PATCH       api/v1/contracts/{contract} api.contracts.update ÔÇ║ Modules\Contracts\Http\Controllers\ContractsContÔÇª
+  DELETE          api/v1/contracts/{contract} api.contracts.destroy ÔÇ║ Modules\Contracts\Http\Controllers\ContractsConÔÇª
+  GET|HEAD        api/v1/declarations api.declarations.index ÔÇ║ Modules\Declarations\Http\Controllers\DeclarationsContÔÇª
+  POST            api/v1/declarations api.declarations.store ÔÇ║ Modules\Declarations\Http\Controllers\DeclarationsContÔÇª
+  GET|HEAD        api/v1/declarations/{declaration} api.declarations.show ÔÇ║ Modules\Declarations\Http\Controllers\DecÔÇª
+  PUT|PATCH       api/v1/declarations/{declaration} api.declarations.update ÔÇ║ Modules\Declarations\Http\Controllers\DÔÇª
+  DELETE          api/v1/declarations/{declaration} api.declarations.destroy ÔÇ║ Modules\Declarations\Http\Controllers\ÔÇª
+  GET|HEAD        api/v1/employees api.employees.index ÔÇ║ Modules\Employees\Http\Controllers\EmployeesController@index
+  POST            api/v1/employees api.employees.store ÔÇ║ Modules\Employees\Http\Controllers\EmployeesController@store
+  GET|HEAD        api/v1/employees/{employee} api.employees.show ÔÇ║ Modules\Employees\Http\Controllers\EmployeesControÔÇª
+  PUT|PATCH       api/v1/employees/{employee} api.employees.update ÔÇ║ Modules\Employees\Http\Controllers\EmployeesContÔÇª
+  DELETE          api/v1/employees/{employee} api.employees.destroy ÔÇ║ Modules\Employees\Http\Controllers\EmployeesConÔÇª
+  GET|HEAD        api/v1/evenements api.evenements.index ÔÇ║ Modules\Evenements\Http\Controllers\EvenementsController@iÔÇª
+  POST            api/v1/evenements api.evenements.store ÔÇ║ Modules\Evenements\Http\Controllers\EvenementsController@sÔÇª
+  GET|HEAD        api/v1/evenements/{evenement} api.evenements.show ÔÇ║ Modules\Evenements\Http\Controllers\EvenementsCÔÇª
+  PUT|PATCH       api/v1/evenements/{evenement} api.evenements.update ÔÇ║ Modules\Evenements\Http\Controllers\EvenementÔÇª
+  DELETE          api/v1/evenements/{evenement} api.evenements.destroy ÔÇ║ Modules\Evenements\Http\Controllers\EvenemenÔÇª
+  GET|HEAD        api/v1/impots ............... api.impot.index ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@index
+  POST            api/v1/impots ............... api.impot.store ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@store
+  GET|HEAD        api/v1/impots/{impot} ......... api.impot.show ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@show
+  PUT|PATCH       api/v1/impots/{impot} ..... api.impot.update ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@update
+  DELETE          api/v1/impots/{impot} ... api.impot.destroy ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@destroy
+  GET|HEAD        api/v1/landingpages api.landingpage.index ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageControlÔÇª
+  POST            api/v1/landingpages api.landingpage.store ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageControlÔÇª
+  GET|HEAD        api/v1/landingpages/{landingpage} api.landingpage.show ÔÇ║ Modules\LandingPage\Http\Controllers\LandiÔÇª
+  PUT|PATCH       api/v1/landingpages/{landingpage} api.landingpage.update ÔÇ║ Modules\LandingPage\Http\Controllers\LanÔÇª
+  DELETE          api/v1/landingpages/{landingpage} api.landingpage.destroy ÔÇ║ Modules\LandingPage\Http\Controllers\LaÔÇª
+  GET|HEAD        api/v1/leaves ............ api.leaves.index ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@index
+  POST            api/v1/leaves ............ api.leaves.store ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@store
+  GET|HEAD        api/v1/leaves/{leaf} ....... api.leaves.show ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@show
+  PUT|PATCH       api/v1/leaves/{leaf} ... api.leaves.update ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@update
+  DELETE          api/v1/leaves/{leaf} . api.leaves.destroy ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@destroy
+  GET|HEAD        api/v1/loans ................ api.loans.index ÔÇ║ Modules\Loans\Http\Controllers\LoansController@index
+  POST            api/v1/loans ................ api.loans.store ÔÇ║ Modules\Loans\Http\Controllers\LoansController@store
+  GET|HEAD        api/v1/loans/{loan} ........... api.loans.show ÔÇ║ Modules\Loans\Http\Controllers\LoansController@show
+  PUT|PATCH       api/v1/loans/{loan} ....... api.loans.update ÔÇ║ Modules\Loans\Http\Controllers\LoansController@update
+  DELETE          api/v1/loans/{loan} ..... api.loans.destroy ÔÇ║ Modules\Loans\Http\Controllers\LoansController@destroy
+  GET|HEAD        api/v1/natureavantages api.natureavantage.index ÔÇ║ Modules\NatureAvantage\Http\Controllers\NatureAvaÔÇª
+  POST            api/v1/natureavantages api.natureavantage.store ÔÇ║ Modules\NatureAvantage\Http\Controllers\NatureAvaÔÇª
+  GET|HEAD        api/v1/natureavantages/{natureavantage} api.natureavantage.show ÔÇ║ Modules\NatureAvantage\Http\ContrÔÇª
+  PUT|PATCH       api/v1/natureavantages/{natureavantage} api.natureavantage.update ÔÇ║ Modules\NatureAvantage\Http\ConÔÇª
+  DELETE          api/v1/natureavantages/{natureavantage} api.natureavantage.destroy ÔÇ║ Modules\NatureAvantage\Http\CoÔÇª
+  GET|HEAD        api/v1/paiesalaries api.paiesalaries.index ÔÇ║ Modules\PaieSalaries\Http\Controllers\PaieSalariesContÔÇª
+  POST            api/v1/paiesalaries api.paiesalaries.store ÔÇ║ Modules\PaieSalaries\Http\Controllers\PaieSalariesContÔÇª
+  GET|HEAD        api/v1/paiesalaries/{paiesalary} api.paiesalaries.show ÔÇ║ Modules\PaieSalaries\Http\Controllers\PaieÔÇª
+  PUT|PATCH       api/v1/paiesalaries/{paiesalary} api.paiesalaries.update ÔÇ║ Modules\PaieSalaries\Http\Controllers\PaÔÇª
+  DELETE          api/v1/paiesalaries/{paiesalary} api.paiesalaries.destroy ÔÇ║ Modules\PaieSalaries\Http\Controllers\PÔÇª
+  GET|HEAD        api/v1/pointeuses api.pointeuses.index ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusesController@iÔÇª
+  POST            api/v1/pointeuses api.pointeuses.store ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusesController@sÔÇª
+  GET|HEAD        api/v1/pointeuses/{pointeus} api.pointeuses.show ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusesCoÔÇª
+  PUT|PATCH       api/v1/pointeuses/{pointeus} api.pointeuses.update ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusesÔÇª
+  DELETE          api/v1/pointeuses/{pointeus} api.pointeuses.destroy ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeuseÔÇª
+  GET|HEAD        api/v1/ruptures .... api.ruptures.index ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesController@index
+  POST            api/v1/ruptures .... api.ruptures.store ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesController@store
+  GET|HEAD        api/v1/ruptures/{rupture} api.ruptures.show ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesController@ÔÇª
+  PUT|PATCH       api/v1/ruptures/{rupture} api.ruptures.update ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControlleÔÇª
+  DELETE          api/v1/ruptures/{rupture} api.ruptures.destroy ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControllÔÇª
+  GET|HEAD        api/v1/simulators api.simulator.index ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorController@index
+  POST            api/v1/simulators api.simulator.store ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorController@store
+  GET|HEAD        api/v1/simulators/{simulator} api.simulator.show ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorContÔÇª
+  PUT|PATCH       api/v1/simulators/{simulator} api.simulator.update ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorCoÔÇª
+  DELETE          api/v1/simulators/{simulator} api.simulator.destroy ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorCÔÇª
+  GET|HEAD        api/v1/times ................... api.time.index ÔÇ║ Modules\Time\Http\Controllers\TimeController@index
+  POST            api/v1/times ................... api.time.store ÔÇ║ Modules\Time\Http\Controllers\TimeController@store
+  GET|HEAD        api/v1/times/{time} .............. api.time.show ÔÇ║ Modules\Time\Http\Controllers\TimeController@show
+  PUT|PATCH       api/v1/times/{time} .......... api.time.update ÔÇ║ Modules\Time\Http\Controllers\TimeController@update
+  DELETE          api/v1/times/{time} ........ api.time.destroy ÔÇ║ Modules\Time\Http\Controllers\TimeController@destroy
+  GET|HEAD        api/v1/users ................... api.user.index ÔÇ║ Modules\User\Http\Controllers\UserController@index
+  POST            api/v1/users ................... api.user.store ÔÇ║ Modules\User\Http\Controllers\UserController@store
+  GET|HEAD        api/v1/users/{user} .............. api.user.show ÔÇ║ Modules\User\Http\Controllers\UserController@show
+  PUT|PATCH       api/v1/users/{user} .......... api.user.update ÔÇ║ Modules\User\Http\Controllers\UserController@update
+  DELETE          api/v1/users/{user} ........ api.user.destroy ÔÇ║ Modules\User\Http\Controllers\UserController@destroy
+  POST            api/verify-user-type ............................................... ApiAppController@verifyUserType
+  POST            chatbot-api/chat ............ chatbot.api. ÔÇ║ Modules\Chatbot\Http\Controllers\ChatbotController@chat
+  GET|HEAD        chatbot-api/guide chatbot.api. ÔÇ║ Modules\Chatbot\Http\Controllers\ChatbotController@getGuideMarkdown
+  POST            chatbot-api/report chatbot.api. ÔÇ║ Modules\Chatbot\Http\Controllers\ChatbotController@generateReport
+  GET|HEAD        company/avantages company.avantages.index ÔÇ║ Modules\NatureAvantage\Http\Controllers\NatureAvantageCÔÇª
+  POST            company/avantages company.avantages.store ÔÇ║ Modules\NatureAvantage\Http\Controllers\NatureAvantageCÔÇª
+  GET|HEAD        company/avantages/create company.avantages.create ÔÇ║ Modules\NatureAvantage\Http\Controllers\NatureAÔÇª
+  GET|HEAD        company/avantages/{avantage} company.avantages.show ÔÇ║ Modules\NatureAvantage\Http\Controllers\NaturÔÇª
+  PUT|PATCH       company/avantages/{avantage} company.avantages.update ÔÇ║ Modules\NatureAvantage\Http\Controllers\NatÔÇª
+  DELETE          company/avantages/{avantage} company.avantages.destroy ÔÇ║ Modules\NatureAvantage\Http\Controllers\NaÔÇª
+  GET|HEAD        company/avantages/{avantage}/edit company.avantages.edit ÔÇ║ Modules\NatureAvantage\Http\Controllers\ÔÇª
+  PUT             company/avantages/{avantage}/toggle-status company.avantages.toggle-status ÔÇ║ Modules\NatureAvantageÔÇª
+  POST            company/contracts/attachment/add/{id} company.contracts.attachment.add ÔÇ║ Modules\Contracts\Http\ConÔÇª
+  DELETE          company/contracts/attachment/delete/{id} company.contracts.attachment.delete ÔÇ║ Modules\Contracts\HtÔÇª
+  GET|HEAD        company/contracts/attachment/download/{id} company.contracts.attachment.download ÔÇ║ Modules\ContractÔÇª
+  POST            company/contracts/avenant/add/{id} company.contracts.avenant.add ÔÇ║ Modules\Contracts\Http\ControlleÔÇª
+  DELETE          company/contracts/avenant/destroy/{id} company.contracts.avenant.destroy ÔÇ║ Modules\Contracts\Http\CÔÇª
+  GET|HEAD        company/contracts/avenant/download/{id} company.contracts.avenant.download ÔÇ║ Modules\Contracts\HttpÔÇª
+  GET|HEAD        company/contracts/avenant/edit/{id} company.contracts.avenant.edit ÔÇ║ Modules\Contracts\Http\ControlÔÇª
+  GET|HEAD        company/contracts/create company.contracts.create ÔÇ║ Modules\Contracts\Http\Controllers\ContractsConÔÇª
+  GET|HEAD        company/contracts/dashboard company.contracts.dashboard ÔÇ║ Modules\Contracts\Http\Controllers\ContraÔÇª
+  DELETE          company/contracts/destroy/{id} company.contracts.destroy ÔÇ║ Modules\Contracts\Http\Controllers\ContrÔÇª
+  GET|HEAD        company/contracts/edit/{id} company.contracts.edit ÔÇ║ Modules\Contracts\Http\Controllers\ContractsCoÔÇª
+  GET|HEAD        company/contracts/employee/{id} company.contracts.employee ÔÇ║ Modules\Contracts\Http\Controllers\ConÔÇª
+  GET|HEAD        company/contracts/index company.contracts.index ÔÇ║ Modules\Contracts\Http\Controllers\ContractsContrÔÇª
+  GET|HEAD        company/contracts/show/{id} company.contracts.show ÔÇ║ Modules\Contracts\Http\Controllers\ContractsCoÔÇª
+  POST            company/contracts/signature/save/{id} company.contracts.signature.save ÔÇ║ Modules\Contracts\Http\ConÔÇª
+  GET|HEAD        company/contracts/signature/{id} company.contracts.signature ÔÇ║ Modules\Contracts\Http\Controllers\CÔÇª
+  POST            company/contracts/store company.contracts.store ÔÇ║ Modules\Contracts\Http\Controllers\ContractsContrÔÇª
+  GET|HEAD        company/contracts/types company.contracts.types ÔÇ║ Modules\Contracts\Http\Controllers\ContractsContrÔÇª
+  DELETE          company/contracts/types/destroy/{id} company.contracts.types.destroy ÔÇ║ Modules\Contracts\Http\ContrÔÇª
+  POST            company/contracts/types/store company.contracts.types.store ÔÇ║ Modules\Contracts\Http\Controllers\CoÔÇª
+  PUT             company/contracts/types/update/{id} company.contracts.types.update ÔÇ║ Modules\Contracts\Http\ControlÔÇª
+  PUT             company/contracts/update/{id} company.contracts.update ÔÇ║ Modules\Contracts\Http\Controllers\ContracÔÇª
+  GET|HEAD        company/dashboard .......................... company.dashboard ÔÇ║ Company\CompanyController@dashboard
+  GET|HEAD        company/declarations/bulletins/download company. ÔÇ║ Modules\Declarations\Http\Controllers\BulletinQuÔÇª
+  GET|HEAD        company/declarations/cotisation/index company.declarations.cotisation.index ÔÇ║ Modules\Declarations\ÔÇª
+  GET|HEAD        company/declarations/create company.declarations.create ÔÇ║ Modules\Declarations\Http\Controllers\DecÔÇª
+  GET|HEAD        company/declarations/dashboard company.declarations.dashboard ÔÇ║ Modules\Declarations\Http\ControlleÔÇª
+  GET|HEAD        company/declarations/declaration/annuelle company.declarations.declaration.annuelle ÔÇ║ Modules\DeclaÔÇª
+  GET|HEAD        company/declarations/declaration/mensuelle company.declarations.declaration.mensuelle ÔÇ║ Modules\DecÔÇª
+  DELETE          company/declarations/destroy/{id} company.declarations.destroy ÔÇ║ Modules\Declarations\Http\ControllÔÇª
+  GET|HEAD        company/declarations/edit/{id} company.declarations.edit ÔÇ║ Modules\Declarations\Http\Controllers\DeÔÇª
+  GET|HEAD        company/declarations/get_bulletins company.declarations.get_bulletins ÔÇ║ Modules\Declarations\Http\CÔÇª
+  GET|HEAD        company/declarations/get_cotisations company.declarations.get_cotisations ÔÇ║ Modules\Declarations\HtÔÇª
+  GET|HEAD        company/declarations/get_decla_cmu company.declarations.get_decla_cmu ÔÇ║ Modules\Declarations\Http\CÔÇª
+  GET|HEAD        company/declarations/get_decla_cnps company.declarations.get_decla_cnps ÔÇ║ Modules\Declarations\HttpÔÇª
+  GET|HEAD        company/declarations/get_decla_edi company.declarations.get_decla_edi ÔÇ║ Modules\Declarations\Http\CÔÇª
+  GET|HEAD        company/declarations/get_decla_efi company.declarations.get_decla_efi ÔÇ║ Modules\Declarations\Http\CÔÇª
+  GET|HEAD        company/declarations/get_disa company.declarations.get_disa ÔÇ║ Modules\Declarations\Http\ControllersÔÇª
+  GET|HEAD        company/declarations/get_employees_periode company.declarations.get_employees_periode ÔÇ║ Modules\DecÔÇª
+  GET|HEAD        company/declarations/get_paylists company.declarations.get_paylists ÔÇ║ Modules\Declarations\Http\ConÔÇª
+  GET|HEAD        company/declarations/get_paylists_annuel company.declarations.get_paylists_annuel ÔÇ║ Modules\DeclaraÔÇª
+  GET|HEAD        company/declarations/get_paylists_individuel company.declarations.get_paylists_individuel ÔÇ║ ModulesÔÇª
+  GET|HEAD        company/declarations/get_periodes company.declarations.get_periodes ÔÇ║ Modules\Declarations\Http\ConÔÇª
+  GET|HEAD        company/declarations/index company.declarations.index ÔÇ║ Modules\Declarations\Http\Controllers\DeclaÔÇª
+  GET|HEAD        company/declarations/livrepaie/annuel company.declarations.livrepaie.annuel ÔÇ║ Modules\Declarations\ÔÇª
+  GET|HEAD        company/declarations/livrepaie/individuel company.declarations.livrepaie.individuel ÔÇ║ Modules\DeclaÔÇª
+  GET|HEAD        company/declarations/livrepaie/mensuel company.declarations.livrepaie.mensuel ÔÇ║ Modules\DeclarationÔÇª
+  GET|HEAD        company/declarations/resume company.declarations.resume.index ÔÇ║ Modules\Declarations\Http\ControlleÔÇª
+  POST            company/declarations/resume-bulk-destroy company.declarations.resume.bulk-destroy ÔÇ║ Modules\DeclaraÔÇª
+  GET|HEAD        company/declarations/resume/bulletins-all/{id} company.declarations.resume.bulletins-all ÔÇ║ Modules\ÔÇª
+  GET|HEAD        company/declarations/resume/create company.declarations.resume.create ÔÇ║ Modules\Declarations\Http\CÔÇª
+  GET|HEAD        company/declarations/resume/download company.declarations.resume.download ÔÇ║ Modules\Declarations\HtÔÇª
+  POST            company/declarations/resume/generate-queue company.declarations.resume.generate-queue ÔÇ║ Modules\DecÔÇª
+  GET|HEAD        company/declarations/resume/progress company.declarations.resume.progress ÔÇ║ Modules\Declarations\HtÔÇª
+  GET|HEAD        company/declarations/resume/{id} company.declarations.resume.show ÔÇ║ Modules\Declarations\Http\ContrÔÇª
+  PUT             company/declarations/resume/{id} company.declarations.resume.update ÔÇ║ Modules\Declarations\Http\ConÔÇª
+  DELETE          company/declarations/resume/{id} company.declarations.resume.destroy ÔÇ║ Modules\Declarations\Http\CoÔÇª
+  GET|HEAD        company/declarations/resume/{id}/edit company.declarations.resume.edit ÔÇ║ Modules\Declarations\Http\ÔÇª
+  GET|HEAD        company/declarations/show/{id} company.declarations.show ÔÇ║ Modules\Declarations\Http\Controllers\DeÔÇª
+  POST            company/declarations/store company.declarations.store ÔÇ║ Modules\Declarations\Http\Controllers\DeclaÔÇª
+  GET|HEAD        company/declarations/test ................................................ company.declarations.test
+  PUT             company/declarations/update/{id} company.declarations.update ÔÇ║ Modules\Declarations\Http\ControllerÔÇª
+  GET|HEAD        company/employees company.employees.index ÔÇ║ Modules\Employees\Http\Controllers\EmployeesController@ÔÇª
+  POST            company/employees company.employees.store ÔÇ║ Modules\Employees\Http\Controllers\EmployeesController@ÔÇª
+  GET|HEAD        company/employees/bulletins/show/{id} company.employees.bulletins.show ÔÇ║ Modules\Employees\Http\ConÔÇª
+  GET|HEAD        company/employees/create company.employees.create ÔÇ║ Modules\Employees\Http\Controllers\EmployeesConÔÇª
+  GET|HEAD        company/employees/dashboard company.employees.dashboard ÔÇ║ Modules\Employees\Http\Controllers\EmployÔÇª
+  DELETE          company/employees/demandes/destroy/{id} company.employees.demandes.destroy ÔÇ║ Modules\Employees\HttpÔÇª
+  GET|HEAD        company/employees/demandes/index company.employees.demandes.index ÔÇ║ Modules\Employees\Http\ControllÔÇª
+  POST            company/employees/demandes/reject/{id} company.employees.demandes.reject ÔÇ║ Modules\Employees\Http\CÔÇª
+  GET|HEAD        company/employees/demandes/show/{id} company.employees.demandes.show ÔÇ║ Modules\Employees\Http\ContrÔÇª
+  POST            company/employees/demandes/validate/{id} company.employees.demandes.validate ÔÇ║ Modules\Employees\HtÔÇª
+  POST            company/employees/documents/store company.employees.documents.store ÔÇ║ Modules\Employees\Http\ControÔÇª
+  DELETE          company/employees/documents/{id} company.employees.documents.destroy ÔÇ║ Modules\Employees\Http\ContrÔÇª
+  GET|HEAD        company/employees/dossiers/index company.employees.dossiers.index ÔÇ║ Modules\Employees\Http\ControllÔÇª
+  GET|HEAD        company/employees/dossiers/profile/{id} company.employees.dossiers.profile ÔÇ║ Modules\Employees\HttpÔÇª
+  POST            company/employees/employee/json company.employees.employee.json ÔÇ║ Modules\Employees\Http\ControllerÔÇª
+  POST            company/employees/family/store company.employees.family.store ÔÇ║ Modules\Employees\Http\Controllers\ÔÇª
+  PUT             company/employees/family/{id} company.employees.family.update ÔÇ║ Modules\Employees\Http\Controllers\ÔÇª
+  DELETE          company/employees/family/{id} company.employees.family.destroy ÔÇ║ Modules\Employees\Http\ControllersÔÇª
+  GET|HEAD        company/employees/get-categories-by-type/{typeId} company.employees.get-categories-by-type ÔÇ║ ModuleÔÇª
+  GET|HEAD        company/employees/get-category-details/{typeId}/{categoryId} company.employees.get-category-detailsÔÇª
+  POST            company/employees/getdepartment company.employees.getdepartment ÔÇ║ Modules\Employees\Http\ControllerÔÇª
+  GET|HEAD        company/employees/grille/create/{id} company.employees.grille.create ÔÇ║ Modules\Employees\Http\ContrÔÇª
+  DELETE          company/employees/grille/destroy/{id} company.employees.grille.destroy ÔÇ║ Modules\Employees\Http\ConÔÇª
+  GET|HEAD        company/employees/grille/edit/{id} company.employees.grille.edit ÔÇ║ Modules\Employees\Http\ControlleÔÇª
+  GET|HEAD        company/employees/grille/index company.employees.grille.index ÔÇ║ Modules\Employees\Http\Controllers\ÔÇª
+  GET|HEAD        company/employees/grille/show/{id} company.employees.grille.show ÔÇ║ Modules\Employees\Http\ControlleÔÇª
+  POST            company/employees/grille/store company.employees.grille.store ÔÇ║ Modules\Employees\Http\Controllers\ÔÇª
+  PUT             company/employees/grille/update/{id} company.employees.grille.update ÔÇ║ Modules\Employees\Http\ContrÔÇª
+  POST            company/employees/import company.employees.import ÔÇ║ Modules\Employees\Http\Controllers\EmployeesConÔÇª
+  GET|HEAD        company/employees/import-template company.employees.import.template ÔÇ║ Modules\Employees\Http\ControÔÇª
+  GET|HEAD        company/employees/{id} company.employees.show ÔÇ║ Modules\Employees\Http\Controllers\EmployeesControlÔÇª
+  PUT             company/employees/{id} company.employees.update ÔÇ║ Modules\Employees\Http\Controllers\EmployeesContrÔÇª
+  DELETE          company/employees/{id} company.employees.destroy ÔÇ║ Modules\Employees\Http\Controllers\EmployeesContÔÇª
+  GET|HEAD        company/employees/{id}/attestation-travail company.employees.attestation-travail ÔÇ║ Modules\EmployeeÔÇª
+  GET|HEAD        company/employees/{id}/certificat-travail company.employees.certificat-travail ÔÇ║ Modules\Employees\ÔÇª
+  GET|HEAD        company/employees/{id}/edit company.employees.edit ÔÇ║ Modules\Employees\Http\Controllers\EmployeesCoÔÇª
+  POST            company/employees/{id}/toggle company.employees.toggle ÔÇ║ Modules\Employees\Http\Controllers\EmployeÔÇª
+  GET|HEAD        company/evenements/annonces company.evenements.annonces.index ÔÇ║ Modules\Evenements\Http\ControllersÔÇª
+  POST            company/evenements/annonces company.evenements.annonces.store ÔÇ║ Modules\Evenements\Http\ControllersÔÇª
+  GET|HEAD        company/evenements/annonces/create company.evenements.annonces.create ÔÇ║ Modules\Evenements\Http\ConÔÇª
+  GET|HEAD        company/evenements/annonces/{annonce} company.evenements.annonces.show ÔÇ║ Modules\Evenements\Http\CoÔÇª
+  PUT|PATCH       company/evenements/annonces/{annonce} company.evenements.annonces.update ÔÇ║ Modules\Evenements\Http\ÔÇª
+  DELETE          company/evenements/annonces/{annonce} company.evenements.annonces.destroy ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/annonces/{annonce}/edit company.evenements.annonces.edit ÔÇ║ Modules\Evenements\HtÔÇª
+  POST            company/evenements/annonces/{annonce}/export company.evenements.annonces.export ÔÇ║ Modules\EvenementÔÇª
+  GET|HEAD        company/evenements/api/evenements/events company.evenements.api.events.index ÔÇ║ Modules\Evenements\HÔÇª
+  POST            company/evenements/api/evenements/events company.evenements.api.events.store ÔÇ║ Modules\Evenements\HÔÇª
+  PUT             company/evenements/api/evenements/events/{event} company.evenements.api.events.update ÔÇ║ Modules\EveÔÇª
+  DELETE          company/evenements/api/evenements/events/{event} company.evenements.api.events.destroy ÔÇ║ Modules\EvÔÇª
+  GET|HEAD        company/evenements/awards company.evenements.awards.index ÔÇ║ Modules\Evenements\Http\Controllers\AwaÔÇª
+  POST            company/evenements/awards company.evenements.awards.store ÔÇ║ Modules\Evenements\Http\Controllers\AwaÔÇª
+  GET|HEAD        company/evenements/awards/create company.evenements.awards.create ÔÇ║ Modules\Evenements\Http\ControlÔÇª
+  POST            company/evenements/awards/quick-create company.evenements.awards.quick-create ÔÇ║ Modules\Evenements\ÔÇª
+  GET|HEAD        company/evenements/awards/{award} company.evenements.awards.show ÔÇ║ Modules\Evenements\Http\ControllÔÇª
+  PUT|PATCH       company/evenements/awards/{award} company.evenements.awards.update ÔÇ║ Modules\Evenements\Http\ControÔÇª
+  DELETE          company/evenements/awards/{award} company.evenements.awards.destroy ÔÇ║ Modules\Evenements\Http\ContrÔÇª
+  GET|HEAD        company/evenements/awards/{award}/edit company.evenements.awards.edit ÔÇ║ Modules\Evenements\Http\ConÔÇª
+  POST            company/evenements/awards/{award}/export company.evenements.awards.export ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/dashboard company.evenements.dashboard ÔÇ║ Modules\Evenements\Http\Controllers\DasÔÇª
+  GET|HEAD        company/evenements/events company.evenements.events.index ÔÇ║ Modules\Evenements\Http\Controllers\EveÔÇª
+  POST            company/evenements/events company.evenements.events.store ÔÇ║ Modules\Evenements\Http\Controllers\EveÔÇª
+  GET|HEAD        company/evenements/events/calendar company.evenements.events.calendar ÔÇ║ Modules\Evenements\Http\ConÔÇª
+  GET|HEAD        company/evenements/events/create company.evenements.events.create ÔÇ║ Modules\Evenements\Http\ControlÔÇª
+  GET|HEAD        company/evenements/events/{event} company.evenements.events.show ÔÇ║ Modules\Evenements\Http\ControllÔÇª
+  PUT|PATCH       company/evenements/events/{event} company.evenements.events.update ÔÇ║ Modules\Evenements\Http\ControÔÇª
+  DELETE          company/evenements/events/{event} company.evenements.events.destroy ÔÇ║ Modules\Evenements\Http\ContrÔÇª
+  PATCH           company/evenements/events/{event}/cancel company.evenements.events.cancel ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/events/{event}/edit company.evenements.events.edit ÔÇ║ Modules\Evenements\Http\ConÔÇª
+  POST            company/evenements/events/{event}/export company.evenements.events.export ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/meetings company.evenements.meetings.index ÔÇ║ Modules\Evenements\Http\ControllersÔÇª
+  POST            company/evenements/meetings company.evenements.meetings.store ÔÇ║ Modules\Evenements\Http\ControllersÔÇª
+  GET|HEAD        company/evenements/meetings/calendar company.evenements.meetings.calendar ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/meetings/create company.evenements.meetings.create ÔÇ║ Modules\Evenements\Http\ConÔÇª
+  GET|HEAD        company/evenements/meetings/{meeting} company.evenements.meetings.show ÔÇ║ Modules\Evenements\Http\CoÔÇª
+  PUT|PATCH       company/evenements/meetings/{meeting} company.evenements.meetings.update ÔÇ║ Modules\Evenements\Http\ÔÇª
+  DELETE          company/evenements/meetings/{meeting} company.evenements.meetings.destroy ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/meetings/{meeting}/edit company.evenements.meetings.edit ÔÇ║ Modules\Evenements\HtÔÇª
+  POST            company/evenements/meetings/{meeting}/export company.evenements.meetings.export ÔÇ║ Modules\EvenementÔÇª
+  GET|HEAD        company/evenements/promotions company.evenements.promotions.index ÔÇ║ Modules\Evenements\Http\ControlÔÇª
+  POST            company/evenements/promotions company.evenements.promotions.store ÔÇ║ Modules\Evenements\Http\ControlÔÇª
+  GET|HEAD        company/evenements/promotions/create company.evenements.promotions.create ÔÇ║ Modules\Evenements\HttpÔÇª
+  POST            company/evenements/promotions/export company.evenements.promotions.export ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/promotions/{promotion} company.evenements.promotions.show ÔÇ║ Modules\Evenements\HÔÇª
+  PUT|PATCH       company/evenements/promotions/{promotion} company.evenements.promotions.update ÔÇ║ Modules\EvenementsÔÇª
+  DELETE          company/evenements/promotions/{promotion} company.evenements.promotions.destroy ÔÇ║ Modules\EvenementÔÇª
+  GET|HEAD        company/evenements/promotions/{promotion}/edit company.evenements.promotions.edit ÔÇ║ Modules\EvenemeÔÇª
+  GET|HEAD        company/evenements/rapports company.evenements.rapports.index ÔÇ║ Modules\Evenements\Http\ControllersÔÇª
+  POST            company/evenements/rapports company.evenements.rapports.store ÔÇ║ Modules\Evenements\Http\ControllersÔÇª
+  GET|HEAD        company/evenements/rapports/create company.evenements.rapports.create ÔÇ║ Modules\Evenements\Http\ConÔÇª
+  GET|HEAD        company/evenements/rapports/{rapport} company.evenements.rapports.show ÔÇ║ Modules\Evenements\Http\CoÔÇª
+  PUT|PATCH       company/evenements/rapports/{rapport} company.evenements.rapports.update ÔÇ║ Modules\Evenements\Http\ÔÇª
+  DELETE          company/evenements/rapports/{rapport} company.evenements.rapports.destroy ÔÇ║ Modules\Evenements\HttpÔÇª
+  GET|HEAD        company/evenements/rapports/{rapport}/edit company.evenements.rapports.edit ÔÇ║ Modules\Evenements\HtÔÇª
+  POST            company/evenements/rapports/{rapport}/export company.evenements.rapports.export ÔÇ║ Modules\EvenementÔÇª
+  GET|HEAD        company/evenements/transfers company.evenements.transfers.index ÔÇ║ Modules\Evenements\Http\ControlleÔÇª
+  POST            company/evenements/transfers company.evenements.transfers.store ÔÇ║ Modules\Evenements\Http\ControlleÔÇª
+  GET|HEAD        company/evenements/transfers/create company.evenements.transfers.create ÔÇ║ Modules\Evenements\Http\CÔÇª
+  GET|HEAD        company/evenements/transfers/{transfer} company.evenements.transfers.show ÔÇ║ Modules\Evenements\HttpÔÇª
+  PUT|PATCH       company/evenements/transfers/{transfer} company.evenements.transfers.update ÔÇ║ Modules\Evenements\HtÔÇª
+  DELETE          company/evenements/transfers/{transfer} company.evenements.transfers.destroy ÔÇ║ Modules\Evenements\HÔÇª
+  POST            company/evenements/transfers/{transfer}/approve company.evenements.transfers.approve ÔÇ║ Modules\EvenÔÇª
+  GET|HEAD        company/evenements/transfers/{transfer}/edit company.evenements.transfers.edit ÔÇ║ Modules\EvenementsÔÇª
+  POST            company/evenements/transfers/{transfer}/export company.evenements.transfers.export ÔÇ║ Modules\EvenemÔÇª
+  POST            company/evenements/transfers/{transfer}/reject company.evenements.transfers.reject ÔÇ║ Modules\EvenemÔÇª
+  GET|HEAD        company/impots/create company.impots.create ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@create
+  GET|HEAD        company/impots/dashboard company.impots.dashboard ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@ÔÇª
+  DELETE          company/impots/destroy/{id} company.impots.destroy ÔÇ║ Modules\Impot\Http\Controllers\ImpotControllerÔÇª
+  GET|HEAD        company/impots/edit/{id} . company.impots.edit ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@edit
+  GET|HEAD        company/impots/index ... company.impots.index ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@index
+  GET|HEAD        company/impots/show/{id} . company.impots.show ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@show
+  POST            company/impots/store ... company.impots.store ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@store
+  PUT             company/impots/update/{id} company.impots.update ÔÇ║ Modules\Impot\Http\Controllers\ImpotController@uÔÇª
+  GET|HEAD        company/leaves/attestation/{id} company.leaves.attestation ÔÇ║ Modules\Leaves\Http\Controllers\LeavesÔÇª
+  GET|HEAD        company/leaves/calendar company.leaves.calendar ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@ÔÇª
+  POST            company/leaves/changeaction/{id} company.leaves.changeaction ÔÇ║ Modules\Leaves\Http\Controllers\LeavÔÇª
+  GET|HEAD        company/leaves/create company.leaves.create ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@creaÔÇª
+  GET|HEAD        company/leaves/datasLeave company.leaves.datasLeave ÔÇ║ Modules\Leaves\Http\Controllers\LeavesControlÔÇª
+  DELETE          company/leaves/destroy/{id} company.leaves.destroy ÔÇ║ Modules\Leaves\Http\Controllers\LeavesControllÔÇª
+  GET|HEAD        company/leaves/edit/{id} company.leaves.edit ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@edit
+  GET|HEAD        company/leaves/end/{id} company.leaves.end ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@endLeÔÇª
+  GET|HEAD        company/leaves/get_employee_leave_date company.leaves.get_employee_leave_date ÔÇ║ Modules\Leaves\HttpÔÇª
+  GET|HEAD        company/leaves/get_employee_leave_sb company.leaves.get_employee_leave_sb ÔÇ║ Modules\Leaves\Http\ConÔÇª
+  GET|HEAD        company/leaves/index . company.leaves.index ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@index
+  GET|HEAD        company/leaves/show/{id} company.leaves.show ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@show
+  GET|HEAD        company/leaves/start/{id} company.leaves.start ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@sÔÇª
+  POST            company/leaves/store . company.leaves.store ÔÇ║ Modules\Leaves\Http\Controllers\LeavesController@store
+  PUT             company/leaves/update/{id} company.leaves.update ÔÇ║ Modules\Leaves\Http\Controllers\LeavesControllerÔÇª
+  GET|HEAD        company/loans ........... company.loans.index ÔÇ║ Modules\Loans\Http\Controllers\LoansController@index
+  POST            company/loans ........... company.loans.store ÔÇ║ Modules\Loans\Http\Controllers\LoansController@store
+  GET|HEAD        company/loans/active-loans company.loans.active ÔÇ║ Modules\Loans\Http\Controllers\LoansController@acÔÇª
+  GET|HEAD        company/loans/create .. company.loans.create ÔÇ║ Modules\Loans\Http\Controllers\LoansController@create
+  GET|HEAD        company/loans/loans-report company.loans.report ÔÇ║ Modules\Loans\Http\Controllers\LoansController@reÔÇª
+  GET|HEAD        company/loans/show/{loan} . company.loans.show ÔÇ║ Modules\Loans\Http\Controllers\LoansController@show
+  PUT             company/loans/{loan} .. company.loans.update ÔÇ║ Modules\Loans\Http\Controllers\LoansController@update
+  DELETE          company/loans/{loan} company.loans.destroy ÔÇ║ Modules\Loans\Http\Controllers\LoansController@destroy
+  GET|HEAD        company/loans/{loan}/edit . company.loans.edit ÔÇ║ Modules\Loans\Http\Controllers\LoansController@edit
+  GET|HEAD        company/loans/{loan}/payments company.loans.payments.index ÔÇ║ Modules\Loans\Http\Controllers\LoanPayÔÇª
+  POST            company/loans/{loan}/payments company.loans.payments.store ÔÇ║ Modules\Loans\Http\Controllers\LoanPayÔÇª
+  GET|HEAD        company/loans/{loan}/payments/create company.loans.payments.create ÔÇ║ Modules\Loans\Http\ControllersÔÇª
+  PUT             company/loans/{loan}/payments/{payment} company.loans.payments.update ÔÇ║ Modules\Loans\Http\ControllÔÇª
+  DELETE          company/loans/{loan}/payments/{payment} company.loans.payments.destroy ÔÇ║ Modules\Loans\Http\ControlÔÇª
+  GET|HEAD        company/loans/{loan}/payments/{payment}/edit company.loans.payments.edit ÔÇ║ Modules\Loans\Http\ContrÔÇª
+  GET|HEAD        company/packs ................................... company.packs.index ÔÇ║ Company\PackController@index
+  GET|HEAD        company/packs/history ....................... company.packs.history ÔÇ║ Company\PackController@history
+  GET|HEAD        company/packs/orders/{order} ... company.packs.orders.show ÔÇ║ Company\PackController@showOrderDetails
+  POST            company/packs/orders/{order}/cancel company.packs.orders.cancel ÔÇ║ Company\PackController@cancelOrder
+  GET|HEAD        company/packs/orders/{order}/details company.packs.orders.details ÔÇ║ Company\PackController@getOrderÔÇª
+  GET|HEAD        company/packs/orders/{order}/invoice company.packs.orders.invoice ÔÇ║ Company\PackController@downloadÔÇª
+  POST            company/packs/payment/{plan} ............ company.packs.payment ÔÇ║ Company\PackController@showPayment
+  GET|HEAD        company/packs/plans .......................... company.packs.plans ÔÇ║ Company\PackController@getPlans
+  POST            company/packs/renew ............................. company.packs.renew ÔÇ║ Company\PackController@renew
+  POST            company/packs/subscribe ................. company.packs.subscribe ÔÇ║ Company\PackController@subscribe
+  POST            company/packs/upgrade ....................... company.packs.upgrade ÔÇ║ Company\PackController@upgrade
+  GET|HEAD        company/paiesalaries/allowance company.paiesalaries.allowance.index ÔÇ║ Modules\PaieSalaries\Http\ConÔÇª
+  GET|HEAD        company/paiesalaries/allowance/create/{id}/{periode} company.paiesalaries.allowance.create ÔÇ║ ModuleÔÇª
+  GET|HEAD        company/paiesalaries/allowance/edit/{id}/{periode} company.paiesalaries.allowance.edit ÔÇ║ Modules\PaÔÇª
+  GET|HEAD        company/paiesalaries/allowance/option company.paiesalaries.allowance.option ÔÇ║ Modules\PaieSalaries\ÔÇª
+  POST            company/paiesalaries/allowance/option company.paiesalaries.allowance.storeOption ÔÇ║ Modules\PaieSalaÔÇª
+  GET|HEAD        company/paiesalaries/allowance/option/edit/{id} company.paiesalaries.allowance.editOption.edit ÔÇ║ MoÔÇª
+  PUT             company/paiesalaries/allowance/option/{id} company.paiesalaries.allowance.updateOption ÔÇ║ Modules\PaÔÇª
+  DELETE          company/paiesalaries/allowance/option/{id} company.paiesalaries.allowance.destroyOption ÔÇ║ Modules\PÔÇª
+  POST            company/paiesalaries/allowance/saveDefaults company.paiesalaries.allowance.saveDefaults ÔÇ║ Modules\PÔÇª
+  GET|HEAD        company/paiesalaries/allowance/show/{id}/{periode} company.paiesalaries.allowance.show ÔÇ║ Modules\PaÔÇª
+  POST            company/paiesalaries/allowance/store company.paiesalaries.allowance.store ÔÇ║ Modules\PaieSalaries\HtÔÇª
+  PUT             company/paiesalaries/allowance/{id} company.paiesalaries.allowance.update ÔÇ║ Modules\PaieSalaries\HtÔÇª
+  DELETE          company/paiesalaries/allowance/{id} company.paiesalaries.allowance.destroy ÔÇ║ Modules\PaieSalaries\HÔÇª
+  GET|HEAD        company/paiesalaries/calcule company.paiesalaries.calcule ÔÇ║ Modules\PaieSalaries\Http\Controllers\PÔÇª
+  GET|HEAD        company/paiesalaries/dashboard company.paiesalaries.dashboard ÔÇ║ Modules\PaieSalaries\Http\ControlleÔÇª
+  GET|HEAD        company/paiesalaries/download-preview-bulletin/{id}/{exerciceId}/{periodeId} company.paiesalaries.dÔÇª
+  GET|HEAD        company/paiesalaries/exercices company.paiesalaries.exercices.index ÔÇ║ Modules\PaieSalaries\Http\ConÔÇª
+  POST            company/paiesalaries/exercices company.paiesalaries.exercices.store ÔÇ║ Modules\PaieSalaries\Http\ConÔÇª
+  GET|HEAD        company/paiesalaries/exercices-dropdown company.paiesalaries.exercices-dropdown ÔÇ║ Modules\PaieSalarÔÇª
+  GET|HEAD        company/paiesalaries/exercices/create company.paiesalaries.exercices.create ÔÇ║ Modules\PaieSalaries\ÔÇª
+  POST            company/paiesalaries/exercices/{exerciceId}/periodes company.paiesalaries.periodes.store ÔÇ║ Modules\ÔÇª
+  GET|HEAD        company/paiesalaries/exercices/{exerciceId}/periodes/create company.paiesalaries.periodes.create ÔÇ║ ÔÇª
+  GET|HEAD        company/paiesalaries/exercices/{id} company.paiesalaries.exercices.show ÔÇ║ Modules\PaieSalaries\HttpÔÇª
+  PUT             company/paiesalaries/exercices/{id} company.paiesalaries.exercices.update ÔÇ║ Modules\PaieSalaries\HtÔÇª
+  DELETE          company/paiesalaries/exercices/{id} company.paiesalaries.exercices.destroy ÔÇ║ Modules\PaieSalaries\HÔÇª
+  GET|HEAD        company/paiesalaries/exercices/{id}/edit company.paiesalaries.exercices.edit ÔÇ║ Modules\PaieSalariesÔÇª
+  GET|HEAD        company/paiesalaries/periodes-dropdown/{exerciceId} company.paiesalaries.periodes-dropdown ÔÇ║ ModuleÔÇª
+  POST            company/paiesalaries/periodes/loanpaiement/{id} company.paiesalaries.periodes.loanpaiement ÔÇ║ ModuleÔÇª
+  GET|HEAD        company/paiesalaries/periodes/{id} company.paiesalaries.periodes.show ÔÇ║ Modules\PaieSalaries\Http\CÔÇª
+  PUT             company/paiesalaries/periodes/{id} company.paiesalaries.periodes.update ÔÇ║ Modules\PaieSalaries\HttpÔÇª
+  DELETE          company/paiesalaries/periodes/{id} company.paiesalaries.periodes.destroy ÔÇ║ Modules\PaieSalaries\HttÔÇª
+  GET|HEAD        company/paiesalaries/periodes/{id}/edit company.paiesalaries.periodes.edit ÔÇ║ Modules\PaieSalaries\HÔÇª
+  POST            company/paiesalaries/periodes/{id}/generer-bulletins company.paiesalaries.periodes.generer-bulletinÔÇª
+  POST            company/paiesalaries/periodes/{id}/recopier-primes company.paiesalaries.periodes.recopier-primes ÔÇ║ ÔÇª
+  POST            company/paiesalaries/periodes/{id}/valider-paiement company.paiesalaries.periodes.valider-paiement ÔÇª
+  POST            company/paiesalaries/periodes/{periode}/duplicate-elements company.paiesalaries.periodes.duplicate-ÔÇª
+  GET|HEAD        company/paiesalaries/preview-bulletin/{id}/{exerciceId}/{periodeId} company.paiesalaries.preview-buÔÇª
+  GET|HEAD        company/paiesalaries/remboursements company.paiesalaries.remboursements ÔÇ║ Modules\PaieSalaries\HttpÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/add/show/{id} company.paiesalaries.remboursements.add.show ÔÇ║ MoÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/add/{id} company.paiesalaries.remboursements.destroy.add ÔÇ║ ModuÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/add/{id}/activate company.paiesalaries.remboursements.activate.ÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/add/{id}/deactivate company.paiesalaries.remboursements.deactivÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/create/{id} company.paiesalaries.remboursements.create ÔÇ║ ModuleÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/edit/{id} company.paiesalaries.remboursements.edit ÔÇ║ Modules\PaÔÇª
+  POST            company/paiesalaries/remboursements/store company.paiesalaries.remboursements.store ÔÇ║ Modules\PaieSÔÇª
+  PUT             company/paiesalaries/remboursements/update/{id} company.paiesalaries.remboursements.update ÔÇ║ ModuleÔÇª
+  DELETE          company/paiesalaries/remboursements/{id} company.paiesalaries.remboursements.destroy ÔÇ║ Modules\PaieÔÇª
+  POST            company/paiesalaries/remboursements/{id}/activate company.paiesalaries.remboursements.activate ÔÇ║ MoÔÇª
+  GET|HEAD        company/paiesalaries/remboursements/{id}/add-employee company.paiesalaries.remboursements.add-emploÔÇª
+  POST            company/paiesalaries/remboursements/{id}/deactivate company.paiesalaries.remboursements.deactivate ÔÇª
+  POST            company/paiesalaries/remboursements/{id}/store-employees company.paiesalaries.remboursements.store-ÔÇª
+  GET|HEAD        company/paiesalaries/retenues company.paiesalaries.retenues.index ÔÇ║ Modules\PaieSalaries\Http\ContrÔÇª
+  GET|HEAD        company/paiesalaries/retenues/add/show/{id} company.paiesalaries.retenues.add.show ÔÇ║ Modules\PaieSaÔÇª
+  GET|HEAD        company/paiesalaries/retenues/add/{id} company.paiesalaries.retenues.destroy.add ÔÇ║ Modules\PaieSalaÔÇª
+  GET|HEAD        company/paiesalaries/retenues/add/{id}/activate company.paiesalaries.retenues.activate.add ÔÇ║ ModuleÔÇª
+  GET|HEAD        company/paiesalaries/retenues/add/{id}/deactivate company.paiesalaries.retenues.deactivate.add ÔÇ║ MoÔÇª
+  POST            company/paiesalaries/retenues/apply-all company.paiesalaries.retenues.applyAll ÔÇ║ Modules\PaieSalariÔÇª
+  GET|HEAD        company/paiesalaries/retenues/apply/{id}/{periode_id} company.paiesalaries.retenues.apply ÔÇ║ ModulesÔÇª
+  GET|HEAD        company/paiesalaries/retenues/create/{id} company.paiesalaries.retenues.create ÔÇ║ Modules\PaieSalariÔÇª
+  GET|HEAD        company/paiesalaries/retenues/edit/{id} company.paiesalaries.retenues.edit ÔÇ║ Modules\PaieSalaries\HÔÇª
+  POST            company/paiesalaries/retenues/store company.paiesalaries.retenues.store ÔÇ║ Modules\PaieSalaries\HttpÔÇª
+  POST            company/paiesalaries/retenues/storeApply company.paiesalaries.retenues.storeApply ÔÇ║ Modules\PaieSalÔÇª
+  PUT             company/paiesalaries/retenues/update/{id} company.paiesalaries.retenues.update ÔÇ║ Modules\PaieSalariÔÇª
+  DELETE          company/paiesalaries/retenues/{id} company.paiesalaries.retenues.destroy ÔÇ║ Modules\PaieSalaries\HttÔÇª
+  POST            company/paiesalaries/retenues/{id}/activate company.paiesalaries.retenues.activate ÔÇ║ Modules\PaieSaÔÇª
+  GET|HEAD        company/paiesalaries/retenues/{id}/add-employee company.paiesalaries.retenues.add-employee ÔÇ║ ModuleÔÇª
+  POST            company/paiesalaries/retenues/{id}/deactivate company.paiesalaries.retenues.deactivate ÔÇ║ Modules\PaÔÇª
+  POST            company/paiesalaries/retenues/{id}/store-employees company.paiesalaries.retenues.store-employees ÔÇ║ ÔÇª
+  POST            company/paiesalaries/set-active-exercice company.paiesalaries.set-active-exercice ÔÇ║ Modules\PaieSalÔÇª
+  POST            company/paiesalaries/set-active-periode company.paiesalaries.set-active-periode ÔÇ║ Modules\PaieSalarÔÇª
+  GET|HEAD        company/paiesalaries/show/{id}/{periode_id} company.paiesalaries.show ÔÇ║ Modules\PaieSalaries\Http\CÔÇª
+  POST            company/paiesalaries/store company.paiesalaries.store ÔÇ║ Modules\PaieSalaries\Http\Controllers\PaieSÔÇª
+  PUT             company/paiesalaries/{id} company.paiesalaries.update ÔÇ║ Modules\PaieSalaries\Http\Controllers\PaieSÔÇª
+  GET|HEAD        company/plan/pricing ...................... company.plan.pricing ÔÇ║ Company\CompanyController@pricing
+  GET|HEAD        company/pointeuses/create company.pointeuses.create ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeuseÔÇª
+  DELETE          company/pointeuses/destroy/{id} company.pointeuses.destroy ÔÇ║ Modules\Pointeuses\Http\Controllers\PoÔÇª
+  GET|HEAD        company/pointeuses/edit/{id} company.pointeuses.edit ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusÔÇª
+  GET|HEAD        company/pointeuses/index company.pointeuses.index ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusesCÔÇª
+  GET|HEAD        company/pointeuses/show/{id} company.pointeuses.show ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusÔÇª
+  POST            company/pointeuses/store company.pointeuses.store ÔÇ║ Modules\Pointeuses\Http\Controllers\PointeusesCÔÇª
+  PUT             company/pointeuses/update/{id} company.pointeuses.update ÔÇ║ Modules\Pointeuses\Http\Controllers\PoinÔÇª
+  GET|HEAD        company/reports/index . company.reports.index ÔÇ║ Modules\User\Http\Controllers\ReportController@index
+  GET|HEAD        company/ruptures/create company.ruptures.create ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControlÔÇª
+  GET|HEAD        company/ruptures/decompte/download/doc/{id} company.ruptures.decompte.download.doc ÔÇ║ Modules\RupturÔÇª
+  GET|HEAD        company/ruptures/decompte/download/pdf/{id} company.ruptures.decompte.download.pdf ÔÇ║ Modules\RupturÔÇª
+  DELETE          company/ruptures/destroy/{id} company.ruptures.destroy ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesÔÇª
+  GET|HEAD        company/ruptures/edit/{id} company.ruptures.edit ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControÔÇª
+  GET|HEAD        company/ruptures/employee/{employee_id} company.ruptures.employee ÔÇ║ Modules\Ruptures\Http\ControlleÔÇª
+  GET|HEAD        company/ruptures/get-contract-type-end/{id} company.ruptures.get-contract-type-end ÔÇ║ Modules\RupturÔÇª
+  GET|HEAD        company/ruptures/get-contract-type/{id} company.ruptures.get-contract-type ÔÇ║ Modules\Ruptures\Http\ÔÇª
+  GET|HEAD        company/ruptures/index company.ruptures.index ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControlleÔÇª
+  GET|HEAD        company/ruptures/releve/download/doc/{id} company.ruptures.releve.download.doc ÔÇ║ Modules\Ruptures\HÔÇª
+  GET|HEAD        company/ruptures/releve/download/pdf/{id} company.ruptures.releve.download.pdf ÔÇ║ Modules\Ruptures\HÔÇª
+  GET|HEAD        company/ruptures/show/{id} company.ruptures.show ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControÔÇª
+  GET|HEAD        company/ruptures/solde/download/doc/{id} company.ruptures.solde.download.doc ÔÇ║ Modules\Ruptures\HttÔÇª
+  GET|HEAD        company/ruptures/solde/download/pdf/{id} company.ruptures.solde.download.pdf ÔÇ║ Modules\Ruptures\HttÔÇª
+  POST            company/ruptures/store company.ruptures.store ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControlleÔÇª
+  GET|HEAD        company/ruptures/types company.ruptures.types ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesControlleÔÇª
+  DELETE          company/ruptures/types/destroy/{id} company.ruptures.types.destroy ÔÇ║ Modules\Ruptures\Http\ControllÔÇª
+  POST            company/ruptures/types/store company.ruptures.types.store ÔÇ║ Modules\Ruptures\Http\Controllers\RuptuÔÇª
+  PUT             company/ruptures/types/update/{id} company.ruptures.types.update ÔÇ║ Modules\Ruptures\Http\ControllerÔÇª
+  PUT             company/ruptures/update/{id} company.ruptures.update ÔÇ║ Modules\Ruptures\Http\Controllers\RupturesCoÔÇª
+  POST            company/ruptures/{id}/change-status company.ruptures.change-status ÔÇ║ Modules\Ruptures\Http\ControllÔÇª
+  GET|HEAD        company/settings/api/location-suggestions company.settings.location.suggestions ÔÇ║ Modules\Settings\ÔÇª
+  GET|HEAD        company/settings/attendance-system company.settings.attendance-system.index ÔÇ║ Modules\Settings\HttpÔÇª
+  POST            company/settings/attendance-system company.settings.attendance-system.update ÔÇ║ Modules\Settings\HttÔÇª
+  POST            company/settings/attendance-system/qr-code-download company.settings.attendance-system.qr-code-downÔÇª
+  POST            company/settings/attendance-system/qr-code-generate company.settings.attendance-system.qr-code-geneÔÇª
+  GET|HEAD        company/settings/branches company.settings.branches.index ÔÇ║ Modules\Settings\Http\Controllers\SettiÔÇª
+  POST            company/settings/branches company.settings.branches.store ÔÇ║ Modules\Settings\Http\Controllers\SettiÔÇª
+  PUT             company/settings/branches/{branch} company.settings.branches.update ÔÇ║ Modules\Settings\Http\ControlÔÇª
+  DELETE          company/settings/branches/{branch} company.settings.branches.destroy ÔÇ║ Modules\Settings\Http\ControÔÇª
+  GET|HEAD        company/settings/branches/{branch}/edit company.settings.branches.edit ÔÇ║ Modules\Settings\Http\ContÔÇª
+  PUT             company/settings/branches/{branch}/toggle company.settings.branches.toggle ÔÇ║ Modules\Settings\Http\ÔÇª
+  GET|HEAD        company/settings/company-documents company.settings.company-documents.index ÔÇ║ Modules\Settings\HttpÔÇª
+  POST            company/settings/company-documents/legal company.settings.company-documents.store ÔÇ║ Modules\SettingÔÇª
+  PUT             company/settings/company-documents/legal/{companyDocument} company.settings.company-documents.updatÔÇª
+  DELETE          company/settings/company-documents/legal/{companyDocument} company.settings.company-documents.destrÔÇª
+  GET|HEAD        company/settings/company-documents/legal/{companyDocument}/download company.settings.company-documeÔÇª
+  POST            company/settings/company-documents/legal/{companyDocument}/toggle-verification company.settings.comÔÇª
+  POST            company/settings/company-documents/logos company.settings.company-documents.update-logos ÔÇ║ Modules\ÔÇª
+  POST            company/settings/company-logo company.settings.logo.update ÔÇ║ Modules\Settings\Http\Controllers\SettÔÇª
+  GET|HEAD        company/settings/company-settings company.settings.settings ÔÇ║ Modules\Settings\Http\Controllers\SetÔÇª
+  POST            company/settings/company-settings company.settings.settings.update ÔÇ║ Modules\Settings\Http\ControllÔÇª
+  POST            company/settings/company-signature company.settings.signature.update ÔÇ║ Modules\Settings\Http\ControÔÇª
+  POST            company/settings/company-stamp company.settings.stamp.update ÔÇ║ Modules\Settings\Http\Controllers\SeÔÇª
+  GET|HEAD        company/settings/config company.settings.config ÔÇ║ Modules\Settings\Http\Controllers\SettingsControlÔÇª
+  GET|HEAD        company/settings/config/end company.settings.config.end ÔÇ║ Modules\Settings\Http\Controllers\SettingÔÇª
+  GET|HEAD        company/settings/departments company.settings.departments.index ÔÇ║ Modules\Settings\Http\ControllersÔÇª
+  POST            company/settings/departments company.settings.departments.store ÔÇ║ Modules\Settings\Http\ControllersÔÇª
+  PUT             company/settings/departments/{department} company.settings.departments.update ÔÇ║ Modules\Settings\HtÔÇª
+  DELETE          company/settings/departments/{department} company.settings.departments.destroy ÔÇ║ Modules\Settings\HÔÇª
+  GET|HEAD        company/settings/departments/{department}/edit company.settings.departments.edit ÔÇ║ Modules\SettingsÔÇª
+  PUT             company/settings/departments/{department}/toggle company.settings.departments.toggle ÔÇ║ Modules\SettÔÇª
+  GET|HEAD        company/settings/designations company.settings.designations.index ÔÇ║ Modules\Settings\Http\ControlleÔÇª
+  POST            company/settings/designations company.settings.designations.store ÔÇ║ Modules\Settings\Http\ControlleÔÇª
+  PUT             company/settings/designations/{designation} company.settings.designations.update ÔÇ║ Modules\SettingsÔÇª
+  DELETE          company/settings/designations/{designation} company.settings.designations.destroy ÔÇ║ Modules\SettingÔÇª
+  GET|HEAD        company/settings/designations/{designation}/edit company.settings.designations.edit ÔÇ║ Modules\SettiÔÇª
+  PUT             company/settings/designations/{designation}/toggle company.settings.designations.toggle ÔÇ║ Modules\SÔÇª
+  GET|HEAD        company/settings/documents company.settings.documents ÔÇ║ Modules\Settings\Http\Controllers\SettingsCÔÇª
+  POST            company/settings/documents company.settings.documents.update ÔÇ║ Modules\Settings\Http\Controllers\SeÔÇª
+  GET|HEAD        company/settings/leave-types company.settings.leave-types.index ÔÇ║ Modules\Settings\Http\ControllersÔÇª
+  POST            company/settings/leave-types company.settings.leave-types.store ÔÇ║ Modules\Settings\Http\ControllersÔÇª
+  PUT             company/settings/leave-types/{leaveType} company.settings.leave-types.update ÔÇ║ Modules\Settings\HttÔÇª
+  DELETE          company/settings/leave-types/{leaveType} company.settings.leave-types.destroy ÔÇ║ Modules\Settings\HtÔÇª
+  GET|HEAD        company/settings/leave-types/{leaveType}/edit company.settings.leave-types.edit ÔÇ║ Modules\Settings\ÔÇª
+  PUT             company/settings/leave-types/{leaveType}/toggle company.settings.leave-types.toggle ÔÇ║ Modules\SettiÔÇª
+  GET|HEAD        company/settings/loan-types company.settings.loan-types.index ÔÇ║ Modules\Settings\Http\Controllers\LÔÇª
+  POST            company/settings/loan-types company.settings.loan-types.store ÔÇ║ Modules\Settings\Http\Controllers\LÔÇª
+  GET|HEAD        company/settings/loan-types/create company.settings.loan-types.create ÔÇ║ Modules\Settings\Http\ContrÔÇª
+  GET|HEAD        company/settings/loan-types/{loanType} company.settings.loan-types.show ÔÇ║ Modules\Settings\Http\ConÔÇª
+  PUT             company/settings/loan-types/{loanType} company.settings.loan-types.update ÔÇ║ Modules\Settings\Http\CÔÇª
+  DELETE          company/settings/loan-types/{loanType} company.settings.loan-types.destroy ÔÇ║ Modules\Settings\Http\ÔÇª
+  GET|HEAD        company/settings/loan-types/{loanType}/edit company.settings.loan-types.edit ÔÇ║ Modules\Settings\HttÔÇª
+  PUT             company/settings/loan-types/{loanType}/toggle-status company.settings.loan-types.toggle-status ÔÇ║ MoÔÇª
+  GET|HEAD        company/settings/theme company.settings.theme ÔÇ║ Modules\Settings\Http\Controllers\SettingsControlleÔÇª
+  POST            company/settings/theme company.settings.theme.update ÔÇ║ Modules\Settings\Http\Controllers\SettingsCoÔÇª
+  GET|HEAD        company/settings/users company.settings.users.index ÔÇ║ Modules\Settings\Http\Controllers\SettingsConÔÇª
+  POST            company/settings/users company.settings.users.store ÔÇ║ Modules\Settings\Http\Controllers\SettingsConÔÇª
+  GET|HEAD        company/settings/users/create company.settings.users.create ÔÇ║ Modules\Settings\Http\Controllers\SetÔÇª
+  GET|HEAD        company/settings/users/export company.settings.users.export ÔÇ║ Modules\Settings\Http\Controllers\SetÔÇª
+  POST            company/settings/users/import company.settings.users.import ÔÇ║ Modules\Settings\Http\Controllers\SetÔÇª
+  PUT             company/settings/users/{user} company.settings.users.update ÔÇ║ Modules\Settings\Http\Controllers\SetÔÇª
+  DELETE          company/settings/users/{user} company.settings.users.destroy ÔÇ║ Modules\Settings\Http\Controllers\SeÔÇª
+  GET|HEAD        company/settings/users/{user}/details company.settings.users.details ÔÇ║ Modules\Settings\Http\ControÔÇª
+  GET|HEAD        company/settings/users/{user}/edit company.settings.users.edit ÔÇ║ Modules\Settings\Http\Controllers\ÔÇª
+  POST            company/settings/users/{user}/reset-password company.settings.users.reset-password ÔÇ║ Modules\SettinÔÇª
+  POST            company/settings/users/{user}/send-welcome-email company.settings.users.send-welcome-email ÔÇ║ ModuleÔÇª
+  PUT             company/settings/users/{user}/toggle-status company.settings.users.toggle-status ÔÇ║ Modules\SettingsÔÇª
+  GET|HEAD        company/settings/work-locations company.settings.work-locations.index ÔÇ║ Modules\Settings\Http\ContrÔÇª
+  POST            company/settings/work-locations company.settings.work-locations.store ÔÇ║ Modules\Settings\Http\ContrÔÇª
+  PUT             company/settings/work-locations/{workLocation} company.settings.work-locations.update ÔÇ║ Modules\SetÔÇª
+  DELETE          company/settings/work-locations/{workLocation} company.settings.work-locations.destroy ÔÇ║ Modules\SeÔÇª
+  PUT             company/settings/work-locations/{workLocation}/toggle company.settings.work-locations.toggle ÔÇ║ ModuÔÇª
+  GET|HEAD        company/simulator/create company.simulator.create ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorConÔÇª
+  GET|HEAD        company/simulator/dashboard company.simulator.dashboard ÔÇ║ Modules\Simulator\Http\Controllers\SimulaÔÇª
+  DELETE          company/simulator/destroy/{id} company.simulator.destroy ÔÇ║ Modules\Simulator\Http\Controllers\SimulÔÇª
+  GET|HEAD        company/simulator/edit/{id} company.simulator.edit ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorCoÔÇª
+  GET|HEAD        company/simulator/index company.simulator.index ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorContrÔÇª
+  GET|HEAD        company/simulator/show/{id} company.simulator.show ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorCoÔÇª
+  POST            company/simulator/store company.simulator.store ÔÇ║ Modules\Simulator\Http\Controllers\SimulatorContrÔÇª
+  PUT             company/simulator/update/{id} company.simulator.update ÔÇ║ Modules\Simulator\Http\Controllers\SimulatÔÇª
+  GET|HEAD        company/times/absences/create company.times.absences.create ÔÇ║ Modules\Time\Http\Controllers\AbsenceÔÇª
+  DELETE          company/times/absences/destroy/{id} company.times.absences.destroy ÔÇ║ Modules\Time\Http\Controllers\ÔÇª
+  GET|HEAD        company/times/absences/edit/{id} company.times.absences.edit ÔÇ║ Modules\Time\Http\Controllers\AbsencÔÇª
+  GET|HEAD        company/times/absences/index company.times.absences.index ÔÇ║ Modules\Time\Http\Controllers\AbsenceCoÔÇª
+  DELETE          company/times/absences/remove-document/{id} company.times.absences.remove-document ÔÇ║ Modules\Time\HÔÇª
+  GET|HEAD        company/times/absences/show/{id} company.times.absences.show ÔÇ║ Modules\Time\Http\Controllers\AbsencÔÇª
+  POST            company/times/absences/store company.times.absences.store ÔÇ║ Modules\Time\Http\Controllers\AbsenceCoÔÇª
+  PUT             company/times/absences/update-status/{id} company.times.absences.update-status ÔÇ║ Modules\Time\Http\ÔÇª
+  PUT             company/times/absences/update/{id} company.times.absences.update ÔÇ║ Modules\Time\Http\Controllers\AbÔÇª
+  GET|HEAD        company/times/overtime company.times.overtime.index ÔÇ║ Modules\Time\Http\Controllers\OvertimeControlÔÇª
+  DELETE          company/times/overtime/destroy/{id} company.times.overtime.destroy ÔÇ║ Modules\Time\Http\Controllers\ÔÇª
+  GET|HEAD        company/times/overtime/edit/{id} company.times.overtime.edit ÔÇ║ Modules\Time\Http\Controllers\OvertiÔÇª
+  GET|HEAD        company/times/overtime/export company.times.overtime.export ÔÇ║ Modules\Time\Http\Controllers\OvertimÔÇª
+  GET|HEAD        company/times/overtime/show/{id} company.times.overtime.show ÔÇ║ Modules\Time\Http\Controllers\OvertiÔÇª
+  POST            company/times/overtime/store company.times.overtime.store ÔÇ║ Modules\Time\Http\Controllers\OvertimeCÔÇª
+  PUT             company/times/overtime/update/{id} company.times.overtime.update ÔÇ║ Modules\Time\Http\Controllers\OvÔÇª
+  POST            company/times/overtime/{id}/mark-as-paid company.times.overtime.mark-as-paid ÔÇ║ Modules\Time\Http\CoÔÇª
+  POST            company/times/overtime/{id}/mark-as-unpaid company.times.overtime.mark-as-unpaid ÔÇ║ Modules\Time\HttÔÇª
+  POST            company/times/qrcode-pointage/check-in company.times.qrcode-pointage.check-in ÔÇ║ Modules\Time\Http\CÔÇª
+  POST            company/times/qrcode-pointage/check-out company.times.qrcode-pointage.check-out ÔÇ║ Modules\Time\HttpÔÇª
+  GET|HEAD        company/times/qrcode-pointage/export company.times.qrcode-pointage.export ÔÇ║ Modules\Time\Http\ContrÔÇª
+  GET|HEAD        company/times/qrcode-pointage/index company.times.qrcode-pointage.index ÔÇ║ Modules\Time\Http\ControlÔÇª
+  POST            company/times/qrcode-pointage/scan company.times.qrcode-pointage.scan ÔÇ║ Modules\Time\Http\ControlleÔÇª
+  GET|HEAD        company/users/create .... company.users.create ÔÇ║ Modules\User\Http\Controllers\UserController@create
+  GET|HEAD        company/users/dashboard company.users.dashboard ÔÇ║ Modules\User\Http\Controllers\UserController@dashÔÇª
+  DELETE          company/users/destroy/{id} company.users.destroy ÔÇ║ Modules\User\Http\Controllers\UserController@desÔÇª
+  GET|HEAD        company/users/edit/{id} ..... company.users.edit ÔÇ║ Modules\User\Http\Controllers\UserController@edit
+  GET|HEAD        company/users/index ....... company.users.index ÔÇ║ Modules\User\Http\Controllers\UserController@index
+  GET|HEAD        company/users/show/{id} ..... company.users.show ÔÇ║ Modules\User\Http\Controllers\UserController@show
+  POST            company/users/store ....... company.users.store ÔÇ║ Modules\User\Http\Controllers\UserController@store
+  PUT             company/users/update/{id} company.users.update ÔÇ║ Modules\User\Http\Controllers\UserController@update
+  GET|HEAD        contact ............... contact ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@contact
+  POST            contact .... contact.store ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@storeContact
+  GET|HEAD        employee/dashboard ...................... employee.dashboard ÔÇ║ Employee\EmployeeController@dashboard
+  GET|HEAD        forgot-password ..................... password.request ÔÇ║ Auth\LoginController@showForgotPasswordForm
+  POST            forgot-password ................................ password.email ÔÇ║ Auth\LoginController@sendResetLink
+  GET|HEAD        guide-utilisateur ................................................................ guide-utilisateur
+  GET|HEAD        hr/dashboard .............................................. hr.dashboard ÔÇ║ HR\HRController@dashboard
+  GET|HEAD        landingpages .. landingpage.index ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@index
+  POST            landingpages .. landingpage.store ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@store
+  GET|HEAD        landingpages/create landingpage.create ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageControllerÔÇª
+  GET|HEAD        landingpages/{landingpage} landingpage.show ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageContrÔÇª
+  PUT|PATCH       landingpages/{landingpage} landingpage.update ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageConÔÇª
+  DELETE          landingpages/{landingpage} landingpage.destroy ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageCoÔÇª
+  GET|HEAD        landingpages/{landingpage}/edit landingpage.edit ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageÔÇª
+  GET|HEAD        login ................................................... login ÔÇ║ Auth\LoginController@showLoginForm
+  POST            login ...................................................... login.post ÔÇ║ Auth\LoginController@login
+  POST            logout ........................................................ logout ÔÇ║ Auth\LoginController@logout
+  GET|HEAD        maintenance ............................................................................ maintenance
+  GET|HEAD        notifications ................................... notifications.index ÔÇ║ NotificationController@index
+  GET|HEAD        notifications/ajax/unread ............. notifications.ajax.unread ÔÇ║ NotificationController@getUnread
+  PATCH           notifications/mark-all-read ..... notifications.mark-all-read ÔÇ║ NotificationController@markAllAsRead
+  GET|HEAD        notifications/stats ............................. notifications.stats ÔÇ║ NotificationController@stats
+  GET|HEAD        notifications/unread .......................... notifications.unread ÔÇ║ NotificationController@unread
+  GET|HEAD        notifications/{notification} ...................... notifications.show ÔÇ║ NotificationController@show
+  DELETE          notifications/{notification} ................ notifications.destroy ÔÇ║ NotificationController@destroy
+  PATCH           notifications/{notification}/read ...... notifications.mark-read ÔÇ║ NotificationController@markAsRead
+  PATCH           notifications/{notification}/unread notifications.mark-unread ÔÇ║ NotificationController@markAsUnread
+  GET|HEAD        order/pay/genius/{order} order.pay.genius ÔÇ║ Modules\LandingPage\Http\Controllers\PaymentController@ÔÇª
+  GET|HEAD        order/payment/callback/{order} order.payment.callback ÔÇ║ Modules\LandingPage\Http\Controllers\PaymenÔÇª
+  GET|HEAD        order/payment/{order} order.payment ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@shÔÇª
+  POST            order/success/{order} order.success ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@orÔÇª
+  GET|HEAD        order/success/{order} order.success.view ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageControllÔÇª
+  GET|HEAD        payment/callback payment.callback ÔÇ║ Modules\LandingPage\Http\Controllers\PaymentController@handleCaÔÇª
+  POST            payment/initiate payment.initiate ÔÇ║ Modules\LandingPage\Http\Controllers\PaymentController@initiateÔÇª
+  POST            payment/webhook/wave payment.webhook.wave ÔÇ║ Modules\LandingPage\Http\Controllers\PaymentController@ÔÇª
+  GET|HEAD        privacy ........... privacy ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@showPrivacy
+  GET|HEAD        register .... register ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@showRegistration
+  POST            register ...... register.store ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@register
+  GET|HEAD        reset-password/{code} .................. password.reset ÔÇ║ Auth\LoginController@showResetPasswordForm
+  POST            reset-password/{code} ......................... password.update ÔÇ║ Auth\LoginController@resetPassword
+  GET|HEAD        simulateur ...... simulateur ÔÇ║ Modules\LandingPage\Http\Controllers\LandingPageController@simulateur
+  GET|HEAD        storage/{path} ....................................................................... storage.local
+  GET|HEAD        super-admin ...................... super-admin.dashboard ÔÇ║ SuperAdmin\SuperAdminController@dashboard
+  GET|HEAD        super-admin/activities ... super-admin.activities.index ÔÇ║ SuperAdmin\SuperAdminController@activities
+  GET|HEAD        super-admin/commandes ...... super-admin.commandes.index ÔÇ║ SuperAdmin\SuperAdminController@commandes
+  GET|HEAD        super-admin/commandes/coupons/index super-admin.commandes.coupons.index ÔÇ║ SuperAdmin\SuperAdminContÔÇª
+  POST            super-admin/commandes/coupons/store super-admin.commandes.coupons.store ÔÇ║ SuperAdmin\SuperAdminContÔÇª
+  GET|HEAD        super-admin/commandes/coupons/{coupon} super-admin.commandes.coupons.show ÔÇ║ SuperAdmin\SuperAdminCoÔÇª
+  POST            super-admin/commandes/coupons/{coupon} super-admin.commandes.coupons.update ÔÇ║ SuperAdmin\SuperAdminÔÇª
+  DELETE          super-admin/commandes/coupons/{coupon} super-admin.commandes.coupons.delete ÔÇ║ SuperAdmin\SuperAdminÔÇª
+  GET|HEAD        super-admin/commandes/coupons/{coupon}/edit super-admin.commandes.coupons.edit ÔÇ║ SuperAdmin\SuperAdÔÇª
+  POST            super-admin/commandes/coupons/{coupon}/toggle super-admin.commandes.coupons.toggle ÔÇ║ SuperAdmin\SupÔÇª
+  GET|HEAD        super-admin/commandes/pending super-admin.commandes.pending ÔÇ║ SuperAdmin\SuperAdminController@commaÔÇª
+  GET|HEAD        super-admin/commandes/{commande} super-admin.commandes.show ÔÇ║ SuperAdmin\SuperAdminController@showCÔÇª
+  POST            super-admin/commandes/{commande} super-admin.commandes.update ÔÇ║ SuperAdmin\SuperAdminController@updÔÇª
+  POST            super-admin/commandes/{commande}/cancel super-admin.commandes.cancel ÔÇ║ SuperAdmin\SuperAdminControlÔÇª
+  POST            super-admin/commandes/{commande}/delete super-admin.commandes.delete ÔÇ║ SuperAdmin\SuperAdminControlÔÇª
+  GET|HEAD        super-admin/enterprises super-admin.enterprises.index ÔÇ║ SuperAdmin\SuperAdminController@enterprises
+  POST            super-admin/enterprises super-admin.enterprises.store ÔÇ║ SuperAdmin\SuperAdminController@storeEnterpÔÇª
+  GET|HEAD        super-admin/enterprises/create super-admin.enterprises.create ÔÇ║ SuperAdmin\SuperAdminController@creÔÇª
+  GET|HEAD        super-admin/enterprises/export/pdf super-admin.enterprises.export.pdf ÔÇ║ SuperAdmin\SuperAdminControÔÇª
+  GET|HEAD        super-admin/enterprises/export/xlsx super-admin.enterprises.export.xlsx ÔÇ║ SuperAdmin\SuperAdminContÔÇª
+  GET|HEAD        super-admin/enterprises/lastlogin super-admin.enterprises.lastlogin ÔÇ║ SuperAdmin\SuperAdminControllÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise} super-admin.enterprises.show ÔÇ║ SuperAdmin\SuperAdminControllerÔÇª
+  PUT             super-admin/enterprises/{enterprise} super-admin.enterprises.update ÔÇ║ SuperAdmin\SuperAdminControllÔÇª
+  DELETE          super-admin/enterprises/{enterprise} super-admin.enterprises.delete ÔÇ║ SuperAdmin\SuperAdminControllÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise}/activate super-admin.enterprises.activate ÔÇ║ SuperAdmin\SuperAdÔÇª
+  DELETE          super-admin/enterprises/{enterprise}/ajax super-admin.enterprises.delete.ajax ÔÇ║ SuperAdmin\SuperAdmÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise}/edit super-admin.enterprises.edit ÔÇ║ SuperAdmin\SuperAdminContrÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise}/showactivity super-admin.enterprises.showactivity ÔÇ║ SuperAdminÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise}/subscription super-admin.enterprises.subscription ÔÇ║ SuperAdminÔÇª
+  PUT             super-admin/enterprises/{enterprise}/subscription super-admin.enterprises.subscription.update ÔÇ║ SupÔÇª
+  POST            super-admin/enterprises/{enterprise}/subscription/renew super-admin.enterprises.subscription.renew ÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise}/suspend super-admin.enterprises.suspend ÔÇ║ SuperAdmin\SuperAdmiÔÇª
+  GET|HEAD        super-admin/enterprises/{enterprise}/users super-admin.enterprises.users ÔÇ║ SuperAdmin\SuperAdminConÔÇª
+  GET|HEAD        super-admin/packs .................. super-admin.packs.index ÔÇ║ SuperAdmin\SuperAdminController@packs
+  POST            super-admin/packs .............. super-admin.packs.store ÔÇ║ SuperAdmin\SuperAdminController@storePack
+  GET|HEAD        super-admin/packs/create ..... super-admin.packs.create ÔÇ║ SuperAdmin\SuperAdminController@createPack
+  GET|HEAD        super-admin/packs/{pack} ......... super-admin.packs.show ÔÇ║ SuperAdmin\SuperAdminController@showPack
+  PUT             super-admin/packs/{pack} ..... super-admin.packs.update ÔÇ║ SuperAdmin\SuperAdminController@updatePack
+  DELETE          super-admin/packs/{pack} ..... super-admin.packs.delete ÔÇ║ SuperAdmin\SuperAdminController@deletePack
+  GET|HEAD        super-admin/packs/{pack}/edit .... super-admin.packs.edit ÔÇ║ SuperAdmin\SuperAdminController@editPack
+  GET|HEAD        super-admin/packs/{pack}/modules super-admin.packs.modules ÔÇ║ SuperAdmin\SuperAdminController@packMoÔÇª
+  POST            super-admin/packs/{pack}/modules super-admin.packs.modules.update ÔÇ║ SuperAdmin\SuperAdminControllerÔÇª
+  PATCH           super-admin/packs/{pack}/toggle super-admin.packs.toggle ÔÇ║ SuperAdmin\SuperAdminController@togglePaÔÇª
+  GET|HEAD        super-admin/profile ............ super-admin.profile.index ÔÇ║ SuperAdmin\SuperAdminController@profile
+  GET|HEAD        super-admin/reports ............ super-admin.reports.index ÔÇ║ SuperAdmin\SuperAdminController@reports
+  GET|HEAD        super-admin/reports/export/pdf super-admin.reports.export.pdf ÔÇ║ SuperAdmin\SuperAdminController@expÔÇª
+  GET|HEAD        super-admin/reports/export/xlsx super-admin.reports.export.xlsx ÔÇ║ SuperAdmin\SuperAdminController@eÔÇª
+  GET|HEAD        super-admin/search ................ super-admin.search.ajax ÔÇ║ SuperAdmin\SuperAdminController@search
+  GET|HEAD        super-admin/sectors ............ super-admin.sectors.index ÔÇ║ SuperAdmin\SuperAdminController@sectors
+  POST            super-admin/sectors ........ super-admin.sectors.store ÔÇ║ SuperAdmin\SuperAdminController@storeSector
+  GET|HEAD        super-admin/sectors/create super-admin.sectors.create ÔÇ║ SuperAdmin\SuperAdminController@createSector
+  GET|HEAD        super-admin/sectors/export/pdf super-admin.sectors.export.pdf ÔÇ║ SuperAdmin\SuperAdminController@expÔÇª
+  GET|HEAD        super-admin/sectors/export/xlsx super-admin.sectors.export.xlsx ÔÇ║ SuperAdmin\SuperAdminController@eÔÇª
+  GET|HEAD        super-admin/sectors/{sector} . super-admin.sectors.show ÔÇ║ SuperAdmin\SuperAdminController@showSector
+  PUT             super-admin/sectors/{sector} super-admin.sectors.update ÔÇ║ SuperAdmin\SuperAdminController@updateSecÔÇª
+  DELETE          super-admin/sectors/{sector} super-admin.sectors.delete ÔÇ║ SuperAdmin\SuperAdminController@deleteSecÔÇª
+  GET|HEAD        super-admin/sectors/{sector}/edit super-admin.sectors.edit ÔÇ║ SuperAdmin\SuperAdminController@editSeÔÇª
+  PATCH           super-admin/sectors/{sector}/toggle super-admin.sectors.toggle ÔÇ║ SuperAdmin\SuperAdminController@toÔÇª
+  GET|HEAD        super-admin/settings ......... super-admin.settings.index ÔÇ║ SuperAdmin\SuperAdminController@settings
+  POST            super-admin/settings .. super-admin.settings.update ÔÇ║ SuperAdmin\SuperAdminController@updateSettings
+  POST            super-admin/settings/reset super-admin.settings.reset ÔÇ║ SuperAdmin\SuperAdminController@resetSettinÔÇª
+  POST            super-admin/settings/test-email super-admin.settings.test-email ÔÇ║ SuperAdmin\SuperAdminController@tÔÇª
+  GET|HEAD        super-admin/support ............ super-admin.support.index ÔÇ║ SuperAdmin\SuperAdminController@support
+  GET|HEAD        super-admin/users .................. super-admin.users.index ÔÇ║ SuperAdmin\SuperAdminController@users
+  POST            super-admin/users .............. super-admin.users.store ÔÇ║ SuperAdmin\SuperAdminController@storeUser
+  GET|HEAD        super-admin/users/create/{entreprise} super-admin.users.create ÔÇ║ SuperAdmin\SuperAdminController@crÔÇª
+  GET|HEAD        super-admin/users/{user} ......... super-admin.users.show ÔÇ║ SuperAdmin\SuperAdminController@showUser
+  PUT             super-admin/users/{user} ..... super-admin.users.update ÔÇ║ SuperAdmin\SuperAdminController@updateUser
+  DELETE          super-admin/users/{user} ..... super-admin.users.delete ÔÇ║ SuperAdmin\SuperAdminController@deleteUser
+  GET|HEAD        super-admin/users/{user}/activate super-admin.users.activate ÔÇ║ SuperAdmin\SuperAdminController@actiÔÇª
+  GET|HEAD        super-admin/users/{user}/edit .... super-admin.users.edit ÔÇ║ SuperAdmin\SuperAdminController@editUser
+  GET|HEAD        super-admin/users/{user}/suspend super-admin.users.suspend ÔÇ║ SuperAdmin\SuperAdminController@suspenÔÇª
+  GET|HEAD        test-404 ........................................................................................... 
+  GET|HEAD        test-419 ........................................................................................... 
+  GET|HEAD        test-500 ........................................................................................... 
+  GET|HEAD        up ................................................................................................. 
+
+                                                                                                  Showing [736] routes
+

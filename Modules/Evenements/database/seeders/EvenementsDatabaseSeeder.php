@@ -1,0 +1,18 @@
+<?php
+
+namespace Modules\Evenements\Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class EvenementsDatabaseSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $this->call([
+            EventTypesTableSeeder::class,
+        ]);
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Pointeuses",
+    "alias": "pointeuses",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Pointeuses\\Providers\\PointeusesServiceProvider"
+    ],
+    "files": []
+}

@@ -1,0 +1,181 @@
+@import './themes/theme-default.css';
+
+/* ================================================
+   STYLES ADDITIONNELS POUR L'APPLICATION
+   ================================================ */
+
+/* Styles spécifiques à l'application RH Flow */
+@import './themes/core.css';
+  
+/* ================================================
+   SUPPORT DES COMPOSANTS
+   ================================================ */
+
+/* Chart.js styles for dark theme */
+:root[data-bs-theme="dark"] .chartjs-render-monitor {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* ApexCharts dark theme support */
+.apexcharts-canvas.dark {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* ================================================
+   ANIMATIONS PERSONNALISÉES
+   ================================================ */
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 0.5s ease-out;
+}
+
+.slide-in-right {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.bounce-in {
+  animation: bounceIn 0.6s ease-out;
+}
+
+/* ================================================
+   CLASSES UTILITAIRES PERSONNALISÉES
+   ================================================ */
+
+/* Espacement personnalisé */
+.gap-1 { gap: 0.25rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-3 { gap: 1rem !important; }
+.gap-4 { gap: 1.5rem !important; }
+.gap-5 { gap: 3rem !important; }
+
+/* Largeur personnalisée */
+.w-15 { width: 15% !important; }
+.w-25 { width: 25% !important; }
+.w-35 { width: 35% !important; }
+.w-65 { width: 65% !important; }
+.w-75 { width: 75% !important; }
+.w-85 { width: 85% !important; }
+
+/* hauteur personnalisée */
+.h-15 { height: 15% !important; }
+.h-25 { height: 25% !important; }
+.h-35 { height: 35% !important; }
+.h-65 { height: 65% !important; }
+.h-75 { height: 75% !important; }
+.h-85 { height: 85% !important; }
+
+/* Ombres personnalisées */
+.shadow-soft {
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.shadow-medium {
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+.shadow-strong {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.16) !important;
+}
+
+/* Bordures personnalisées */
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.border-dotted {
+  border-style: dotted !important;
+}
+
+/* ================================================
+   RESPONSIVE UTILITIES
+   ================================================ */
+
+@media (max-width: 576px) {
+  .hidden-xs { display: none !important; }
+  .text-xs-center { text-align: center !important; }
+  .text-xs-left { text-align: left !important; }
+  .text-xs-right { text-align: right !important; }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .hidden-sm { display: none !important; }
+  .text-sm-center { text-align: center !important; }
+  .text-sm-left { text-align: left !important; }
+  .text-sm-right { text-align: right !important; }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .hidden-md { display: none !important; }
+  .text-md-center { text-align: center !important; }
+  .text-md-left { text-align: left !important; }
+  .text-md-right { text-align: right !important; }
+}
+
+@media (min-width: 993px) {
+  .hidden-lg { display: none !important; }
+  .text-lg-center { text-align: center !important; }
+  .text-lg-left { text-align: left !important; }
+  .text-lg-right { text-align: right !important; }
+}
+
+/* ================================================
+   PRINT STYLES
+   ================================================ */
+
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+
+  .btn {
+    display: none !important;
+  }
+}

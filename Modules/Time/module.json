@@ -1,0 +1,11 @@
+{
+    "name": "Time",
+    "alias": "time",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Time\\Providers\\TimeServiceProvider"
+    ],
+    "files": []
+}

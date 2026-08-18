@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/loans",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Loans\\": "app/",
+            "Modules\\Loans\\Database\\Factories\\": "database/factories/",
+            "Modules\\Loans\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Loans\\Tests\\": "tests/"
+        }
+    }
+}

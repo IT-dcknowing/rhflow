@@ -1,0 +1,11 @@
+{
+    "name": "NatureAvantage",
+    "alias": "natureavantage",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\NatureAvantage\\Providers\\NatureAvantageServiceProvider"
+    ],
+    "files": []
+}

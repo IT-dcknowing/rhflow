@@ -1,0 +1,28 @@
+@extends('layouts.app')
+
+@section('title', 'Dashboard Employé')
+
+@section('content')
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-1">Mon Dashboard</h4>
+                    <p class="text-muted mb-0">Bienvenue, {{ $user->name }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('notifications.index') }}" class="btn btn-outline-primary">
+                        <i class="ti ti-bell me-1"></i>Notifications
+                    </a>
+                    <a href="{{ route('super-admin.profile.index') }}" class="btn btn-primary">
+                        <i class="ti ti-user me-1"></i>Mon Profil
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endsection

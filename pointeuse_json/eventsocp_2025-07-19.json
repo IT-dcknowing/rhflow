@@ -1,0 +1,21 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	2,
+		"totalMatches":	2,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	22,
+				"time":	"2025-07-19T00:00:00-00:00",
+				"doorNo":	1,
+				"serialNo":	22420
+			}, {
+				"major":	5,
+				"minor":	20,
+				"time":	"2025-07-19T00:00:00-00:00",
+				"doorNo":	1,
+				"serialNo":	22421
+			}]
+	}
+}

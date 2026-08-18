@@ -1,0 +1,20 @@
+RewriteEngine On
+
+# 1. Redirection de www vers non-www (toutes les pages)
+RewriteCond %{HTTP_HOST} ^www\.dc-knowing\.com$ [NC]
+RewriteRule ^(.*)$ https://dc-knowing.com/$1 [R=301,L]
+
+# 2. Forcer HTTPS pour toutes les pages
+RewriteCond %{HTTPS} !on
+RewriteCond %{HTTP_HOST} ^dc-knowing\.com$ [NC]
+RewriteRule ^(.*)$ https://dc-knowing.com/$1 [R=301,L]
+
+# 3. Redirection de la racine vers /RHFLOW
+RewriteCond %{HTTP_HOST} ^dc-knowing\.com$ [NC]
+RewriteCond %{HTTPS} on
+RewriteRule ^/?$ https://dc-knowing.com/rhflow/public [R=301,L]
+
+# 4. Redirection GRH vers RHFLOW
+RewriteCond %{HTTP_HOST} ^dc-knowing\.com$ [NC]
+RewriteCond %{HTTPS} on
+RewriteRule ^GRH(/.*)?$ https://dc-knowing.com/rhflow/public$1 [R=301,L]

@@ -1,0 +1,181 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	15,
+		"totalMatches":	15,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	21,
+				"time":	"2024-12-16T00:00:00-00:00",
+				"doorNo":	1,
+				"serialNo":	11608
+			}, {
+				"major":	5,
+				"minor":	19,
+				"time":	"2024-12-16T00:00:00-00:00",
+				"doorNo":	1,
+				"serialNo":	11609
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T05:59:09-00:00",
+				"cardNo":	"2611624278",
+				"cardType":	1,
+				"name":	"Ghislain Kouamé ",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"003",
+				"serialNo":	11610,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T06:19:12-00:00",
+				"cardType":	1,
+				"name":	"Diby Édith ",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"022",
+				"serialNo":	11611,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T07:38:17-00:00",
+				"cardType":	1,
+				"name":	"Maimouna Coulibaly",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"010",
+				"serialNo":	11612,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T07:52:10-00:00",
+				"cardNo":	"2612532006",
+				"cardType":	1,
+				"name":	"Eli Bohui",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"004",
+				"serialNo":	11613,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T07:59:12-00:00",
+				"cardType":	1,
+				"name":	"Sephora  N'GORAN",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"019",
+				"serialNo":	11614,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:07:13-00:00",
+				"cardType":	1,
+				"name":	"Emmanuel Yapi",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"015",
+				"serialNo":	11615,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:14:23-00:00",
+				"cardNo":	"2611528918",
+				"cardType":	1,
+				"name":	"Fulgence Yohou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"002",
+				"serialNo":	11616,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:17:50-00:00",
+				"cardType":	1,
+				"name":	"Isaac Kouassi ",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"018",
+				"serialNo":	11617,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	1,
+				"time":	"2024-12-16T08:21:55-00:00",
+				"cardNo":	"2612192870",
+				"cardType":	1,
+				"name":	"Jean Gabin ORI",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"007",
+				"serialNo":	11618,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:22:06-00:00",
+				"cardType":	1,
+				"name":	"Christian Gohou",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"006",
+				"serialNo":	11619,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:23:47-00:00",
+				"cardType":	1,
+				"name":	"Mariame Katienin",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"020",
+				"serialNo":	11620,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:42:29-00:00",
+				"cardType":	1,
+				"name":	"Assoko Saphyr Carmel",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"023",
+				"serialNo":	11621,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2024-12-16T08:47:11-00:00",
+				"cardType":	1,
+				"name":	"Aymard Koffi",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"008",
+				"serialNo":	11623,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}]
+	}
+}

@@ -1,0 +1,19 @@
+# Configuration Email pour Gmail
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_SCHEME=tls
+MAIL_USERNAME=votre-email@gmail.com
+MAIL_PASSWORD=votre-mot-de-passe-d-app
+MAIL_FROM_ADDRESS=rhflow@dc-knowing.com
+MAIL_FROM_NAME=RHFlow
+
+# Alternative: Utiliser un service SMTP professionnel
+# MAIL_MAILER=smtp
+# MAIL_HOST=smtp.votre-fournisseur.com
+# MAIL_PORT=587
+# MAIL_SCHEME=tls
+# MAIL_USERNAME=votre-email-professionnel
+# MAIL_PASSWORD=votre-mot-de-passe
+# MAIL_FROM_ADDRESS=rhflow@dc-knowing.com
+# MAIL_FROM_NAME=RHFlow

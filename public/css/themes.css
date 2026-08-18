@@ -1,0 +1,440 @@
+/* ================================================
+   RH FLOW - SYSTÈME DE THÈMES CSS COMPLET
+   ================================================
+
+   Thèmes disponibles :
+   - Light (Clair) - theme-default.css
+   - Dark (Sombre) - theme-default-dark.css
+   - Bordered (Clair/Sombre) - theme-bordered.css / theme-bordered-dark.css
+   - Raspberry (Clair/Sombre) - theme-raspberry.css / theme-raspberry-dark.css
+   - Semi-Dark (Clair/Sombre) - theme-semi-dark.css / theme-semi-dark-dark.css
+
+   Utilisation :
+   - Importer ce fichier dans app.css
+   - Sélectionner le thème via data-theme attribute sur <html>
+   - Ou utiliser une classe CSS sur body
+   ================================================ */
+
+/* ================================================
+   VARIABLES CSS POUR TOUS LES THÈMES
+   ================================================ */
+:root {
+  /* Couleurs de base RH Flow */
+  --rh-primary: #253e87;
+  --rh-primary-rgb: 105, 108, 255;
+  --rh-secondary: #8592a3;
+  --rh-success: #71dd37;
+  --rh-info: #03c3ec;
+  --rh-warning: #ffab00;
+  --rh-danger: #ff3e1d;
+  --rh-light: #fcfdfd;
+  --rh-dark: #233446;
+
+  /* Couleurs de fond */
+  --rh-bg-body: #f4f5fa;
+  --rh-bg-card: #ffffff;
+  --rh-bg-navbar: rgba(255, 255, 255, 0.9);
+  --rh-bg-sidebar: #ffffff;
+
+  /* Couleurs de texte */
+  --rh-text-primary: #566a7f;
+  --rh-text-secondary: #8592a3;
+  --rh-text-muted: #a8aaae;
+
+  /* Bordures */
+  --rh-border-color: #d9dee3;
+  --rh-border-light: #e7e7e7;
+
+  /* Ombres */
+  --rh-shadow-sm: 0 0.125rem 0.25rem rgba(165, 163, 174, 0.3);
+  --rh-shadow: 0 0.25rem 0.5rem rgba(165, 163, 174, 0.3);
+  --rh-shadow-lg: 0 0.5rem 1rem rgba(165, 163, 174, 0.3);
+
+  /* Transitions */
+  --rh-transition: all 0.3s ease;
+}
+
+/* ================================================
+   THÈME PAR DÉFAUT - MODE CLAIR
+   ================================================ */
+@import './themes/theme-default.css';
+
+/* ================================================
+   SUPPORT DU MODE SOMBRE AUTOMATIQUE
+   ================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Redéfinir les couleurs pour le mode sombre */
+    --rh-bg-body: #1f1f2e;
+    --rh-bg-card: #2b2d42;
+    --rh-bg-navbar: rgba(43, 45, 66, 0.9);
+    --rh-bg-sidebar: #1f1f2e;
+
+    --rh-text-primary: #c7c8cc;
+    --rh-text-secondary: #8b8d98;
+    --rh-text-muted: #6c6f82;
+
+    --rh-border-color: #3a3b5c;
+    --rh-border-light: #3a3b5c;
+  }
+
+  /* Importer le thème sombre par défaut */
+  @import './themes/theme-default-dark.css';
+}
+
+/* ================================================
+   SYSTÈME DE SÉLECTION DYNAMIQUE
+   ================================================ */
+[data-theme="light"] {
+  @import './themes/theme-default.css';
+}
+
+[data-theme="dark"] {
+  :root {
+    --rh-bg-body: #1f1f2e;
+    --rh-bg-card: #2b2d42;
+    --rh-bg-navbar: rgba(43, 45, 66, 0.9);
+    --rh-bg-sidebar: #1f1f2e;
+
+    --rh-text-primary: #c7c8cc;
+    --rh-text-secondary: #8b8d98;
+    --rh-text-muted: #6c6f82;
+
+    --rh-border-color: #3a3b5c;
+    --rh-border-light: #3a3b5c;
+  }
+
+  @import './themes/theme-default-dark.css';
+}
+
+[data-theme="bordered"] {
+  @import './themes/theme-bordered.css';
+}
+
+[data-theme="bordered-dark"] {
+  @import './themes/theme-bordered-dark.css';
+}
+
+[data-theme="raspberry"] {
+  @import './themes/theme-raspberry.css';
+}
+
+[data-theme="raspberry-dark"] {
+  @import './themes/theme-raspberry-dark.css';
+}
+
+[data-theme="semi-dark"] {
+  @import './themes/theme-semi-dark.css';
+}
+
+[data-theme="semi-dark-dark"] {
+  @import './themes/theme-semi-dark-dark.css';
+}
+
+/* ================================================
+   CLASSES D'ÉTAT POUR LE MODE SOMBRE
+   ================================================ */
+.dark-mode {
+  --rh-bg-body: #1f1f2e !important;
+  --rh-bg-card: #2b2d42 !important;
+  --rh-bg-navbar: rgba(43, 45, 66, 0.9) !important;
+  --rh-bg-sidebar: #1f1f2e !important;
+
+  --rh-text-primary: #c7c8cc !important;
+  --rh-text-secondary: #8b8d98 !important;
+  --rh-text-muted: #6c6f82 !important;
+
+  --rh-border-color: #3a3b5c !important;
+  --rh-border-light: #3a3b5c !important;
+}
+
+.light-mode {
+  --rh-bg-body: #f4f5fa !important;
+  --rh-bg-card: #ffffff !important;
+  --rh-bg-navbar: rgba(255, 255, 255, 0.9) !important;
+  --rh-bg-sidebar: #ffffff !important;
+
+  --rh-text-primary: #566a7f !important;
+  --rh-text-secondary: #8592a3 !important;
+  --rh-text-muted: #a8aaae !important;
+
+  --rh-border-color: #d9dee3 !important;
+  --rh-border-light: #e7e7e7 !important;
+}
+
+/* ================================================
+   ANIMATIONS ET TRANSITIONS
+   ================================================ */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ================================================
+   SUPPORT DES ICÔNES
+   ================================================ */
+/* Themify Icons */
+@import '../themify-icons/themify-icons.css';
+
+/* Bootstrap Icons */
+@import '../bootstrap-icons/bootstrap-icons.css';
+
+/* Support des icônes dans tous les thèmes */
+.ti, .bi {
+  transition: var(--rh-transition);
+}
+
+/* ================================================
+   COMPOSANTS DE BASE
+   ================================================ */
+
+/* Body */
+body {
+  background-color: var(--rh-bg-body);
+  color: var(--rh-text-primary);
+  transition: var(--rh-transition);
+}
+
+/* Cards */
+.card {
+  background-color: var(--rh-bg-card);
+  border-color: var(--rh-border-color);
+  box-shadow: var(--rh-shadow-sm);
+  transition: var(--rh-transition);
+}
+
+.card:hover {
+  box-shadow: var(--rh-shadow);
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--rh-bg-navbar) !important;
+  backdrop-filter: saturate(200%) blur(10px);
+  border-bottom: 1px solid var(--rh-border-color);
+}
+
+/* Sidebar */
+.menu-vertical {
+  background-color: var(--rh-bg-sidebar) !important;
+  border-right: 1px solid var(--rh-border-color);
+}
+
+.menu-link {
+  color: var(--rh-text-primary) !important;
+  transition: var(--rh-transition);
+}
+
+.menu-link:hover {
+  background-color: rgba(var(--rh-primary-rgb), 0.1) !important;
+  color: var(--rh-primary) !important;
+}
+
+.menu-item.active .menu-link {
+  background-color: rgba(var(--rh-primary-rgb), 0.15) !important;
+  color: var(--rh-primary) !important;
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  background-color: var(--rh-bg-card);
+  border-color: var(--rh-border-color);
+  box-shadow: var(--rh-shadow);
+}
+
+.dropdown-item {
+  color: var(--rh-text-primary);
+  transition: var(--rh-transition);
+}
+
+.dropdown-item:hover {
+  background-color: rgba(var(--rh-primary-rgb), 0.1);
+  color: var(--rh-primary);
+}
+
+.dropdown-header {
+  color: var(--rh-text-secondary);
+}
+
+.dropdown-divider {
+  border-color: var(--rh-border-light);
+}
+
+/* Boutons */
+.btn-outline-primary {
+  color: var(--rh-primary);
+  border-color: var(--rh-primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--rh-primary);
+  border-color: var(--rh-primary);
+  color: white;
+}
+
+.btn-outline-secondary {
+  color: var(--rh-text-secondary);
+  border-color: var(--rh-border-color);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--rh-bg-card);
+  color: var(--rh-text-primary);
+  border-color: var(--rh-text-primary);
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+}
+
+/* Timeline */
+.timeline-item {
+  position: relative;
+  padding-left: 2.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.timeline-item:not(:last-child):before {
+  content: '';
+  position: absolute;
+  left: 0.625rem;
+  top: 2rem;
+  height: calc(100% - 1rem);
+  width: 1px;
+  background: var(--rh-border-light);
+}
+
+.timeline-point {
+  position: absolute;
+  left: 0.375rem;
+  top: 0.5rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+}
+
+.timeline-point-primary {
+  background: var(--rh-primary);
+}
+
+.timeline-point-success {
+  background: var(--rh-success);
+}
+
+.timeline-point-info {
+  background: var(--rh-info);
+}
+
+.timeline-point-warning {
+  background: var(--rh-warning);
+}
+
+.timeline-point-danger {
+  background: var(--rh-danger);
+}
+
+/* Avatars */
+.avatar-initial {
+  background-color: rgba(var(--rh-primary-rgb), 0.1);
+  color: var(--rh-primary);
+  font-weight: 600;
+}
+
+/* Tables */
+.table {
+  color: var(--rh-text-primary);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(var(--rh-primary-rgb), 0.04);
+}
+
+/* Formulaires */
+.form-control {
+  background-color: var(--rh-bg-card);
+  border-color: var(--rh-border-color);
+  color: var(--rh-text-primary);
+}
+
+.form-control:focus {
+  border-color: var(--rh-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--rh-primary-rgb), 0.25);
+}
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* ================================================
+   ANIMATIONS DE CHARGEMENT
+   ================================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ================================================
+   CLASSES UTILITAIRES
+   ================================================ */
+.text-primary { color: var(--rh-primary) !important; }
+.text-secondary { color: var(--rh-text-secondary) !important; }
+.text-success { color: var(--rh-success) !important; }
+.text-info { color: var(--rh-info) !important; }
+.text-warning { color: var(--rh-warning) !important; }
+.text-danger { color: var(--rh-danger) !important; }
+.text-muted { color: var(--rh-text-muted) !important; }
+
+.bg-primary { background-color: var(--rh-primary) !important; }
+.bg-secondary { background-color: var(--rh-secondary) !important; }
+.bg-success { background-color: var(--rh-success) !important; }
+.bg-info { background-color: var(--rh-info) !important; }
+.bg-warning { background-color: var(--rh-warning) !important; }
+.bg-danger { background-color: var(--rh-danger) !important; }
+.bg-light { background-color: var(--rh-light) !important; }
+.bg-dark { background-color: var(--rh-dark) !important; }
+
+.border-primary { border-color: var(--rh-primary) !important; }
+.border-secondary { border-color: var(--rh-secondary) !important; }
+.border-success { border-color: var(--rh-success) !important; }
+.border-info { border-color: var(--rh-info) !important; }
+.border-warning { border-color: var(--rh-warning) !important; }
+.border-danger { border-color: var(--rh-danger) !important; }

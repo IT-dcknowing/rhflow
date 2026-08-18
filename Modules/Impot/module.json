@@ -1,0 +1,11 @@
+{
+    "name": "Impot",
+    "alias": "impot",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Impot\\Providers\\ImpotServiceProvider"
+    ],
+    "files": []
+}

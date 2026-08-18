@@ -1,0 +1,636 @@
+@extends('layouts.app')
+
+@section('title', 'Postes - RH Flow')
+
+@section('content')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1">👔 Postes</h4>
+                    <p class="text-muted mb-0">Gérez les différents postes de votre entreprise</p>
+                    <small class="text-primary">
+                        <i class="fas fa-calendar me-1"></i>
+                        {{ now()->format('l d F Y') }} •
+                        <i class="fas fa-clock me-1"></i>
+                        {{ now()->format('H:i') }}
+                    </small>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('company.settings.config') }}" class="btn btn-outline-info">
+                        <i class="fas fa-arrow-left me-1"></i>Retour
+                    </a>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createDesignationModal">
+                        <i class="fas fa-plus me-1"></i>Nouveau Poste
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <div class="avatar-initial bg-label-warning rounded">
+                            <i class="fas fa-user-tie fa-28px"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1 text-warning">{{ $stats['total_designations'] }}</h3>
+                    <p class="text-muted mb-2">Total Postes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <div class="avatar-initial bg-label-success rounded">
+                            <i class="fas fa-check-circle fa-28px"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1 text-success">{{ $stats['active_designations'] }}</h3>
+                    <p class="text-muted mb-2">Postes Actifs</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <div class="avatar-initial bg-label-warning rounded">
+                            <i class="fas fa-pause-circle fa-28px"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1 text-warning">{{ $stats['inactive_designations'] }}</h3>
+                    <p class="text-muted mb-2">Postes Inactifs</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
+                        <div class="avatar-initial bg-label-info rounded">
+                            <i class="fas fa-user-tie fa-28px"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1 text-info">{{ $departments->count() }}</h3>
+                    <p class="text-muted mb-2">Services</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des Postes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📋 Postes Configurés</h5>
+                    <span class="badge bg-label-primary">{{ $stats['total_designations'] }} postes</span>
+                </div>
+                <div class="card-body">
+                    @if($designations->count() > 0)
+                        <div class="row">
+                            @foreach($designations as $designation)
+                            <div class="col-xl-6 col-lg-6 mb-4">
+                                <div class="card border h-100 {{ $designation->is_active ? 'border-warning' : 'border-secondary' }}">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3" style="width: 40px; height: 40px;">
+                                                    <div class="avatar-initial {{ $designation->is_active ? 'bg-label-warning' : 'bg-label-secondary' }} rounded">
+                                                        <i class="fas fa-user-tie fa-20px"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-1">{{ $designation->name }}</h6>
+                                                    <small class="text-muted">Code: {{ $designation->code }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn p-0" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#" onclick="editDesignation({{ $designation->id }})">
+                                                        <i class="fas fa-edit me-1"></i>Modifier
+                                                    </a></li>
+                                                    @if($designation->is_active)
+                                                    <li><a class="dropdown-item text-warning" href="#" onclick="toggleDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}', true)">
+                                                        <i class="fas fa-pause me-1"></i>Désactiver
+                                                    </a></li>
+                                                    @else
+                                                    <li><a class="dropdown-item text-success" href="#" onclick="toggleDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}', false)">
+                                                        <i class="fas fa-play me-1"></i>Activer
+                                                    </a></li>
+                                                    @endif
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}')">
+                                                        <i class="fas fa-trash me-1"></i>Supprimer
+                                                    </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        @if($designation->description)
+                                            <div class="mb-3">
+                                                <small class="text-muted">{{ $designation->description }}</small>
+                                            </div>
+                                        @endif
+
+                                        <div class="mb-3">
+                                            @if($designation->department)
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-sitemap me-2 text-muted"></i>
+                                                    <small class="text-muted">{{ $designation->department->name }}</small>
+                                                </div>
+                                            @endif
+
+                                            @if($designation->base_salary)
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <i class="fas fa-euro-sign me-2 text-success"></i>
+                                                    <small class="text-success">Salaire de base: {{ number_format($designation->base_salary, 0, ',', ' ') }} €</small>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge {{ $designation->is_active ? 'bg-label-success' : 'bg-label-secondary' }}">
+                                                    {{ $designation->is_active ? '✅ Actif' : '❌ Inactif' }}
+                                                </span>
+                                                @if($designation->base_salary)
+                                                    <span class="badge bg-label-success ms-1">{{ number_format($designation->base_salary, 0, ',', ' ') }} €</span>
+                                                @endif
+                                                @if($designation->department)
+                                                    <span class="badge bg-label-info ms-1">{{ $designation->department->name }}</span>
+                                                @endif
+                                            </div>
+                                            @if($designation->employees->count() > 0)
+                                                <div class="text-end">
+                                                    <small class="text-muted">{{ $designation->employees->count() }} employés</small>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-5">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="avatar avatar-xl mb-3" style="width: 80px; height: 80px;">
+                                    <div class="avatar-initial bg-label-secondary rounded">
+                                        <i class="fas fa-user-tie fa-32px"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5 class="text-muted">Aucun poste configuré</h5>
+                            <p class="text-muted mb-4">Commencez par créer votre premier poste</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createDesignationModal">
+                                <i class="fas fa-plus me-1"></i>Créer un Poste
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Création -->
+<div class="modal fade" id="createDesignationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">➕ Nouveau Poste</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ route('company.settings.designations.store') }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nom du Poste <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" id="name" required placeholder="Ex: Développeur, Manager, Comptable...">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control designationCode" name="code" required placeholder="POST-XXXX" id="designationCode" readonly>
+                            <small class="text-muted">Généré automatiquement</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="2" placeholder="Description du poste..."></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Service <span class="text-danger">*</span></label>
+                            <select class="form-select" name="department_id">
+                                <option value="">Sélectionner un service</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }} ({{ $department->branch->name }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="is_active" value="0">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="isActive" value="1" checked>
+                        <label class="form-check-label" for="isActive">
+                            Poste actif
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'Édition -->
+<div class="modal fade" id="editDesignationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">✏️ Modifier le Poste</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="" id="editDesignationForm">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nom du Poste <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" id="editName" required placeholder="Ex: Développeur, Manager, Comptable...">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control designationCode" name="code" required placeholder="POST-XXXX" id="editCode" readonly>
+                            <small class="text-muted">Généré automatiquement</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="2" placeholder="Description du poste..." id="editDescription"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Service <span class="text-danger">*</span></label>
+                            <select class="form-select" name="department_id" id="editDepartmentId">
+                                <option value="">Sélectionner un service</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ $department->id == old('department_id', $designation->department_id ?? '') ? 'selected' : '' }}>{{ $department->name }} ({{ $department->branch->name }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="is_active" value="0" id="editIsActiveHidden">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="editIsActive" value="1">
+                        <label class="form-check-label" for="editIsActive">
+                            Poste actif
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<style>
+    /* Card hover effects */
+    .card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: none;
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, rgba(105, 110, 255, 0.05) 0%, rgba(3, 195, 236, 0.05) 100%);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .card-header h5 {
+        color: #566a7f;
+        font-weight: 600;
+    }
+
+    /* Badge improvements */
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 6px;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .bg-label-primary {
+        background-color: rgba(105, 110, 255, 0.1) !important;
+        color: #253e87 !important;
+    }
+
+    .bg-label-success {
+        background-color: rgba(40, 200, 72, 0.1) !important;
+        color: #28c848 !important;
+    }
+
+    .bg-label-warning {
+        background-color: rgba(255, 205, 7, 0.1) !important;
+        color: #ffcd07 !important;
+    }
+
+    .bg-label-info {
+        background-color: rgba(3, 195, 236, 0.1) !important;
+        color: #03c3ec !important;
+    }
+
+    .bg-label-secondary {
+        background-color: rgba(133, 146, 163, 0.1) !important;
+        color: #8592a3 !important;
+    }
+
+    /* Code input styling */
+    .designationCode {
+        background-color: #f8f9fa;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem;
+        }
+
+        .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+        }
+
+        h5 {
+            font-size: 1.125rem;
+        }
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    function editDesignation(id) {
+        // Récupérer les données de la désignation via AJAX
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            alert('Erreur: Token CSRF non trouvé');
+            return;
+        }
+
+        fetch(`{{ url('/company/settings/designations') }}/${id}/edit`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const designation = data.designation;
+
+                // Vérifier que tous les éléments existent avant de les manipuler
+                const editName = document.getElementById('editName');
+                const editCode = document.getElementById('editCode');
+                const editDescription = document.getElementById('editDescription');
+                const editDepartmentId = document.getElementById('editDepartmentId');
+                const editIsActive = document.getElementById('editIsActive');
+                const editDesignationForm = document.getElementById('editDesignationForm');
+
+                // Remplir le formulaire d'édition seulement si les éléments existent
+                if (editName) editName.value = designation.name;
+                if (editCode) editCode.value = designation.code;
+                if (editDescription) editDescription.value = designation.description || '';
+                if (editDepartmentId) editDepartmentId.value = designation.department_id || '';
+                if (editIsActive) editIsActive.checked = designation.is_active;
+                if (editDesignationForm) editDesignationForm.action = `{{ url('/company/settings/designations') }}/${id}`;
+
+                // Ouvrir le modal seulement si l'élément existe
+                const editModal = document.getElementById('editDesignationModal');
+                if (editModal) {
+                    const modal = new bootstrap.Modal(editModal);
+                    modal.show();
+                }
+            } else {
+                alert('Erreur lors du chargement des données: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur lors du chargement des données');
+        });
+    }
+
+    function deleteDesignation(id, name) {
+        if (confirm(`Êtes-vous sûr de vouloir supprimer le poste "${name}" ? Cette action est irréversible.`)) {
+            // Créer un formulaire de suppression avec la route nommée
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{{ url('/company/settings/designations') }}/${id}`;
+
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+
+            const method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'DELETE';
+
+            form.appendChild(csrf);
+            form.appendChild(method);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    function toggleDesignation(id, name, isActive) {
+        const action = isActive ? 'désactiver' : 'activer';
+        const confirmMessage = `Êtes-vous sûr de vouloir ${action} le poste "${name}" ?`;
+
+        if (confirm(confirmMessage)) {
+            // Créer un formulaire pour la route toggle avec méthode PUT
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{{ url('/company/settings/designations') }}/${id}/toggle`;
+
+            const csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+
+            const method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'PUT';
+
+            form.appendChild(csrf);
+            form.appendChild(method);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Générer automatiquement le code de la désignation
+    function generateDesignationCode() {
+        const nameInput = document.getElementById('name');
+        const codeInput = document.getElementById('designationCode');
+
+        if (nameInput && codeInput) {
+            nameInput.addEventListener('input', function() {
+                const name = this.value.trim();
+                let code = 'POST-';
+
+                if (name.length > 0) {
+                    // Prendre les 4 premières lettres du nom et les mettre en majuscules
+                    const namePart = name.substring(0, 4).toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                    // Ajouter un nombre aléatoire pour éviter les doublons
+                    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+
+                    code += namePart + randomNum;
+                }
+
+                if (codeInput) codeInput.value = code;
+            });
+        }
+    }
+
+    // Générer automatiquement le code de la désignation pour l'édition
+    function generateEditDesignationCode() {
+        const nameInput = document.getElementById('editName');
+        const codeInput = document.getElementById('editCode');
+
+        if (nameInput && codeInput) {
+            nameInput.addEventListener('input', function() {
+                const name = this.value.trim();
+                let code = 'POST-';
+
+                if (name.length > 0) {
+                    // Prendre les 4 premières lettres du nom et les mettre en majuscules
+                    const namePart = name.substring(0, 4).toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                    // Ajouter un nombre aléatoire pour éviter les doublons
+                    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+
+                    code += namePart + randomNum;
+                }
+
+                if (codeInput) codeInput.value = code;
+            });
+        }
+    }
+
+    // Fonction d'initialisation robuste
+    function initializeDesignationFunctions() {
+        // Attendre que le DOM soit complètement chargé
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(initAllFunctions, 100);
+            });
+        } else {
+            setTimeout(initAllFunctions, 100);
+        }
+    }
+
+    function initAllFunctions() {
+        // Générer le code automatiquement
+        generateDesignationCode();
+        generateEditDesignationCode();
+
+        // Réinitialiser le formulaire de création quand le modal se ferme
+        const createModal = document.getElementById('createDesignationModal');
+        if (createModal) {
+            createModal.addEventListener('hidden.bs.modal', function() {
+                // Vérifier que les éléments existent avant de les manipuler
+                const nameInput = document.querySelector('input[name="name"]');
+                const codeInput = document.getElementById('designationCode');
+                const description = document.querySelector('textarea[name="description"]');
+                const departmentSelect = document.querySelector('select[name="department_id"]');
+                const isActive = document.getElementById('isActive');
+
+                if (nameInput) nameInput.value = '';
+                if (codeInput) codeInput.value = '';
+                if (description) description.value = '';
+                if (departmentSelect) departmentSelect.value = '';
+                if (isActive) isActive.checked = true;
+            });
+        }
+
+        // Réinitialiser le formulaire d'édition quand le modal se ferme
+        const editModal = document.getElementById('editDesignationModal');
+        if (editModal) {
+            editModal.addEventListener('hidden.bs.modal', function() {
+                // Vérifier que les éléments existent avant de les manipuler
+                const editName = document.getElementById('editName');
+                const editCode = document.getElementById('editCode');
+                const editDescription = document.getElementById('editDescription');
+                const editDepartmentId = document.getElementById('editDepartmentId');
+                const editIsActive = document.getElementById('editIsActive');
+                const editDesignationForm = document.getElementById('editDesignationForm');
+
+                if (editName) editName.value = '';
+                if (editCode) editCode.value = '';
+                if (editDescription) editDescription.value = '';
+                if (editDepartmentId) editDepartmentId.value = '';
+                if (editIsActive) editIsActive.checked = true;
+                if (editDesignationForm) editDesignationForm.action = '';
+            });
+        }
+    }
+
+    // Initialiser quand le DOM est prêt
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeDesignationFunctions();
+    });
+</script>
+@endpush
+

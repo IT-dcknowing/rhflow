@@ -1,0 +1,47 @@
+{
+	"AcsEvent":	{
+		"searchID":	"001",
+		"responseStatusStrg":	"OK",
+		"numOfMatches":	4,
+		"totalMatches":	4,
+		"InfoList":	[{
+				"major":	5,
+				"minor":	21,
+				"time":	"2025-07-20T09:10:07-00:00",
+				"doorNo":	1,
+				"serialNo":	22423
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-07-20T09:10:07-00:00",
+				"cardNo":	"2612867254",
+				"cardType":	1,
+				"name":	"Keyman Constant",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"001",
+				"serialNo":	22422,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	38,
+				"time":	"2025-07-20T09:10:11-00:00",
+				"cardNo":	"2612867254",
+				"cardType":	1,
+				"name":	"Keyman Constant",
+				"cardReaderNo":	1,
+				"doorNo":	1,
+				"employeeNoString":	"001",
+				"serialNo":	22424,
+				"userType":	"normal",
+				"currentVerifyMode":	"cardOrFpOrPw"
+			}, {
+				"major":	5,
+				"minor":	22,
+				"time":	"2025-07-20T09:10:16-00:00",
+				"doorNo":	1,
+				"serialNo":	22425
+			}]
+	}
+}
