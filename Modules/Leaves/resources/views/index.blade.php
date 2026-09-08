@@ -57,6 +57,9 @@
                     <a href="{{ route('company.leaves.calendar') }}" class="btn btn-outline-primary">
                         <i class="fas fa-calendar me-1"></i>Vue Calendrier
                     </a>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createLeaveTypeModal">
+                        <i class="fas fa-tags me-1"></i>Nouveau Type de Congé
+                    </button>
                     <a href="{{ route('company.leaves.create') }}?periode_id={{$periode->id}}" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i>Nouveau Congé
                     </a>
@@ -132,6 +135,7 @@
                         <th>Période</th>
                         <th>Durée</th>
                         <th>Statut</th>
+                        <th>Paie</th>
                         <th>Date de demande</th>
                         <th>Actions</th>
                     </tr>
@@ -182,9 +186,65 @@
                                     {{ $statusLabels[$leave->status] ?? $leave->status }}
                                 </span>
                             </td>
+                            <td>
+                                @if($leave->is_active)
+                                    <span class="badge bg-label-success status-badge">
+                                        <i class="fas fa-toggle-on me-1"></i>Activé
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">{{ $leave->activatedPeriode->nom ?? 'Période inconnue' }}</small>
+                                @elseif($leave->isActivable())
+                                    <span class="badge bg-label-secondary status-badge">
+                                        <i class="fas fa-toggle-off me-1"></i>Non activé
+                                    </span>
+                                @else
+                                    {{-- Un congé non approuvé n'est pas activable : on dit pourquoi
+                                         plutôt que de laisser la colonne muette. --}}
+                                    <span class="badge bg-label-warning status-badge">
+                                        <i class="fas fa-hourglass-half me-1"></i>À approuver
+                                    </span>
+                                @endif
+                            </td>
                             <td>{{ \Carbon\Carbon::parse($leave->applied_on)->format('d/m/Y H:i') }}</td>
                             <td class="action-buttons">
                                 <div class="d-flex">
+                                    @if($leave->status === 'Pending')
+                                        {{-- Sans approbation, aucun bouton d'activation n'apparaît :
+                                             on rend l'étape accessible directement depuis la liste. --}}
+                                        <a href="{{ route('company.leaves.show', $leave->id) }}"
+                                           class="btn btn-icon btn-outline-info btn-sm me-1"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="top"
+                                           title="Traiter la demande (approuver / rejeter)">
+                                            <i class="fas fa-gavel"></i>
+                                        </a>
+                                    @endif
+                                    @if($leave->isActivable())
+                                        @if($leave->is_active)
+                                            <form action="{{ route('company.leaves.deactivate', $leave->id) }}"
+                                                  method="POST"
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('Désactiver ce congé ? L\'allocation sortira de la paie de la période. Les bulletins déjà générés ne sont pas modifiés.');">
+                                                @csrf
+                                                <button type="submit"
+                                                        class="btn btn-icon btn-outline-secondary btn-sm me-1"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Désactiver pour la paie">
+                                                    <i class="fas fa-toggle-off"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button"
+                                                    class="btn btn-icon btn-outline-success btn-sm me-1 js-activate-leave"
+                                                    data-url="{{ route('company.leaves.activateForm', $leave->id) }}"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Activer pour la paie">
+                                                <i class="fas fa-toggle-on"></i>
+                                            </button>
+                                        @endif
+                                    @endif
                                     <a href="{{ route('company.leaves.show', $leave->id) }}" 
                                        class="btn btn-icon btn-outline-primary btn-sm me-1"
                                        data-bs-toggle="tooltip" 
@@ -219,7 +279,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">
+                            <td colspan="9" class="text-center py-4">
                                 <div class="d-flex flex-column align-items-center">
                                     <i class="fas fa-inbox fa-3x text-muted mb-2"></i>
                                     <h5 class="mb-1">Aucune demande de congé trouvée</h5>
@@ -360,6 +420,57 @@
     </div>
 </div>
 @endif
+
+<!-- Modale de création d'un type de congé (poste vers le CRUD existant du module Settings) -->
+<div class="modal fade" id="createLeaveTypeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-tags me-2"></i>Nouveau Type de Congé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <form method="POST" action="{{ route('company.settings.leave-types.store') }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-0">
+                        <label for="leave_type_title" class="form-label">Nom du Type de Congé <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control @error('title') is-invalid @enderror" id="leave_type_title"
+                               name="title" value="{{ old('title') }}" required maxlength="255"
+                               placeholder="Ex: Congé Annuel, Congé Maladie...">
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <small class="text-muted">La durée d'un congé se calcule à partir de ses dates de début et de fin.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('company.settings.leave-types.index') }}" class="btn btn-link me-auto">
+                        Gérer tous les types
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modale d'activation d'un congé pour la paie (contenu chargé en AJAX) -->
+<div class="modal fade" id="activateLeaveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-toggle-on me-2"></i>Activer le congé pour la paie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div id="activateLeaveModalBody">
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -396,6 +507,35 @@
         }
     });
     
+    // Activation d'un congé pour la paie : charge le formulaire (choix période + montant) dans la modale.
+    // Délégué sur document car DataTable re-crée les lignes à chaque pagination.
+    $(document).on('click', '.js-activate-leave', function () {
+        var url = this.getAttribute('data-url');
+        var body = document.getElementById('activateLeaveModalBody');
+        var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('activateLeaveModal'));
+
+        body.innerHTML = '<div class="modal-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+        modal.show();
+
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (response) {
+                if (!response.ok) { throw new Error('HTTP ' + response.status); }
+                return response.text();
+            })
+            .then(function (html) { body.innerHTML = html; })
+            .catch(function () {
+                body.innerHTML = '<div class="modal-body"><div class="alert alert-danger mb-0">Impossible de charger le formulaire d\'activation.</div></div>';
+            });
+    });
+
+    // La validation de storeLeaveType renvoie ici : on rouvre la modale sur l'erreur.
+    @if($errors->has('title'))
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('createLeaveTypeModal');
+            if (el) { new bootstrap.Modal(el).show(); }
+        });
+    @endif
+
     // Filtres avancés
     function toggleAdvancedFilters() {
         var advancedFilters = document.getElementById('advancedFilters');

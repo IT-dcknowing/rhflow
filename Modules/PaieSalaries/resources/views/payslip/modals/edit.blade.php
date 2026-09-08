@@ -28,7 +28,7 @@
 </style>
 @php
 
-    $date_embauche = new DateTime($employee->company_doj);
+    $date_embauche = new DateTime($employee->company_doj ?: ($employee->start_date ?: 'now'));
     $date_actuelle = new DateTime(date('Y-m-d'));
     $difference = $date_embauche->diff($date_actuelle);
     $date_pa = $difference->format('%y');
@@ -62,7 +62,6 @@
             </span>
             <span id="brut_update" class="badge rounded bg-label-black p-1" style="background-color:#000; color:yellow;"></span>
         </h6>
-        <span id="nombreDesactive" style="margin-bottom: 10px;"></span> 
         <span id="cpte1" align="center" class="text-center mb-4">
             <strong></strong>
         </span>
@@ -90,7 +89,9 @@
                         @forelse($allowanceEmployee->where('periode_id', $periode) as $allowance)
                             <tr class="allowance-row" id="allowance-row-{{ $allowance->id }}">
                                 <td align="center" class="border border-dark" width="2%">
-                                    <input type="checkbox" id="option{{ $allowance->id }}"  value="{{ $allowance->allowance_option_id }}" checked @if(in_array($allowance->allowance_option_id, $allowances)) disabled @endif>
+                                    <input type="checkbox" id="option{{ $allowance->id }}" value="{{ $allowance->allowance_option_id }}" checked
+                                        onchange="toggleSingleAllowance({{ $allowance->id }}, this)"
+                                        title="Décocher pour retirer cet élément du bulletin">
                                 </td>
                                 <td align="center" class="border border-dark">
                                     <strong>{{ $allowance->code }}</strong>
@@ -232,23 +233,6 @@
             steps[n].className += " active";
         }
     }
-
-    // Fonction pour compter les cases à cocher désactivées
-    function compterCasesDesactivees() {
-        var nombreDesactivees = 0;
-        var cases = document.querySelectorAll('input[type="checkbox"]');
-        cases.forEach(function(caseCheckbox) {
-            if (caseCheckbox.disabled) {
-                nombreDesactivees++;
-            }
-        });
-        document.getElementById('nombreDesactive').textContent = "Nombre de cases désactivées : " + nombreDesactivees;
-    }
-
-    // Appel de la fonction au chargement de la page
-    window.onload = function() {
-        compterCasesDesactivees();
-    };
 </script>
 <script>
     function workDay(i) {
@@ -351,7 +335,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/company/paiesalaries/allowance/' + encodeURIComponent(allowanceId),
+                    url: '{{ route("company.paiesalaries.allowance.update", ":id") }}'.replace(':id', encodeURIComponent(allowanceId)),
                     type: 'PUT',
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -393,6 +377,70 @@
         });
     }
 
+    // Décocher la case retire l'élément du bulletin (même effet que la corbeille).
+    // La case est recochée si l'utilisateur annule ou si la suppression échoue.
+    function toggleSingleAllowance(allowanceId, checkbox) {
+        if (checkbox.checked) {
+            return;
+        }
+
+        Swal.fire({
+            title: 'Retirer cet élément ?',
+            text: "Cet élément ne sera plus pris en compte dans le bulletin.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, retirer!',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                checkbox.checked = true;
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("company.paiesalaries.allowance.update", ":id") }}'.replace(':id', encodeURIComponent(allowanceId)),
+                type: 'DELETE',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    allowance_id: allowanceId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Retiré!',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            $('#allowance-row-' + allowanceId).fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                        });
+                    } else {
+                        checkbox.checked = true;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    checkbox.checked = true;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur',
+                        text: 'Une erreur est survenue lors de la suppression'
+                    });
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    }
+
     function deleteSingleAllowance(allowanceId) {
         Swal.fire({
             title: 'Êtes-vous sûr?',
@@ -406,7 +454,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/company/paiesalaries/allowance/' + encodeURIComponent(allowanceId),
+                    url: '{{ route("company.paiesalaries.allowance.update", ":id") }}'.replace(':id', encodeURIComponent(allowanceId)),
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}',

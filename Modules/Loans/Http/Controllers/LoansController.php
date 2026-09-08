@@ -34,9 +34,15 @@ class LoansController extends Controller
         $periode = null;
 
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
-            );
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
         } else {
             // Pick the latest 'en_cours' period by default
             $periode = PaiePeriode::with("exercice")
@@ -106,9 +112,15 @@ class LoansController extends Controller
         
         $periode = null;
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
-            );
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
         }
         
         return view('loans::create', compact('employees', 'branches', 'loanOptions', 'periode'));
@@ -301,6 +313,164 @@ class LoansController extends Controller
 
         return redirect()->back()
                         ->with('success', 'Prêt supprimé avec succès.');
+    }
+
+    /**
+     * Désactive un prêt : il sort de la paie des périodes encore modifiables.
+     *
+     * Les périodes verrouillées (validée / payée / clôturée / annulée, ou bulletin déjà
+     * généré) sont laissées intactes : une paie émise ne se réécrit pas. Elles sont
+     * listées dans le message de retour pour que l'utilisateur sache ce qui subsiste.
+     */
+    public function deactivate($id)
+    {
+        $user = Auth::user();
+        $loan = Loan::where('company_id', $user->company_id)->findOrFail($id);
+
+        if (!$loan->is_active) {
+            return redirect()->back()->with('error', 'Ce prêt est déjà désactivé.');
+        }
+
+        $retenues = Retenue::where('loan_id', $loan->id)
+            ->where('company_id', $user->company_id)
+            ->get();
+
+        $sauvegarde = [];
+        $periodesVerrouillees = [];
+
+        \DB::beginTransaction();
+        try {
+            foreach ($retenues as $retenue) {
+                $periode = PaiePeriode::where('company_id', $user->company_id)
+                    ->find($retenue->periode_id);
+
+                // Une période introuvable (supprimée) ne bloque rien : la ligne est orpheline.
+                if ($periode && $error = $this->paieLockError($periode, $retenue->employee_id)) {
+                    $periodesVerrouillees[] = $periode->nom ?? ('#' . $periode->id);
+                    continue;
+                }
+
+                // On mémorise la ligne telle quelle : son montant a pu être ajusté sur
+                // cette période, le prêt seul ne permettrait pas de la reconstruire.
+                $attributs = $retenue->getAttributes();
+                unset($attributs['id'], $attributs['created_at'], $attributs['updated_at']);
+                $sauvegarde[] = $attributs;
+
+                $retenue->delete();
+            }
+
+            $loan->is_active = 0;
+            $loan->retenues_backup = $sauvegarde;
+            $loan->save();
+
+            \DB::commit();
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            \Log::error('Désactivation prêt échouée', ['loan_id' => $loan->id, 'error' => $e->getMessage()]);
+
+            return redirect()->back()->with('error', 'La désactivation du prêt a échoué : ' . $e->getMessage());
+        }
+
+        $message = 'Prêt désactivé. ' . count($sauvegarde) . ' retenue(s) retirée(s) de la paie.';
+        if ($periodesVerrouillees) {
+            $message .= ' Périodes non modifiées car la paie y est verrouillée : '
+                . implode(', ', $periodesVerrouillees) . '.';
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Réactive un prêt en restaurant les retenues retirées lors de sa désactivation.
+     *
+     * On rejoue la sauvegarde plutôt que de recalculer depuis le prêt : les dates des
+     * périodes ne recoupent pas toujours celles du prêt dans les données existantes, et
+     * le montant de la retenue a pu être ajusté période par période.
+     */
+    public function activate($id)
+    {
+        $user = Auth::user();
+        $loan = Loan::where('company_id', $user->company_id)->findOrFail($id);
+
+        if ($loan->is_active) {
+            return redirect()->back()->with('error', 'Ce prêt est déjà actif.');
+        }
+
+        $sauvegarde = $loan->retenues_backup ?: [];
+        $restaurees = 0;
+        $ignorees = [];
+
+        \DB::beginTransaction();
+        try {
+            foreach ($sauvegarde as $attributs) {
+                $periode = PaiePeriode::where('company_id', $user->company_id)
+                    ->find($attributs['periode_id'] ?? null);
+
+                // La période a pu être clôturée ou supprimée depuis la désactivation.
+                if (!$periode) {
+                    $ignorees[] = 'période #' . ($attributs['periode_id'] ?? '?') . ' introuvable';
+                    continue;
+                }
+
+                if ($this->paieLockError($periode, $attributs['employee_id'] ?? $loan->employee_id)) {
+                    $ignorees[] = $periode->nom ?? ('#' . $periode->id);
+                    continue;
+                }
+
+                $dejaPresente = Retenue::where('loan_id', $loan->id)
+                    ->where('periode_id', $periode->id)
+                    ->exists();
+
+                if ($dejaPresente) {
+                    continue;
+                }
+
+                $attributs['loan_id'] = $loan->id;
+                Retenue::create($attributs);
+                $restaurees++;
+            }
+
+            $loan->is_active = 1;
+            $loan->retenues_backup = null;
+            $loan->save();
+
+            \DB::commit();
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            \Log::error('Réactivation prêt échouée', ['loan_id' => $loan->id, 'error' => $e->getMessage()]);
+
+            return redirect()->back()->with('error', 'La réactivation du prêt a échoué : ' . $e->getMessage());
+        }
+
+        $message = 'Prêt réactivé. ' . $restaurees . ' retenue(s) restaurée(s) dans la paie.';
+        if ($ignorees) {
+            $message .= ' Non restaurées : ' . implode(', ', $ignorees) . '.';
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    /**
+     * Renvoie un message si la paie de cette période ne peut plus être modifiée,
+     * null sinon. Même règle que la désactivation d'un congé.
+     */
+    private function paieLockError(PaiePeriode $periode, $employeeId)
+    {
+        if (in_array($periode->statut, ['validee', 'payee', 'cloture', 'annulee'])) {
+            return 'La période « ' . ($periode->nom ?? $periode->id) . ' » est ' . $periode->statut
+                . ' : sa paie ne peut plus être modifiée.';
+        }
+
+        $payslipExists = PaySlip::where('company_id', Auth::user()->company_id)
+            ->where('employee_id', $employeeId)
+            ->where('periode_id', $periode->id)
+            ->exists();
+
+        if ($payslipExists) {
+            return 'Le bulletin de cet employé est déjà généré pour cette période : la paie émise ne peut plus être modifiée.';
+        }
+
+        return null;
     }
 
     /**

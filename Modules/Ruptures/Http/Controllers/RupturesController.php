@@ -34,9 +34,15 @@ class RupturesController extends Controller
        
         $periode = null;
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
-            );
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
         }
         
         $exercices = PaieExercice::with("periodes")
@@ -81,9 +87,15 @@ class RupturesController extends Controller
        
         $periode = null;
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
-            );
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
         } 
         
         $employees = Employee::where('company_id', Auth::user()->company_id)->where('is_active', 1)->get();

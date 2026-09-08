@@ -351,15 +351,15 @@ class SettingsController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'days' => 'required|integer|min:1|max:365',
         ]);
 
         $user = Auth::user();
         $company = $user->company;
 
+        // Plus de nombre de jours a la creation : la duree d'un conge se deduit de ses
+        // dates de debut et de fin. La colonne days garde son defaut (0).
         LeaveType::create([
             'title' => $request->title,
-            'days' => $request->days,
             'created_by' => $user->id,
             'company_id' => $company->id,
             'is_active' => true,

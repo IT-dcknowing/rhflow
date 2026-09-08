@@ -22,6 +22,7 @@ class Retenue extends Model
         "libelle",
         "type_retenue_id",
         "employee_id",
+        "loan_id",
         "branche_id",
         "periode_id",
         "ordre",
@@ -50,8 +51,16 @@ class Retenue extends Model
     }
  
     public function periode()
-    { 
+    {
         return $this->belongsTo(PaiePeriode::class);
+    }
+
+    /**
+     * Prêt à l'origine de cette retenue (retenues de code 500 uniquement).
+     */
+    public function loan(): BelongsTo
+    {
+        return $this->belongsTo(\Modules\Loans\Models\Loan::class, 'loan_id');
     }
 
     public function company()

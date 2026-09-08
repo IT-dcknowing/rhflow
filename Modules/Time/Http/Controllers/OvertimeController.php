@@ -24,11 +24,21 @@ class OvertimeController extends Controller
        
         $periode = null;
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
+            // Récupérer le mois sélectionné ou le mois en cours.
+            // Sans période valide, on retombe sur le mois courant plutôt que de planter.
+            $selectedMonth = $request->input(
+                'month',
+                $periode ? $periode->date_debut->format('Y-m') : date('Y-m')
             );
-            // Récupérer le mois sélectionné ou le mois en cours
-            $selectedMonth = $request->input('month', $periode->date_debut->format('Y-m'));
         }else{
             // Récupérer le mois sélectionné ou le mois en cours
             $selectedMonth = $request->input('month', date('Y-m'));

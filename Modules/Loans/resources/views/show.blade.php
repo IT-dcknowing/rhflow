@@ -71,7 +71,16 @@
                         <div class="col-md-6 mb-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="card-title">Période : {{ $loan->periode->nom }} - Statut : {{ ucfirst($loan->periode->statut) }}</h5>
+                                    {{-- La période peut avoir été supprimée avec son exercice : le prêt reste valide. --}}
+                                    <h5 class="card-title">
+                                        @if($loan->periode)
+                                            Période : {{ $loan->periode->nom }} - Statut : {{ ucfirst($loan->periode->statut) }}
+                                        @else
+                                            <span class="text-warning">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>Période supprimée
+                                            </span>
+                                        @endif
+                                    </h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3 d-flex justify-content-between align-items-center border-bottom">

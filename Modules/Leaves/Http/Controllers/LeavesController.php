@@ -28,9 +28,15 @@ class LeavesController extends Controller
        
         $periode = null;
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
-            );
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
         }
         
         $exercices = PaieExercice::with("periodes")
@@ -40,14 +46,25 @@ class LeavesController extends Controller
         
         // Récupération des congés avec pagination et chargement des relations
         $leaves = Leave::with([
-                'employee', 
+                'employee',
                 'leaveType',
-                'periode.exercice'
+                'periode.exercice',
+                'activatedPeriode'
             ])
             ->where('company_id', $company_id)
+            ->when($request->filled('employee_id'), function ($query) use ($request) {
+                $query->where('employee_id', $request->employee_id);
+            })
+            ->when($request->filled('leave_type_id'), function ($query) use ($request) {
+                $query->where('leave_type_id', $request->leave_type_id);
+            })
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
-            
+            ->paginate(15)
+            ->withQueryString();
+
         $leaveTypes = LeaveType::where('company_id', $company_id)
             ->where('is_active', 1)
             ->get();
@@ -73,20 +90,36 @@ class LeavesController extends Controller
 
         $periode = null;
         if ($request->has("periode_id")) {
-            $periode = PaiePeriode::with("exercice")->findOrFail(
-                $request->periode_id,
-            );
+            // Une période supprimée ne doit pas produire un 404 : on retombe sur
+            // l'écran de sélection de période avec un message.
+            $periode = PaiePeriode::with("exercice")
+                ->where("company_id", Auth::user()->company_id)
+                ->find($request->periode_id);
+
+            if (!$periode) {
+                session()->flash("error", "Cette période de paie n'existe plus ou n'appartient pas à votre entreprise.");
+            }
         }
         
         $leaveTypes = LeaveType::where('company_id', $company_id)
             ->where('is_active', 1)
             ->get();
-            
+
         $employees = Employee::where('company_id', $company_id)
             ->where('is_active', 1)
             ->get();
-            
-        return view('leaves::create', compact('leaveTypes', 'employees', 'periode'));
+
+        // Périodes ouvertes, proposées quand on arrive sans periode_id (ex. depuis la fiche employé).
+        $periodes = PaiePeriode::with('exercice')
+            ->where('company_id', $company_id)
+            ->whereIn('statut', ['brouillon', 'en_cours'])
+            ->orderBy('date_debut', 'desc')
+            ->get();
+
+        // Employé pré-sélectionné quand on crée le congé depuis la liste des employés.
+        $selectedEmployeeId = $request->employee_id;
+
+        return view('leaves::create', compact('leaveTypes', 'employees', 'periode', 'periodes', 'selectedEmployeeId'));
     }
 
     /**
@@ -94,12 +127,16 @@ class LeavesController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [ 
+        $validator = Validator::make($request->all(), [
                 'employee_id' => 'required',
                 'leave_type_id' => 'required',
+                'periode_id' => 'required|exists:paie_periodes,id',
                 'start_date' => 'required|date',
                 'back_date' => 'required|date',
                 'end_date' => 'required|date',
+            ],
+            [
+                'periode_id.required' => 'Vous devez rattacher ce congé à une période de paie.',
             ]
         );
 
@@ -161,9 +198,9 @@ class LeavesController extends Controller
         $leave->leave_reason = $request->leave_reason;
         $leave->amount_leave = $amountLeave;
         $leave->amount_leave_net = $amountLeaveNet;
-        $leave->month_leave = json_encode($request->month_leave);
-        $leave->sb_leave = json_encode($request->salaire_brut);
-        $leave->days_leave = json_encode($request->total_jours);
+        $leave->month_leave = json_encode($request->month_leave ?? []);
+        $leave->sb_leave = json_encode($request->salaire_brut ?? []);
+        $leave->days_leave = json_encode($request->total_jours ?? []);
         $leave->remark = $request->periode_reference;
         $leave->status = 'Pending';
         $leave->leave_statut = 1;
@@ -193,8 +230,17 @@ class LeavesController extends Controller
             ])
             ->where('company_id', $user->company_id)
             ->findOrFail($id);
-            
-        return view('leaves::show', compact('leave'));
+
+        // Période à laquelle renvoie le bouton "Retour". La période d'origine du congé
+        // peut avoir été supprimée (soft delete) : dans ce cas on retombe sur la période
+        // ouverte la plus récente, sinon l'index afficherait l'écran de sélection.
+        $retourPeriodeId = $leave->periode?->id
+            ?? PaiePeriode::where('company_id', $user->company_id)
+                ->whereIn('statut', ['brouillon', 'en_cours'])
+                ->orderBy('date_debut', 'desc')
+                ->value('id');
+
+        return view('leaves::show', compact('leave', 'retourPeriodeId'));
     }
     
     /**
@@ -251,9 +297,9 @@ class LeavesController extends Controller
             $leave->total_leave_days = $request->nb_jours_conge;
             $leave->amount_leave = $request->allo_conge_brut;
             $leave->amount_leave_net = $request->allo_conge_net;
-            $leave->month_leave = json_encode($request->month_leave);
-            $leave->sb_leave = json_encode($request->salary_brut);
-            $leave->days_leave = json_encode($request->nbre_jour);
+            $leave->month_leave = json_encode($request->month_leave ?? []);
+            $leave->sb_leave = json_encode($request->salary_brut ?? []);
+            $leave->days_leave = json_encode($request->nbre_jour ?? []);
         }
         $leave->updated_by = Auth::user()->id;
         $leave->remark = $request->periode_reference;
@@ -330,36 +376,209 @@ class LeavesController extends Controller
         $leave->leave_reason = $request->leave_reason;
         $leave->save();
         
-        if($request->status == 'Approuvé'){
-            $employee = Employee::find($leave->employee_id);
-
-            if($leave->amount_leave >= 0){
-                $allowance = new Allowance();
-                $allowance->code = '123';
-                $allowance->code_compta = '6613';
-                $allowance->employee_id = $leave->employee_id;
-                $allowance->allowance_option_id = 23; // Utiliser $value qui contient item_brut
-                $allowance->periode_id = $leave->periode_id;
-                $allowance->title = 'Allocation congé';
-                $allowance->trait_fisc = 'exo 0%';
-                $allowance->trait_cnps = 'Soumis';
-                $allowance->base_heures = 0;
-                $allowance->jours_leave = 0;
-                $allowance->amount_imp = round($leave->amount_leave);
-                $allowance->amount = round($leave->amount_leave);
-                $allowance->montant = round($leave->amount_leave);
-                $allowance->details = $leave->leave_reason;
-                $allowance->jours_work = $employee->tax_payer_id;
-                $allowance->type_amount = 0;
-                $allowance->type = "fixed";
-                $allowance->company_id = Auth::user()->company_id;
-                $allowance->created_by = Auth::user()->id;
-                $allowance->save();
-            }
+        // L'approbation ne crée plus la ligne de paie : elle rend seulement le congé activable.
+        // C'est l'activation explicite (activate) qui génère l'"Allocation congé".
+        if ($request->status == 'Approuvé') {
+            return redirect()->back()->with(
+                'success',
+                "Congé approuvé. Activez-le sur une période pour qu'il soit pris en compte dans la paie."
+            );
         }
-        
+
         return redirect()->back()
             ->with('success', 'Statut de la demande mis à jour avec succès.');
+    }
+
+    /**
+     * Formulaire d'activation : choix de la période de paie et du montant de l'allocation.
+     */
+    public function activateForm($id)
+    {
+        $user = Auth::user();
+        $leave = Leave::with(['employee', 'leaveType', 'periode'])
+            ->where('company_id', $user->company_id)
+            ->findOrFail($id);
+
+        // Périodes encore ouvertes : une paie validée / payée ne doit plus bouger.
+        $periodes = PaiePeriode::with('exercice')
+            ->where('company_id', $user->company_id)
+            ->whereIn('statut', ['brouillon', 'en_cours'])
+            ->orderBy('date_debut', 'desc')
+            ->get();
+
+        return view('leaves::modals.activate', compact('leave', 'periodes'));
+    }
+
+    /**
+     * Active le congé pour la paie d'une période : crée (ou restaure) la ligne "Allocation congé".
+     */
+    public function activate(Request $request, $id)
+    {
+        $user = Auth::user();
+        $leave = Leave::where('company_id', $user->company_id)->findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'periode_id' => 'required|exists:paie_periodes,id',
+            'amount_leave' => 'required|numeric|min:0',
+        ], [
+            'periode_id.required' => 'Vous devez choisir une période de paie.',
+            'amount_leave.required' => "Le montant de l'allocation congé est obligatoire.",
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if (!$leave->isActivable()) {
+            return redirect()->back()->with('error', 'Seul un congé approuvé peut être activé pour la paie.');
+        }
+
+        $periode = PaiePeriode::where('company_id', $user->company_id)->findOrFail($request->periode_id);
+
+        if ($error = $this->paieLockError($periode, $leave->employee_id)) {
+            return redirect()->back()->with('error', $error);
+        }
+
+        $amount = round((float) $request->amount_leave);
+        $employee = Employee::findOrFail($leave->employee_id);
+
+        \DB::beginTransaction();
+        try {
+            // Idempotent : on reprend la ligne existante du congé (même soft-deleted)
+            // au lieu d'en créer une seconde.
+            $allowance = Allowance::withTrashed()
+                ->where('company_id', $user->company_id)
+                ->where('code', $leave->allowanceCode())
+                ->first();
+
+            if (!$allowance) {
+                $allowance = new Allowance();
+                $allowance->code = $leave->allowanceCode();
+                $allowance->created_by = $user->id;
+            } else {
+                if ($allowance->trashed()) {
+                    $allowance->restore();
+                }
+                $allowance->updated_by = $user->id;
+            }
+
+            $allowance->code_compta = '6613';
+            $allowance->employee_id = $leave->employee_id;
+            $allowance->allowance_option_id = 23;
+            $allowance->periode_id = $periode->id;
+            $allowance->title = 'Allocation congé';
+            $allowance->trait_fisc = 'exo 0%';
+            $allowance->trait_cnps = 'Soumis';
+            $allowance->base_heures = 0;
+            $allowance->jours_leave = (int) $leave->total_leave_days;
+            $allowance->amount_imp = $amount;
+            $allowance->amount = $amount;
+            $allowance->montant = $amount;
+            $allowance->details = $leave->leave_reason;
+            $allowance->jours_work = $employee->tax_payer_id;
+            $allowance->type_amount = 0;
+            $allowance->type = 'fixed';
+            $allowance->is_active = 1;
+            $allowance->company_id = $user->company_id;
+            $allowance->save();
+
+            $leave->is_active = true;
+            $leave->allowance_id = $allowance->id;
+            $leave->activated_periode_id = $periode->id;
+            $leave->activated_at = now();
+            $leave->amount_leave = $amount;
+            $leave->updated_by = $user->id;
+            $leave->save();
+
+            \DB::commit();
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            \Log::error('Activation congé échouée', ['leave_id' => $leave->id, 'error' => $e->getMessage()]);
+            return redirect()->back()->with('error', "L'activation du congé a échoué : " . $e->getMessage());
+        }
+
+        return redirect()->back()->with(
+            'success',
+            "Congé activé sur la période « " . ($periode->nom ?? $periode->id) . " » : l'allocation entrera dans le bulletin."
+        );
+    }
+
+    /**
+     * Désactive le congé : la ligne "Allocation congé" sort de la paie.
+     * Refusé si le bulletin de la période est déjà généré — une paie émise ne doit pas bouger.
+     */
+    public function deactivate($id)
+    {
+        $user = Auth::user();
+        $leave = Leave::where('company_id', $user->company_id)->findOrFail($id);
+
+        if (!$leave->is_active) {
+            return redirect()->back()->with('error', "Ce congé n'est pas activé pour la paie.");
+        }
+
+        $periode = $leave->activated_periode_id
+            ? PaiePeriode::where('company_id', $user->company_id)->find($leave->activated_periode_id)
+            : null;
+
+        if ($periode && $error = $this->paieLockError($periode, $leave->employee_id)) {
+            return redirect()->back()->with('error', $error);
+        }
+
+        \DB::beginTransaction();
+        try {
+            $allowance = Allowance::where('company_id', $user->company_id)
+                ->where('code', $leave->allowanceCode())
+                ->first();
+
+            if ($allowance) {
+                // Soft delete : la ligne sort de tous les calculs de paie sans être perdue,
+                // et reste restaurable si le congé est réactivé.
+                $allowance->is_active = 0;
+                $allowance->updated_by = $user->id;
+                $allowance->save();
+                $allowance->delete();
+            }
+
+            $leave->is_active = false;
+            $leave->activated_periode_id = null;
+            $leave->activated_at = null;
+            $leave->updated_by = $user->id;
+            $leave->save();
+
+            \DB::commit();
+        } catch (\Throwable $e) {
+            \DB::rollBack();
+            \Log::error('Désactivation congé échouée', ['leave_id' => $leave->id, 'error' => $e->getMessage()]);
+            return redirect()->back()->with('error', "La désactivation du congé a échoué : " . $e->getMessage());
+        }
+
+        return redirect()->back()->with(
+            'success',
+            "Congé désactivé : l'allocation n'est plus prise en compte dans la paie."
+        );
+    }
+
+    /**
+     * Retourne un message d'erreur si la paie de cette période est déjà figée pour cet employé,
+     * null si l'on peut encore y toucher. Une paie générée ou validée ne doit jamais être modifiée.
+     */
+    private function paieLockError(PaiePeriode $periode, $employeeId)
+    {
+        if (in_array($periode->statut, ['validee', 'payee', 'cloture', 'annulee'])) {
+            return 'La période « ' . ($periode->nom ?? $periode->id) . ' » est ' . $periode->statut
+                . ' : sa paie ne peut plus être modifiée.';
+        }
+
+        $payslipExists = PaySlip::where('company_id', Auth::user()->company_id)
+            ->where('employee_id', $employeeId)
+            ->where('periode_id', $periode->id)
+            ->exists();
+
+        if ($payslipExists) {
+            return 'Le bulletin de cet employé est déjà généré pour cette période : la paie émise ne peut plus être modifiée.';
+        }
+
+        return null;
     }
 
     public function startLeave($id)
@@ -510,8 +729,11 @@ class LeavesController extends Controller
                                 ->pluck('salary_brut', 'salary_month');
 
         // Retourner la date de congé et le nombre de bulletins de paie en JSON
+        // end_leave est null pour un employé qui n'a jamais pris de congé : on retombe sur sa date d'embauche.
         return response()->json([
-                                    'leave_date' => date_format($employee_leave_date,"Y-m-d"),
+                                    'leave_date' => $employee_leave_date
+                                        ? Carbon::parse($employee_leave_date)->format('Y-m-d')
+                                        : ($employee_company_doj ? Carbon::parse($employee_company_doj)->format('Y-m-d') : null),
                                     'company_doj' => $employee_company_doj,
                                     'leave_salary' => $employee_salary,
                                     'payslips_count' => $payslipsCount,

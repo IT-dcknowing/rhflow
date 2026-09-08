@@ -85,6 +85,9 @@
                                 @else
                                     <span class="badge bg-label-warning">Annulé</span>
                                 @endif
+                                @if(!$loan->is_active)
+                                    <span class="badge bg-label-secondary">Inactif</span>
+                                @endif
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
@@ -94,6 +97,25 @@
                                     <a href="{{ route('company.loans.edit', $loan->id) }}" class="btn btn-sm btn-primary me-2">
                                         <i class="ti ti-pencil"></i>
                                     </a>
+                                    @if($loan->is_active)
+                                        <form action="{{ route('company.loans.deactivate', $loan->id) }}"
+                                              method="POST" class="d-inline me-2"
+                                              onsubmit="return confirm('Désactiver ce prêt ? Sa retenue sera retirée de la paie des périodes encore modifiables. Les bulletins déjà générés ne sont pas touchés.');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="Désactiver ce prêt">
+                                                <i class="fas fa-toggle-off"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('company.loans.activate', $loan->id) }}"
+                                              method="POST" class="d-inline me-2"
+                                              onsubmit="return confirm('Réactiver ce prêt ? Sa retenue sera régénérée sur les périodes ouvertes.');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Réactiver ce prêt">
+                                                <i class="fas fa-toggle-on"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     <button type="button" class="btn btn-sm btn-danger" id="delete-loan">
                                         <i class="fas fa-trash me-1"></i>
                                     </button>

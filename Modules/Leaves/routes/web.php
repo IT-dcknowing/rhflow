@@ -19,6 +19,9 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
     Route::get('leaves/attestation/{id}', [LeavesController::class, 'attestationForm'])->name('leaves.attestation');
     Route::get('leaves/datasLeave', [LeavesController::class, 'datasLeave'])->name('leaves.datasLeave');
     Route::post('leaves/changeaction/{id}', [LeavesController::class, 'changeStatus'])->name('leaves.changeaction');
+    Route::get('leaves/activate-form/{id}', [LeavesController::class, 'activateForm'])->name('leaves.activateForm');
+    Route::post('leaves/activate/{id}', [LeavesController::class, 'activate'])->name('leaves.activate');
+    Route::post('leaves/deactivate/{id}', [LeavesController::class, 'deactivate'])->name('leaves.deactivate');
     Route::get('leaves/start/{id}', [LeavesController::class, 'startLeave'])->name('leaves.start');
     Route::get('leaves/end/{id}', [LeavesController::class, 'endLeave'])->name('leaves.end');
 });

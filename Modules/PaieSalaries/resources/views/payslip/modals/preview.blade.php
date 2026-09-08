@@ -63,8 +63,8 @@
     $amount_avtg = 0;
     $compte = 0;
     // Anciennete basee sur la FIN DE PERIODE (ex: paie Janvier 2025 = date ref 31/01/2025)
-    $date_embauche = new DateTime($employee->company_doj ?? $employee->start_date);
-    $date_ref_paie = new DateTime($periode->date_fin);
+    $date_embauche = new DateTime($employee->company_doj ?: ($employee->start_date ?: 'now'));
+    $date_ref_paie = new DateTime($periode->date_fin ?: 'now');
     $difference = $date_embauche->diff($date_ref_paie);
     $date_pa = intval($difference->format('%y')); // annees completes uniquement
     $date_m  = intval($difference->format('%m'));
@@ -128,16 +128,16 @@
                                     Boite postale :  {{ $company->postal_code }}<br>
                                     Horaire mensuelle :  173,33<br>
                                     Nombre de jours travaillÃ©s : {{ $nbre_jours_base }} <br>
-                                    Grille salariale : <strong>{{ $company->sector->name }}</strong><br>
+                                    Grille salariale : <strong>{{ $company->sector->name ?? '-' }}</strong><br>
                                 </td>
                                 <td colspan="6">
                                     Nom et PrÃ©nom :  {{ $employee->name }}<br>
                                     Adresse :  {{ $employee->address }}<br>
-                                    Situation matrimoniale : {{ $employee->situation->name }}<br>
+                                    Situation matrimoniale : {{ $employee->situation->name ?? '-' }}<br>
                                     Enfants Ã  charge : {{ $employee->enfant }}<br>
                                     NumÃ©ro CNPS :  {{ $employee->num_cnps }}<br>
                                     AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
-                                    CatÃ©gorie : {{$employee->categorieEmp->title}} / {{$employee->sous_categorie}}<br>
+                                    CatÃ©gorie : {{ $employee->categorieEmp->title ?? '-' }} / {{$employee->sous_categorie}}<br>
                                     Emploi :   {{ $employee->designation->name ?? '-' }} <br>
                                     Tel / E-mail : {{$employee->phone}} / {{$employee->email}} <br>
                                     Nombre de parts : {{ $employee->parts }}<br>
@@ -461,16 +461,16 @@
                                 Boite postale :  {{ $company->postal_code }}<br>
                                 Horaire mensuelle :  173,33<br>
                                 Nombre de jours travaillÃ©s : {{ $nbre_jours_base }} <br>
-                                Grille salariale : <strong>{{ $company->sector->name }}</strong><br>
+                                Grille salariale : <strong>{{ $company->sector->name ?? '-' }}</strong><br>
                             </td>
                             <td class="border border-dark" colspan ="5">
                                 Nom et PrÃ©nom :  {{ $employee->name }}<br>
                                 Adresse :  {{ $employee->address }}<br>
-                                Situation matrimoniale : {{ $employee->situation->name }}<br>
+                                Situation matrimoniale : {{ $employee->situation->name ?? '-' }}<br>
                                 Enfants Ã  charge : {{ $employee->enfant }}<br>
                                 NumÃ©ro CNPS :  {{ $employee->num_cnps }}<br>
                                 AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
-                                CatÃ©gorie : {{$employee->categorieEmp->title}} / {{$employee->sous_categorie}}<br>
+                                CatÃ©gorie : {{ $employee->categorieEmp->title ?? '-' }} / {{$employee->sous_categorie}}<br>
                                 Emploi :   {{ $employee->designation->name ?? '-' }} <br>
                                 Tel / E-mail : {{$employee->phone}} / {{$employee->email}} <br>
                                 Nombre de parts : {{ $employee->parts }}<br>

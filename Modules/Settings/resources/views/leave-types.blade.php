@@ -223,11 +223,7 @@
                     <div class="mb-3">
                         <label class="form-label">Nom du Type de Congé *</label>
                         <input type="text" class="form-control" name="title" required placeholder="Ex: Congé Annuel, Congé Maladie...">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Nombre de Jours *</label>
-                        <input type="number" class="form-control" name="days" required min="1" max="365" placeholder="30">
-                        <small class="text-muted">Nombre de jours alloués par an</small>
+                        <small class="text-muted">La durée d'un congé se calcule à partir de ses dates de début et de fin.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -349,17 +345,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (createForm) {
         createForm.addEventListener('submit', function(e) {
             const title = createForm.querySelector('input[name="title"]').value.trim();
-            const days = createForm.querySelector('input[name="days"]').value;
 
             if (title.length < 2) {
                 e.preventDefault();
                 alert('Le nom du type de congé doit contenir au moins 2 caractères');
-                return;
-            }
-
-            if (days < 1 || days > 365) {
-                e.preventDefault();
-                alert('Le nombre de jours doit être entre 1 et 365');
                 return;
             }
         });

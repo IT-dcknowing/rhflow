@@ -31,6 +31,11 @@
 @endpush
 
 @section('content')
+@php
+    // $retourPeriodeId vient du controleur : periode du conge si elle existe encore,
+    // sinon repli sur la periode ouverte la plus recente de l'entreprise.
+    $retourUrl = route('company.leaves.index') . ($retourPeriodeId ? '?periode_id=' . $retourPeriodeId : '');
+@endphp
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <div class="col-12">
@@ -45,14 +50,14 @@
                                 <a href="{{ route('company.dashboard') }}">Tableau de bord</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('company.leaves.index') }}?periode_id={{$leave->periode_id}}">Gestion des congés</a>
+                                <a href="{{ $retourUrl }}">Gestion des congés</a>
                             </li>
                             <li class="breadcrumb-item active">Détails de la demande #{{ $leave->id }}</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="align-items-center">
-                    <a href="{{ route('company.leaves.index') }}?periode_id={{$leave->periode_id}}" class="btn btn-outline-primary me-2">
+                    <a href="{{ $retourUrl }}" class="btn btn-outline-primary me-2">
                         <i class="fas fa-arrow-left me-2"></i>Retour
                     </a>
                     @if($leave->status == 'Approuvé' || $leave->status == 'Démarré')
@@ -64,6 +69,24 @@
                         <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#actionModal">
                             <i class="fas fa-check me-2"></i> {{ __('Traiter la demande')}}
                         </button>
+                    @endif
+                    @if($leave->isActivable())
+                        @if($leave->is_active)
+                            <form action="{{ route('company.leaves.deactivate', $leave->id) }}"
+                                  method="POST"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Désactiver ce congé ? L\'allocation sortira de la paie de la période. Les bulletins déjà générés ne sont pas modifiés.');">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="fas fa-toggle-off me-2"></i>Désactiver pour la paie
+                                </button>
+                            </form>
+                        @else
+                            <button type="button" class="btn btn-success js-activate-leave"
+                                    data-url="{{ route('company.leaves.activateForm', $leave->id) }}">
+                                <i class="fas fa-toggle-on me-2"></i>Activer pour la paie
+                            </button>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -307,7 +330,48 @@
         </div>
     </div>
 </div>
+
+<!-- Modale d'activation du congé pour la paie (contenu chargé en AJAX) -->
+<div class="modal fade" id="activateLeaveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-toggle-on me-2"></i>Activer le congé pour la paie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div id="activateLeaveModalBody">
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    // Charge le formulaire d'activation (choix de la période + montant) dans la modale.
+    $(document).on('click', '.js-activate-leave', function () {
+        var url = this.getAttribute('data-url');
+        var body = document.getElementById('activateLeaveModalBody');
+        var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('activateLeaveModal'));
+
+        body.innerHTML = '<div class="modal-body text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
+        modal.show();
+
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (response) {
+                if (!response.ok) { throw new Error('HTTP ' + response.status); }
+                return response.text();
+            })
+            .then(function (html) { body.innerHTML = html; })
+            .catch(function () {
+                body.innerHTML = '<div class="modal-body"><div class="alert alert-danger mb-0">Impossible de charger le formulaire d\'activation.</div></div>';
+            });
+    });
+</script>
+@endpush
 
 @push('script')
     <script src="{{ asset('assets/js/plugins/dropzone-amd-module.min.js') }}"></script>

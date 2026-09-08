@@ -15,6 +15,10 @@ Route::middleware(['auth', 'verified'])->prefix('company')->name('company.')->gr
         Route::put('/{loan}', [LoansController::class, 'update'])->name('update');
         Route::delete('/{loan}', [LoansController::class, 'destroy'])->name('destroy');
 
+        // Activation / désactivation d'un prêt pour la paie
+        Route::post('/{loan}/deactivate', [LoansController::class, 'deactivate'])->name('deactivate');
+        Route::post('/{loan}/activate', [LoansController::class, 'activate'])->name('activate');
+
         // Routes pour les rapports et prêts actifs
         Route::get('active-loans', [LoansController::class, 'activeLoans'])->name('active');
         Route::get('loans-report', [LoansController::class, 'report'])->name('report');

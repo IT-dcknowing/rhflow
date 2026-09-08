@@ -39,8 +39,13 @@ class Loan extends Model
 		'statut',
 		'month_paie',
         'is_active',
+        'retenues_backup',
         'prochaine_echeance',
 		'company_id',
+    ];
+
+    protected $casts = [
+        'retenues_backup' => 'array',
     ];
 
     public function employee()

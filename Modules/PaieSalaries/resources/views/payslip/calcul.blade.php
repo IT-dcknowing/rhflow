@@ -494,9 +494,9 @@
                 
                 // Charger le formulaire via AJAX
                 $.ajax({
-                    url: '/company/paiesalaries/allowance/edit/' +
-                        encodeURIComponent(employeeId) + '/' +
-                        encodeURIComponent(periodeId),
+                    url: '{{ route("company.paiesalaries.allowance.edit", [":id", ":periode_id"]) }}'
+                        .replace(':id', encodeURIComponent(employeeId))
+                        .replace(':periode_id', encodeURIComponent(periodeId)),
                     type: 'GET',
                     success: function(response) {
                         $('#modalBodyContentEdit').html(response);
@@ -521,10 +521,10 @@
                 
                 // Charger le formulaire via AJAX
                 $.ajax({
-                    url: '/company/paiesalaries/preview-bulletin/' +
-                        encodeURIComponent(employeeId) + '/' +
-                        encodeURIComponent(exerciceId) + '/' +
-                        encodeURIComponent(periodeId),
+                    url: '{{ route("company.paiesalaries.preview-bulletin", [":id", ":exercice_id", ":periode_id"]) }}'
+                        .replace(':id', encodeURIComponent(employeeId))
+                        .replace(':exercice_id', encodeURIComponent(exerciceId))
+                        .replace(':periode_id', encodeURIComponent(periodeId)),
                     type: 'GET',
                     success: function(response) {
                         $('#modalBodyContentShowBulletin').html(response);

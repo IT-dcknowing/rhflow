@@ -1068,6 +1068,102 @@
                 @endif
             </div>
 
+            {{-- 2 bis. ÉCHÉANCES DE PRÊT --}}
+            @if($loanPayments->count() > 0)
+                <div class="quick-section">
+                    <div class="quick-section-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="quick-section-icon amber"><i class="fas fa-university"></i></div>
+                            <div>
+                                <div class="quick-section-title">Échéances de prêt ({{ $loanPayments->count() }})</div>
+                                <div class="quick-section-sub">
+                                    Appliquez l'échéance du mois pour qu'elle soit retenue sur le bulletin.
+                                    Un prêt n'entre dans la paie que période par période.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-4 pb-4">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Employé</th>
+                                        <th>Prêt</th>
+                                        <th class="text-center">Avancement</th>
+                                        <th class="text-end">Reste dû</th>
+                                        <th class="text-end">Échéance</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($loanPayments as $echeance)
+                                        <tr>
+                                            <td>{{ $echeance->loan->employee->name ?? '-' }}</td>
+                                            <td>
+                                                {{ $echeance->loan->title }}
+                                                @if($echeance->hors_periode)
+                                                    <br>
+                                                    <small class="text-warning">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                                        Hors échéancier ({{ \Carbon\Carbon::parse($echeance->loan->start_date)->format('m/Y') }}
+                                                        → {{ \Carbon\Carbon::parse($echeance->loan->end_date)->format('m/Y') }})
+                                                    </small>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-label-info">
+                                                    {{ $echeance->echeances_payees }} / {{ $echeance->nbre_mois }} mois
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                <strong>{{ number_format($echeance->remaining_amount, 0, ',', ' ') }}</strong> FCFA
+                                            </td>
+                                            <td class="text-end">
+                                                {{ number_format($echeance->amount, 0, ',', ' ') }} FCFA
+                                            </td>
+                                            <td class="text-end">
+                                                @if($echeance->applied)
+                                                    <span class="badge bg-label-success me-1">
+                                                        <i class="fas fa-check me-1"></i>Appliquée
+                                                    </span>
+                                                    @unless(in_array($periode->statut, ['validee', 'payee', 'cloture', 'annulee']))
+                                                        <form action="{{ route('company.paiesalaries.periodes.loanpaiement.retirer', $echeance->loan->id) }}"
+                                                              method="POST" class="d-inline"
+                                                              onsubmit="return confirm('Retirer l\'échéance de ce prêt pour {{ $periode->nom }} ? Le prêt reste actif, il ne sera simplement pas retenu ce mois-ci.');">
+                                                            @csrf
+                                                            <input type="hidden" name="periode_id" value="{{ $periode->id }}">
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                                    title="Ne pas retenir ce prêt sur cette période">
+                                                                <i class="fas fa-ban me-1"></i>Retirer
+                                                            </button>
+                                                        </form>
+                                                    @endunless
+                                                @elseif(in_array($periode->statut, ['validee', 'payee', 'cloture', 'annulee']))
+                                                    <span class="badge bg-label-secondary">Période {{ $periode->statut }}</span>
+                                                @else
+                                                    <form action="{{ route('company.paiesalaries.periodes.loanpaiement', $echeance->loan->id) }}"
+                                                          method="POST" class="d-inline"
+                                                          onsubmit="return confirm('Appliquer une échéance de {{ number_format($echeance->amount, 0, ',', ' ') }} FCFA sur cette période ?');">
+                                                        @csrf
+                                                        <input type="hidden" name="periode_id" value="{{ $periode->id }}">
+                                                        <input type="hidden" name="amount" value="{{ (int) $echeance->amount }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-plus me-1"></i>Appliquer
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- 2. ALERTES --}}
             @if(count($alerts) > 0)
                 <div class="quick-section">

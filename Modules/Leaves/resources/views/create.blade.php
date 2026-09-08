@@ -40,14 +40,14 @@
                                 <a href="{{ route('company.dashboard') }}">Tableau de bord</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('company.leaves.index') }}?periode_id={{$periode->id}}">Gestion des congés</a>
+                                <a href="{{ route('company.leaves.index') }}{{ $periode ? '?periode_id=' . $periode->id : '' }}">Gestion des congés</a>
                             </li>
                             <li class="breadcrumb-item active">Nouvelle demande</li>
                         </ol>
                     </nav>
                 </div>
                 <div>
-                    <a href="{{ route('company.leaves.index') }}?periode_id={{$periode->id}}" class="btn btn-outline-secondary">
+                    <a href="{{ route('company.leaves.index') }}{{ $periode ? '?periode_id=' . $periode->id : '' }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                 </div>
@@ -58,20 +58,42 @@
     <form id="leaveForm" action="{{ route('company.leaves.store') }}" method="POST">
         @csrf
         <div class="row">
-            <input type="hidden" name="periode_id" value="{{$periode->id}}">
+            @if($periode)
+                <input type="hidden" name="periode_id" value="{{ $periode->id }}">
+            @endif
             <div class="col-md-8">
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Nouvelle demande de congé</h5>
                     </div>
                     <div class="card-body">
+                        @unless($periode)
+                            {{-- Arrivée sans période (ex. depuis la fiche employé) : on la fait choisir ici. --}}
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="periode_id" class="form-label">Période de paie <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('periode_id') is-invalid @enderror" id="periode_id" name="periode_id" required>
+                                        <option value="">Sélectionner une période</option>
+                                        @foreach($periodes as $p)
+                                            <option value="{{ $p->id }}" {{ old('periode_id') == $p->id ? 'selected' : '' }}>
+                                                {{ $p->nom }}@if($p->exercice) — {{ $p->exercice->nom }}@endif ({{ ucfirst($p->statut) }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('periode_id')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-text">Période de rattachement du congé. Vous pourrez choisir une autre période au moment de l'activer pour la paie.</div>
+                                </div>
+                            </div>
+                        @endunless
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3">
                                 <label for="employee_id" class="form-label">Employé <span class="text-danger">*</span></label>
                                 <select class="form-select select2 @error('employee_id') is-invalid @enderror" id="employee_id" name="employee_id" required>
                                     <option value="">Sélectionner un employé</option>
                                     @foreach($employees as $employee)
-                                        <option value="{{ $employee->id }}" {{ old('employee_id') == $employee->id ? 'selected' : '' }}>
+                                        <option value="{{ $employee->id }}" {{ old('employee_id', $selectedEmployeeId ?? null) == $employee->id ? 'selected' : '' }}>
                                             {{ $employee->name }} ({{ \Auth::user()->employeeIdFormat($employee->employee_id) ?? 'N/A' }})
                                         </option>
                                     @endforeach
@@ -332,14 +354,13 @@
             </div>
             
             <div class="d-flex justify-content-between mt-4">
-                <a href="{{ route('company.leaves.index') }}?periode_id={{$periode->id}}" class="btn btn-outline-secondary">
+                <a href="{{ route('company.leaves.index') }}{{ $periode ? '?periode_id=' . $periode->id : '' }}" class="btn btn-outline-secondary">
                     <i class="fas fa-times me-1"></i>Annuler
                 </a>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-paper-plane me-1"></i>Soumettre la demande
                 </button>
             </div>
-        </div>
     </form>
 </div>
 @endsection
@@ -416,36 +437,51 @@
             // Convertir la différence en jours
             var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            // Afficher la différence dans le champ "periode_reference"
+            // La période de référence reste l'écart entre le retour du dernier congé et
+            // le début du nouveau : elle alimente le calcul de l'allocation congé.
             document.getElementById('periode_reference').value = diffDays;
-            document.getElementById('nb_jours_conge').value = Math.round((diffDays * 2.2 * 1.25)/30);
-
-            var nbreJours = parseInt($('#nb_jours_conge').val());
-
-            // Ajouter le nombre de jours spécifié à la date de début
-            var endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + nbreJours);
-
-            // Formatage de la date de fin pour l'afficher dans le champ de formulaire
-            var formattedEndDate = endDate.getFullYear() + '-' + ('0' + (endDate.getMonth() + 1)).slice(-2) + '-' + ('0' + endDate.getDate()).slice(-2);
-
-            // Mettre à jour la valeur du champ de formulaire 'end_date' avec la date de fin calculée
-            $('#end_date').val(formattedEndDate);
-
-            if (diffDays > 0) { // Vérifie si les dates sont valides
-                const duration = diffDays;
-
-                $('#summary-period').text(`${startDate} - ${formattedEndDate}`);
-                $('#summary-duration').text(`${duration} jour${duration > 1 ? 's' : ''}`);
-            
-                // Calcul des jours restants (à implémenter avec une requête AJAX si nécessaire)
-                $('#summary-remaining').text('À calculer');
-            }
         } else {
             // Si une des dates est manquante, on efface la période de référence
             document.getElementById('periode_reference').value = '';
-            document.getElementById('nb_jours_conge').value = '';
         }
+
+        updateLeaveDuration();
+    }
+
+    // La durée du congé se déduit uniquement de la date de début et de la date de fin,
+    // bornes incluses, quel que soit le type de congé.
+    function updateLeaveDuration() {
+        var startDate = document.getElementById('start_date').value;
+        var endDate = document.getElementById('end_date').value;
+
+        if (!startDate || !endDate) {
+            document.getElementById('nb_jours_conge').value = '';
+            $('#summary-period').text('-');
+            $('#summary-duration').text('-');
+            return 0;
+        }
+
+        var start = new Date(startDate);
+        var end = new Date(endDate);
+
+        if (end < start) {
+            document.getElementById('nb_jours_conge').value = '';
+            $('#summary-period').text(`${startDate} - ${endDate}`);
+            $('#summary-duration').text('Date de fin antérieure à la date de début');
+            return 0;
+        }
+
+        // Bornes incluses : du 19 au 21 = 3 jours.
+        var duration = Math.round((end - start) / 86400000) + 1;
+
+        document.getElementById('nb_jours_conge').value = duration;
+        $('#summary-period').text(`${startDate} - ${endDate}`);
+        $('#summary-duration').text(`${duration} jour${duration > 1 ? 's' : ''}`);
+
+        // Calcul des jours restants (à implémenter avec une requête AJAX si nécessaire)
+        $('#summary-remaining').text('À calculer');
+
+        return duration;
     }
 
     function fillMonths() {
@@ -701,6 +737,17 @@
     document.getElementById('start_date').addEventListener('change', calculateDateDifference);
     document.getElementById('start_date').addEventListener('change', fillMonths);
 
+    // La date de fin ne pilote que la durée : elle ne change ni la période de référence
+    // ni les mois de la période. On rafraîchit l'allocation seulement si les salaires
+    // ont déjà été chargés par fillMonths(), sinon updateTotalBrut() n'a rien à calculer.
+    document.getElementById('end_date').addEventListener('change', function () {
+        updateLeaveDuration();
+        var cpte = document.getElementById('cpte_salary_brut');
+        if (cpte && cpte.value) {
+            updateTotalBrut();
+        }
+    });
+
     $(document).ready(function() {
         // Fonction pour obtenir la date de retour du dernier congé de l'employé sélectionné
         function leave_end() {
@@ -752,6 +799,12 @@
         $(document).on('change', '#employee_id', function() {
             leave_end();
         });
+
+        // Employé pré-sélectionné (création depuis la liste des employés) :
+        // charger ses données tout de suite, sans attendre un changement de sélection.
+        if ($('#employee_id').val()) {
+            leave_end();
+        }
     });
 
     function showNumberField() {

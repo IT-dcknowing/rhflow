@@ -441,20 +441,33 @@ class PaieSalariesController extends Controller
      */
     public function destroyExercice($id)
     {
-        $exercice = PaieExercice::findOrFail($id);
+        // Cadré sur l'entreprise : un exercice d'une autre société ne doit pas être supprimable.
+        $exercice = PaieExercice::where("company_id", Auth::user()->company_id)->findOrFail($id);
 
-        // Vérifier s'il y a des périodes associées
-        if ($exercice->periodes()->count() > 0) {
+        // Vérifier s'il y a des périodes associées.
+        // La clé étrangère est en cascade : sans ce garde-fou, supprimer l'exercice
+        // emporterait silencieusement toutes ses périodes de paie.
+        $nbPeriodes = $exercice->periodes()->count();
+        if ($nbPeriodes > 0) {
             return back()->with(
                 "error",
-                "Impossible de supprimer cet exercice car il contient des périodes de paie.",
+                "Impossible de supprimer cet exercice : il contient " . $nbPeriodes . " période(s) de paie. "
+                    . "Supprimez-les d'abord.",
             );
         }
 
-        $exercice->delete();
+        try {
+            $exercice->delete();
+        } catch (\Throwable $e) {
+            \Log::error("Suppression de l'exercice impossible", ['exercice_id' => $id, 'error' => $e->getMessage()]);
+            return back()->with(
+                "error",
+                "Impossible de supprimer cet exercice : il est encore référencé par d'autres données.",
+            );
+        }
 
         return redirect()
-            ->route("company.paiesalaries.index")
+            ->route("company.paiesalaries.exercices.index")
             ->with("success", "Exercice supprimé avec succès.");
     }
 
@@ -567,6 +580,7 @@ class PaieSalariesController extends Controller
                     Retenue::create([
                         'periode_id' => $periode->id,
                         'employee_id' => $originalLoan->employee_id,
+                        'loan_id' => $originalLoan->id, // trace le prêt d'origine : sans lui, impossible de retirer la retenue quand le prêt est désactivé
                         'type_retenue_id' => 30, // Code typique pour les prêts
                         'code' => 500,
                         'ordre' => $lastOrder ? $lastOrder->ordre + 1 : 1,
@@ -691,29 +705,41 @@ class PaieSalariesController extends Controller
             $repaymentPercentage = $calculator->calculateRepaymentPercentage($loan);
             $repaymentSchedule = $calculator->generateRepaymentSchedule($loan);
 
-            // Si le prêt n'est pas terminé, ajouter une échéance pour la période suivante
+            // Si le prêt n'est pas terminé, préparer son échéance pour cette période
             if ($remainingAmount > 0) {
                 // Calculer le montant de l'échéance (mensuel ou selon la configuration du prêt)
-                $monthlyAmount = $loan->amount_deduc ?? ($loan->amount / $loan->nbre_mois);
+                $monthlyAmount = $loan->amount_deduc ?: ($loan->amount / max((int) $loan->nbre_mois, 1));
 
                 // Vérifier s'il y a déjà un paiement enregistré pour cette période
                 $existingPayment = $loan->payments()
                     ->where('periode_id', $periode->id)
                     ->first();
 
-                if (!$existingPayment) {
-                    // Créer un objet de paiement virtuel pour l'affichage
-                    $virtualPayment = new \stdClass();
-                    $virtualPayment->id = null;
-                    $virtualPayment->loan = $loan;
-                    $virtualPayment->payment_date = $periode->date_paiement;
-                    $virtualPayment->amount = min($monthlyAmount, $remainingAmount);
-                    $virtualPayment->periode_id = null; // Pas encore appliqué à cette période
-                    $virtualPayment->note = null;
-                    $virtualPayment->is_virtual = true; // Marquer comme virtuel pour la vue
+                $echeance = new \stdClass();
+                $echeance->id = $existingPayment->id ?? null;
+                $echeance->loan = $loan;
+                $echeance->payment_date = $periode->date_paiement;
+                $echeance->amount = $existingPayment->amount ?? min($monthlyAmount, $remainingAmount);
+                $echeance->periode_id = $existingPayment ? $periode->id : null;
+                $echeance->note = $existingPayment->note ?? null;
+                $echeance->is_virtual = !$existingPayment;
 
-                    $loanPayments->push($virtualPayment);
-                }
+                // Données d'affichage de l'échéancier
+                $echeance->total_paid = $totalPaid;
+                $echeance->remaining_amount = $remainingAmount;
+                $echeance->repayment_percentage = $repaymentPercentage;
+                $echeance->echeances_payees = $loan->payments()->count();
+                $echeance->nbre_mois = (int) $loan->nbre_mois;
+                $echeance->applied = (bool) $existingPayment;
+
+                // Le prêt court-il sur cette période ? Un prêt peut être rattaché à une période
+                // sans rapport avec son échéancier réel : on le signale sans bloquer.
+                // start_date / end_date ne sont pas castés sur le modèle Loan, d'où le parse explicite.
+                $echeance->hors_periode =
+                    ($loan->start_date && Carbon::parse($periode->date_fin)->lt(Carbon::parse($loan->start_date)))
+                    || ($loan->end_date && Carbon::parse($periode->date_debut)->gt(Carbon::parse($loan->end_date)));
+
+                $loanPayments->push($echeance);
             }
         }
 
@@ -1808,15 +1834,18 @@ class PaieSalariesController extends Controller
         $company = Company::findOrFail(Auth::user()->company_id);
         $allowances = Allowance::where("company_id", $company->id)
             ->where("employee_id", $employee->id)
+            ->where("periode_id", $periode)
             ->pluck("allowance_option_id")
             ->toArray();
         $countAllowances = Allowance::where("company_id", $company->id)
             ->where("employee_id", $employee->id)
+            ->where("periode_id", $periode)
             ->pluck("allowance_option_id")
             ->count();
         $allowanceEmployee = Allowance::with("allowanceOption")
             ->where("company_id", $company->id)
             ->where("employee_id", $employee->id)
+            ->where("periode_id", $periode)
             ->get();
         $allowancesDefault = AllowanceOption::where("type", "default")->get();
         $allowancesCreated = AllowanceOption::where("type", "created")
@@ -3581,6 +3610,7 @@ public function storeRemboursement(Request $request)
                         Retenue::create([
                             'periode_id' => $periode->id,
                             'employee_id' => $originalLoan->employee_id,
+                            'loan_id' => $originalLoan->id, // trace le prêt d'origine : sans lui, impossible de retirer la retenue quand le prêt est désactivé
                             'type_retenue_id' => 30,
                             'code' => 500,
                             'ordre' => $lastOrder ? $lastOrder->ordre + 1 : 1,
@@ -3678,7 +3708,7 @@ public function storeRemboursement(Request $request)
                     ->first();
 
             if (!$loan) {
-                return response()->json(['error' => 'Prêt non trouvé'], 404);
+                return $this->loanPaiementError($request, 'Prêt non trouvé', 404);
             }
 
             // Récupérer la période depuis le formulaire
@@ -3688,7 +3718,30 @@ public function storeRemboursement(Request $request)
                         ->first();
 
             if (!$periode) {
-                return response()->json(['error' => 'Période non trouvée'], 404);
+                return $this->loanPaiementError($request, 'Période non trouvée', 404);
+            }
+
+            // Une paie déjà générée ou validée ne doit pas être modifiée.
+            if (in_array($periode->statut, ['validee', 'payee', 'cloture', 'annulee'])) {
+                return $this->loanPaiementError(
+                    $request,
+                    'La période « ' . ($periode->nom ?? $periode->id) . ' » est ' . $periode->statut
+                        . ' : sa paie ne peut plus être modifiée.',
+                    400
+                );
+            }
+
+            $payslipExists = PaySlip::where('company_id', $companyId)
+                ->where('employee_id', $loan->employee_id)
+                ->where('periode_id', $periode->id)
+                ->exists();
+
+            if ($payslipExists) {
+                return $this->loanPaiementError(
+                    $request,
+                    'Le bulletin de cet employé est déjà généré pour cette période : la paie émise ne peut plus être modifiée.',
+                    400
+                );
             }
 
             // Vérifier si un paiement existe déjà pour ce prêt et cette période
@@ -3697,7 +3750,7 @@ public function storeRemboursement(Request $request)
                                         ->first();
 
             if ($existingPayment) {
-                return response()->json(['error' => 'Un paiement existe déjà pour ce prêt et cette période'], 400);
+                return $this->loanPaiementError($request, 'Une échéance est déjà appliquée pour ce prêt sur cette période.', 400);
             }
 
             // Obtenir le dernier ordre pour les retenues
@@ -3707,47 +3760,177 @@ public function storeRemboursement(Request $request)
 
             $amount = $request->input('amount', $loan->amount_deduc);
 
-            // Créer le paiement du prêt
-            LoanPayment::create([
-                'loan_id' => $loan->id,
-                'periode_id' => $periode->id,
-                'amount' => $amount,
-                'payment_date' => now(),
-                'note' => $request->input('note', 'Paiement échéance'),
-                'company_id' => $companyId,
-            ]);
+            // Le paiement et la retenue sont indissociables : sans transaction, un échec sur la
+            // retenue laisserait un LoanPayment orphelin, affiché comme "Appliquée" alors que
+            // rien n'est retenu sur le bulletin.
+            \DB::transaction(function () use ($loan, $periode, $amount, $lastOrder, $companyId, $request) {
+                // Créer le paiement du prêt
+                LoanPayment::create([
+                    'loan_id' => $loan->id,
+                    'periode_id' => $periode->id,
+                    'amount' => $amount,
+                    'payment_date' => now(),
+                    'note' => $request->input('note', 'Paiement échéance'),
+                    'company_id' => $companyId,
+                ]);
 
-            // Créer la retenue correspondante
-            Retenue::create([
-                'periode_id' => $periode->id,
-                'employee_id' => $loan->employee_id,
-                'type_retenue_id' => 30, // Type pour prêt
-                'code' => 500, // Code pour prêt
-                'ordre' => $lastOrder ? $lastOrder->ordre + 1 : 1,
-                'patronale' => 0,
-                'salariale' => 1,
-                'base' => $loan->amount,
-                'taux' => $loan->nbre_mois,
-                'libelle' => 'Prêt : ' . ($loan->title ?? 'Non spécifié'),
-                'amount' => $amount,
-                'date_application' => now(),
-                'month_paie' => $periode->date_debut->format('Y-m'),
-                'is_active' => true,
-                'type' => 'add',
-                'company_id' => $companyId,
-            ]);
+                // Créer la retenue correspondante
+                Retenue::create([
+                    'periode_id' => $periode->id,
+                    'employee_id' => $loan->employee_id,
+                    'loan_id' => $loan->id,
+                    'type_retenue_id' => 30, // Type pour prêt
+                    'code' => 500, // Code pour prêt
+                    'ordre' => $lastOrder ? $lastOrder->ordre + 1 : 1,
+                    'patronale' => 0,
+                    'salariale' => 1,
+                    'base' => $loan->amount,
+                    'taux' => $loan->nbre_mois,
+                    'libelle' => 'Prêt : ' . ($loan->title ?? 'Non spécifié'),
+                    'amount' => $amount,
+                    'date_application' => now(),
+                    'month_paie' => $periode->date_debut->format('Y-m'),
+                    'is_active' => true,
+                    'type' => 'add',
+                    'company_id' => $companyId,
+                ]);
+            });
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Paiement enregistré avec succès'
-            ]);
+            $message = 'Échéance de ' . number_format($amount, 0, ',', ' ') . ' FCFA appliquée sur '
+                . ($periode->nom ?? $periode->id) . ' pour ' . ($loan->employee->name ?? 'l\'employé') . '.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+
+            return redirect()->back()->with('success', $message);
 
         } catch (\Exception $e) {
             \Log::error('Erreur lors du paiement du prêt: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Une erreur est survenue lors du traitement du paiement'
-            ], 500);
+
+            // Cas typique d'un déploiement où les migrations n'ont pas été jouées :
+            // le message générique masquait la vraie cause.
+            if (str_contains($e->getMessage(), "Unknown column") || str_contains($e->getMessage(), "1054")) {
+                return $this->loanPaiementError(
+                    $request,
+                    "La base de données n'est pas à jour (colonne manquante). Exécutez « php artisan migrate » sur ce serveur.",
+                    500
+                );
+            }
+
+            return $this->loanPaiementError($request, 'Une erreur est survenue lors du traitement du paiement.', 500);
         }
+    }
+
+    /**
+     * Retire l'échéance d'un prêt sur une période : le prêt n'est pas retenu ce mois-là.
+     * Le prêt reste actif, seule la mensualité du mois est annulée — elle pourra être
+     * réappliquée plus tard sur cette période ou reportée sur la suivante.
+     */
+    public function loanPaiementRetirer(Request $request, $loanId)
+    {
+        try {
+            $companyId = Auth::user()->company_id;
+
+            $loan = Loan::where('id', $loanId)->where('company_id', $companyId)->first();
+            if (!$loan) {
+                return $this->loanPaiementError($request, 'Prêt non trouvé', 404);
+            }
+
+            $periode = PaiePeriode::where('id', $request->input('periode_id'))
+                ->where('company_id', $companyId)
+                ->first();
+            if (!$periode) {
+                return $this->loanPaiementError($request, 'Période non trouvée', 404);
+            }
+
+            // Même règle que pour l'application : une paie émise ne se modifie pas.
+            if (in_array($periode->statut, ['validee', 'payee', 'cloture', 'annulee'])) {
+                return $this->loanPaiementError(
+                    $request,
+                    'La période « ' . ($periode->nom ?? $periode->id) . ' » est ' . $periode->statut
+                        . ' : sa paie ne peut plus être modifiée.',
+                    400
+                );
+            }
+
+            $payslipExists = PaySlip::where('company_id', $companyId)
+                ->where('employee_id', $loan->employee_id)
+                ->where('periode_id', $periode->id)
+                ->exists();
+
+            if ($payslipExists) {
+                return $this->loanPaiementError(
+                    $request,
+                    'Le bulletin de cet employé est déjà généré pour cette période : la paie émise ne peut plus être modifiée.',
+                    400
+                );
+            }
+
+            $payment = LoanPayment::where('loan_id', $loan->id)
+                ->where('periode_id', $periode->id)
+                ->first();
+
+            if (!$payment) {
+                return $this->loanPaiementError($request, "Aucune échéance appliquée pour ce prêt sur cette période.", 400);
+            }
+
+            \DB::beginTransaction();
+            try {
+                // loan_id cible le bon prêt même si l'employé en a plusieurs sur la période.
+                // Les retenues antérieures à la colonne loan_id retombent sur le libellé.
+                Retenue::where('company_id', $companyId)
+                    ->where('periode_id', $periode->id)
+                    ->where('employee_id', $loan->employee_id)
+                    ->where('code', 500)
+                    ->where(function ($query) use ($loan) {
+                        $query->where('loan_id', $loan->id)
+                              ->orWhere(function ($sub) use ($loan) {
+                                  $sub->whereNull('loan_id')
+                                      ->whereIn('libelle', [$loan->title, 'Prêt : ' . $loan->title]);
+                              });
+                    })
+                    ->delete();
+
+                $payment->delete();
+
+                // Un prêt marqué terminé par cette échéance redevient en cours.
+                if ($loan->statut === 'completed') {
+                    $loan->statut = 'running';
+                    $loan->save();
+                }
+
+                \DB::commit();
+            } catch (\Throwable $e) {
+                \DB::rollBack();
+                throw $e;
+            }
+
+            $message = 'Échéance retirée : le prêt « ' . $loan->title . ' » ne sera pas retenu sur '
+                . ($periode->nom ?? $periode->id) . '.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+
+            return redirect()->back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors du retrait de l\'échéance de prêt: ' . $e->getMessage());
+            return $this->loanPaiementError($request, "Une erreur est survenue lors du retrait de l'échéance.", 500);
+        }
+    }
+
+    /**
+     * Réponse d'erreur de loanPaiement : JSON pour les appels AJAX, redirection pour un formulaire.
+     */
+    private function loanPaiementError(Request $request, $message, $status = 400)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => $message], $status);
+        }
+
+        return redirect()->back()->with('error', $message);
     }
 
     /**

@@ -188,12 +188,16 @@
                                                         @endif
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item text-info"
-                                                            href="{{ route('company.contracts.show', $employee->id) }}">
+                                                            href="{{ route('company.contracts.index', ['employee_id' => $employee->id]) }}">
                                                             <i class="fas fa-file-text me-1"></i>Contrats
                                                         </a>
                                                         <a class="dropdown-item text-warning"
-                                                            href="{{ route('company.leaves.show', $employee->id) }}">
+                                                            href="{{ route('company.leaves.index', ['employee_id' => $employee->id]) }}">
                                                             <i class="fas fa-calendar me-1"></i>Congés
+                                                        </a>
+                                                        <a class="dropdown-item text-success"
+                                                            href="{{ route('company.leaves.create', ['employee_id' => $employee->id]) }}">
+                                                            <i class="fas fa-umbrella-beach me-1"></i>Créer un congé
                                                         </a>
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item text-danger" href="#"

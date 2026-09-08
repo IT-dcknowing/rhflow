@@ -28,6 +28,7 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
     Route::post('paiesalaries/periodes/{id}/generer-bulletins', [PaieSalariesController::class, 'genererBulletins'])->name('paiesalaries.periodes.generer-bulletins');
     Route::post('paiesalaries/periodes/{id}/valider-paiement', [PaieSalariesController::class, 'validerPaiement'])->name('paiesalaries.periodes.valider-paiement');
     Route::post('paiesalaries/periodes/loanpaiement/{id}', [PaieSalariesController::class, 'loanPaiement'])->name('paiesalaries.periodes.loanpaiement');
+    Route::post('paiesalaries/periodes/loanpaiement/{id}/retirer', [PaieSalariesController::class, 'loanPaiementRetirer'])->name('paiesalaries.periodes.loanpaiement.retirer');
     Route::post('paiesalaries/periodes/{id}/recopier-primes', [PaieSalariesController::class, 'recopierPrimes'])->name('paiesalaries.periodes.recopier-primes');
 
     // Routes pour le sélecteur global d'exercice et de période

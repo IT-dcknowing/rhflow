@@ -159,9 +159,9 @@ $title = ($leave->employee->gender == 'Male') ? 'Monsieur' : (($leave->employee-
                                     $total = 0;
                                     $total_jours = 0;
                                     $LeaveMonth = '';
-                                    $salaires = json_decode($leave->sb_leave, true);
-                                    $jours = json_decode($leave->days_leave, true);
-                                    $monthsLeave = json_decode($leave->month_leave, true);
+                                    $salaires = !empty($leave->sb_leave) ? (array) json_decode($leave->sb_leave, true) : [];
+                                    $jours = !empty($leave->days_leave) ? (array) json_decode($leave->days_leave, true) : [];
+                                    $monthsLeave = !empty($leave->month_leave) ? (array) json_decode($leave->month_leave, true) : [];
                                 @endphp
 
                                 @foreach ($monthsLeave as $moisNum => $moisDate)
