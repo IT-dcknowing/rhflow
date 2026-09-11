@@ -106,9 +106,6 @@
                         <a href="{{ request()->fullUrlWithQuery(['period' => 'quarter']) }}" class="btn btn-outline-primary {{ $period === 'quarter' ? 'active' : '' }}">Trimestre</a>
                         <a href="{{ request()->fullUrlWithQuery(['period' => 'year']) }}" class="btn btn-outline-primary {{ $period === 'year' ? 'active' : '' }}">Année</a>
                     </div>
-                    <button class="btn btn-outline-warning" onclick="window.location.reload()">
-                        <i class="fas fa-sync-alt me-1"></i>Actualiser
-                    </button>
                 </div>
             </div>
         </div>

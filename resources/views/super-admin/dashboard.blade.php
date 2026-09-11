@@ -1,6 +1,6 @@
 @extends('layouts.super-admin')
 
-@section('title', 'Dashboard Super Admin - RH Flow')
+@section('title', 'Tableau de bord Super Admin - RH Flow')
 
 @section('content')
 <!-- Header Dashboard -->
@@ -12,10 +12,6 @@
                 <p class="text-muted mb-0">Voici un aperçu de votre système RH Flow</p>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary bg-label-primary" onclick="window.location.reload()">
-                    <i class="ti ti-refresh me-2"></i>
-                    Actualiser
-                </button>
                 <a href="{{ route('super-admin.enterprises.create') }}" class="btn btn-primary">
                     <i class="ti ti-plus me-2"></i>
                     Nouvelle Entreprise
@@ -622,7 +618,7 @@
             });
         });
 
-        console.log('Dashboard Super Admin chargé avec succès ✅');
+        console.log('Tableau de bord Super Admin chargé avec succès ✅');
     });
 
     // Auto-dismiss notifications after 5 seconds

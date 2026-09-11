@@ -20,7 +20,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Dashboard Entreprise - RH Flow')
+@section('title', 'Tableau de bord Entreprise - RH Flow')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">

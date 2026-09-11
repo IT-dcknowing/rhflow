@@ -212,9 +212,6 @@
                             <div class="col-12">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="mb-0">Pièces jointes</h5>
-                                    <button type="button" class="btn btn-sm btn-outline-primary" id="refreshAttachments">
-                                        <i class="fas fa-sync-alt me-1"></i> Actualiser
-                                    </button>
                                 </div>
                                 
                                 @if($meeting->attachments->isNotEmpty())

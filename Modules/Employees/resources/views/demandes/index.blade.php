@@ -81,7 +81,6 @@
                                             <table class="table table-sm" id="demandeEmployees">
                                                 <thead>
                                                     <tr>
-                                                        <th>ID</th>
                                                         <th>Employés</th>
                                                         <th>Catégorie</th>
                                                         <th>Période</th>
@@ -92,7 +91,6 @@
                                                 <tbody>
                                                     @foreach($demandes as $demande)
                                                         <tr>
-                                                            <td><span class="badge bg-info">{{ \Auth::user()->employeeIdFormat($demande->employee?->employee_id ?? 'N/A') }}</span></td>
                                                             <td>{{ $demande->employee?->name ?? 'Salarié introuvable' }}</td>
                                                             <td>{{ getCategorieLabel($demande->categorie_demandes) }}</td>
                                                             <td>{{ \Carbon\Carbon::parse($demande->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($demande->end_date)->format('d/m/Y') }}</td>
@@ -183,7 +181,7 @@
         // Initialisation de DataTable
         var table = $('#demandeEmployees').DataTable({
             responsive: true,
-            order: [[1, 'desc']],
+            order: [[0, 'desc']],
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
             },

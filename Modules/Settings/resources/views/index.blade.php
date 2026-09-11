@@ -19,9 +19,6 @@
                         </small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-primary" onclick="refreshSettings()">
-                            <i class="fas fa-refresh me-1"></i>Actualiser
-                        </button>
                         <a href="{{ route('company.settings.config.end') }}" class="btn btn-outline-success">
                             <i class="fas fa-check me-1"></i>Terminer la configuration
                         </a>

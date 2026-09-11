@@ -80,7 +80,6 @@
                         <table id="announcementsTable" class="table table-hover table-striped w-100">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="5%">ID</th>
                                     <th width="25%">Titre</th>
                                     <th width="15%">Période</th>
                                     <th width="15%">Succursale</th>
@@ -92,7 +91,6 @@
                             <tbody>
                                 @forelse($announcements as $announcement)
                                     <tr>
-                                        <td>#{{ str_pad($announcement->id, 4, '0', STR_PAD_LEFT) }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
@@ -191,7 +189,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">
+                                        <td colspan="6" class="text-center">
                                             <div class="empty-state">
                                                 <i class="fas fa-bullhorn fa-3x text-muted mb-3"></i>
                                                 <h4 class="h5">Aucune annonce trouvée</h4>
@@ -373,9 +371,9 @@
                  "<'row'<'col-sm-12'tr>>" +
                  "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
             pageLength: 10,
-            order: [[0, 'desc']],
+            order: [[1, 'desc']],
             columnDefs: [
-                { orderable: false, targets: [5, 6] } // Désactiver le tri sur les colonnes Statut et Actions
+                { orderable: false, targets: [4, 5] } // Désactiver le tri sur les colonnes Statut et Actions
             ]
         });
         
@@ -404,12 +402,12 @@
             if (status) {
                 const now = new Date();
                 
-                table.column(5).search(status, true, false).draw();
+                table.column(4).search(status, true, false).draw();
             }
             
             // Filtrer par succursale
             if (branchId) {
-                table.column(3).search(branchId, true, false).draw();
+                table.column(2).search(branchId, true, false).draw();
             }
             
             // Masquer les filtres après application

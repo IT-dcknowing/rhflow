@@ -1,5 +1,5 @@
 @php
-    // RÃ©cupÃ©rer les donnÃ©es depuis le paySlip
+    // Récupérer les données depuis le paySlip
     $allowances = json_decode($paySlip->allowances ?? '[]', true);
     $retenues = json_decode($paySlip->retenues ?? '[]', true);
 
@@ -25,7 +25,7 @@
     $amount_avtg = $paySlip->avtg_real ?? 0;
     $compte = 1;
 
-    // Calculer l'anciennetÃ©
+    // Calculer l'ancienneté
     $date_embauche = new DateTime($paySlip->employee->company_doj ?? date('Y-m-d'));
     $date_actuelle = new DateTime(date('Y-m-d'));
     $difference = $date_embauche->diff($date_actuelle);
@@ -38,16 +38,16 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- En-tÃªte de la page -->
+    <!-- En-tête de la page -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h4 class="mb-1">ðŸ“‹ Gestion des Bulletins de Paie</h4>
-                    <p class="text-muted mb-0">Consultez et modifiez les bulletins de paie gÃ©nÃ©rÃ©s</p>
+                    <p class="text-muted mb-0">Consultez et modifiez les bulletins de paie générés</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ ucfirst(Carbon\Carbon::now()->locale('fr_FR')->isoFormat('dddd D MMMM YYYY')) }} â€¢
+                        {{ ucfirst(Carbon\Carbon::now()->locale('fr_FR')->isoFormat('dddd D MMMM YYYY')) }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ Carbon\Carbon::now()->locale('fr_FR')->isoFormat('HH:mm') }}
                     </small>
@@ -69,7 +69,7 @@
                     <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#bull3show" id="affichebull3"><i class="ti ti-note ti-xs me-1"></i> Bulletin 3</a></li>
                     <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#bull4show" id="affichebull4"><i class="ti ti-note ti-xs me-1"></i> Bulletin 4</a></li>
                 </ul>
-                <h5 class="mb-0">PÃ©riode : {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</h5>
+                <h5 class="mb-0">Période : {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</h5>
             </div>
         </div>
         <hr>
@@ -82,21 +82,21 @@
                         <div>
                             <a href="#" onclick="window.print()"
                                 class="btn btn-success">
-                                <i class="fas fa-download me-2"></i>TÃ©lÃ©charger PDF
+                                <i class="fas fa-download me-2"></i>Télécharger PDF
                             </a>
                         </div>
                     </div>
                     <div class="card-body" id="payslipContent">
                         <div class="table-responsive mb-4">
                             <table class="table table-sm mb-4" style="font-family: Arial; font-size: 18px;">
-                                <!-- En-tÃªte du bulletin -->
+                                <!-- En-tête du bulletin -->
                                 <tr class="table-success">
                                     <td colspan="9" class="text-center">
                                         <h4 style="font-size: 24px;"><strong>BULLETIN DE PAIE</strong></h4>
-                                        <p class="mb-1">PÃ©riode: {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</p>
+                                        <p class="mb-1">Période: {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</p>
                                     </td>
                                 </tr>
-                                <!-- Informations employÃ© -->
+                                <!-- Informations employé -->
                                 <tr class="table-primary">
                                     <td colspan="3">
                                         EMPLOYEUR
@@ -109,28 +109,28 @@
                                     <td colspan="3">
                                         Nom :  {{ $paySlip->nom_etp ?? 'Entreprise' }}<br>
                                         Adresse :  {{ $paySlip->adresse_etp ?? 'N/A' }}<br>
-                                        TÃ©lÃ©phone : {{ $paySlip->phone_etp ?? 'N/A' }}<br>
+                                        Téléphone : {{ $paySlip->phone_etp ?? 'N/A' }}<br>
                                         Boite postale :  {{ $paySlip->btp_etp ?? 'N/A' }}<br>
                                         Horaire mensuelle :  173,33<br>
-                                        Nombre de jours travaillÃ©s : {{ $paySlip->nbre_jour ?? 30 }} <br>
+                                        Nombre de jours travaillés : {{ $paySlip->nbre_jour ?? 30 }} <br>
                                         Grille salariale : <strong>{{ $paySlip->categories_emp ?? 'N/A' }}</strong><br>
                                     </td>
                                     <td colspan="6">
-                                        Nom et PrÃ©nom :  {{ $paySlip->employee->name ?? 'N/A' }}<br>
+                                        Nom et Prénom :  {{ $paySlip->employee->name ?? 'N/A' }}<br>
                                         Adresse :  {{ $paySlip->address_emp ?? 'N/A' }}<br>
                                         Situation matrimoniale : {{ $paySlip->situation_emp ?? 'N/A' }}<br>
-                                        Enfants Ã  charge : {{ $paySlip->enfant_emp ?? 0 }}<br>
-                                        NumÃ©ro CNPS :  {{ $paySlip->num_cnps_emp ?? 'N/A' }}<br>
-                                        AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
-                                        CatÃ©gorie : {{ $paySlip->categories_emp ?? 'N/A' }}<br>
+                                        Enfants à charge : {{ $paySlip->enfant_emp ?? 0 }}<br>
+                                        Numéro CNPS :  {{ $paySlip->num_cnps_emp ?? 'N/A' }}<br>
+                                        Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
+                                        Catégorie : {{ $paySlip->categories_emp ?? 'N/A' }}<br>
                                         Emploi :   {{ $paySlip->emploi ?? 'N/A' }} <br>
                                         Tel / E-mail : {{ $paySlip->phone_emp ?? 'N/A' }} <br>
                                         Nombre de parts : {{ $paySlip->parts_emp ?? 1 }}<br>
                                     </td>
                                 </tr>
                                 <tr class="table-success">
-                                    <th width="5%" rowspan="2" class="text-center align-middle">NÂ°</th>
-                                    <th width="25%" rowspan="2" class="text-center align-middle">DÃ‰SIGNATION</th>
+                                    <th width="5%" rowspan="2" class="text-center align-middle">N°</th>
+                                    <th width="25%" rowspan="2" class="text-center align-middle">DÉSIGNATION</th>
                                     <th width="5%" rowspan="2" class="text-center align-middle">NOMBRE</th>
                                     <th rowspan="2" class="text-center align-middle">BASE JOURNALIÈRE</th>
                                     <th colspan="3" class="text-center align-middle">PART SALARIALE</th>
@@ -246,7 +246,7 @@
                                         </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="9" class="text-center">Aucune dÃ©duction</td>
+                                        <td colspan="9" class="text-center">Aucune déduction</td>
                                     </tr>
                                     @endforelse
                                     <tr class="table-danger">
@@ -279,7 +279,7 @@
                             </table>
 
                             <table class="table table-sm" style="font-family: Arial; font-size: 18px;">
-                                <!-- RÃ©capitulatif final -->
+                                <!-- Récapitulatif final -->
                                 <tr class="table-success text-center">
                                     <td>Cumuls</td>
                                     <td>Salaire brut</td>
@@ -287,14 +287,14 @@
                                     <td>Charges patronales</td>
                                     <td>Avantages en nature</td>
                                     <td>Net imposable</td>
-                                    <td>Heures travaillÃ©es</td>
-                                    <td>Heures<br/>supplÃ©mentaires</td>
+                                    <td>Heures travaillées</td>
+                                    <td>Heures<br/>supplémentaires</td>
                                     <td>NET A PAYER</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center">
-                                        PÃ©riode<hr/>
-                                        AnnÃ©e
+                                        Période<hr/>
+                                        Année
                                     </td>
                                     <td class="text-center">
                                         {{number_format($paySlip->salary_brut ?? 0, 0 ,'.',' ')}}<hr/>
@@ -327,8 +327,8 @@
                         <!-- Signature -->
                         <div class="row mt-5">
                             <div class="col-md-8 align-items-center" style="color:#000;">
-                                <b><i>PayÃ© par : {{ $paySlip->type_paiement ?? '-' }} </i></b><br>
-                                <i> Pour vous aider Ã  faire valoir vos droits, conservez ce bulletin de paie sans limitation de durÃ©e.</i>
+                                <b><i>Payé par : {{ $paySlip->type_paiement ?? '-' }} </i></b><br>
+                                <i> Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.</i>
                             </div>
                             <div class="col-md-4 text-center">
                                 <p>Le {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</p>
@@ -350,7 +350,7 @@
                             <button class="btn btn-success" onclick="$('.logoBull4').show();">{{ __('Avec logo') }}</button>
                             <button class="btn btn-warning" onclick="$('.logoBull4').hide();">{{ __('Sans logo') }}</button>
                             <a href="#" onclick="window.print()" class="btn btn-success ms-2">
-                                <i class="fas fa-download me-2"></i>TÃ©lÃ©charger PDF
+                                <i class="fas fa-download me-2"></i>Télécharger PDF
                             </a>
                         </div>
                     </div>
@@ -367,7 +367,7 @@
                             <tr>
                                 <td colspan="9" style="background-color: {{ isset($company) ? ($company->getThemeHeaderBgColor() ?? '#8c6b5d') : '#8c6b5d' }}; color: {{ isset($company) ? (($company->getThemeHeaderBgColor() ?? '#8c6b5d') == '#ffffff' ? '#000000' : '#ffffff') : '#ffffff' }}; text-align: center; padding: 10px; border: 1px solid #000;">
                                     <h2 style="margin: 0; font-size: 18px;">BULLETIN DE PAIE</h2>
-                                    <p style="margin: 5px 0 0 0;">PÃ©riode : {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</p>
+                                    <p style="margin: 5px 0 0 0;">Période : {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</p>
                                 </td>
                             </tr>
 
@@ -386,21 +386,21 @@
                                 <td colspan="4" style="border: 1px solid #000; padding: 5px; vertical-align: top;">
                                     <strong>Nom :</strong> {{ $paySlip->nom_etp ?? 'Entreprise' }}<br>
                                     <strong>Adresse :</strong> {{ $paySlip->adresse_etp ?? 'N/A' }}<br>
-                                    <strong>TÃ©lÃ©phone :</strong> {{ $paySlip->phone_etp ?? 'N/A' }}<br>
-                                    <strong>BoÃ®te postale :</strong> {{ $paySlip->btp_etp ?? 'N/A' }}<br>
+                                    <strong>Téléphone :</strong> {{ $paySlip->phone_etp ?? 'N/A' }}<br>
+                                    <strong>Boîte postale :</strong> {{ $paySlip->btp_etp ?? 'N/A' }}<br>
                                     <strong>Nombre de parts :</strong> {{ $paySlip->parts_emp ?? 1 }}<br>
                                     <strong>Horaire mensuelle :</strong> 173,33<br>
-                                    <strong>Nombre de jours travaillÃ©s :</strong> {{ $paySlip->nbre_jour ?? 30 }}<br>
+                                    <strong>Nombre de jours travaillés :</strong> {{ $paySlip->nbre_jour ?? 30 }}<br>
                                     <strong>Grille salariale :</strong> {{ $paySlip->categories_emp ?? 'N/A' }}
                                 </td>
                                 <td colspan="5" style="border: 1px solid #000; padding: 5px; vertical-align: top;">
-                                    <strong>Nom et PrÃ©nom :</strong> {{ $paySlip->employee->name ?? 'N/A' }}<br>
+                                    <strong>Nom et Prénom :</strong> {{ $paySlip->employee->name ?? 'N/A' }}<br>
                                     <strong>Adresse :</strong> {{ $paySlip->address_emp ?? 'N/A' }}<br>
                                     <strong>Situation matrimoniale :</strong> {{ $paySlip->situation_emp ?? 'N/A' }}<br>
-                                    <strong>Enfants Ã  charge :</strong> {{ $paySlip->enfant_emp ?? 0 }}<br>
-                                    <strong>NumÃ©ro CNPS :</strong> {{ $paySlip->num_cnps_emp ?? 'N/A' }}<br>
-                                    <strong>AnciennetÃ© :</strong> {{$date_pa}} an(s) et {{$date_m}} mois<br>
-                                    <strong>CatÃ©gorie :</strong> {{ $paySlip->categories_emp ?? 'N/A' }}<br>
+                                    <strong>Enfants à charge :</strong> {{ $paySlip->enfant_emp ?? 0 }}<br>
+                                    <strong>Numéro CNPS :</strong> {{ $paySlip->num_cnps_emp ?? 'N/A' }}<br>
+                                    <strong>Ancienneté :</strong> {{$date_pa}} an(s) et {{$date_m}} mois<br>
+                                    <strong>Catégorie :</strong> {{ $paySlip->categories_emp ?? 'N/A' }}<br>
                                     <strong>Emploi :</strong> {{ $paySlip->emploi ?? 'N/A' }}<br>
                                     <strong>Tel / E-mail :</strong> {{ $paySlip->phone_emp ?? 'N/A' }}
                                 </td>
@@ -408,8 +408,8 @@
 
                             <!-- LIGNE 4 & 5 : EN-TETES COLONNES GAINS / RETENUES -->
                             <tr style="background-color: {{ isset($company) ? ($company->getThemeSecondaryColor() ?? '#e0e0e0') : '#e0e0e0' }}; color: {{ isset($company) ? (($company->getThemeSecondaryColor() ?? '#e0e0e0') == '#ffffff' ? '#000000' : '#ffffff') : '#000000' }}; text-align: center; font-weight: bold;">
-                                <td rowspan="2" style="width: 5%; border: 1px solid #000; padding: 5px;">NÂ°</td>
-                                <td rowspan="2" style="width: 30%; border: 1px solid #000; padding: 5px;">DÃ‰SIGNATION</td>
+                                <td rowspan="2" style="width: 5%; border: 1px solid #000; padding: 5px;">N°</td>
+                                <td rowspan="2" style="width: 30%; border: 1px solid #000; padding: 5px;">DÉSIGNATION</td>
                                 <td rowspan="2" style="width: 5%; border: 1px solid #000; padding: 5px;">NOMBRE</td>
                                 <td rowspan="2" style="width: 10%; border: 1px solid #000; padding: 5px;">BASE</td>
                                 <td colspan="3" style="width: 30%; border: 1px solid #000; padding: 5px;">PART SALARIALE</td>
@@ -532,12 +532,12 @@
                                 <td style="border: 1px solid #000; padding: 5px;">Charges<br>patronales</td>
                                 <td style="border: 1px solid #000; padding: 5px;">Avantages en<br>nature</td>
                                 <td style="border: 1px solid #000; padding: 5px;">Net Imposable</td>
-                                <td style="border: 1px solid #000; padding: 5px;">Heures<br>travaillÃ©es</td>
+                                <td style="border: 1px solid #000; padding: 5px;">Heures<br>travaillées</td>
                                 <td style="border: 1px solid #000; padding: 5px;">Heures<br>supp</td>
                                 <td style="border: 1px solid #000; padding: 5px;">NET A PAYER</td>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">PÃ©riode</td>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">Période</td>
                                 <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$paySlip->salary_brut ?? 0, 0, '.', ' ')}}</td>
                                 <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$totalretenuessal, 0, '.', ' ')}}</td>
                                 <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$totalretenuesemp, 0, '.', ' ')}}</td>
@@ -550,7 +550,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">AnnÃ©e</td>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">Année</td>
                                 <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$paySlip->salary_brut ?? 0, 0, '.', ' ')}}</td>
                                 <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$totalretenuessal, 0, '.', ' ')}}</td>
                                 <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$totalretenuesemp, 0, '.', ' ')}}</td>
@@ -564,11 +564,11 @@
                         <!-- FOOTER NOTE & SIGNATURE -->
                         <div class="row mt-5">
                             <div class="col-md-8 align-items-center" style="color:#000;">
-                                <b><i>PayÃ© par : {{ $paySlip->type_paiement ?? '-' }} </i></b><br>
-                                <i> Pour vous aider Ã  faire valoir vos droits, conservez ce bulletin de paie sans limitation de durÃ©e.</i>
+                                <b><i>Payé par : {{ $paySlip->type_paiement ?? '-' }} </i></b><br>
+                                <i> Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.</i>
                             </div>
                             <div class="col-md-4 text-center">
-                                <p>Fait Ã  {{ $paySlip->adresse_etp ?? 'Lieu' }}, le {{ \Carbon\Carbon::parse($periode->date_fin)->day(25)->format('d/m/Y') }}</p>
+                                <p>Fait à {{ $paySlip->adresse_etp ?? 'Lieu' }}, le {{ \Carbon\Carbon::parse($periode->date_fin)->day(25)->format('d/m/Y') }}</p>
                                 <p><strong> LA DIRECTION </strong></p>
                                 <p class="border-top pt-2">Signature</p>
                             </div>
@@ -588,18 +588,18 @@
 <script>
     // Gestion des onglets de bulletins
     $(document).ready(function() {
-        // Afficher le bulletin 1 par dÃ©faut
+        // Afficher le bulletin 1 par défaut
         $('#bull1show').addClass('show active');
         $('#affichebull1').addClass('active');
 
-        // Fonction pour gÃ©rer l'affichage des bulletins
+        // Fonction pour gérer l'affichage des bulletins
         function showBulletin(bulletinId, tabLink) {
             $('.tab-pane').removeClass('show active').hide(); // Masquer tous les bulletins
             $('.nav-link').removeClass('active'); // Retirer active des onglets
 
-            // Afficher le bulletin spÃ©cifiÃ©
+            // Afficher le bulletin spécifié
             $(bulletinId).addClass('show active').show();
-            $(tabLink).addClass('active'); // Ajouter active Ã  l'onglet cliquÃ©
+            $(tabLink).addClass('active'); // Ajouter active à l'onglet cliqué
         }
 
         // Gestion des clics sur les onglets

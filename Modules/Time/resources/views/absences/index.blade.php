@@ -222,7 +222,7 @@ use Carbon\Carbon;
                 <div class="modal-body" id="showAbsenceModalBody">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">Chargement…</span>
                         </div>
                     </div>
                 </div>
@@ -244,7 +244,7 @@ use Carbon\Carbon;
                 <div class="modal-body" id="editAbsenceModalBody">
                     <div class="text-center py-4">
                         <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">Chargement…</span>
                         </div>
                     </div>
                 </div>

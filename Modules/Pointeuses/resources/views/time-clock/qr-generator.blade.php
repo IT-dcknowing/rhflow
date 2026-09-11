@@ -321,7 +321,7 @@
 
                 $('.department_id').empty();
                 var emp_selct = `<select class="form-select department_id" name="department_id" id="choices-multiple"
-                                        placeholder="Select Department" required>
+                                        placeholder="Sélectionner un département" required>
                                         </select>`;
                 $('.department_div').html(emp_selct);
 

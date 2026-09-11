@@ -811,19 +811,19 @@
                         <a href="{{ route('company.dashboard') }}"
                             class="sidebar-main-item {{ Request::route()->getName() == 'company.dashboard' ? 'active' : '' }}">
                             <div class="item-icon"><i class="fas fa-home"></i></div>
-                            <span class="item-label">Dashboard Entreprise</span>
+                            <span class="item-label">Tableau de bord Entreprise</span>
                         </a>
                     @elseif($estRh || $estPaie)
                         <a href="{{ route('hr.dashboard') }}"
                             class="sidebar-main-item {{ Request::route()->getName() == 'hr.dashboard' ? 'active' : '' }}">
                             <div class="item-icon"><i class="fas fa-home"></i></div>
-                            <span class="item-label">Dashboard RH/Paie</span>
+                            <span class="item-label">Tableau de bord RH/Paie</span>
                         </a>
                     @elseif($typeUtilisateur === 'employee')
                         <a href="{{ route('employee.dashboard') }}"
                             class="sidebar-main-item {{ Request::route()->getName() == 'employee.dashboard' ? 'active' : '' }}">
                             <div class="item-icon"><i class="fas fa-home"></i></div>
-                            <span class="item-label">Dashboard Employé</span>
+                            <span class="item-label">Tableau de bord Employé</span>
                         </a>
                     @endif
 

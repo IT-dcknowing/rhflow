@@ -83,7 +83,6 @@
                                         <table class="table table-sm table-bordered" id="retenuesTableDefault">
                                             <thead>
                                                 <tr>
-                                                    <th>#</th>
                                                     <th>Employé</th>
                                                     <th>Salaire Brut Imposable</th>
                                                     <th>Salaire Brut Social</th>
@@ -96,7 +95,6 @@
                                             <tbody>
                                                 @forelse($employees as $employee)
                                                     <tr>
-                                                        <td>{{ $loop->iteration }}</td>
                                                         <td>
                                                             {{ $employee->name }}<br>
                                                             <span class="text-muted badge bg-label-success">-
@@ -160,7 +158,7 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="8" class="text-center">Aucune retenue trouvée</td>
+                                                        <td colspan="7" class="text-center">Aucune retenue trouvée</td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>
@@ -173,7 +171,6 @@
                                         <table class="table table-hover" id="retenuesTableCreated">
                                             <thead>
                                                 <tr>
-                                                    <th>#</th>
                                                     <th>Code</th>
                                                     <th>Libellé</th>
                                                     <th>Type</th>
@@ -186,7 +183,6 @@
                                             <tbody>
                                                 @forelse($retenues as $retenue)
                                                     <tr>
-                                                        <td>{{ $loop->iteration }}</td>
                                                         <td>
                                                             {{$retenue->code ? $retenue->code : '-'}}
                                                         </td>
@@ -262,7 +258,7 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="7" class="text-center">Aucune retenue enregistrée</td>
+                                                        <td colspan="6" class="text-center">Aucune retenue enregistrée</td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>
@@ -561,7 +557,7 @@
             // Initialisation de DataTable
             $('#retenuesTableDefault').DataTable({
                 responsive: true,
-                order: [[0, 'desc']],
+                order: [[0, 'asc']],
                 language: {
                     url: "{{ asset('libs/datatables/i18n/fr-FR.json') }}"
                 }

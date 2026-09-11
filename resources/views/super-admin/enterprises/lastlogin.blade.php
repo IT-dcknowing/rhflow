@@ -18,9 +18,6 @@
                         </small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-primary bg-primary text-white" onclick="refreshData()">
-                            <i class="ti ti-refresh me-1"></i>Actualiser
-                        </button>
                         <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-primary bg-label-primary">
                             <i class="ti ti-arrow-left me-1"></i>Toutes les entreprises
                         </a>

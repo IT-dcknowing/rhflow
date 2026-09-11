@@ -20,10 +20,6 @@
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour aux abonnements
                     </a>
-                    <button class="btn btn-outline-secondary" onclick="refreshHistory()">
-                        <i class="ti ti-refresh me-2"></i>
-                        Actualiser
-                    </button>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 @php
     use Carbon\Carbon;
     $plan = Utility::getChatGPTSettings();
-    // DÃ©finir la locale en franÃ§ais
+    // Définir la locale en français
     setlocale(LC_TIME, 'fr_FR.utf8');
     $date_trait = Carbon::parse($monthpaie);
 @endphp
@@ -15,7 +15,7 @@
     $getleave = $employee->get_allo_conge();
 	$nbre_jours = intval($employee->get_jours_work());
 	$total_sbi = $employee->get_salary_imposable();
-	//calculons les charges des employÃ©s
+	//calculons les charges des employés
 	$cmu = $employee->cmu;
 	$resultricf = 0;
 	if($cmu < 7){
@@ -97,7 +97,7 @@
 			$tot5 = (((75000*0)/100)+((165000*16)/100)+((560000*21)/100)+((1600000*24)/100)+((5600000*28)/100)+(($mt5*32)/100));
 			$resultimpricf = round($tot5);
 		}
-		// Fix: Table 2023 certifiÃ©e
+		// Fix: Table 2023 certifiée
 		$p = (float) str_replace(',', '.', $employee->parts);
 		$fixedTable = [
 			"1"   => 0, "1.5" => 5500, "2"   => 11000, "2.5" => 16500,
@@ -145,7 +145,7 @@
 			$tot5 = (((75000*0)/100)+((165000*16)/100)+((560000*21)/100)+((1600000*24)/100)+((5600000*28)/100)+(($mt5*32)/100));
 			$resultimpricf = round($tot5);
 		}
-		// Fix: Table 2023 certifiÃ©e
+		// Fix: Table 2023 certifiée
 		$p = (float) str_replace(',', '.', $employee->parts);
 		$fixedTable = [
 			"1"   => 0, "1.5" => 5500, "2"   => 11000, "2.5" => 16500,
@@ -194,7 +194,7 @@
 			$tot5 = (((2500*0)/100)+((5500*16)/100)+((18667*21)/100)+((53333*24)/100)+((186667*28)/100)+(($mt5*32)/100));
 			$resultimpricf = round($tot5*$nbre_jours);
 		}
-		// Fix: Table 2023 certifiÃ©e avec proratisation
+		// Fix: Table 2023 certifiée avec proratisation
 		$p = (float) str_replace(',', '.', $employee->parts);
 		$fixedTable = [
 			"1"   => 0, "1.5" => 5500, "2"   => 11000, "2.5" => 16500,
@@ -255,11 +255,11 @@
 	}
 
 	if($employee->martalstatu_id == '1'){
-		$situation = 'CÃ©libataire';
+		$situation = 'Célibataire';
 	}else if($employee->martalstatu_id == '2'){
-		$situation = 'MariÃ©(e)';
+		$situation = 'Marié(e)';
 	}else if($employee->martalstatu_id == '3'){
-		$situation = 'DivorcÃ©(e)';
+		$situation = 'Divorcé(e)';
 	}else if($employee->martalstatu_id == '4'){
 		$situation = 'Veuf(ve)';
 	}
@@ -269,7 +269,7 @@
 		$compte=1;
 	}else{
 		foreach ($payslipss as $payslip) {
-			// Vous pouvez maintenant accÃ©der Ã  la propriÃ©tÃ© 'salary_month' en toute sÃ©curitÃ©
+			// Vous pouvez maintenant accéder à la propriété 'salary_month' en toute sécurité
 			$salaryMonth = $payslip->salary_month;
 			$compte++;
 		}
@@ -350,7 +350,7 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('Accueil') }}</a></li>
-    <li class="breadcrumb-item">{{ __('DÃ©tails de l\'employÃ©') }}</li>
+    <li class="breadcrumb-item">{{ __('Détails de l\'employé') }}</li>
 @endsection
 
 @section('content')
@@ -367,53 +367,53 @@
             <h5 class="mb-0" style="color:#fff;">{{ __('Mois de traitement : ') }} <strong>{{$date_trait->formatLocalized('%B %Y')}}</strong></h5>
         </div>
         <div class="col-2 text-end">
-            <a href="{{ route('payslip.payslipmonths', ['monthpaie' => $monthpaie]) }}" class="btn btn-secondary">Allez Ã  l'Etat de paie</a>
+            <a href="{{ route('payslip.payslipmonths', ['monthpaie' => $monthpaie]) }}" class="btn btn-secondary">Allez à l'Etat de paie</a>
         </div>
     </div>
     @php
-        // VÃ©rifier que la collection des employÃ©s prÃ©cÃ©dents n'est pas vide
+        // Vérifier que la collection des employés précédents n'est pas vide
         if ($employeeprevious->isNotEmpty()) {
-            // Trouver l'index de l'employÃ© actuel
+            // Trouver l'index de l'employé actuel
             $currentEmployeeIndex2 = $employeeprevious->search(function ($emp) use ($employee) {
                 return $emp->id === $employee->id;
             });
-            // VÃ©rifier que l'employÃ© actuel a Ã©tÃ© trouvÃ©
+            // Vérifier que l'employé actuel a été trouvé
             if ($currentEmployeeIndex2 !== false) {
-                // DÃ©terminer l'index du prÃ©cÃ©dent employÃ©
+                // Déterminer l'index du précédent employé
                 $previousEmployeeIndex = ($currentEmployeeIndex2 - 1 + $employeeprevious->count()) % $employeeprevious->count();
                 $previousEmployee = $employeeprevious[$previousEmployeeIndex];
             } else {
-                $previousEmployee = null; // L'employÃ© actuel n'a pas Ã©tÃ© trouvÃ©
+                $previousEmployee = null; // L'employé actuel n'a pas été trouvé
             }
         } else {
-            $previousEmployee = null; // La liste des employÃ©s prÃ©cÃ©dents est vide
+            $previousEmployee = null; // La liste des employés précédents est vide
         }
     @endphp
     <div class="col-2 mb-4" align="left" >
         <div class="row" style="justify-content: end;">
             <div class="col-12">
-                <a href="{{ route('setsalary.employee_details_mois', ['id' => $previousEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;"><i class="ti ti-arrow-left"></i> {{ __('EmployÃ© PrÃ©cÃ©dent') }}</a>
+                <a href="{{ route('setsalary.employee_details_mois', ['id' => $previousEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;"><i class="ti ti-arrow-left"></i> {{ __('Employé Précédent') }}</a>
             </div>
         </div>
     </div>
-    <!-- Colonne de gauche avec la liste des employÃ©s -->
+    <!-- Colonne de gauche avec la liste des employés -->
     <div class="col-8 mb-4">
         @include('setsalary.menu_mois')
     </div>
     @php
-        // Trouver l'index de l'employÃ© actuel
+        // Trouver l'index de l'employé actuel
         $currentEmployeeIndex = $employeenext->search(function ($emp) use ($employee) {
             return $emp->id === $employee->id;
         });
 
-        // DÃ©terminer l'index du prochain employÃ©
+        // Déterminer l'index du prochain employé
         $nextEmployeeIndex = ($currentEmployeeIndex + 1) % $employeenext->count();
         $nextEmployee = $employeenext[$nextEmployeeIndex];
     @endphp
     <div class="col-2 mb-4" align="right">
         <div class="row" style="justify-content: end;">
             <div class="col-12">
-                <a href="{{ route('setsalary.employee_details_mois', ['id' => $nextEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;">{{ __('EmployÃ© Suivant') }} <i class="ti ti-arrow-right"></i></a>
+                <a href="{{ route('setsalary.employee_details_mois', ['id' => $nextEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;">{{ __('Employé Suivant') }} <i class="ti ti-arrow-right"></i></a>
             </div>
         </div>
     </div>
@@ -467,13 +467,13 @@
             <ul class="nav nav-pills flex-column flex-md-row mb-4">
                 <li class="nav-item"><a class="nav-link active" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#basic"><i class="ti ti-calendar-off ti-xs me-1"></i> Absences</a></li>
                 <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#allowances"><i class="ti ti-clock-play ti-xs me-1"></i> Heures Supps</a></li>
-                <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#deductions"><i class="ti ti-cash ti-xs me-1"></i> PrÃªts</a></li>
+                <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#deductions"><i class="ti ti-cash ti-xs me-1"></i> Prêts</a></li>
                 <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#overtime"><i class="ti ti-gift ti-xs me-1"></i> Avantages en Nature</a></li>
-                <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#leave"><i class="ti ti-beach ti-xs me-1"></i> CongÃ©s</a></li>
+                <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#leave"><i class="ti ti-beach ti-xs me-1"></i> Congés</a></li>
                 <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#ruptures"><i class="ti ti-alert-triangle ti-xs me-1"></i> Sanction & Ruptures</a></li>
                 <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#salaire"><i class="ti ti-currency-dollar ti-xs me-1"></i> Salaire</a></li>
                 <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#retenues"><i class="ti ti-arrow-left-to-arc ti-xs me-1"></i> Retenues</a></li>
-                <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#apercu"><i class="ti ti-file-text ti-xs me-1"></i> AperÃ§u du Bulletin</a></li>
+                <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#apercu"><i class="ti ti-file-text ti-xs me-1"></i> Aperçu du Bulletin</a></li>
             </ul>
             <div class="tab-content">
                 <!-- Absence -->
@@ -490,8 +490,8 @@
                             <tr>
                                 <th style="color: #fff;">{{ __('Date') }}</th>
                                 <th style="color: #fff;">Nombre</th>
-                                <th style="color: #fff;">JustifiÃ©e?</th>
-                                <th style="color: #fff;">{{ __('DÃ©ductible?') }}</th>
+                                <th style="color: #fff;">Justifiée?</th>
+                                <th style="color: #fff;">{{ __('Déductible?') }}</th>
                                 <th style="color: #fff;">{{ __('Motifs') }}</th>
                                 <th style="color: #fff;">{{ __('Statut') }}</th>
                                 <th style="color: #fff;">{{ __('Action') }}</th>
@@ -509,7 +509,7 @@
                                             $url2 = route('timesheet.destroy', $timesheet->id);
                                         @endphp
                                         <tr>
-                                            <td> DÃ©part : {{ $formattedStartDate }} <br> ArrivÃ©e : {{ $timesheet->arrival_date ? $formattedEndDate : '-' }}</td>
+                                            <td> Départ : {{ $formattedStartDate }} <br> Arrivée : {{ $timesheet->arrival_date ? $formattedEndDate : '-' }}</td>
                                             <td align="center"><strong>{{ $timesheet->hours }} jours</strong></td>
                                             <td align="center"><strong>{{ $timesheet->motif_justify }}</strong></td>
                                             <td align="center">
@@ -534,9 +534,9 @@
                                             <td align="center"><strong>{{ $timesheet->remark }}</strong></td>
                                             <td align="center">
                                                 @if($timesheet->statut == 1)
-                                                    <center><span class="status_badge badge p-2 px-3 rounded" style="background-color: #145388;">{{ __('TraitÃ©') }}</span></center>
+                                                    <center><span class="status_badge badge p-2 px-3 rounded" style="background-color: #145388;">{{ __('Traité') }}</span></center>
                                                 @else
-                                                    <center><span class="status_badge badge p-2 px-3 rounded" style="background-color:red;">{{ __('Non TraitÃ©') }}</span></center>
+                                                    <center><span class="status_badge badge p-2 px-3 rounded" style="background-color:red;">{{ __('Non Traité') }}</span></center>
                                                 @endif
                                             </td>
                                             <td class="Action" align="center">
@@ -575,7 +575,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="8" class="text-center">{{ __('Aucun enregistrement trouvÃ©') }}</td>
+                                    <td colspan="8" class="text-center">{{ __('Aucun enregistrement trouvé') }}</td>
                                 </tr>
                             @endif
                         </tbody>
@@ -596,8 +596,8 @@
                     <table class="table table-striped" id="table-heursup" style="font-size: 13px;">
                         <thead style="background-color: #000;">
                             <tr>
-                                <th style="color: #fff;"><center>PÃ©riodes</center></th>
-                                <th style="color: #fff;"><center>Heure travaillÃ©e</center></th>
+                                <th style="color: #fff;"><center>Périodes</center></th>
+                                <th style="color: #fff;"><center>Heure travaillée</center></th>
                                 <th style="color: #fff;"><center>Taux horaire</center></th>
                                 <th style="color: #fff;"><center>Gain</center></th>
                                 <th style="color: #fff;"><center>{{ __('Statut') }}</center></th>
@@ -617,11 +617,11 @@
                                             {{ $startDate->format('d/m/Y') }} - {{ $endDate->format('d/m/Y') }}
                                         </td>
                                         <td align="center">
-                                            De la 41Ã¨ Ã  la 46Ã¨ heure : <strong>{{ $heuresup->quar_heure ?? '0' }}</strong><br>
-                                            Au dÃ©lÃ  de la 46Ã¨ heure : <strong>{{ $heuresup->heure_audd ?? '0' }}</strong><br>
-                                            Jours ouvrÃ©s Nuit : <strong>{{ $heuresup->heure_nuit_ferie ?? '0' }}</strong><br>
-                                            Dimanche et jours fÃ©riÃ©s : <strong>{{ $heuresup->heure_dim_ferie ?? '0' }}</strong><br>
-                                            Nuit dimanche et jours fÃ©riÃ©s : <strong>{{ $heuresup->heure_nuit_dim_ferie ?? '0' }}</strong><hr>
+                                            De la 41è à la 46è heure : <strong>{{ $heuresup->quar_heure ?? '0' }}</strong><br>
+                                            Au délà de la 46è heure : <strong>{{ $heuresup->heure_audd ?? '0' }}</strong><br>
+                                            Jours ouvrés Nuit : <strong>{{ $heuresup->heure_nuit_ferie ?? '0' }}</strong><br>
+                                            Dimanche et jours fériés : <strong>{{ $heuresup->heure_dim_ferie ?? '0' }}</strong><br>
+                                            Nuit dimanche et jours fériés : <strong>{{ $heuresup->heure_nuit_dim_ferie ?? '0' }}</strong><hr>
                                             <strong>Total : {{ $total }}</strong>
                                         </td>
                                         <td align="center">{{ $heuresup->taux_hour }}</td>
@@ -629,7 +629,7 @@
                                             <strong>{{ $heuresup->montant }} FCFA</strong><hr>
                                             @if($heuresup->statut !== 1)
                                                 <div class="action-btn bg-success ms-2">
-                                                    <a class="btn btn-success" href="{{ route('heuresup.updateHours', ['monthpaie' => $monthpaie, 'id' => $heuresup->id]) }}" title="{{ __('PayÃ©') }}">
+                                                    <a class="btn btn-success" href="{{ route('heuresup.updateHours', ['monthpaie' => $monthpaie, 'id' => $heuresup->id]) }}" title="{{ __('Payé') }}">
                                                         <span>{{ __('Payable ce mois ?') }}</span>
                                                     </a>
                                                 </div>
@@ -639,15 +639,15 @@
                                                 </div>
                                             @elseif($heuresup->paid == 1)
                                                 <div class="action-btn bg-success ms-2">
-                                                    <span class="status_badge badge p-2 px-3 rounded" style="background-color: green;">{{ __('PayÃ©') }}</span>
+                                                    <span class="status_badge badge p-2 px-3 rounded" style="background-color: green;">{{ __('Payé') }}</span>
                                                 </div>
                                             @endif
                                         </td>
                                         <td align="center">
                                             @if($heuresup->statut == 1)
-                                                <span class="status_badge badge p-2 px-3 rounded" style="background-color: #145388;">{{ __('TraitÃ©') }}</span>
+                                                <span class="status_badge badge p-2 px-3 rounded" style="background-color: #145388;">{{ __('Traité') }}</span>
                                             @else
-                                                <span class="status_badge badge p-2 px-3 rounded" style="background-color:red;">{{ __('Non TraitÃ©') }}</span>
+                                                <span class="status_badge badge p-2 px-3 rounded" style="background-color:red;">{{ __('Non Traité') }}</span>
                                             @endif
                                         </td>
                                         <td class="action">
@@ -686,7 +686,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="6" class="text-center">{{ __('Aucune heure supplÃ©mentaire trouvÃ©e') }}</td>
+                                    <td colspan="6" class="text-center">{{ __('Aucune heure supplémentaire trouvée') }}</td>
                                 </tr>
                             @endif
                         </tbody>
@@ -701,10 +701,10 @@
                                     data-title="{{ __('Create Loan') }}" data-bs-toggle="tooltip" title=""
                                     data-size="xl" class="btn btn-sm btn-primary"
                                     data-bs-original-title="{{ __('Create') }}">
-                                    <i class="ti ti-plus" style="color:white;"></i><span style="color:white;">Ajouter un prÃªt</span>
+                                    <i class="ti ti-plus" style="color:white;"></i><span style="color:white;">Ajouter un prêt</span>
                                 </a>
 
-                                <a data-url="{{ route('setsalary.create_autres_retenue',['monthpaie' => $monthpaie, 'id' => $employee->id]) }}" data-ajax-popup="true" data-size="xl" data-title="{{ __('CrÃ©er une retenue') }}" data-bs-toggle="tooltip" class="btn btn-sm btn-primary">
+                                <a data-url="{{ route('setsalary.create_autres_retenue',['monthpaie' => $monthpaie, 'id' => $employee->id]) }}" data-ajax-popup="true" data-size="xl" data-title="{{ __('Créer une retenue') }}" data-bs-toggle="tooltip" class="btn btn-sm btn-primary">
                                     <i class="ti ti-plus" style="color:white;"></i> <span style="color:white;">Ajouter une autre retenue</span>
                                 </a>
                             </div>
@@ -715,13 +715,13 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" href="#" role="tab" aria-controls="nav-home" aria-selected="true">
                                 <i class="ti ti-calendar-stats ti-xs me-1"></i>
-                                <strong>PrÃªts en cours ce mois-ci</strong>
+                                <strong>Prêts en cours ce mois-ci</strong>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="nav-recap-tab" data-bs-toggle="tab" data-bs-target="#nav-recap" href="#" role="tab" aria-controls="nav-recap" aria-selected="false">
                                 <i class="ti ti-list ti-xs me-1"></i>
-                                <strong>Liste des PrÃªts</strong>
+                                <strong>Liste des Prêts</strong>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -736,12 +736,12 @@
                         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div class="card-datatable table-responsive pt-0">
                                 <div class="row align-items-center" align="center">
-                                    <marquee behavior="" direction=""><h6 class="h2"><b class="fw-bold">Si vous avez des prÃªts dont le remboursement a Ã©tÃ© effectuÃ©, n'oubliez pas de cliquer sur le bouton "PrÃªt remboursÃ©" aprÃ¨s avoir gÃ©nÃ©rÃ© la paie du mois concernÃ©.</b></h6></marquee>
+                                    <marquee behavior="" direction=""><h6 class="h2"><b class="fw-bold">Si vous avez des prêts dont le remboursement a été effectué, n'oubliez pas de cliquer sur le bouton "Prêt remboursé" après avoir généré la paie du mois concerné.</b></h6></marquee>
                                 </div>
                                 <table class="table table-striped table-hover" style="font-size: 12px;">
                                     <thead style="background-color: #000; color: #fff; font-size: 11px;">
                                         <tr>
-                                            <th width="35%" style="color: #fff;"><center>{{ __('DÃ©tails des prÃªts') }}</center></th>
+                                            <th width="35%" style="color: #fff;"><center>{{ __('Détails des prêts') }}</center></th>
                                             <th width="35%" style="color: #fff;"><center>{{ __('Total') }}</center></th>
                                             <th width="10%" style="color: #fff;"><center>{{ __(key: 'Applicable?') }}</center></th>
                                             <th width="10%" style="color: #fff;"><center>{{ __(key: 'Historique') }}</center></th>
@@ -755,7 +755,7 @@
 
                                         @if ($groupedLoansThisMonth->isEmpty())
                                             <tr>
-                                                <td colspan="6"><center>{{ __('Aucune donnÃ©es') }}</center></td>
+                                                <td colspan="6"><center>{{ __('Aucune données') }}</center></td>
                                             </tr>
                                         @else
                                             @foreach ($groupedLoansThisMonth as $employeeId => $employeeLoans)
@@ -771,21 +771,21 @@
                                                         @foreach ($employeeLoans as $loan)
                                                             <div class="mb-3 p-2 border rounded">
                                                                 <strong>{{ $loan->title }}</strong><br>
-                                                                Ã‰chÃ©ance: {{ \Auth::user()->dateFormat($loan->fin_date) }}<br>
-                                                                Ã€ rembourser: {{ number_format($loan->amount, 0, '.', ' ') }} FCFA<br>
-                                                                RemboursÃ©: {{ number_format($loan->amount - $loan->amountpaie, 0, '.', ' ') }} FCFA<br>
+                                                                Échéance: {{ \Auth::user()->dateFormat($loan->fin_date) }}<br>
+                                                                À rembourser: {{ number_format($loan->amount, 0, '.', ' ') }} FCFA<br>
+                                                                Remboursé: {{ number_format($loan->amount - $loan->amountpaie, 0, '.', ' ') }} FCFA<br>
                                                                 Restant: {{ number_format( $loan->amountpaie, 0, '.', ' ') }} FCFA<br>
                                                                 Retenue mensuelle: {{ number_format($loan->amount_deduc, 0, '.', ' ') }} FCFA<br>
                                                                 Statut:
                                                                 @if ($loan->statut == '2')
-                                                                    <span class="badge bg-success">RemboursÃ©</span>
+                                                                    <span class="badge bg-success">Remboursé</span>
                                                                 @else
                                                                     <span class="badge bg-warning">En cours</span>
                                                                 @endif
                                                                 @if ($loan->amountpaie == '0')
                                                                     @if ($loan->statut == '1' || $loan->statut == '4')
                                                                         <a class="badge bg-success" href="{{URL::to('loan/deductFinish/' . $loan->id_loan )}}" data-title="{{ __('Fini') }}">
-                                                                            PrÃªt remboursÃ© <i class="ti ti-check text-white"></i>
+                                                                            Prêt remboursé <i class="ti ti-check text-white"></i>
                                                                         </a>
                                                                     @else
 
@@ -795,8 +795,8 @@
                                                         @endforeach
                                                     </td>
                                                     <td>
-                                                        <strong>Mt Ã  rembourser :</strong> {{ number_format($totalAmount, 0, '.', ' ') }} FCFA<br>
-                                                        <strong>Mt remboursÃ© :</strong> {{ number_format($totalAmountRemaining, 0, '.', ' ') }} FCFA<br>
+                                                        <strong>Mt à rembourser :</strong> {{ number_format($totalAmount, 0, '.', ' ') }} FCFA<br>
+                                                        <strong>Mt remboursé :</strong> {{ number_format($totalAmountRemaining, 0, '.', ' ') }} FCFA<br>
                                                         <strong>Mt restant :</strong> {{ number_format($totalAmountPaid, 0, '.', ' ') }} FCFA<br>
                                                         <strong>Mt Retenue :</strong> {{ number_format($totalMonthlyDeduction, 0, '.', ' ') }} FCFA
                                                     </td>
@@ -804,7 +804,7 @@
                                                         @foreach ($employeeLoans as $loan)
                                                             @if ($loan->month_paie == $monthpaie)
                                                                 <div class="d-flex">
-                                                                    <a class="btn btn-sm btn-info disabled me-2" href="#" data-title="{{ __('DÃ©duit') }}">
+                                                                    <a class="btn btn-sm btn-info disabled me-2" href="#" data-title="{{ __('Déduit') }}">
                                                                         <i class="ti ti-check text-white"></i>
                                                                     </a>
                                                                     <a class="btn btn-sm btn-danger" href="{{URL::to('loan/deductNotMonth/' . $loan->id_loan )}}" data-title="{{ __('Annuler') }}">
@@ -831,7 +831,7 @@
                                                                 data-url="{{ URL::to('loan/' . $loan->id_loan . '/voir') }}"
                                                                 data-ajax-popup="true" data-size="xl"
                                                                 data-bs-toggle="tooltip" title=""
-                                                                data-title="{{ __('DÃ©tails prÃªt') }}"
+                                                                data-title="{{ __('Détails prêt') }}"
                                                                 data-bs-original-title="{{ __('Voir') }}" style="color:#fff;">
                                                                 <i class="ti ti-eye text-white"></i>
                                                             </a>
@@ -848,7 +848,7 @@
                                                                             data-url="{{ URL::to('loan/' . $loan->id_loan . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl"
                                                                             data-bs-toggle="tooltip" title=""
-                                                                            data-title="{{ __('Modifier prÃªt') }}"
+                                                                            data-title="{{ __('Modifier prêt') }}"
                                                                             data-bs-original-title="{{ __('Modifier') }}">
                                                                             <i class="ti ti-pencil text-white"></i>
                                                                         </a>
@@ -863,7 +863,7 @@
                                                                                 'id' => 'delete-form-' . $loan->id_loan,
                                                                             ]) }}
                                                                             <a chref="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip"
-                                                                            title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                                            title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                                 <i class="ti ti-trash text-white"></i>
                                                                             </a>
                                                                         </form>
@@ -879,38 +879,38 @@
                                                         <div class="modal-dialog modal-lg">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h5 class="modal-title" id="deductModalLabel-{{$loan->id_loan}}">DÃ©tails du PrÃªt</h5>
+                                                                    <h5 class="modal-title" id="deductModalLabel-{{$loan->id_loan}}">Détails du Prêt</h5>
                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="row">
                                                                         <div class="form-group col-md-6">
-                                                                            <p>EmployÃ©: <strong>{{ $firstLoan->name }}</strong></p>
-                                                                            <p>Titre du prÃªt: <strong>{{ $loan->title }}</strong></p>
-                                                                            <p>Date d'Ã©chÃ©ance: <strong>{{ \Auth::user()->dateFormat($loan->fin_date) }}</strong></p>
+                                                                            <p>Employé: <strong>{{ $firstLoan->name }}</strong></p>
+                                                                            <p>Titre du prêt: <strong>{{ $loan->title }}</strong></p>
+                                                                            <p>Date d'échéance: <strong>{{ \Auth::user()->dateFormat($loan->fin_date) }}</strong></p>
                                                                         </div>
                                                                         <div class="form-group col-md-6">
-                                                                            <p>Montant Ã  rembourser: <strong>{{ number_format($loan->amount, 0, '.', ' ') }} FCFA</strong></p>
+                                                                            <p>Montant à rembourser: <strong>{{ number_format($loan->amount, 0, '.', ' ') }} FCFA</strong></p>
                                                                             @if($loan->amountpaie == null)
-                                                                                <p>Montant remboursÃ©: <strong>0 FCFA</strong></p>
+                                                                                <p>Montant remboursé: <strong>0 FCFA</strong></p>
                                                                                 <p>Montant restant: <strong>{{ number_format($loan->amount, 0, '.', ' ') }} FCFA</strong></p>
                                                                             @else
-                                                                                <p>Montant remboursÃ©: <strong>{{ number_format($loan->amountpaie, 0, '.', ' ') }} FCFA</strong></p>
+                                                                                <p>Montant remboursé: <strong>{{ number_format($loan->amountpaie, 0, '.', ' ') }} FCFA</strong></p>
                                                                                 <p>Montant restant: <strong>{{ number_format($loan->amount - $loan->amountpaie, 0, '.', ' ') }} FCFA</strong></p>
                                                                             @endif
                                                                         </div>
                                                                         <div class="form-group col-md-12" align="center">
-                                                                            <h6>Nombre d'Ã©chÃ©ances restant :
+                                                                            <h6>Nombre d'échéances restant :
                                                                                 <span style="color: red;">
                                                                                     <?php
                                                                                         $vartot = 0;
 
-                                                                                        // VÃ©rifie si $loan->amount_deduc est diffÃ©rent de 0 pour Ã©viter la division par zÃ©ro
+                                                                                        // Vérifie si $loan->amount_deduc est différent de 0 pour éviter la division par zéro
                                                                                         if ($loan->amount_deduc != 0) {
                                                                                             $vartot = $loan->amount / $loan->amount_deduc;
                                                                                         }
 
-                                                                                        // Affichage basÃ© sur les conditions
+                                                                                        // Affichage basé sur les conditions
                                                                                     ?>
                                                                                     @if($loan->nbre_mois < $vartot)
                                                                                         {{$loan->nbre_mois}}
@@ -927,7 +927,7 @@
                                                                         <form action="{{ URL::to('loan/deductThisMonth/' . $loan->id_loan ) }}" method="POST">
                                                                             @csrf
                                                                             <div class="mb-3">
-                                                                                <label for="amount_deduc" class="form-label">Montant Ã  dÃ©duire ce mois</label>
+                                                                                <label for="amount_deduc" class="form-label">Montant à déduire ce mois</label>
                                                                                 <input type="number" class="form-control" id="amount_deduc" name="amount_deduc" value="{{ $loan->amount_deduc }}">
                                                                                 <input type="hidden" name="date_pay" id="date_pay" value="{{$monthpaie}}" />
                                                                             </div>
@@ -952,7 +952,7 @@
                                 <table class="table table-striped table-hover" style="font-size: 12px;">
                                     <thead style="background-color: #000; color: #fff; font-size: 11px;">
                                         <tr>
-                                            <th width="35%" style="color: #fff;"><center>{{ __('DÃ©tails des prÃªts') }}</center></th>
+                                            <th width="35%" style="color: #fff;"><center>{{ __('Détails des prêts') }}</center></th>
                                             <th width="35%" style="color: #fff;"><center>{{ __('Total') }}</center></th>
                                             <th width="10%" style="color: #fff;"><center>{{ __(key: 'Applicable?') }}</center></th>
                                             <th width="10%" style="color: #fff;"><center>{{ __(key: 'Historique') }}</center></th>
@@ -965,7 +965,7 @@
                                         @endphp
                                         @if ($groupedLoans->isEmpty())
                                             <tr>
-                                                <td colspan="9"><center>{{ __('Aucune donnÃ©es') }}</center></td>
+                                                <td colspan="9"><center>{{ __('Aucune données') }}</center></td>
                                             </tr>
                                         @else
                                             @foreach ($groupedLoans as $employeeId => $employeeLoans)
@@ -982,14 +982,14 @@
                                                         @foreach ($employeeLoans as $loan)
                                                             <div class="mb-3 p-2 border rounded">
                                                                 <strong>{{ $loan->title }}</strong><br>
-                                                                Ã‰chÃ©ance: {{ \Auth::user()->dateFormat($loan->fin_date) }}<br>
-                                                                Ã€ rembourser: {{ number_format($loan->amount, 0, '.', ' ') }} FCFA<br>
-                                                                RemboursÃ©: {{ number_format($loan->amount - $loan->amountpaie, 0, '.', ' ') }} FCFA<br>
+                                                                Échéance: {{ \Auth::user()->dateFormat($loan->fin_date) }}<br>
+                                                                À rembourser: {{ number_format($loan->amount, 0, '.', ' ') }} FCFA<br>
+                                                                Remboursé: {{ number_format($loan->amount - $loan->amountpaie, 0, '.', ' ') }} FCFA<br>
                                                                 Restant: {{ number_format( $loan->amountpaie, 0, '.', ' ') }} FCFA<br>
                                                                 Retenue mensuelle: {{ number_format($loan->amount_deduc, 0, '.', ' ') }} FCFA<br>
                                                                 Statut:
                                                                 @if ($loan->statut == '2')
-                                                                    <span class="badge bg-success">RemboursÃ©</span>
+                                                                    <span class="badge bg-success">Remboursé</span>
                                                                 @else
                                                                     <span class="badge bg-warning">En cours</span>
                                                                 @endif
@@ -997,8 +997,8 @@
                                                         @endforeach
                                                     </td>
                                                     <td>
-                                                        <strong>Mt Ã  rembourser :</strong> {{ number_format($totalAmount, 0, '.', ' ') }} FCFA<br>
-                                                        <strong>Mt remboursÃ© :</strong> {{ number_format($totalAmountRemaining, 0, '.', ' ') }} FCFA<br>
+                                                        <strong>Mt à rembourser :</strong> {{ number_format($totalAmount, 0, '.', ' ') }} FCFA<br>
+                                                        <strong>Mt remboursé :</strong> {{ number_format($totalAmountRemaining, 0, '.', ' ') }} FCFA<br>
                                                         <strong>Mt restant :</strong> {{ number_format($totalAmountPaid, 0, '.', ' ') }} FCFA<br>
                                                         <strong>Mt Retenue :</strong> {{ number_format($totalMonthlyDeduction, 0, '.', ' ') }} FCFA
                                                     </td>
@@ -1006,7 +1006,7 @@
                                                         @foreach ($employeeLoans as $loan)
                                                             @if ($loan->month_paie == $monthpaie )
                                                                 <a class="btn btn-sm btn-info disabled" href="#">
-                                                                    DÃ©duit
+                                                                    Déduit
                                                                 </a>
                                                             @else
                                                                 @if($loan->statut == 1)
@@ -1032,7 +1032,7 @@
                                                                 data-url="{{ URL::to('loan/' . $loan->id_loan . '/voir') }}"
                                                                 data-ajax-popup="true" data-size="xl"
                                                                 data-bs-toggle="tooltip" title=""
-                                                                data-title="{{ __('DÃ©tails prÃªt') }}"
+                                                                data-title="{{ __('Détails prêt') }}"
                                                                 data-bs-original-title="{{ __('Voir') }}" style="color:#fff;">
                                                                 <i class="ti ti-eye text-white"></i>
                                                             </a>
@@ -1049,7 +1049,7 @@
                                                                             data-url="{{ URL::to('loan/' . $loan->id_loan . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl"
                                                                             data-bs-toggle="tooltip" title=""
-                                                                            data-title="{{ __('Modifier prÃªt') }}"
+                                                                            data-title="{{ __('Modifier prêt') }}"
                                                                             data-bs-original-title="{{ __('Modifier') }}">
                                                                             <i class="ti ti-pencil text-white"></i>
                                                                         </a>
@@ -1064,7 +1064,7 @@
                                                                                     'id' => 'delete-form-' . $loan->id_loan,
                                                                                 ]) }}
                                                                                 <a chref="#" class="btn btn-sm bg-danger align-items-center bs-pass-para disabled" data-bs-toggle="tooltip"
-                                                                                title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                                                title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                                     <i class="ti ti-trash text-white"></i>
                                                                                 </a>
                                                                             </form>
@@ -1077,7 +1077,7 @@
                                                                             data-url="{{ URL::to('loan/' . $loan->id_loan . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl"
                                                                             data-bs-toggle="tooltip" title=""
-                                                                            data-title="{{ __('Modifier prÃªt') }}"
+                                                                            data-title="{{ __('Modifier prêt') }}"
                                                                             data-bs-original-title="{{ __('Modifier') }}">
                                                                             <i class="ti ti-pencil text-white"></i>
                                                                         </a>
@@ -1092,7 +1092,7 @@
                                                                                     'id' => 'delete-form-' . $loan->id_loan,
                                                                                 ]) }}
                                                                                 <a chref="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip"
-                                                                                title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                                                title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                                     <i class="ti ti-trash text-white"></i>
                                                                                 </a>
                                                                             </form>
@@ -1116,8 +1116,7 @@
                                 <table class="table" style="font-size: 12px;">
                                     <thead>
                                         <tr>
-                                            <th><strong>#</strong></th>
-                                            <th><center>{{ __('EmployÃ©s') }}</center></th>
+                                            <th><center>{{ __('Employés') }}</center></th>
                                             <th><center>{{ __('Nom de la retenue') }}</center></th>
                                             <th><center>{{ __('Type de retenue') }}</center></th>
                                             <th><center>{{ __('Montant') }}</center></th>
@@ -1130,12 +1129,11 @@
                                         @endphp
                                         @if ($autresRetenues->isEmpty())
                                             <tr>
-                                                <td colspan="6"><center>{{ __('Aucune donnÃ©es') }}</center></td>
+                                                <td colspan="5"><center>{{ __('Aucune données') }}</center></td>
                                             </tr>
                                         @else
                                             @foreach($autresRetenues as $retenue)
                                                 <tr>
-                                                    <td>{{ $cpte++ }}</td>
                                                     <td align="center">{{ $employee->name }}</td>
                                                     <td align="center">{{ $retenue->lib_retenue }}</td>
                                                     <td align="center">{{ $retenue->type_retenue }}</td>
@@ -1162,7 +1160,7 @@
                                                                     ]) }}
                                                                     <a class="btn btn-sm bg-danger align-items-center bs-pass-para"
                                                                         data-bs-toggle="tooltip" title=""
-                                                                        data-bs-original-title="Delete" aria-label="Delete">
+                                                                        data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                         <i class="ti ti-trash text-white"></i>
                                                                     </a>
                                                                 </form>
@@ -1184,7 +1182,7 @@
                         @can('Create Overtime')
                             <div class="col-1 text-end">
                                 <a href="#" data-size="xl" data-url="{{ route('avantages.create') }}" data-ajax-popup="true"
-                                    data-bs-toggle="tooltip" title="{{ __('CrÃ©er un avantage') }}" class="btn btn-sm btn-primary">
+                                    data-bs-toggle="tooltip" title="{{ __('Créer un avantage') }}" class="btn btn-sm btn-primary">
                                     <i class="ti ti-plus"></i>
                                 </a>
                             </div>
@@ -1194,8 +1192,8 @@
                         <thead style="background-color: #000; color: #fff;">
                             <tr>
                                 <th style="color: #fff;"><center>{{ __('Type d\'avantage') }}</center></th>
-                                <th style="color: #fff;"><center>{{ __('Montant rÃ©el') }}</center></th>
-                                <th style="color: #fff;"><center>{{ __('Montant selon le barÃ¨me') }}</center></th>
+                                <th style="color: #fff;"><center>{{ __('Montant réel') }}</center></th>
+                                <th style="color: #fff;"><center>{{ __('Montant selon le barème') }}</center></th>
                                 <th style="color: #fff;"><center>{{ __('Traitement') }}</center></th>
                                 <th style="color: #fff;"><center>{{ __('Action') }}</center></th>
                             </tr>
@@ -1203,7 +1201,7 @@
                         <tbody>
                             @if ($avantages->isEmpty())
                                 <tr>
-                                    <td colspan="9"><center>{{ __('Aucune donnÃ©es') }}</center></td>
+                                    <td colspan="9"><center>{{ __('Aucune données') }}</center></td>
                                 </tr>
                             @else
                                 @foreach ($avantages as $avantage)
@@ -1216,9 +1214,9 @@
                                                     @elseif($avantage->type_avantage == 2)
                                                         Avantage en Argent
                                                     @elseif($avantage->type_avantage == 3)
-                                                        Assurance-vie complÃ©mentaire
+                                                        Assurance-vie complémentaire
                                                     @else
-                                                        Assurance santÃ©
+                                                        Assurance santé
                                                     @endif
                                                 </td>
                                                 <td align="right">{{ number_format($avantage->montant_reel,'0','.',' ') }} FCFA</td>
@@ -1260,7 +1258,7 @@
                                                             <div class="action-btn">
                                                                 <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para"
                                                                     data-bs-toggle="tooltip" title=""
-                                                                    data-bs-original-title="Delete" aria-label="Delete"><i
+                                                                    data-bs-original-title="Supprimer" aria-label="Supprimer"><i
                                                                         class="ti ti-trash text-white text-white"></i></a>
                                                             </div>
                                                         </form>
@@ -1290,11 +1288,11 @@
                     <table class="table table-hover" id="pc-dt-simple">
                         <thead style="background-color: #000; color: #fff;">
                             <tr>
-                                <th style="color: #fff;"><center>{{ __('Dernier congÃ©') }}</center></th>
-                                <th style="color: #fff;"><center>{{ __('Prochain congÃ©') }}</center></th>
+                                <th style="color: #fff;"><center>{{ __('Dernier congé') }}</center></th>
+                                <th style="color: #fff;"><center>{{ __('Prochain congé') }}</center></th>
                                 <th style="color: #fff;"><center>{{ __('Statut') }}</center></th>
-                                <th style="color: #fff;"><center>{{ __('Type de CongÃ©') }}</center></th>
-                                <th style="color: #fff;"><center>{{ __('Allocation congÃ©') }}</center></th>
+                                <th style="color: #fff;"><center>{{ __('Type de Congé') }}</center></th>
+                                <th style="color: #fff;"><center>{{ __('Allocation congé') }}</center></th>
                                 <th style="color: #fff;"><center>{{ __('Approbation') }}</center></th>
                                 <th style="color: #fff;"><center>{{ __('Action') }}</center></th>
                             </tr>
@@ -1314,9 +1312,9 @@
                                         @endphp
                                         <td><center>{{ \Auth::user()->dateFormat($dateProchainConge) }}</center></td>
                                         <td align="center">
-                                            @if (($leave->end_date < $dateactuelle ) && ($leave->status == 'ApprouvÃ©') || ($leave->status == 'TerminÃ©'))
-                                                <span class="badge bg-danger">{{ __('TerminÃ©') }}</span>
-                                            @elseif ((($leave->end_date >= $dateactuelle) && ($leave->start_date <= $dateactuelle)) && ($leave->status == 'DÃ©marrÃ©'))
+                                            @if (($leave->end_date < $dateactuelle ) && ($leave->status == 'Approuvé') || ($leave->status == 'Terminé'))
+                                                <span class="badge bg-danger">{{ __('Terminé') }}</span>
+                                            @elseif ((($leave->end_date >= $dateactuelle) && ($leave->start_date <= $dateactuelle)) && ($leave->status == 'Démarré'))
                                                 <span class="badge bg-info">{{ __('En cours') }}</span>
                                             @else
                                                 <span class="badge bg-warning">{{ __('En attente') }}</span>
@@ -1327,9 +1325,9 @@
                                             @if($leave->leave_type_id == 1)
                                                 <strong>{{ number_format($leave->amount_leave,'0','.',' ') }} FCFA</strong><br>
                                                 @if($leave->lave_sit == 2)
-                                                    <span class="badge bg-success">{{ __('PayÃ©') }}</span>
+                                                    <span class="badge bg-success">{{ __('Payé') }}</span>
                                                 @else
-                                                    <span class="badge bg-warning">{{ __('Non PayÃ©') }}</span>
+                                                    <span class="badge bg-warning">{{ __('Non Payé') }}</span>
                                                 @endif
                                             @else
                                                 -
@@ -1338,33 +1336,33 @@
                                         <td align="center">
                                             @if ($leave->status == 'Pending')
                                                 <span class="badge bg-warning">{{ __('En attente') }}</span>
-                                            @elseif($leave->status == 'ApprouvÃ©')
-                                                <span class="badge bg-success">{{ __('ApprouvÃ©') }}</span>
+                                            @elseif($leave->status == 'Approuvé')
+                                                <span class="badge bg-success">{{ __('Approuvé') }}</span>
                                                 @if($leave->leave_type_id == 1)
                                                 <hr>
                                                     <a href="#" data-url="{{ route('leave.attestation', ['id' => $leave->id]) }}" data-ajax-popup="true"
-                                                        data-title="{{ __('Attestation de CongÃ©') }}" data-size="xl" data-bs-toggle="tooltip" title=""
+                                                        data-title="{{ __('Attestation de Congé') }}" data-size="xl" data-bs-toggle="tooltip" title=""
                                                         class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Attestation') }}">
                                                         {{ __('Attestation') }}
                                                     </a>
                                                 @endif
-                                            @elseif($leave->status == 'RejetÃ©')
-                                                <span class="badge bg-danger">{{ __('RÃ©jÃ©tÃ©') }}</span>
-                                            @elseif($leave->status == 'TerminÃ©')
-                                                <span class="badge bg-info">{{ __('TerminÃ©') }}</span>
+                                            @elseif($leave->status == 'Rejeté')
+                                                <span class="badge bg-danger">{{ __('Réjété') }}</span>
+                                            @elseif($leave->status == 'Terminé')
+                                                <span class="badge bg-info">{{ __('Terminé') }}</span>
                                                 @if($leave->leave_type_id == 1)
                                                 <hr>
                                                     <a href="#" data-url="{{ route('leave.attestation', ['id' => $leave->id]) }}" data-ajax-popup="true"
-                                                        data-title="{{ __('Attestation de CongÃ©') }}" data-size="xl" data-bs-toggle="tooltip" title=""
+                                                        data-title="{{ __('Attestation de Congé') }}" data-size="xl" data-bs-toggle="tooltip" title=""
                                                         class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Attestation') }}">
                                                         {{ __('Attestation') }}
                                                     </a>
                                                 @endif
                                             @else
-                                                <span class="badge bg-info">{{ __('DÃ©marrÃ©') }}</span>
+                                                <span class="badge bg-info">{{ __('Démarré') }}</span>
                                                 <hr>
                                                 <a href="#" data-url="{{ route('leave.attestation', ['id' => $leave->id]) }}" data-ajax-popup="true"
-                                                    data-title="{{ __('Attestation de CongÃ©') }}" data-size="xl" data-bs-toggle="tooltip" title=""
+                                                    data-title="{{ __('Attestation de Congé') }}" data-size="xl" data-bs-toggle="tooltip" title=""
                                                     class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Attestation') }}">
                                                     {{ __('Attestation') }}
                                                 </a>
@@ -1373,16 +1371,16 @@
                                         <td align="center">
                                             <div class="d-flex justify-content-center">
                                                 @if (\Auth::user()->type != 'employee')
-                                                    @if($leave->status == 'ApprouvÃ©' || $leave->status == 'DÃ©marrÃ©')
+                                                    @if($leave->status == 'Approuvé' || $leave->status == 'Démarré')
                                                         {{-- @can('Edit Leave')
                                                             <a href="#" class="btn btn-sm bg-info align-items-center me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-title="{{ __('Edit Leave') }}" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
                                                                 <i class="ti ti-pencil text-white"></i>
                                                             </a>
                                                         @endcan --}}
-                                                        @if($leave->status == 'DÃ©marrÃ©')
+                                                        @if($leave->status == 'Démarré')
                                                             <a href="#" class="btn btn-sm bg-warning me-2" data-url="{{ URL::to('leave/updateLeave', $leave->id) }}">{{ __('Date retour') }}</a>
-                                                        @elseif($leave->status == 'ApprouvÃ©')
-                                                            <a href="#" class="btn btn-sm bg-info me-2" data-url="{{ URL::to('leave/startLeave', $leave->id) }}" onclick="return confirm('ÃŠtes-vous sÃ»r de vouloir terminer cette action ?');">{{ __('DÃ©marrer le congÃ©') }}</a>
+                                                        @elseif($leave->status == 'Approuvé')
+                                                            <a href="#" class="btn btn-sm bg-info me-2" data-url="{{ URL::to('leave/startLeave', $leave->id) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer cette action ?');">{{ __('Démarrer le congé') }}</a>
                                                             @can('Delete Leave')
                                                                 {!! Form::open(['method' => 'DELETE', 'route' => ['leave.destroy', $leave->id], 'id' => 'delete-form-' . $leave->id]) !!}
                                                                     <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
@@ -1391,7 +1389,7 @@
                                                                 {!! Form::close() !!}
                                                             @endcan
                                                         @endif
-                                                    @elseif($leave->status == 'TerminÃ©' || $leave->status == 'RejetÃ©')
+                                                    @elseif($leave->status == 'Terminé' || $leave->status == 'Rejeté')
                                                         @can('Edit Leave')
                                                             <a href="#" class="btn btn-sm bg-info me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
                                                                 <i class="ti ti-pencil text-white"></i>
@@ -1444,14 +1442,14 @@
                                                 $dateactuelle     = date('Y-m-d');
                                                 $dateProchainConge = $dateDernierConge->copy()->addYear();
                                             } catch (\Exception $e) {
-                                                $dateProchainConge = 'Date incorrecte ou non dÃ©finie';
+                                                $dateProchainConge = 'Date incorrecte ou non définie';
                                             }
                                         } else {
                                             $dateProchainConge = 'Date non disponible';
                                         }
                                     @endphp
                                     <td><center>{{ \Auth::user()->dateFormat($dateProchainConge) }}</center></td>
-                                    <td align="center"><span class="badge bg-warning">{{ __('Non effectuÃ©') }}</span></td>
+                                    <td align="center"><span class="badge bg-warning">{{ __('Non effectué') }}</span></td>
                                     <td align="center">-</td>
                                     <td align="center">-</td>
                                     <td align="center">-</td>
@@ -1468,7 +1466,7 @@
                             <div class="col-1 text-end">
 
                                 <a href="#" data-url="{{ route('termination.create', ['monthpaie' => $monthpaie]) }}" data-ajax-popup="true"
-                                    data-title="{{ __('CrÃ©er une nouvelle rupture ou sanctions') }}" data-size="xl" data-bs-toggle="tooltip" title=""
+                                    data-title="{{ __('Créer une nouvelle rupture ou sanctions') }}" data-size="xl" data-bs-toggle="tooltip" title=""
                                     class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Create') }}">
                                     <i class="ti ti-plus"></i>
                                 </a>
@@ -1479,7 +1477,7 @@
                         <thead style="background-color:#000">
                             <tr>
                                 <th style="color:#fff;">{{ __('Termination Type') }}</th>
-                                <th style="color:#fff;">{{ __('Droit Ã  payer') }}</th>
+                                <th style="color:#fff;">{{ __('Droit à payer') }}</th>
                                 <th style="color:#fff;">{{ __('Description') }}</th>
                                 <th style="color:#fff;">{{ __('Statut') }}</th>
                                 @if (Gate::check('Edit Termination') || Gate::check('Delete Termination'))
@@ -1490,7 +1488,7 @@
                         <tbody>
                             @if($ruptures->isEmpty())
                                 <tr>
-                                    <td colspan="5"><center>{{ __('Aucune donnÃ©es') }}</center></td>
+                                    <td colspan="5"><center>{{ __('Aucune données') }}</center></td>
                                 </tr>
                             @else
                                 @foreach ($ruptures as $termination)
@@ -1502,29 +1500,29 @@
                                                 @endphp
                                                 <td>
                                                     {{ !empty($termination->terminationType()) ? $termination->terminationType()->name : '' }}
-                                                    Date du prÃ©avis : {{ \Auth::user()->dateFormat($termination->notice_date) }} <br> Date de fin : {{ \Auth::user()->dateFormat($termination->termination_date) }}
+                                                    Date du préavis : {{ \Auth::user()->dateFormat($termination->notice_date) }} <br> Date de fin : {{ \Auth::user()->dateFormat($termination->termination_date) }}
                                                 </td>
                                                 <td align="right">{{number_format($droitrupture,'0','.',' ') }} FCFA</td>
                                                 <td align="center">
                                                     @if($termination->statut == 1 || $termination->statut == 3)
                                                         <a href="#" class="action-item" data-url="{{ route('termination.description',$termination->id) }}" data-ajax-popup="true" data-bs-toggle="tooltip" title="{{__('Desciption')}}" data-title="{{__('Desciption')}}"><i class="icon_desc fa fa-comment"></i></a>
                                                     @else
-                                                        <h6>VÃ©rifier  <a href="#" class="action-item" data-url="{{ route('termination.description',$termination->id) }}" data-ajax-popup="true" data-bs-toggle="tooltip" title="{{__('Desciption')}}" data-title="{{__('Desciption')}}"><i class="icon_desc fa fa-comment"></i></a> </h6>
+                                                        <h6>Vérifier  <a href="#" class="action-item" data-url="{{ route('termination.description',$termination->id) }}" data-ajax-popup="true" data-bs-toggle="tooltip" title="{{__('Desciption')}}" data-title="{{__('Desciption')}}"><i class="icon_desc fa fa-comment"></i></a> </h6>
                                                     @endif
                                                 </td>
                                                 <td align="center">
                                                     @if($termination->statut == 1)
                                                         <a class="btn btn-success disabled" href="#">
-                                                            ValidÃ© <i class="fa fa-check"></i>
+                                                            Validé <i class="fa fa-check"></i>
                                                         </a>
                                                     @else
                                                         @if($termination->termination_type == 6 || $termination->termination_type == 7)
                                                             @if($termination->statut == 3)
-                                                                <a class="btn btn-warning disabled" href="{{ URL::to('termination/updateSanction/'.$monthpaie.'/'.$termination->id) }}" onclick="return confirm('ÃŠtes-vous sÃ»r de vouloir terminer cette action ? Assurez-vous d\'avoir vÃ©rifiÃ© attentivement les informations de l\'employÃ©.')">
+                                                                <a class="btn btn-warning disabled" href="{{ URL::to('termination/updateSanction/'.$monthpaie.'/'.$termination->id) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer cette action ? Assurez-vous d\'avoir vérifié attentivement les informations de l\'employé.')">
                                                                     Fin de sanction <br> {{$termination->termination_date}}
                                                                 </a>
                                                                 @else
-                                                                <a class="btn btn-warning" href="{{ URL::to('termination/updateSanction/'.$monthpaie.'/'.$termination->id) }}" onclick="return confirm('ÃŠtes-vous sÃ»r de vouloir terminer cette action ? Assurez-vous d\'avoir vÃ©rifiÃ© attentivement les informations de l\'employÃ©.')">
+                                                                <a class="btn btn-warning" href="{{ URL::to('termination/updateSanction/'.$monthpaie.'/'.$termination->id) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer cette action ? Assurez-vous d\'avoir vérifié attentivement les informations de l\'employé.')">
                                                                     Fin de sanction ?
                                                                 </a>
                                                             @endif
@@ -1554,8 +1552,8 @@
                                                                     {!! Form::open(['method' => 'DELETE', 'route' => ['termination.destroy', $termination->id], 'id' => 'delete-form-' . $termination->id]) !!}
                                                                         <div class="action-btn">
                                                                             <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para"
-                                                                                data-bs-toggle="tooltip" title="" data-bs-original-title="Delete"
-                                                                                aria-label="Delete"><i
+                                                                                data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer"
+                                                                                aria-label="Supprimer"><i
                                                                                     class="ti ti-trash text-white text-white"></i></a>
                                                                         </div>
                                                                     </form>
@@ -1580,7 +1578,7 @@
                     <div id="salary">
                         <!-- Header -->
                         <div class="text-center">
-                            Nombre de jours travaillÃ©s : <strong style="color: red;">{{$employee->tax_payer_id}} </strong> | Mise Ã  jour ici ðŸ‘‰
+                            Nombre de jours travaillés : <strong style="color: red;">{{$employee->tax_payer_id}} </strong> | Mise à jour ici ðŸ‘‰
                             <a data-url="{{ route('employee.basic.salary', $employee->id) }}" data-size="xl" data-ajax-popup="true"
                                 class="btn btn-sm bg-warning align-items-center" data-bs-toggle="tooltip"
                                 title="" data-bs-original-title="{{ __('View') }}">
@@ -1591,13 +1589,13 @@
                             <div class="d-flex">
                                 <div class="col-10" style="justify-content: start;">
                                     <h5 class="card-action-title mb-0">
-                                        DerniÃ¨re mise Ã  jour du salaire : <strong style="color: red;">{{ Auth::user()->dateFormat($employee->updated_at) }}</strong>
+                                        Dernière mise à jour du salaire : <strong style="color: red;">{{ Auth::user()->dateFormat($employee->updated_at) }}</strong>
                                     </h5>
                                 </div>
                                 <div class="col-2 text-end">
                                     @can('Create Allowance')
                                     <a data-url="{{ route('allowances.create', $employee->id) }}" data-size="xl" data-ajax-popup="true" class="btn btn-label-primary">
-                                        <span class="text-#000"> Ajouter Ã©lÃ©ments brut <i class="ti ti-plus #000"></i></span>
+                                        <span class="text-#000"> Ajouter éléments brut <i class="ti ti-plus #000"></i></span>
                                     </a>
                                     @endcan
                                 </div>
@@ -1646,7 +1644,7 @@
                                                                         'route' => ['allowance.destroy', $allowance->id],
                                                                         'id' => 'delete-form-' . $allowance->id,
                                                                     ]) !!}
-                                                                        <a href="#" class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                                        <a href="#" class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                             <i class="ti ti-trash text-secondary ti-sm"></i>
                                                                         </a>
                                                                     </form>
@@ -1664,8 +1662,8 @@
                                             class="accordion-collapse collapse"
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
-                                                <h6 class="mb-1">la partie fixe qui est liÃ©e Ã  la fonction du stagiaire</h6>
-                                                <p class="mb-1">et/ou Ã  la catÃ©gorie professionnelle du stagiaire</p>
+                                                <h6 class="mb-1">la partie fixe qui est liée à la fonction du stagiaire</h6>
+                                                <p class="mb-1">et/ou à la catégorie professionnelle du stagiaire</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1678,7 +1676,7 @@
                                                         <span class="h6 mb-1">
                                                             {{ __('Salaire de base') }}
                                                         </span>
-                                                        <span class="badge bg-label-success">CatÃ©goriel</span>
+                                                        <span class="badge bg-label-success">Catégoriel</span>
                                                     </span>
                                                     <span class="mb-0 text-muted">Le salaire de base est...</span>
                                                 </span>
@@ -1702,8 +1700,8 @@
                                             class="accordion-collapse collapse"
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
-                                                <h6 class="mb-1">la partie fixe qui est liÃ©e Ã  la fonction du travailleur</h6>
-                                                <p class="mb-1">et/ou Ã  la catÃ©gorie professionnelle du Travailleur</p>
+                                                <h6 class="mb-1">la partie fixe qui est liée à la fonction du travailleur</h6>
+                                                <p class="mb-1">et/ou à la catégorie professionnelle du Travailleur</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1715,10 +1713,10 @@
                                                 <span>
                                                     <span class="d-flex gap-2 align-items-baseline">
                                                         <span class="h6 mb-1">
-                                                            Prime d'anciennetÃ©
+                                                            Prime d'ancienneté
                                                         </span>
                                                     </span>
-                                                    <span class="mb-0 text-muted"> AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois</span>
+                                                    <span class="mb-0 text-muted"> Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois</span>
                                                 </span>
                                             </a>
                                             <div class="d-flex gap-3 p-4 p-sm-0 pt-0 ms-1 ms-sm-0 w-25">
@@ -1733,7 +1731,7 @@
                                                     </a>
                                                 @endcan
                                                 @can('Delete Allowance')
-                                                    <a class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                    <a class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                         <i class="ti ti-trash text-secondary ti-sm"></i>
                                                     </a>
                                                 @endcan
@@ -1744,19 +1742,19 @@
                                             class="accordion-collapse collapse"
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
-                                                <h6 class="mb-1">et 1% de salaire par annÃ©e </h6>
-                                                <p class="mb-1">de service jusqu'a la 25ieme annÃ©es</p>
+                                                <h6 class="mb-1">et 1% de salaire par année </h6>
+                                                <p class="mb-1">de service jusqu'a la 25ieme années</p>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
 
-                                <!-- DÃ©tails du salaire (prime, avantages, etc.) -->
+                                <!-- Détails du salaire (prime, avantages, etc.) -->
                                 @if(!$allowances->isEmpty())
                                     @foreach ($allowances as $allowance)
                                         @if($allowance->amount >= '0')
-                                            @if($allowance->title == 'Prime d\'anciennetÃ©')
-                                                <!-- Prime de d'anciennetÃ© -->
+                                            @if($allowance->title == 'Prime d\'ancienneté')
+                                                <!-- Prime de d'ancienneté -->
                                                 @if($date_pa < 2)
 
                                                 @else
@@ -1766,10 +1764,10 @@
                                                                 <span>
                                                                     <span class="d-flex gap-2 align-items-baseline">
                                                                         <span class="h6 mb-1">
-                                                                            Prime d'anciennetÃ©
+                                                                            Prime d'ancienneté
                                                                         </span>
                                                                     </span>
-                                                                    <span class="mb-0 text-muted"> AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois | Mettre Ã  jour l'anciÃ¨nnetÃ© : <b id="primeancien" style="color:#fff; background-color:green;"></b></span>
+                                                                    <span class="mb-0 text-muted"> Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois | Mettre à jour l'anciènneté : <b id="primeancien" style="color:#fff; background-color:green;"></b></span>
                                                                 </span>
                                                             </a>
                                                             <div class="d-flex gap-3 p-4 p-sm-0 pt-0 ms-1 ms-sm-0 w-25">
@@ -1788,7 +1786,7 @@
                                                                         'route' => ['allowance.destroy', $allowance->id],
                                                                         'id' => 'delete-form-' . $allowance->id,
                                                                     ]) !!}
-                                                                        <a class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                                        <a class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                             <i class="ti ti-trash text-secondary ti-sm"></i>
                                                                         </a>
                                                                     </form>
@@ -1800,8 +1798,8 @@
                                                             class="accordion-collapse collapse"
                                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                                             <div class="accordion-body ps-4 ms-2">
-                                                                <h6 class="mb-1">et 1% de salaire par annÃ©e </h6>
-                                                                <p class="mb-1">de service jusqu'a la 25ieme annÃ©es</p>
+                                                                <h6 class="mb-1">et 1% de salaire par année </h6>
+                                                                <p class="mb-1">de service jusqu'a la 25ieme années</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1841,7 +1839,7 @@
                                                                     'route' => ['allowance.destroy', $allowance->id],
                                                                     'id' => 'delete-form-' . $allowance->id,
                                                                 ]) !!}
-                                                                    <a href="#" class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete">
+                                                                    <a href="#" class="bs-pass-para" data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                                         <i class="ti ti-trash text-secondary ti-sm"></i>
                                                                     </a>
                                                                 </form>
@@ -1854,7 +1852,7 @@
                                                         aria-labelledby="headingOffice"
                                                         data-bs-parent="#ecommerceBillingAccordionAddress">
                                                         <div class="accordion-body ps-4 ms-2">
-                                                            <h6 class="mb-1">ITS : ExonÃ©ration {{$allowance->trait_fisc}}</h6>
+                                                            <h6 class="mb-1">ITS : Exonération {{$allowance->trait_fisc}}</h6>
                                                             <p class="mb-1">CNPS : {{$allowance->trait_cnps}}</p>
                                                         </div>
                                                     </div>
@@ -1864,7 +1862,7 @@
                                     @endforeach
                                 @endif
 
-                                <!-- Heures SupplÃ©mentaires -->
+                                <!-- Heures Supplémentaires -->
                                 <?php
                                     $totoverstimes = 0;
                                     foreach ($overtimes as $overtime){
@@ -1879,10 +1877,10 @@
                                                 <span>
                                                     <span class="d-flex gap-2 align-items-baseline">
                                                         <span class="h6 mb-1">
-                                                             Heures SupplÃ©mentaires
+                                                             Heures Supplémentaires
                                                         </span>
                                                     </span>
-                                                    <span class="mb-0 text-muted">Les heures supplÃ©mentaires sont dÃ©comptÃ©es Ã  la semaine...</span>
+                                                    <span class="mb-0 text-muted">Les heures supplémentaires sont décomptées à la semaine...</span>
                                                 </span>
                                             </a>
                                             <div class="d-flex gap-3 p-4 p-sm-0 pt-0 ms-1 ms-sm-0 w-25">
@@ -1910,18 +1908,18 @@
                                             class="accordion-collapse collapse"
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
-                                                <h6 class="mb-1">Elles donnent lieu Ã  des majorations de salaire.</h6>
-                                                <p class="mb-1">Le plafond applicable aux heures supplÃ©mentaires est :</p>
-                                                <p class="mb-1">de 15h/ supplÃ©mentaires max. par semaine par salariÃ©</p>
-                                                <p class="mb-1">et de 3 heures max. par jour au-delÃ  de la durÃ©e journaliÃ¨re de travail prÃ©vue pour le salariÃ©</p>
-                                                <p class="mb-1">et de 75 heures max par an par salariÃ©</p>
+                                                <h6 class="mb-1">Elles donnent lieu à des majorations de salaire.</h6>
+                                                <p class="mb-1">Le plafond applicable aux heures supplémentaires est :</p>
+                                                <p class="mb-1">de 15h/ supplémentaires max. par semaine par salarié</p>
+                                                <p class="mb-1">et de 3 heures max. par jour au-delà de la durée journalière de travail prévue pour le salarié</p>
+                                                <p class="mb-1">et de 75 heures max par an par salarié</p>
                                             </div>
                                         </div>
                                     </div>
                                     @endforeach
                                 @endif
 
-                                <!-- Allocation CongÃ© -->
+                                <!-- Allocation Congé -->
                                 @if($employee->get_allo_conge() > 0)
                                     <div class="accordion-item border-bottom border-top-0">
                                         <div class="accordion-header d-flex justify-content-between align-items-center flex-wrap flex-sm-nowrap" id="headingHomeConge">
@@ -1929,10 +1927,10 @@
                                                 <span>
                                                     <span class="d-flex gap-2 align-items-baseline">
                                                         <span class="h6 mb-1">
-                                                            Allocation congÃ©
+                                                            Allocation congé
                                                         </span>
                                                     </span>
-                                                    <span class="mb-0 text-muted">L'allocation congÃ©, aussi appelÃ©e indemnitÃ© de congÃ©s payÃ©s,</span>
+                                                    <span class="mb-0 text-muted">L'allocation congé, aussi appelée indemnité de congés payés,</span>
                                                 </span>
                                             </a>
                                             <div class="d-flex gap-3 p-4 p-sm-0 pt-0 ms-1 ms-sm-0 w-25">
@@ -1950,10 +1948,10 @@
                                             class="accordion-collapse collapse"
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
-                                                <h6 class="mb-1">est une somme versÃ©e au salariÃ© lorsqu'il prend ses congÃ©s annuels.</h6>
-                                                <p class="mb-1">Elle vise Ã  compenser la perte de salaire due Ã  l'absence du salariÃ©.</p>
-                                                <p class="mb-1">Cette allocation est calculÃ©e en fonction de la rÃ©munÃ©ration habituelle du salariÃ©,</p>
-                                                <p class="mb-1">et est soumise Ã  des rÃ¨gles spÃ©cifiques dÃ©finies par la lÃ©gislation et les conventions collectives.</p>
+                                                <h6 class="mb-1">est une somme versée au salarié lorsqu'il prend ses congés annuels.</h6>
+                                                <p class="mb-1">Elle vise à compenser la perte de salaire due à l'absence du salarié.</p>
+                                                <p class="mb-1">Cette allocation est calculée en fonction de la rémunération habituelle du salarié,</p>
+                                                <p class="mb-1">et est soumise à des règles spécifiques définies par la législation et les conventions collectives.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1990,9 +1988,9 @@
                                             class="accordion-collapse collapse"
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
-                                                <h6 class="mb-1">la mise Ã  disposition d'un bien ou d'un service, </h6>
-                                                <p class="mb-1">permettant au salariÃ© de faire l'Ã©conomie </p>
-                                                <p class="mb-1">de frais qu'il aurait dÃ» normalement supporter</p>
+                                                <h6 class="mb-1">la mise à disposition d'un bien ou d'un service, </h6>
+                                                <p class="mb-1">permettant au salarié de faire l'économie </p>
+                                                <p class="mb-1">de frais qu'il aurait dû normalement supporter</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2008,11 +2006,11 @@
                                                 <span>
                                                     <span class="d-flex gap-2 align-items-baseline">
                                                         <span class="h6 mb-1">
-                                                            PrÃªts
+                                                            Prêts
                                                         </span>
                                                     </span>
                                                     <span class="mb-0 text-muted">
-                                                        Le "prÃªt" est le contrat par...
+                                                        Le "prêt" est le contrat par...
                                                     </span>
                                                 </span>
                                             </a>
@@ -2037,8 +2035,8 @@
                                         <div id="ecommerceBillingAddressHomeTotal" class="accordion-collapse collapse" data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
                                                 <h6 class="mb-1"> </h6>
-                                                <p class="mb-1">Le "prÃªt" est le contrat par lequel une personne remet Ã  une autre, Ã  titre prÃ©caire, un objet, du matÃ©riel, ou</p>
-                                                <p class="mb-1"> des matÃ©riaux, des marchandises, ou une somme d'argent, Ã  charge de restitution au terme qu'elles conviennent.</p>
+                                                <p class="mb-1">Le "prêt" est le contrat par lequel une personne remet à une autre, à titre précaire, un objet, du matériel, ou</p>
+                                                <p class="mb-1"> des matériaux, des marchandises, ou une somme d'argent, à charge de restitution au terme qu'elles conviennent.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2057,7 +2055,7 @@
                                                                 </span>
                                                             </span>
                                                             <span class="mb-0 text-muted">
-                                                                Autre retenue dÃ©ductible
+                                                                Autre retenue déductible
                                                             </span>
                                                         </span>
                                                     </a>
@@ -2071,15 +2069,15 @@
                                                                 'route' => ['setsalary.destroyAutreRetenue', $retenue->id],
                                                                 'id' => 'delete-form-' . $retenue->id,
                                                             ]) }}
-                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete"><i class="ti ti-trash text-secondary ti-sm"></i></a>
+                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer"><i class="ti ti-trash text-secondary ti-sm"></i></a>
                                                         </form>
                                                     </div>
                                                 </div>
                                                 <div id="ecommerceBillingAddressHomeTotal" class="accordion-collapse collapse" data-bs-parent="#ecommerceBillingAccordionAddress">
                                                     <div class="accordion-body ps-4 ms-2">
                                                         <h6 class="mb-1"> </h6>
-                                                        <p class="mb-1">Le montant sera dÃ©duit du salaire net</p>
-                                                        <p class="mb-1">de l'employÃ©.</p>
+                                                        <p class="mb-1">Le montant sera déduit du salaire net</p>
+                                                        <p class="mb-1">de l'employé.</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2093,7 +2091,7 @@
                                                         <span>
                                                             <span class="d-flex gap-2 align-items-baseline">
                                                                 <span class="h6 mb-1">
-                                                                    RÃ©trocession de retenue
+                                                                    Rétrocession de retenue
                                                                 </span>
                                                             </span>
                                                             <span class="mb-0 text-muted">
@@ -2111,15 +2109,15 @@
                                                                 'route' => ['setsalary.destroyAutreRetenue', $retenue->id],
                                                                 'id' => 'delete-form-' . $retenue->id,
                                                             ]) }}
-                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete"><i class="ti ti-trash text-secondary ti-sm"></i></a>
+                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer"><i class="ti ti-trash text-secondary ti-sm"></i></a>
                                                         </form>
                                                     </div>
                                                 </div>
                                                 <div id="ecommerceBillingAddressHomeTotal" class="accordion-collapse collapse" data-bs-parent="#ecommerceBillingAccordionAddress">
                                                     <div class="accordion-body ps-4 ms-2">
                                                         <h6 class="mb-1"> </h6>
-                                                        <p class="mb-1">Acte de reverser une partie ou la totalitÃ© d'une recette </p>
-                                                        <p class="mb-1">ou des honoraires Ã  un tiers.</p>
+                                                        <p class="mb-1">Acte de reverser une partie ou la totalité d'une recette </p>
+                                                        <p class="mb-1">ou des honoraires à un tiers.</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2135,7 +2133,7 @@
                                                         </span>
                                                     </span>
                                                     <span class="mb-0 text-muted">
-                                                        Le montant ou total brut reprÃ©sente...
+                                                        Le montant ou total brut représente...
                                                     </span>
                                                 </span>
                                             </a>
@@ -2155,8 +2153,8 @@
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
                                                 <h6 class="mb-1"> </h6>
-                                                <p class="mb-1">le montant de la rÃ©munÃ©ration brute avant dÃ©duction </p>
-                                                <p class="mb-1">des diffÃ©rentes retenue fiscales et sociales (part salariale).</p>
+                                                <p class="mb-1">le montant de la rémunération brute avant déduction </p>
+                                                <p class="mb-1">des différentes retenue fiscales et sociales (part salariale).</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2169,11 +2167,11 @@
                                                 <span>
                                                     <span class="d-flex gap-2 align-items-baseline">
                                                         <span class="h6 mb-1">
-                                                            PrÃªts
+                                                            Prêts
                                                         </span>
                                                     </span>
                                                     <span class="mb-0 text-muted">
-                                                        Le "prÃªt" est le contrat par...
+                                                        Le "prêt" est le contrat par...
                                                     </span>
                                                 </span>
                                             </a>
@@ -2187,7 +2185,7 @@
                                                 </a>
                                                 <a href="#" class="disabled"
                                                     data-bs-toggle="tooltip" title=""
-                                                    data-bs-original-title="Delete" aria-label="Delete">
+                                                    data-bs-original-title="Supprimer" aria-label="Supprimer">
                                                     <i class="ti ti-trash text-secondary ti-sm"></i>
                                                 </a>
                                             </div>
@@ -2195,8 +2193,8 @@
                                         <div id="ecommerceBillingAddressHomeTotal" class="accordion-collapse collapse" data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
                                                 <h6 class="mb-1"> </h6>
-                                                <p class="mb-1">Le "prÃªt" est le contrat par lequel une personne remet Ã  une autre, Ã  titre prÃ©caire, un objet, du matÃ©riel, ou</p>
-                                                <p class="mb-1"> des matÃ©riaux, des marchandises, ou une somme d'argent, Ã  charge de restitution au terme qu'elles conviennent.</p>
+                                                <p class="mb-1">Le "prêt" est le contrat par lequel une personne remet à une autre, à titre précaire, un objet, du matériel, ou</p>
+                                                <p class="mb-1"> des matériaux, des marchandises, ou une somme d'argent, à charge de restitution au terme qu'elles conviennent.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2215,7 +2213,7 @@
                                                                 </span>
                                                             </span>
                                                             <span class="mb-0 text-muted">
-                                                                Autre retenue dÃ©ductible
+                                                                Autre retenue déductible
                                                             </span>
                                                         </span>
                                                     </a>
@@ -2229,15 +2227,15 @@
                                                                 'route' => ['setsalary.destroyAutreRetenue', $retenue->id],
                                                                 'id' => 'delete-form-' . $retenue->id,
                                                             ]) }}
-                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete"><i class="ti ti-trash text-secondary ti-sm"></i></a>
+                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer"><i class="ti ti-trash text-secondary ti-sm"></i></a>
                                                         </form>
                                                     </div>
                                                 </div>
                                                 <div id="ecommerceBillingAddressHomeTotal" class="accordion-collapse collapse" data-bs-parent="#ecommerceBillingAccordionAddress">
                                                     <div class="accordion-body ps-4 ms-2">
                                                         <h6 class="mb-1"> </h6>
-                                                        <p class="mb-1">Le montant sera dÃ©duit du salaire net</p>
-                                                        <p class="mb-1">de l'employÃ©.</p>
+                                                        <p class="mb-1">Le montant sera déduit du salaire net</p>
+                                                        <p class="mb-1">de l'employé.</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2251,7 +2249,7 @@
                                                         <span>
                                                             <span class="d-flex gap-2 align-items-baseline">
                                                                 <span class="h6 mb-1">
-                                                                    RÃ©trocession de retenue
+                                                                    Rétrocession de retenue
                                                                 </span>
                                                             </span>
                                                             <span class="mb-0 text-muted">
@@ -2269,15 +2267,15 @@
                                                                 'route' => ['setsalary.destroyAutreRetenue', $retenue->id],
                                                                 'id' => 'delete-form-' . $retenue->id,
                                                             ]) }}
-                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Delete" aria-label="Delete"><i class="ti ti-trash text-secondary ti-sm"></i></a>
+                                                            <a data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer" aria-label="Supprimer"><i class="ti ti-trash text-secondary ti-sm"></i></a>
                                                         </form>
                                                     </div>
                                                 </div>
                                                 <div id="ecommerceBillingAddressHomeTotal" class="accordion-collapse collapse" data-bs-parent="#ecommerceBillingAccordionAddress">
                                                     <div class="accordion-body ps-4 ms-2">
                                                         <h6 class="mb-1"> </h6>
-                                                        <p class="mb-1">Acte de reverser une partie ou la totalitÃ© d'une recette </p>
-                                                        <p class="mb-1">ou des honoraires Ã  un tiers.</p>
+                                                        <p class="mb-1">Acte de reverser une partie ou la totalité d'une recette </p>
+                                                        <p class="mb-1">ou des honoraires à un tiers.</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2293,7 +2291,7 @@
                                                         </span>
                                                     </span>
                                                     <span class="mb-0 text-muted">
-                                                        Le montant ou total brut reprÃ©sente...
+                                                        Le montant ou total brut représente...
                                                     </span>
                                                 </span>
                                             </a>
@@ -2313,8 +2311,8 @@
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
                                                 <h6 class="mb-1"> </h6>
-                                                <p class="mb-1">le montant de la rÃ©munÃ©ration brute avant dÃ©duction </p>
-                                                <p class="mb-1">des diffÃ©rentes retenue fiscales et sociales (part salariale).</p>
+                                                <p class="mb-1">le montant de la rémunération brute avant déduction </p>
+                                                <p class="mb-1">des différentes retenue fiscales et sociales (part salariale).</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2328,7 +2326,7 @@
                                                         </span>
                                                     </span>
                                                     <span class="mb-0 text-muted">
-                                                        Le montant ou total brut reprÃ©sente...
+                                                        Le montant ou total brut représente...
                                                     </span>
                                                 </span>
                                             </a>
@@ -2348,8 +2346,8 @@
                                             data-bs-parent="#ecommerceBillingAccordionAddress">
                                             <div class="accordion-body ps-4 ms-2">
                                                 <h6 class="mb-1"> </h6>
-                                                <p class="mb-1">le montant de la rÃ©munÃ©ration brute avant dÃ©duction </p>
-                                                <p class="mb-1">des diffÃ©rentes retenue fiscales et sociales (part salariale).</p>
+                                                <p class="mb-1">le montant de la rémunération brute avant déduction </p>
+                                                <p class="mb-1">des différentes retenue fiscales et sociales (part salariale).</p>
                                             </div>
                                         </div>
                                     </div>
@@ -2368,7 +2366,7 @@
                     <ul class="nav nav-pills flex-column flex-md-row mb-4">
                         <li class="nav-item"><a class="nav-link active" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#imposable">Salaire Brut Imposable (SBI) &nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>
                         <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#sociale">Salaire Brut Social (SBS)  &nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#employes">Charges EmployÃ©  &nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#employes">Charges Employé  &nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>
                         <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#employeurs">Charges Employeur  &nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>
                         {{--<li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#recap">Recapitulatif des Retenues  &nbsp;<i class="fa fa-arrow-circle-right"></i></a></li>--}}
                     </ul>
@@ -2462,10 +2460,10 @@
                                             </tr>
                                             @endforeach
 
-                                            <!-- Ligne pour les Heures supplÃ©mentaires (si prÃ©sentes) -->
+                                            <!-- Ligne pour les Heures supplémentaires (si présentes) -->
                                             @if(!$overtimes->isEmpty())
                                             <tr style="border-bottom-color: #1c232f">
-                                                <td>Heures SupplÃ©mentaires</td>
+                                                <td>Heures Supplémentaires</td>
                                                 <td style="text-align: right;border-right-color: #1c232f">
                                                     <b class="m-0">{{ number_format($totoverstimes, 0 , '.' , ' ') }}</b>
                                                 </td>
@@ -2497,17 +2495,17 @@
                                                     <b class="m-0">Avantages en Nature ou en Argent</b>
                                                 </td>
                                                 <td style="border-right-color: #1c232f;">
-                                                    <b class="m-0" align="left">Montant rÃ©el</b>
+                                                    <b class="m-0" align="left">Montant réel</b>
                                                 </td>
                                                 <td>
                                                 </td>
                                                 <td>
-                                                    <b class="m-0" align="left">Montant au barÃ¨me</b>
+                                                    <b class="m-0" align="left">Montant au barème</b>
                                                 </td>
                                             </tr>
                                             <tr style="border-bottom-color: #1c232f">
                                                 <td>
-                                                    Montant des avantages au barÃ¨me
+                                                    Montant des avantages au barème
                                                 </td>
                                                 <td style="border-right-color: #1c232f;" align="right">
                                                     {{number_format($real, 0 ,'.',' ')}}
@@ -2557,7 +2555,7 @@
                                             </tr>
 
                                             <tr style="border-bottom-color: #1c232f">
-                                                <td><b class="m-0">ExonÃ©rations</b></td>
+                                                <td><b class="m-0">Exonérations</b></td>
                                                 <td style="text-align: right;border-right-color: #1c232f"></td>
                                                 <td></td>
                                                 <td></td>
@@ -2653,7 +2651,7 @@
                                                 }
                                             ?>
                                             <tr style="border-bottom-color: #1c232f">
-                                                <td align="left">Total des primes Ã  10%</td>
+                                                <td align="left">Total des primes à 10%</td>
                                                 <td style="border-right-color: #1c232f " align="right"><b class="m-0">{{number_format($totoezro, 0 ,'.',' ')}}</b></td>
                                                 <td align="left"><b class="m-0" style="color: #ddcd08;">{{number_format($resltexo, 0 ,'.',' ')}}</td>
                                                 <td></td>
@@ -2711,16 +2709,16 @@
                                                 }
                                             ?>
                                             <tr>
-                                                <td>Total des primes exonÃ©rÃ©s Ã  100% dans la limite lÃ©gale</td>
+                                                <td>Total des primes exonérés à 100% dans la limite légale</td>
                                                 <td style="border-right-color: #1c232f "></td>
                                                 <td align="left"><b class="m-0" style="color: #ddcd08;">{{number_format($total, 0 ,'.',' ')}}</b></td>
                                                 <td></td>
                                             </tr>
 
-                                            <!-- Total des exonÃ©rations -->
+                                            <!-- Total des exonérations -->
                                             <tr>
                                                 <td style="border-top-color: #1c232f;" align="left">
-                                                    <b class="m-0" style="color: #ddcd08;">Total des ExonÃ©rations (C)</b>
+                                                    <b class="m-0" style="color: #ddcd08;">Total des Exonérations (C)</b>
                                                 </td>
                                                 <td style="border-right-color: #1c232f !important; border-top-color: #1c232f;" align="left">
 
@@ -2821,10 +2819,10 @@
                                             </tr>
                                             @endforeach
 
-                                            <!-- Ligne pour les Heures supplÃ©mentaires (si prÃ©sentes) -->
+                                            <!-- Ligne pour les Heures supplémentaires (si présentes) -->
                                             @if(!$overtimes->isEmpty())
                                             <tr style="border-bottom-color: #1c232f">
-                                                <td>Heures SupplÃ©mentaires</td>
+                                                <td>Heures Supplémentaires</td>
                                                 <td style="text-align: right;border-right-color: #1c232f">
                                                     <b class="m-0">{{ number_format($totoverstimes, 0 , '.' , ' ') }}</b>
                                                 </td>
@@ -2855,17 +2853,17 @@
                                                     <b class="m-0">Avantages en Nature ou en Argent</b>
                                                 </td>
                                                 <td style="border-right-color: #1c232f;">
-                                                    <b class="m-0" align="left">Montant rÃ©el</b>
+                                                    <b class="m-0" align="left">Montant réel</b>
                                                 </td>
                                                 <td>
                                                 </td>
                                                 <td>
-                                                    <b class="m-0" align="left">Montant au barÃ¨me</b>
+                                                    <b class="m-0" align="left">Montant au barème</b>
                                                 </td>
                                             </tr>
                                             <tr style="border-bottom-color: #1c232f">
                                                 <td>
-                                                    Montant des avantages au barÃ¨me
+                                                    Montant des avantages au barème
                                                 </td>
                                                 <td style="border-right-color: #1c232f;" align="right">
                                                     {{number_format($real, 0 ,'.',' ')}}
@@ -2915,7 +2913,7 @@
                                             </tr>
 
                                             <tr style="border-bottom-color: #1c232f">
-                                                <td><b class="m-0">ExonÃ©rations</td>
+                                                <td><b class="m-0">Exonérations</td>
                                                 <td style="text-align: right;border-right-color: #1c232f"></td>
                                                 <td></td>
                                                 <td></td>
@@ -2967,16 +2965,16 @@
                                                 }
                                             ?>
                                             <tr>
-                                                <td>Total des primes exonÃ©rÃ©s Ã  100% dans la limite lÃ©gale</td>
+                                                <td>Total des primes exonérés à 100% dans la limite légale</td>
                                                 <td style="border-right-color: #1c232f "></td>
                                                 <td align="left"><b class="m-0" style="color: #ddcd08;">{{number_format($total, 0 ,'.',' ')}}</b></td>
                                                 <td></td>
                                             </tr>
 
-                                            <!-- Total des exonÃ©rations -->
+                                            <!-- Total des exonérations -->
                                             <tr>
                                                 <td style="border-top-color: #1c232f;" align="left">
-                                                   <b class="m-0" style="color: #ddcd08;">Total des ExonÃ©rations (C)</b>
+                                                   <b class="m-0" style="color: #ddcd08;">Total des Exonérations (C)</b>
                                                 </td>
                                                 <td style="border-right-color: #1c232f !important; border-top-color: #1c232f;" align="left">
 
@@ -3011,7 +3009,7 @@
                                                 <td align="right" width="25%"><strong>SBI : {{number_format($employee->get_salary_imposable(),0 , '.' , ' ')}} </strong></td>
                                             </tr>
                                             <tr>
-                                                <td>ImpÃ´ts brut : </td>
+                                                <td>Impôts brut : </td>
                                                 <td align="right" width="25%"><strong>{{ number_format($resultimpricf, 0 , '.' , ' ') }} </strong></td>
                                             </tr>
                                             <tr>
@@ -3019,7 +3017,7 @@
                                                 <td align="right" width="25%"><strong>{{ number_format($resultricf, 0 , '.' , ' ') }} </strong></td>
                                             </tr>
                                             <tr>
-                                                <td>ImpÃ´ts Net :</td>
+                                                <td>Impôts Net :</td>
                                                 <td align="right" width="25%">
                                                     <strong>@if($impots < 0)
                                                         0
@@ -3052,22 +3050,22 @@
                                                 <td colspan = "2"><strong>CMU</strong></td>
                                             </tr>
                                             <tr>
-                                                <td>Nombre de bÃ©nÃ©ficiaires : </td><td align="right" width="25%"><strong> {{ ($cmu)}} </strong></td>
+                                                <td>Nombre de bénéficiaires : </td><td align="right" width="25%"><strong> {{ ($cmu)}} </strong></td>
                                             </tr>
                                             <?php if( $cmu < '7'){ ?>
                                                 <tr>
-                                                    <td>LimitÃ© Ã  6 bÃ©nÃ©ficiaires : </td><td align="right" width="25%"><strong>{{ (6 - $cmu)}} Restants</strong></td>
+                                                    <td>Limité à 6 bénéficiaires : </td><td align="right" width="25%"><strong>{{ (6 - $cmu)}} Restants</strong></td>
                                                 </tr>
                                             <?php }else{ ?>
                                                 <tr>
-                                                    <td colspan = "2">Limite de bÃ©nÃ©ficiaires atteint : <strong> 6 </strong></td>
+                                                    <td colspan = "2">Limite de bénéficiaires atteint : <strong> 6 </strong></td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan = "2">La part de l'employÃ© passe de 500 Ã  1000 FCFA par bÃ©nÃ©ficiaires pour <strong>{{($cmu - 6)}}</strong> bÃ©nÃ©ficiaire(s)</td>
+                                                    <td colspan = "2">La part de l'employé passe de 500 à 1000 FCFA par bénéficiaires pour <strong>{{($cmu - 6)}}</strong> bénéficiaire(s)</td>
                                                 </tr>
                                             <?php } ?>
                                             <tr>
-                                                <td>Part SalariÃ© :</td><td align="right" width="25%"><strong>{{ number_format($resultcmu, 0 , '.' , ' ')}}</strong></td>
+                                                <td>Part Salarié :</td><td align="right" width="25%"><strong>{{ number_format($resultcmu, 0 , '.' , ' ')}}</strong></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -3095,7 +3093,7 @@
                                     <div class="card" style="padding:10px; background-color:#1c232f;">
                                         <table class="table-sm table-bordered" style="color: #fff;">
                                             <tr>
-                                                <td><strong>ImpÃ´ts sur Salaire</strong></td>
+                                                <td><strong>Impôts sur Salaire</strong></td>
                                                 <td align="right" width="25%"><strong> SBI : {{number_format($employee->get_salary_imposable(),0 , '.' , ' ')}} </strong></td>
                                             </tr>
                                             <tr>
@@ -3104,17 +3102,17 @@
                                             </tr>
                                             @if($local=='local')
                                                 <tr>
-                                                    <td>Contribution employeur (ExpatriÃ©) : </td>
+                                                    <td>Contribution employeur (Expatrié) : </td>
                                                     <td align="right"><strong>  0 </strong></td>
                                                 </tr>
                                             @else
                                                 <tr>
-                                                    <td>Contribution employeur (ExpatriÃ©) : </td>
+                                                    <td>Contribution employeur (Expatrié) : </td>
                                                     <td align="right"><strong>{{ number_format($resulttax2, 0 , '.' , ' ') }} </strong></td>
                                                 </tr>
                                             @endif
                                             <tr>
-                                                <td>Taxe dâ€™Apprentissage :<br/>Taxe Ã  la F. P. C. :  </td>
+                                                <td>Taxe d’Apprentissage :<br/>Taxe à la F. P. C. :  </td>
                                                 <td align="right"><strong>{{round($tax4)}}<br/>{{round($tax5)}} </strong></td>
                                             </tr>
                                             <tr>
@@ -3158,21 +3156,21 @@
                                             </tr>
                                             <?php if( $cmu < '7'){ ?>
                                                 <tr>
-                                                    <td>BÃ©nÃ©ficiaires Ã  charges partagÃ©es LimitÃ©s Ã  6 : </td>
+                                                    <td>Bénéficiaires à charges partagées Limités à 6 : </td>
                                                     <td align="right"><strong>{{($cmu)}}</strong></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>BÃ©nÃ©ficiaires restants: </td>
+                                                    <td>Bénéficiaires restants: </td>
                                                     <td align="right"><strong>{{(6 - $cmu)}}</strong></td>
                                                 </tr>
                                             <?php }else{ ?>
                                                 <tr>
-                                                    <td>Limite de bÃ©nÃ©ficiaires atteint : </td>
+                                                    <td>Limite de bénéficiaires atteint : </td>
                                                     <td align="right"> <strong> 6 </strong> </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>La part de l'employÃ© passe de 500 Ã  1000 FCFA par bÃ©nÃ©ficiaires pour </td>
-                                                    <td align="right"><strong>{{($cmu - 6)}}</strong> bÃ©nÃ©ficiaire(s)</td>
+                                                    <td>La part de l'employé passe de 500 à 1000 FCFA par bénéficiaires pour </td>
+                                                    <td align="right"><strong>{{($cmu - 6)}}</strong> bénéficiaire(s)</td>
                                                 </tr>
                                             <?php } ?>
                                         </table>
@@ -3209,23 +3207,23 @@
                                         <td class="border border-dark" colspan ="4">
                                             Nom :  {{ \Utility::getValByName('company_name') }}<br>
                                             Adresse :  {{ \Utility::getValByName('company_city') }}, {{ \Utility::getValByName('company_address') }}<br>
-                                            TÃ©lÃ©phone : {{ \Utility::getValByName('company_telephone') }}<br>
+                                            Téléphone : {{ \Utility::getValByName('company_telephone') }}<br>
                                             Boite postale :  {{ \Utility::getValByName('company_zipcode') }}<br>
-                                            PÃ©riode :  {{$firstDay}} au {{$lastDay}}<br>
+                                            Période :  {{$firstDay}} au {{$lastDay}}<br>
                                             Horaire mensuelle :  173,33<br>
-                                            Nombre de jours travaillÃ©s : {{$employee->tax_payer_id}} <br>
+                                            Nombre de jours travaillés : {{$employee->tax_payer_id}} <br>
                                             Grille salariale : <strong>{{ $sect }}</strong><br>
                                         </td>
                                         <td class="border border-dark" colspan ="5">
-                                            Nom et PrÃ©nom :  {{ $employee->name }}<br>
+                                            Nom et Prénom :  {{ $employee->name }}<br>
                                             Adresse :  {{ $employee->address }}<br>
                                             Situation matrimoniale : {{ $situation }}<br>
-                                            Enfants Ã  charge : {{ $employee->enfant }}<br>
-                                            NumÃ©ro CNPS :  {{ $employee->num_cnps }}<br>
-                                            AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
+                                            Enfants à charge : {{ $employee->enfant }}<br>
+                                            Numéro CNPS :  {{ $employee->num_cnps }}<br>
+                                            Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
                                             @foreach($categorie as $cate)
                                                 @if($employee->categorie==$cate->id)
-                                                    CatÃ©gorie : {{$postevalue}} / {{$valueposte}}<br>
+                                                    Catégorie : {{$postevalue}} / {{$valueposte}}<br>
                                                 @endif
                                             @endforeach
                                             Emploi :   {{ !empty(\Auth::user()->getDesignation($employee['designation_id'])) ? \Auth::user()->getDesignation($employee['designation_id'])->name : '-' }} <br>
@@ -3234,8 +3232,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width="5%"bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="3%">NÂ°</td>
-                                        <td width="35%" bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="30%">DÃ‰SIGNATION</td>
+                                        <td width="5%"bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="3%">N°</td>
+                                        <td width="35%" bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="30%">DÉSIGNATION</td>
                                         <td width="5%" bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;">NOMBRE</td>
                                         <td width="5%"bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;">BASE</td>
                                         <td bgcolor="#C0C0C0" class="border border-dark" colspan="3" style="vertical-align: middle; color:#000;">PART SALARIALE</td>
@@ -3337,7 +3335,7 @@
                                                 @elseif($allowance->allowance_option == '11')
                                                     @if(\Utility::getValByName('company_city') =='ABIDJAN' || \Utility::getValByName('company_city') == 'Abidjan' || \Utility::getValByName('company_city') =='abidjan' || strpos(\Utility::getValByName('company_city'), 'Abidjan') !== false)
                                                         {{ number_format(30000/30, 0, '.', ' ') }}
-                                                    @elseif (\Utility::getValByName('company_city')=='BouakÃ©' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouakÃ©')
+                                                    @elseif (\Utility::getValByName('company_city')=='Bouaké' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouaké')
                                                         {{ number_format(round(24000/30), 0, '.', ' ') }}
                                                     @else
                                                         {{ number_format(round(22000/30), 0, '.', ' ') }}
@@ -3369,7 +3367,7 @@
                                                     {{--
                                                     @if(\Utility::getValByName('company_city') =='Abidjan' || \Utility::getValByName('company_city') =='ABIDJAN' || \Utility::getValByName('company_city') =='abidjan' || strpos(\Utility::getValByName('company_city'), 'Abidjan') !== false)
                                                         {{ number_format(30000/30, 0, '.', ' ') }}
-                                                    @elseif (\Utility::getValByName('company_city')=='BouakÃ©' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouakÃ©')
+                                                    @elseif (\Utility::getValByName('company_city')=='Bouaké' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouaké')
                                                         {{ number_format(round(24000/30), 0, '.', ' ') }}
                                                     @else
                                                         {{ number_format(round(22000/30), 0, '.', ' ') }}
@@ -3431,7 +3429,7 @@
                                                 <?php $code++;?>
                                             </td>
                                             <td>
-                                                Allocation congÃ©
+                                                Allocation congé
                                             </td>
                                             <td class="montant">
 
@@ -3467,7 +3465,7 @@
                                             @if($overtimes->isEmpty())
 
                                             @else
-                                                Heures SupplÃ©mentaires
+                                                Heures Supplémentaires
                                             @endif
                                         </td>
                                         <td class="montant">
@@ -3582,7 +3580,7 @@
                                                         <?php echo $code++; ?>
                                                     </td>
                                                     <td>
-                                                        IndemnitÃ© de Gratification
+                                                        Indemnité de Gratification
                                                     </td>
                                                     <td>
                                                         <br/>
@@ -3613,7 +3611,7 @@
                                                         <?php echo $code++; ?>
                                                     </td>
                                                     <td>
-                                                        IndemnitÃ© compensatrice de congÃ©
+                                                        Indemnité compensatrice de congé
                                                     </td>
                                                     <td>
                                                         <br/>
@@ -3644,7 +3642,7 @@
                                                         <?php echo $code++; ?>
                                                     </td>
                                                     <td>
-                                                        IndemnitÃ© de prÃ©avis
+                                                        Indemnité de préavis
                                                     </td>
                                                     <td>
                                                         <br/>
@@ -3675,7 +3673,7 @@
                                                         <?php echo $code++; ?>
                                                     </td>
                                                     <td>
-                                                        IndemnitÃ© de licenciement
+                                                        Indemnité de licenciement
                                                     </td>
                                                     <td>
                                                         <br/>
@@ -3706,7 +3704,7 @@
                                                         <?php echo $code++; ?>
                                                     </td>
                                                     <td>
-                                                        Dommages et intÃ©rÃªts
+                                                        Dommages et intérêts
                                                     </td>
                                                     <td>
                                                         <br/>
@@ -3737,7 +3735,7 @@
                                                         <?php echo $code++; ?>
                                                     </td>
                                                     <td>
-                                                        Dommages et intÃ©rÃªts
+                                                        Dommages et intérêts
                                                     </td>
                                                     <td>
                                                         <br/>
@@ -3798,7 +3796,7 @@
                                             401
                                         </td>
                                         <td>
-                                            ImpÃ´ts bruts avant RICF
+                                            Impôts bruts avant RICF
                                         </td>
                                         <td>
 
@@ -3824,7 +3822,7 @@
                                             402
                                         </td>
                                         <td>
-                                            RÃ©duction pour Charges de Famille
+                                            Réduction pour Charges de Famille
                                         </td>
                                         <td class="montant">
                                             {{$employee->parts}}
@@ -3851,7 +3849,7 @@
                                             403
                                         </td>
                                         <td>
-                                            ImpÃ´ts Nets
+                                            Impôts Nets
                                         </td>
                                         <td>
                                             <br/>
@@ -3962,7 +3960,7 @@
                                             410
                                         </td>
                                         <td>
-                                            Contribution employeur (ExpatriÃ©)
+                                            Contribution employeur (Expatrié)
                                         </td>
                                         <td>
                                             <br/>
@@ -4009,7 +4007,7 @@
                                             411
                                         </td>
                                         <td>
-                                            Taxe dâ€™Apprentissage
+                                            Taxe d’Apprentissage
                                         </td>
                                         <td>
                                             <br/>
@@ -4266,7 +4264,7 @@
                                             <td align="right"  align="right" style="border-buttom: solid 1px white;">
                                                 <?php echo 500; ?>
                                             </td>
-                                            <td ><div class="project-amnt pt-1" align="left">PrÃªts</td>
+                                            <td ><div class="project-amnt pt-1" align="left">Prêts</td>
                                             <td ><p></p></td>
                                             <td  align="right">{{number_format($employee->get_loan(), 0 , '.' , ' ')}}</td>
                                             <td ></td>
@@ -4280,7 +4278,7 @@
                                                 <td align="right"  align="right" >
                                                     <?php echo 503; ?>
                                                 </td>
-                                                <td>RÃ©trocession de retenue</td>
+                                                <td>Rétrocession de retenue</td>
                                                 <td><p></p></td>
                                                 <td align="right"></td>
                                                 <td></td>
@@ -4317,7 +4315,7 @@
                                                 <td align="right"  align="right" >
                                                     <?php echo 503; ?>
                                                 </td>
-                                                <td>RÃ©trocession de retenue</td>
+                                                <td>Rétrocession de retenue</td>
                                                 <td><p></p></td>
                                                 <td align="right"></td>
                                                 <td></td>
@@ -4335,7 +4333,7 @@
                                             <div class="project-amnt pt-1" align="" style="color:#000;">
                                                 @foreach ($paytype as $type)
                                                     @if($type->id == $employee->paytype)
-                                                        <b><i>PayÃ© par : {{ $type->name }} </i></b>
+                                                        <b><i>Payé par : {{ $type->name }} </i></b>
                                                     @endif
                                                 @endforeach
                                             </div>
@@ -4348,14 +4346,14 @@
                                         <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Charges patronales</td>
                                         <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Avantages en nature</td>
                                         <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Net imposable</td>
-                                        <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures travaillÃ©es</td>
-                                        <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures<br/>supplÃ©mentaires</td>
+                                        <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures travaillées</td>
+                                        <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures<br/>supplémentaires</td>
                                         <td bgcolor="#C0C0C0" class="border border-dark color:#000;">NET A PAYER</td>
                                     </tr>
                                     <tr>
                                         <td class="border border-dark">
-                                            PÃ©riode<hr/>
-                                            AnnÃ©e
+                                            Période<hr/>
+                                            Année
                                         </td>
                                         <td class="border border-dark montant">
                                             {{number_format($employee->get_brut_salary(), 0 ,'.',' ')}}<hr/>
@@ -4386,7 +4384,7 @@
                                 </table>
                                 <br>
                                 <div class="row">
-                                    <div class="col-md-6 text-start"><i> Pour vous aider Ã  faire valoir vos droits, conservez ce bulletin de paie sans limitation de durÃ©e.</i></div>
+                                    <div class="col-md-6 text-start"><i> Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.</i></div>
                                     <div class="col-md-6 text-end" style="color:#000;"><u><strong> LA DIRECTION </storng></u></div>
                                 </div>
                             </div>

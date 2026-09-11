@@ -84,7 +84,6 @@
                                 <table class="table table-hover" id="pendingTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>ID</th>
                                             <th>Client</th>
                                             <th>Plan</th>
                                             <th>Montant</th>
@@ -95,7 +94,6 @@
                                     <tbody>
                                         @foreach($commandes as $commande)
                                             <tr>
-                                                <td class="text-nowrap">#{{ $commande->id }}</td>
                                                 <td>{{ $commande->user->name ?? 'N/A' }}</td>
                                                 <td>{{ $commande->plan->name ?? 'N/A' }}</td>
                                                 <td>{{ formatPrice($commande->amount, ['decimals'=>2]) }}</td>

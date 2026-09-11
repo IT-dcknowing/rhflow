@@ -122,7 +122,6 @@
                                 <table class="table table-hover table-striped">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th class="text-center" width="60">#</th>
                                             <th>Matricule</th>
                                             <th>Nom complet</th>
                                             <th>Département</th>
@@ -133,7 +132,6 @@
                                     <tbody>
                                         @forelse($announcement->employees as $key => $employee)
                                             <tr>
-                                                <td class="text-center">{{ $key + 1 }}</td>
                                                 <td>{{ $employee->employee_id }}</td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -177,7 +175,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center py-4">
+                                                <td colspan="5" class="text-center py-4">
                                                     <div class="text-muted">
                                                         <i class="fas fa-inbox fa-3x mb-3"></i>
                                                         <p class="mb-0">Aucun employé n'est concerné par cette annonce</p>

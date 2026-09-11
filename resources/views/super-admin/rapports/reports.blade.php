@@ -21,7 +21,7 @@
                             <option value="365" {{ request('period',30)==365 ? 'selected' : '' }}>Cette année</option>
                         </select>
                         <button class="btn btn-outline-primary bg-label-primary" type="submit">
-                            <i class="ti ti-refresh me-2"></i>Actualiser
+                            <i class="ti ti-filter me-2"></i>Appliquer
                         </button>
                     </form>
                     <div class="dropdown">

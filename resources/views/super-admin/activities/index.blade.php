@@ -26,10 +26,6 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Toutes les activités</h5>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary btn-sm" onclick="refreshActivities()">
-                        <i class="ti ti-refresh me-1"></i>
-                        Actualiser
-                    </button>
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             <i class="ti ti-filter me-1"></i>

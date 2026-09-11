@@ -511,7 +511,7 @@
                     id="downloadbutton2" title="{{ __('Download') }}"><span class="fa fa-download"></span></button>
 
                 @if (\Auth::user()->type == 'hr')
-                <a title="Mail Send" onclick="sendEmail()" class="btn btn-sm btn-warning"><span
+                <a title="Envoyer par e-mail" onclick="sendEmail()" class="btn btn-sm btn-warning"><span
                         class="fa fa-paper-plane"></span></a>
                 @endif
             </div>
@@ -521,7 +521,7 @@
                         id="downloadbutton4" title="{{ __('Download') }}"><span class="fa fa-download"></span></button>
 
                     @if (\Auth::user()->type == 'hr')
-                    <a title="Mail Send" onclick="sendEmail()" class="btn btn-sm btn-warning"><span
+                    <a title="Envoyer par e-mail" onclick="sendEmail()" class="btn btn-sm btn-warning"><span
                             class="fa fa-paper-plane"></span></a>
                     @endif
                 </div>

@@ -51,7 +51,6 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
                                 <th>Nom</th>
                                 <th>Type</th>
                                 <th>Statut</th>
@@ -62,7 +61,6 @@
                         <tbody>
                             @forelse($contractTypes as $type)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $type->name }}</td>
                                     <td>
                                         <span class="badge bg-label-{{ $type->type == 'default' ? 'primary' : 'dark' }}">
@@ -100,7 +98,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-3">Aucun type de contrat trouvé</td>
+                                    <td colspan="5" class="text-center py-3">Aucun type de contrat trouvé</td>
                                 </tr>
                             @endforelse
                         </tbody>

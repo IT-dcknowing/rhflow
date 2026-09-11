@@ -64,7 +64,6 @@
                                     <table class="table table-hover" id="retenuesTableCreated">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
                                                 <th>Code</th>
                                                 <th>Libellé</th>
                                                 <th>Type</th>
@@ -77,7 +76,6 @@
                                         <tbody>
                                             @forelse($retenues as $retenue)
                                                 <tr>
-                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>
                                                         {{$retenue->code ? $retenue->code : '-'}}
                                                     </td>
@@ -150,7 +148,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="8" class="text-center">Aucun remboursement enregistré</td>
+                                                    <td colspan="7" class="text-center">Aucun remboursement enregistré</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -402,7 +400,7 @@
                 // Initialisation de DataTable
                 var table = $('#retenuesTableDefault').DataTable({
                     responsive: true,
-                    order: [[1, 'desc']],
+                    order: [[0, 'desc']],
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
                     },

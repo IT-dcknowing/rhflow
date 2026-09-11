@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $estPaie ? 'Dashboard Paie' : 'Dashboard RH')
+@section('title', $estPaie ? 'Tableau de bord Paie' : 'Tableau de bord RH')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -10,7 +10,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">{{ $estPaie ? '💰 Dashboard Paie' : '👥 Dashboard RH' }}</h4>
+                    <h4 class="mb-1">{{ $estPaie ? '💰 Tableau de bord Paie' : '👥 Tableau de bord RH' }}</h4>
                     <p class="text-muted mb-0">Bienvenue, {{ $user->name }}</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>

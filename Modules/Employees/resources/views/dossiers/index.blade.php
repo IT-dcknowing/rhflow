@@ -136,12 +136,12 @@
                                                         @php
                                                             $hasPhoto = true;
                                                         @endphp
-                                                        <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('documents')) . '/' .$photo->document_value }}" height="110" width="110" alt="User avatar">
+                                                        <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('documents')) . '/' .$photo->document_value }}" height="110" width="110" alt="Avatar utilisateur">
                                                         @break
                                                     @endif
                                                 @endforeach
                                                 @if(!$hasPhoto)
-                                                    <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('avatars')) }}/avatar.png" height="110" width="110" alt="User avatar">
+                                                    <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('avatars')) }}/avatar.png" height="110" width="110" alt="Avatar utilisateur">
                                                 @endif
                                                 <h4>{{$employee->name}}</h4>
                                                 <span class="badge bg-label-secondary mt-1">{{ !empty($employee->designation) ? $employee->designation->name : '' }}</span>
@@ -226,12 +226,12 @@
                                                         @php
                                                             $hasPhoto = true;
                                                         @endphp
-                                                        <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('documents')) . '/' .$photo->document_value }}" height="110" width="110" alt="User avatar">
+                                                        <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('documents')) . '/' .$photo->document_value }}" height="110" width="110" alt="Avatar utilisateur">
                                                         @break
                                                     @endif
                                                 @endforeach
                                                 @if(!$hasPhoto)
-                                                    <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('avatars')) }}/avatar.png" height="110" width="110" alt="User avatar">
+                                                    <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('avatars')) }}/avatar.png" height="110" width="110" alt="Avatar utilisateur">
                                                 @endif
                                                 <h4>{{$employee->name}}</h4>
                                                 <span class="badge bg-label-secondary mt-1">{{ !empty($employee->designation) ? $employee->designation->name : '' }}</span>

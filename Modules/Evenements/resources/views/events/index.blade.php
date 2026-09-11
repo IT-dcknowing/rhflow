@@ -172,7 +172,6 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Titre</th>
                         <th>Type</th>
                         <th>Date et Heure</th>
@@ -185,7 +184,6 @@
                 <tbody class="table-border-bottom-0">
                     @forelse($events as $event)
                         <tr>
-                            <td>{{ $loop->iteration + ($events->currentPage() - 1) * $events->perPage() }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-sm me-3">
@@ -280,7 +278,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <div class="d-flex flex-column align-items-center">
                                     <div class="avatar avatar-xl mb-3">
                                         <div class="avatar-initial bg-label-secondary rounded">

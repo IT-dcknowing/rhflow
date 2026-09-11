@@ -23,7 +23,7 @@
                             <i class="fas fa-arrow-left me-1"></i>Retour
                         </a>
                         <button class="btn btn-primary" onclick="uploadAllDocuments()">
-                            <i class="fas fa-upload me-1"></i>Upload Multiple
+                            <i class="fas fa-upload me-1"></i>Import multiple
                         </button>
                     </div>
                 </div>
@@ -939,7 +939,7 @@
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">📤 Upload Multiple de Documents</h5>
+                                                        <h5 class="modal-title">📤 Import multiple de documents</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">

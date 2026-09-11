@@ -129,7 +129,6 @@
             <table class="table table-hover" id="table_exercice">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Employé</th>
                         <th>Type</th>
                         <th>Période</th>
@@ -143,7 +142,6 @@
                 <tbody class="table-border-bottom-0">
                     @forelse($leaves as $leave)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-sm me-2">
@@ -279,7 +277,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-4">
+                            <td colspan="8" class="text-center py-4">
                                 <div class="d-flex flex-column align-items-center">
                                     <i class="fas fa-inbox fa-3x text-muted mb-2"></i>
                                     <h5 class="mb-1">Aucune demande de congé trouvée</h5>
@@ -479,7 +477,7 @@
     // Initialisation de DataTable
     var table = $('#table_exercice').DataTable({
         responsive: true,
-        order: [[1, 'desc']],
+        order: [[0, 'desc']],
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
         },

@@ -35,10 +35,6 @@
                         <i class="ti ti-plus me-2"></i>
                         Nouveau Secteur
                     </a>
-                    <button class="btn btn-outline-primary bg-label-primary" onclick="refreshTable()">
-                        <i class="ti ti-refresh me-2"></i>
-                        Actualiser
-                    </button>
                 </div>
             </div>
         </div>

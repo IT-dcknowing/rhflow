@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Employé')
+@section('title', 'Tableau de bord Employé')
 
 @section('content')
 <div class="container-fluid">
@@ -9,7 +9,7 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h4 class="mb-1">Mon Dashboard</h4>
+                    <h4 class="mb-1">Mon tableau de bord</h4>
                     <p class="text-muted mb-0">Bienvenue, {{ $user->name }}</p>
                 </div>
                 <div class="d-flex gap-2">

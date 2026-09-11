@@ -36,9 +36,6 @@
                         <i class="ti ti-plus me-2"></i>
                         Nouvelle Entreprise
                     </a>
-                    <a class="btn btn-outline-primary bg-label-primary" href="{{ route('super-admin.enterprises.index') }}">
-                        <i class="ti ti-refresh me-2"></i>Actualiser
-                    </a>
                 </div>
             </div>
         </div>

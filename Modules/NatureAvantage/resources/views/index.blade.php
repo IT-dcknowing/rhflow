@@ -95,7 +95,6 @@
                 <table class="table table-sm dt-responsive" id="avantages-table">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Employés</th>
                             <th>Type d'avantage</th>
                             <th>Montant selon le barème</th>
@@ -108,7 +107,6 @@
                     <tbody>
                         @forelse($avantages as $avantage)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $avantage->employee->name }}</td>
                                 <td>
                                     @if($avantage->type_avantage == 'avantage_en_nature')
@@ -153,7 +151,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="fas fa-gift fa-3x mb-3"></i>
                                         <p class="mb-0">Aucun avantage enregistré pour cette période.</p>
@@ -320,9 +318,9 @@
             var taxeFilter = $('#filter-taxe').val();
 
             // Appliquer le filtrage sur DataTable
-            dt_table.column(0).search(typeFilter); // Supposons que la colonne 0 est pour le type
-            dt_table.column(1).search(statusFilter); // Supposons que la colonne 1 est pour le statut
-            dt_table.column(2).search(taxeFilter); // Supposons que la colonne 2 est pour la taxe
+            dt_table.column(1).search(typeFilter);   // colonne 1 : Type d'avantage
+            dt_table.column(5).search(statusFilter); // colonne 5 : Statut
+            dt_table.column(4).search(taxeFilter);   // colonne 4 : Traitement
 
                 dt_table.draw(); // Re-dessiner la table
             }

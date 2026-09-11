@@ -62,7 +62,6 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>#</th>
                         <th>Nom complet</th>
                         <th>Montant</th>
                         <th>Statut</th>
@@ -71,7 +70,6 @@
                 <tbody>
                     @forelse($retenueEmployees as $employee)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $employee->name }}</td>
                             <td><span class="badge bg-label-success">{{ number_format($retenue->amount, 0, ',', ' ') }} FCFA</span></td>
                             <td>
@@ -84,7 +82,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">Aucun employé associé à cette retenue</td>
+                            <td colspan="4" class="text-center">Aucun employé associé à cette retenue</td>
                         </tr>
                     @endforelse
                 </tbody>

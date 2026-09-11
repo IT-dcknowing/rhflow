@@ -5,7 +5,7 @@
 @endsection
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">{{ __('Tableau de bord') }}</a></li>
     <li class="breadcrumb-item">{{ __('Avantages natures ou argents') }}</li>
 @endsection
 
@@ -107,7 +107,7 @@
                                                                     <div class="action-btn">
                                                                         <a href="#" class="btn btn-sm  bg-danger align-items-center bs-pass-para"
                                                                             data-bs-toggle="tooltip" title=""
-                                                                            data-bs-original-title="Delete" aria-label="Delete"><i
+                                                                            data-bs-original-title="Supprimer" aria-label="Supprimer"><i
                                                                                 class="ti ti-trash text-white text-white"></i></a>
                                                                     </div>
                                                                 </form>

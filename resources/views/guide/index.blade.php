@@ -1085,7 +1085,7 @@
           <div class="card">
             <div class="card-icon" aria-hidden="true">👔</div>
             <h4>Dirigeants &amp; DG</h4>
-            <p>Pilotage des effectifs, masse salariale et indicateurs RH depuis le Dashboard Entreprise.</p>
+            <p>Pilotage des effectifs, masse salariale et indicateurs RH depuis le Tableau de bord Entreprise.</p>
           </div>
           <div class="card">
             <div class="card-icon" aria-hidden="true">📋</div>
@@ -1203,17 +1203,17 @@
             <tbody>
               <tr>
                 <td><code>super_admin</code></td>
-                <td>Dashboard Super Admin</td>
+                <td>Tableau de bord Super Admin</td>
                 <td>Toutes les sociétés, facturation</td>
               </tr>
               <tr>
                 <td><code>entreprise</code> (DG)</td>
-                <td>Dashboard Entreprise</td>
+                <td>Tableau de bord Entreprise</td>
                 <td>Pilotage global, paramètres</td>
               </tr>
               <tr>
                 <td><code>hr</code> / <code>paie</code></td>
-                <td>Dashboard RH</td>
+                <td>Tableau de bord RH</td>
                 <td>Salariés, contrats, paie</td>
               </tr>
               <tr>
@@ -1248,13 +1248,13 @@
         <div class="cards">
           <div class="card">
             <div class="card-icon" aria-hidden="true">🏢</div>
-            <h4>Dashboard Entreprise</h4>
+            <h4>Tableau de bord Entreprise</h4>
             <p>Vision directionnelle : effectifs totaux, <strong>masse salariale</strong>, charges patronales, éléments
               de paie agrégés, alertes fiscales.</p>
           </div>
           <div class="card">
             <div class="card-icon" aria-hidden="true">👥</div>
-            <h4>Dashboard RH</h4>
+            <h4>Tableau de bord RH</h4>
             <p>Vision opérationnelle : répartition par service, statut matrimonial, nouveaux entrants, demandes en
               attente.</p>
           </div>

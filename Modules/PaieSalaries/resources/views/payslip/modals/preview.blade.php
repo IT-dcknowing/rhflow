@@ -81,7 +81,7 @@
         $base_salary = round(($employee->salary / 30) * $nbre_jours_base);
     }
 
-    // DÃ©doublonnage des rubriques par code
+    // Dédoublonnage des rubriques par code
     $allowances = $allowances->unique('code');
     $retenuesEmp = $retenuesEmp->unique('code');
 @endphp
@@ -104,14 +104,14 @@
                 <div class="card-body" id="payslipContent">
                     <div class="table-responsive mb-4">
                         <table class="table table-sm mb-4" style="font-family: Arial; font-size: 12px;">
-                            <!-- En-tÃªte du bulletin -->
+                            <!-- En-tête du bulletin -->
                             <tr class="table-success">
                                 <td colspan="9" class="text-center">
                                     <h4><strong>BULLETIN DE PAIE</strong></h4>
-                                    <p class="mb-1">PÃ©riode: {{ $periode->nom }} | {{ \Carbon\Carbon::parse($periode->date_debut)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</p>
+                                    <p class="mb-1">Période: {{ $periode->nom }} | {{ \Carbon\Carbon::parse($periode->date_debut)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</p>
                                 </td>
                             </tr>
-                            <!-- Informations employÃ© -->
+                            <!-- Informations employé -->
                             <tr class="table-primary">
                                 <td colspan="3">
                                     EMPLOYEUR
@@ -124,28 +124,28 @@
                                 <td colspan="3">
                                     Nom :  {{ $company->name }}<br>
                                     Adresse :  {{ $company->city }}, {{ $company->address }}<br>
-                                    TÃ©lÃ©phone : {{ $company->phone }}<br>
+                                    Téléphone : {{ $company->phone }}<br>
                                     Boite postale :  {{ $company->postal_code }}<br>
                                     Horaire mensuelle :  173,33<br>
-                                    Nombre de jours travaillÃ©s : {{ $nbre_jours_base }} <br>
+                                    Nombre de jours travaillés : {{ $nbre_jours_base }} <br>
                                     Grille salariale : <strong>{{ $company->sector->name ?? '-' }}</strong><br>
                                 </td>
                                 <td colspan="6">
-                                    Nom et PrÃ©nom :  {{ $employee->name }}<br>
+                                    Nom et Prénom :  {{ $employee->name }}<br>
                                     Adresse :  {{ $employee->address }}<br>
                                     Situation matrimoniale : {{ $employee->situation->name ?? '-' }}<br>
-                                    Enfants Ã  charge : {{ $employee->enfant }}<br>
-                                    NumÃ©ro CNPS :  {{ $employee->num_cnps }}<br>
-                                    AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
-                                    CatÃ©gorie : {{ $employee->categorieEmp->title ?? '-' }} / {{$employee->sous_categorie}}<br>
+                                    Enfants à charge : {{ $employee->enfant }}<br>
+                                    Numéro CNPS :  {{ $employee->num_cnps }}<br>
+                                    Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
+                                    Catégorie : {{ $employee->categorieEmp->title ?? '-' }} / {{$employee->sous_categorie}}<br>
                                     Emploi :   {{ $employee->designation->name ?? '-' }} <br>
                                     Tel / E-mail : {{$employee->phone}} / {{$employee->email}} <br>
                                     Nombre de parts : {{ $employee->parts }}<br>
                                 </td>
                             </tr>     
                             <tr class="table-success">
-                                <th width="5%" rowspan="2" class="text-center align-middle">NÂ°</th>
-                                <th width="25%" rowspan="2" class="text-center align-middle">DÃ‰SIGNATION</th>
+                                <th width="5%" rowspan="2" class="text-center align-middle">N°</th>
+                                <th width="25%" rowspan="2" class="text-center align-middle">DÉSIGNATION</th>
                                 <th width="5%" rowspan="2" class="text-center align-middle">NOMBRE</th>
                                 <th rowspan="2" class="text-center align-middle">BASE</th>
                                 <th colspan="3" class="text-center align-middle">PART SALARIALE</th>
@@ -200,7 +200,7 @@
                                         @elseif($allowance->allowance_option == '11')
                                             @if($company->city =='ABIDJAN' || $company->city == 'Abidjan' || $company->city =='abidjan' || strpos($company->city, 'Abidjan') !== false)
                                                 {{ number_format(30000/30, 0, '.', ' ') }}
-                                            @elseif ($company->city=='BouakÃ©' || $company->city=='BOUAKE' || $company->city=='bouakÃ©')
+                                            @elseif ($company->city=='Bouaké' || $company->city=='BOUAKE' || $company->city=='bouaké')
                                                 {{ number_format(round(24000/30), 0, '.', ' ') }}
                                             @else
                                                 {{ number_format(round(22000/30), 0, '.', ' ') }}
@@ -343,7 +343,7 @@
                                     @endif
                                 @empty
                                 <tr>
-                                    <td colspan="2" class="text-center">Aucune dÃ©duction</td>
+                                    <td colspan="2" class="text-center">Aucune déduction</td>
                                     <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                                 </tr>
                                 @endforelse                        
@@ -377,7 +377,7 @@
                         </table>
                     
                         <table class="table table-sm" style="font-family: Arial; font-size: 12px;">
-                            <!-- RÃ©capitulatif final -->
+                            <!-- Récapitulatif final -->
                             <tr class="table-success text-center">
                                 <td>Cumuls</td>
                                 <td>Salaire brut</td>
@@ -385,14 +385,14 @@
                                 <td>Charges patronales</td>
                                 <td>Avantages en nature</td>
                                 <td>Net imposable</td>
-                                <td>Heures travaillÃ©es</td>
-                                <td>Heures<br/>supplÃ©mentaires</td>
+                                <td>Heures travaillées</td>
+                                <td>Heures<br/>supplémentaires</td>
                                 <td>NET A PAYER</td>
                             </tr>
                             <tr>
                                 <td class="text-center">
-                                    PÃ©riode<hr/>
-                                    AnnÃ©e
+                                    Période<hr/>
+                                    Année
                                 </td>
                                 <td class="text-center">
                                     {{number_format($employee->get_brut_salary($periode->id), 0 ,'.',' ')}}<hr/>
@@ -425,8 +425,8 @@
                      <!-- Signature -->
                     <div class="row mt-5">
                         <div class="col-md-8 align-items-center" style="color:#000;">
-                            <b><i>PayÃ© par : {{ $employee->paytypeEmp->name ?? '-' }} </i></b><br>
-                            <i> Pour vous aider Ã  faire valoir vos droits, conservez ce bulletin de paie sans limitation de durÃ©e.</i>
+                            <b><i>Payé par : {{ $employee->paytypeEmp->name ?? '-' }} </i></b><br>
+                            <i> Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.</i>
                         </div>
                         <div class="col-md-4 text-center">
                             <p>Le {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</p>   
@@ -446,7 +446,7 @@
                         <tr>
                             <td class="border border-dark bg-primary" colspan ="9" align="center" style="vertical-align: middle;">
                                 <h2 style="color:#fff;"><strong>BULLETIN DE PAIE</strong></h2>
-                                <p style="color:#fff;">PÃ©riode : <strong>{{ \Carbon\Carbon::parse($periode->date_debut)->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</strong></p>
+                                <p style="color:#fff;">Période : <strong>{{ \Carbon\Carbon::parse($periode->date_debut)->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</strong></p>
                             </td>
                         </tr>
                         <tr>
@@ -457,28 +457,28 @@
                             <td class="border border-dark" colspan ="4">
                                 Nom :  {{ $company->name }}<br>
                                 Adresse :  {{ $company->city }}, {{ $company->address }}<br>
-                                TÃ©lÃ©phone : {{ $company->phone }}<br>
+                                Téléphone : {{ $company->phone }}<br>
                                 Boite postale :  {{ $company->postal_code }}<br>
                                 Horaire mensuelle :  173,33<br>
-                                Nombre de jours travaillÃ©s : {{ $nbre_jours_base }} <br>
+                                Nombre de jours travaillés : {{ $nbre_jours_base }} <br>
                                 Grille salariale : <strong>{{ $company->sector->name ?? '-' }}</strong><br>
                             </td>
                             <td class="border border-dark" colspan ="5">
-                                Nom et PrÃ©nom :  {{ $employee->name }}<br>
+                                Nom et Prénom :  {{ $employee->name }}<br>
                                 Adresse :  {{ $employee->address }}<br>
                                 Situation matrimoniale : {{ $employee->situation->name ?? '-' }}<br>
-                                Enfants Ã  charge : {{ $employee->enfant }}<br>
-                                NumÃ©ro CNPS :  {{ $employee->num_cnps }}<br>
-                                AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
-                                CatÃ©gorie : {{ $employee->categorieEmp->title ?? '-' }} / {{$employee->sous_categorie}}<br>
+                                Enfants à charge : {{ $employee->enfant }}<br>
+                                Numéro CNPS :  {{ $employee->num_cnps }}<br>
+                                Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois<br>
+                                Catégorie : {{ $employee->categorieEmp->title ?? '-' }} / {{$employee->sous_categorie}}<br>
                                 Emploi :   {{ $employee->designation->name ?? '-' }} <br>
                                 Tel / E-mail : {{$employee->phone}} / {{$employee->email}} <br>
                                 Nombre de parts : {{ $employee->parts }}<br>
                             </td>
                         </tr>
                         <tr>
-                            <td width="5%"bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="3%">NÂ°</td>
-                            <td width="35%" bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="30%">DÃ‰SIGNATION</td>
+                            <td width="5%"bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="3%">N°</td>
+                            <td width="35%" bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;" width="30%">DÉSIGNATION</td>
                             <td width="5%" bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;">NOMBRE</td>
                             <td width="5%"bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle; color:#000;">BASE</td>
                             <td bgcolor="#C0C0C0" class="border border-dark" colspan="3" style="vertical-align: middle; color:#000;">PART SALARIALE</td>
@@ -532,7 +532,7 @@
                                 @elseif($allowance->allowance_option == '11')
                                     @if($company->city =='ABIDJAN' || $company->city == 'Abidjan' || $company->city =='abidjan' || strpos($company->city, 'Abidjan') !== false)
                                         {{ number_format(30000/30, 0, '.', ' ') }}
-                                    @elseif ($company->city=='BouakÃ©' || $company->city=='BOUAKE' || $company->city=='bouakÃ©')
+                                    @elseif ($company->city=='Bouaké' || $company->city=='BOUAKE' || $company->city=='bouaké')
                                         {{ number_format(round(24000/30), 0, '.', ' ') }}
                                     @else
                                         {{ number_format(round(22000/30), 0, '.', ' ') }}
@@ -675,7 +675,7 @@
                             @endif
                         @empty
                         <tr>
-                            <td colspan="2" class="text-center">Aucune dÃ©duction</td>
+                            <td colspan="2" class="text-center">Aucune déduction</td>
                             <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                         </tr>
                         @endforelse                        
@@ -708,7 +708,7 @@
                         <tr>
                             <td class="border border-dark" style="border-top-color: solid 1px #000;" colspan="9">
                                 <div class="project-amnt pt-1" align="" style="color:#000;">
-                                    <b><i>PayÃ© par : {{ $employee->paytypeEmp->name ?? '-' }} </i></b>
+                                    <b><i>Payé par : {{ $employee->paytypeEmp->name ?? '-' }} </i></b>
                                 </div>
                             </td>
                         </tr>
@@ -719,14 +719,14 @@
                             <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Charges patronales</td>
                             <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Avantages en nature</td>
                             <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Net imposable</td>
-                            <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures travaillÃ©es</td>
-                            <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures<br/>supplÃ©mentaires</td>
+                            <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures travaillées</td>
+                            <td bgcolor="#C0C0C0" class="border border-dark color:#000;">Heures<br/>supplémentaires</td>
                             <td bgcolor="#C0C0C0" class="border border-dark color:#000;">NET A PAYER</td>
                         </tr>
                         <tr class="text-center">
                             <td class="border border-dark">
-                                PÃ©riode<hr/>
-                                AnnÃ©e
+                                Période<hr/>
+                                Année
                             </td>
                             <td class="border border-dark montant">
                                 {{number_format($employee->get_brut_salary(), 0 ,'.',' ')}}<hr/>
@@ -757,7 +757,7 @@
                     </table>
                     <br>
                     <div class="row">
-                        <div class="col-md-6 text-start"><i> Pour vous aider Ã  faire valoir vos droits, conservez ce bulletin de paie sans limitation de durÃ©e.</i></div>
+                        <div class="col-md-6 text-start"><i> Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.</i></div>
                         <div class="col-md-6 text-end" style="color:#000;"><u><strong> LA DIRECTION </storng></u></div>
                     </div>
                 </div>
@@ -768,18 +768,18 @@
 <script>
     // Gestion des onglets de bulletins
     $(document).ready(function() {
-        // Afficher le bulletin 1 par dÃ©faut
+        // Afficher le bulletin 1 par défaut
         $('#bull1show').addClass('show active');
         $('#affichebull1').addClass('active');
 
-        // Fonction pour gÃ©rer l'affichage des bulletins
+        // Fonction pour gérer l'affichage des bulletins
         function showBulletin(bulletinId, tabLink) {
             $('.tab-pane').removeClass('show active').hide(); // Masquer tous les bulletins
             $('.nav-link').removeClass('active'); // Retirer active des onglets
 
-            // Afficher le bulletin spÃ©cifiÃ©
+            // Afficher le bulletin spécifié
             $(bulletinId).addClass('show active').show();
-            $(tabLink).addClass('active'); // Ajouter active Ã  l'onglet cliquÃ©
+            $(tabLink).addClass('active'); // Ajouter active à l'onglet cliqué
         }
 
         // Gestion des clics sur les onglets

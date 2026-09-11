@@ -65,7 +65,7 @@
                     <li class="menu-item {{ Request::route()->getName() == 'super-admin.dashboard' ? ' active' : '' }}">
                         <a href="{{ route('super-admin.dashboard') }}" class="menu-link">
                             <i class="menu-icon ti ti-home"></i>
-                            <div>Dashboard</div>
+                            <div>Tableau de bord</div>
                         </a>
                     </li>
                     <li class="menu-header small text-uppercase">

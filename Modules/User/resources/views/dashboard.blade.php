@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 py-8">
         <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4">Module User</h1>
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Module Utilisateur</h1>
             <p class="text-gray-600 mb-4">Gestion des utilisateurs via le système modulaire Laravel.</p>
 
             <div class="space-y-3">

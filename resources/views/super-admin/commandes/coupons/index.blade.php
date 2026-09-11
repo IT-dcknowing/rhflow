@@ -123,7 +123,7 @@
                                     <i class="ti ti-filter me-1"></i>Filtrer
                                 </button>
                                 <a href="{{ route('super-admin.commandes.coupons.index') }}" class="btn btn-outline-danger w-100">
-                                    <i class="ti ti-x me-1"></i>Reset
+                                    <i class="ti ti-x me-1"></i>Réinitialiser
                                 </a>
                             </div>
                         </form>

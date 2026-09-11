@@ -356,7 +356,6 @@
                                 <table class="table table-hover">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>#</th>
                                             <th>👤 Employé</th>
                                             <th>📊 Ancien Poste</th>
                                             <th>📈 Nouveau Poste</th>
@@ -370,8 +369,6 @@
                                     <tbody>
                                         @foreach($promotions as $promotion)
                                             <tr>
-                                                <td>{{ $loop->iteration + (($promotions->currentPage() - 1) * $promotions->perPage()) }}
-                                                </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar avatar-sm me-3">

@@ -1272,7 +1272,7 @@
                                                     <td style="background-color:black; text-align: right;"><strong><span
                                                                 id="totalcmusal" style="color:yellow;"></span> <span
                                                                 style="color: white;">FCFA</span></strong></td>
-                                                    <td><strong>Total Retenues SalariÃ©</strong></td>
+                                                    <td><strong>Total Retenues Salarié</strong></td>
                                                     <td style="background-color:black; text-align: right;"><strong><span
                                                                 id="totalretenuessal" style="color:yellow;"></span>
                                                             <span style="color: white;">FCFA</span></strong></td>
@@ -1873,7 +1873,7 @@
                 return;
             }
             if (typeof html2pdf === 'undefined') {
-                alert("Le module d'export PDF n'est pas chargÃ©. Veuillez recharger la page.");
+                alert("Le module d'export PDF n'est pas chargé. Veuillez recharger la page.");
                 return;
             }
 
@@ -1883,7 +1883,7 @@
             var oldFooter = document.getElementById('infopied');
             if (oldFooter) oldFooter.remove();
             if (!element) {
-                alert("Le rÃ©sumÃ© de paie est introuvable.");
+                alert("Le résumé de paie est introuvable.");
                 return;
             }
             info2.style.display = "block";
@@ -1928,7 +1928,7 @@
 
             html2pdf().set(opt).from(element).save().then(closeScript).catch(function (error) {
                 console.error(error);
-                alert("L'export PDF a Ã©chouÃ©. Veuillez rÃ©essayer.");
+                alert("L'export PDF a échoué. Veuillez réessayer.");
                 closeScript();
             });
 
@@ -1946,12 +1946,12 @@
             }
 
             if (typeof html2pdf === 'undefined') {
-                alert("Le module d'export PDF n'est pas chargÃ©. Veuillez recharger la page.");
+                alert("Le module d'export PDF n'est pas chargé. Veuillez recharger la page.");
                 return;
             }
             var element = document.getElementById('resumeBrutNet');
             if (!element) {
-                alert("Le rÃ©sumÃ© de paie est introuvable.");
+                alert("Le résumé de paie est introuvable.");
                 return;
             }
             var opt = {
@@ -1968,7 +1968,7 @@
 
             html2pdf().set(opt).from(element).save().catch(function (error) {
                 console.error(error);
-                alert("L'export PDF a Ã©chouÃ©. Veuillez rÃ©essayer.");
+                alert("L'export PDF a échoué. Veuillez réessayer.");
             });
         }
         function closeScript() {

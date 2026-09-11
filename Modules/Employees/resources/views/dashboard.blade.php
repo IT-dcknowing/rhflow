@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard RH - Gestion des Employés')
+@section('title', 'Tableau de bord RH - Gestion des Employés')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -19,9 +19,6 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" onclick="refreshDashboard()">
-                        <i class="fas fa-refresh me-1"></i>Actualiser
-                    </button>
                     <div class="dropdown">
                         <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             <i class="fas fa-calendar me-1"></i>Période

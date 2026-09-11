@@ -22,10 +22,6 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" onclick="refreshSubscriptionStatus()">
-                        <i class="fas fa-refresh me-2"></i>
-                        Actualiser
-                    </button>
                     <a href="{{ route('company.packs.history') }}" class="btn btn-outline-info">
                         <i class="fas fa-list me-2"></i>
                         Historique

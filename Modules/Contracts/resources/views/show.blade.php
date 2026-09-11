@@ -184,7 +184,6 @@
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Avenant</th>
                                     <th>Libéllé Contrat</th>
                                     <th>Document</th>
@@ -194,7 +193,6 @@
                             <tbody>
                                 @forelse($contract->avenants as $avenant)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $avenant->type_avenant }}</td>
                                         <td>{{ $contract->type->name }}</td>
                                         <td>
@@ -227,7 +225,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center py-3">Aucun avenant trouvé</td>
+                                        <td colspan="3" class="text-center py-3">Aucun avenant trouvé</td>
                                     </tr>
                                 @endforelse
                             </tbody>

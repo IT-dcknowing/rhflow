@@ -1,7 +1,7 @@
 @php
     $plan = Utility::getChatGPTSettings();
 	use Carbon\Carbon;
-    // DÃ©finir la locale en franÃ§ais
+    // Définir la locale en français
     setlocale(LC_TIME, 'fr_FR.utf8');
 @endphp
 <?php
@@ -92,7 +92,7 @@
 			$tot5 = (((75000*0)/100)+((165000*16)/100)+((560000*21)/100)+((1600000*24)/100)+((5600000*28)/100)+(($mt5*32)/100));
 			$resultimpricf = round($tot5);
 		}
-		// Fix: Table 2023 certifiÃ©e
+		// Fix: Table 2023 certifiée
 		$p = (float) str_replace(',', '.', $employee->parts);
 		$fixedTable = [
 			"1"   => 0, "1.5" => 5500, "2"   => 11000, "2.5" => 16500,
@@ -141,7 +141,7 @@
 			$tot5 = (((2500*0)/100)+((5500*16)/100)+((18667*21)/100)+((53333*24)/100)+((186667*28)/100)+(($mt5*32)/100));
 			$resultimpricf = round($tot5*$nbre_jours);
 		}
-		// Fix: Table 2023 certifiÃ©e avec proratisation exacte
+		// Fix: Table 2023 certifiée avec proratisation exacte
 		$p = (float) str_replace(',', '.', $employee->parts);
 		$fixedTable = [
 			"1"   => 0, "1.5" => 5500, "2"   => 11000, "2.5" => 16500,
@@ -193,11 +193,11 @@
 	}
 
 	if($employee->martalstatu_id == '1'){
-		$situation = 'CÃ©libataire';
+		$situation = 'Célibataire';
 	}else if($employee->martalstatu_id == '2'){
-		$situation = 'MariÃ©(e)';
+		$situation = 'Marié(e)';
 	}else if($employee->martalstatu_id == '3'){
-		$situation = 'DivorcÃ©(e)';
+		$situation = 'Divorcé(e)';
 	}else if($employee->martalstatu_id == '4'){
 		$situation = 'Veuf(ve)';
 	}
@@ -207,7 +207,7 @@
 		$compte=1;
 	}else{
 		foreach ($payslipss as $payslip) {
-			// Vous pouvez maintenant accÃ©der Ã  la propriÃ©tÃ© 'salary_month' en toute sÃ©curitÃ©
+			// Vous pouvez maintenant accéder à la propriété 'salary_month' en toute sécurité
 			$salaryMonth = $payslip->salary_month;
 			$compte++;
 		}
@@ -250,11 +250,11 @@
     p { color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 7.5pt; margin:0pt; }
     table, tbody {vertical-align: top; overflow: visible; }
     .arrow-icon {
-        color: black; /* Couleur par dÃ©faut de l'icÃ´ne */
+        color: black; /* Couleur par défaut de l'icône */
     }
 
     .nav-link.active .arrow-icon {
-        color: black; /* Couleur de l'icÃ´ne lorsque l'onglet est actif */
+        color: black; /* Couleur de l'icône lorsque l'onglet est actif */
     }
     .scroll-bottom {
         position: fixed;
@@ -342,7 +342,7 @@
 @php
 	$logo = asset(Storage::url('uploads/logo/'));
 	$company_logo = Utility::get_company_logo();
-    // DÃ©finir la locale en franÃ§ais
+    // Définir la locale en français
     $date = Carbon::parse($monthpaie);
 @endphp
 @extends('layouts.admin')
@@ -427,29 +427,29 @@
 @section('content')
     <div class="row">
 		@php
-			// VÃ©rifier que la collection des employÃ©s prÃ©cÃ©dents n'est pas vide
+			// Vérifier que la collection des employés précédents n'est pas vide
 			if ($employeeprevious->isNotEmpty()) {
-				// Trouver l'index de l'employÃ© actuel
+				// Trouver l'index de l'employé actuel
 				$currentEmployeeIndex2 = $employeeprevious->search(function ($emp) use ($employee) {
 					return $emp->id === $employee->id;
 				});
 
-				// VÃ©rifier que l'employÃ© actuel a Ã©tÃ© trouvÃ©
+				// Vérifier que l'employé actuel a été trouvé
 				if ($currentEmployeeIndex2 !== false) {
-					// DÃ©terminer l'index du prÃ©cÃ©dent employÃ©
+					// Déterminer l'index du précédent employé
 					$previousEmployeeIndex = ($currentEmployeeIndex2 - 1 + $employeeprevious->count()) % $employeeprevious->count();
 					$previousEmployee = $employeeprevious[$previousEmployeeIndex];
 				} else {
-					$previousEmployee = null; // L'employÃ© actuel n'a pas Ã©tÃ© trouvÃ©
+					$previousEmployee = null; // L'employé actuel n'a pas été trouvé
 				}
 			} else {
-				$previousEmployee = null; // La liste des employÃ©s prÃ©cÃ©dents est vide
+				$previousEmployee = null; // La liste des employés précédents est vide
 			}
 		@endphp
 		<div class="col-3" align="left" style="margin-bottom: 10px;">
 			<div class="row" style="justify-content: end;">
 				<div class="col-12">
-					<a href="{{ route('setsalary.show', ['eid' => $previousEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;"><i class="ti ti-arrow-left"></i> {{ __('EmployÃ© PrÃ©cÃ©dent') }}</a>
+					<a href="{{ route('setsalary.show', ['eid' => $previousEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;"><i class="ti ti-arrow-left"></i> {{ __('Employé Précédent') }}</a>
 				</div>
 			</div>
 		</div>
@@ -473,24 +473,24 @@
 			<h6>{{$employee->name}}</h6>
 			<div class="alert alert-success" role="alert">
 				<h5><strong>Traitement de paie : {{$date->formatLocalized('%B %Y')}}</strong></h5>
-				<p>Une fois que la configuration est terminÃ©e, cliquez sur "Liste salariÃ©s".</p>
-				<a href="{{ route('setsalary.index', ['monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-warning" style="justify-content: end;">{{ __('Liste salariÃ©s') }} <i class="ti ti-note"></i></a>
+				<p>Une fois que la configuration est terminée, cliquez sur "Liste salariés".</p>
+				<a href="{{ route('setsalary.index', ['monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-warning" style="justify-content: end;">{{ __('Liste salariés') }} <i class="ti ti-note"></i></a>
 			</div>
         </div>
 		@php
-			// Trouver l'index de l'employÃ© actuel
+			// Trouver l'index de l'employé actuel
 			$currentEmployeeIndex = $employeenext->search(function ($emp) use ($employee) {
 				return $emp->id === $employee->id;
 			});
 
-			// DÃ©terminer l'index du prochain employÃ©
+			// Déterminer l'index du prochain employé
 			$nextEmployeeIndex = ($currentEmployeeIndex + 1) % $employeenext->count();
 			$nextEmployee = $employeenext[$nextEmployeeIndex];
 		@endphp
 		<div class="col-3" align="right" style="margin-bottom: 10px;">
 			<div class="row" style="justify-content: end;">
 				<div class="col-12">
-					<a href="{{ route('setsalary.show', ['eid' => $nextEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;">{{ __('EmployÃ© Suivant') }} <i class="ti ti-arrow-right"></i></a>
+					<a href="{{ route('setsalary.show', ['eid' => $nextEmployee->id, 'monthpaie' => $monthpaie]) }}" class="btn btn-sm btn-info" style="justify-content: end;">{{ __('Employé Suivant') }} <i class="ti ti-arrow-right"></i></a>
 				</div>
 			</div>
 		</div>
@@ -542,7 +542,7 @@
 						<div class="card sticky-top">
 							<div class="list-group list-group-flush" id="useradd-sidenav">
 								<a href="#" id="bulletin-tab"
-									class="list-group-item list-group-item-action border-0">{{ __('AperÃ§u bulletin') }}
+									class="list-group-item list-group-item-action border-0">{{ __('Aperçu bulletin') }}
 									<div class="float-end"><i class="ti ti-chevron-right"></i></div>
 								</a>
 							</div>
@@ -559,7 +559,7 @@
 										<h5>{{ $employee->salary_type() }}</h5>
 									</div>
 									<div class="col-4" align="center">
-										<h6>DerniÃ¨re mise Ã  jour du salaire : <strong style="color: red;">{{ Auth::user()->dateFormat($employee->updated_at) }}</strong></h6>
+										<h6>Dernière mise à jour du salaire : <strong style="color: red;">{{ Auth::user()->dateFormat($employee->updated_at) }}</strong></h6>
 									</div>
 									<div class="col-4 text-end">
 										<!--@can('Create Set Salary')
@@ -573,8 +573,8 @@
 										<b>&nbsp;</b>
 										@can('Create Allowance')
 											<a data-url="{{ route('allowances.create', $employee->id) }}" data-ajax-popup="true"
-												data-title="{{ __('CrÃ©er une rubrique') }}" data-bs-toggle="tooltip" title=""
-												class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Create') }}"><span  style="color:#FFF">Ajouter les Ã©lÃ©ments du brut</span>
+												data-title="{{ __('Créer une rubrique') }}" data-bs-toggle="tooltip" title=""
+												class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Create') }}"><span  style="color:#FFF">Ajouter les éléments du brut</span>
 												<i class="ti ti-plus"></i>
 											</a>
 										@endcan
@@ -604,7 +604,7 @@
 										</b></div>
 									</div>
 									<div class="project-info-inner mr-3 col-3" align="center">
-										<div class="project-amnt pt-1"><b class="m-0">Nombre de jours travaillÃ©s : <strong>{{$employee->tax_payer_id}}</strong></b></div>
+										<div class="project-amnt pt-1"><b class="m-0">Nombre de jours travaillés : <strong>{{$employee->tax_payer_id}}</strong></b></div>
 									</div>
 									<div class="project-info-inner mr-3 col-1">
 										<div class="action-btn bg-warning ms-2">
@@ -635,10 +635,10 @@
                                 @else
                                     <div id="divancien" class="row project-info d-flex text-sm">
                                         <div class="project-info-inner mr-3 col-3">
-                                            <div class="project-amnt pt-1"><b class="m-0">Prime d'anciennetÃ©</b></div>
+                                            <div class="project-amnt pt-1"><b class="m-0">Prime d'ancienneté</b></div>
                                         </div>
                                         <div class="project-info-inner mr-3 col-4">
-                                            <div class="project-amnt pt-1"><b class="m-0">2% aprÃ¨s 2 annÃ©es d'anciennetÃ© et 1% de salaire par annÃ©e de service jusqu'a la 25ieme annÃ©es</b></div>
+                                            <div class="project-amnt pt-1"><b class="m-0">2% après 2 années d'ancienneté et 1% de salaire par année de service jusqu'a la 25ieme années</b></div>
                                         </div>
                                         <div class="project-info-inner mr-3 col-3">
                                             <div class="project-amnt pt-1" align="right"><b><span id="primeancien"></span></b></div>
@@ -669,7 +669,7 @@
 																]) !!}
 																<a class="mx-3 btn btn-sm  align-items-center bs-pass-para"
 																	data-bs-toggle="tooltip" title=""
-																	data-bs-original-title="Delete" aria-label="Delete"><i
+																	data-bs-original-title="Supprimer" aria-label="Supprimer"><i
 																		class="ti ti-trash text-white text-white"></i></a>
 																</form>
 															</div>
@@ -733,7 +733,7 @@
 																]) !!}
 																<a class="mx-3 btn btn-sm  align-items-center bs-pass-para"
 																	data-bs-toggle="tooltip" title=""
-																	data-bs-original-title="Delete" aria-label="Delete"><i
+																	data-bs-original-title="Supprimer" aria-label="Supprimer"><i
 																		class="ti ti-trash text-white text-white"></i></a>
 																</form>
 															</div>
@@ -756,7 +756,7 @@
 
 									@else
 										<div class="project-info-inner mr-3 col-6">
-											<div class="project-amnt pt-1"><b class="m-0">Heures SupplÃ©mentaires</b></div>
+											<div class="project-amnt pt-1"><b class="m-0">Heures Supplémentaires</b></div>
 										</div>
 										<div class="project-info-inner mr-3 col-4">
 											<div class="project-amnt pt-1" align="right">
@@ -843,7 +843,7 @@
 										title="{{ __('Download') }}" onclick="saveAsPDF()"><span class="fa fa-download"></span></a>
 
 									@if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr')
-										<a title="Mail Send" href="#"
+										<a title="Envoyer par e-mail" href="#"
 											class="btn btn-sm btn-warning"><span class="fa fa-paper-plane"></span></a>
 									@endif
 								</div>-->
@@ -881,23 +881,23 @@
 												<td class="border border-dark" colspan ="4">
                                                     <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Nom :  {{ \Utility::getValByName('company_name') }}</b></div>
                                                     <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Adresse :  {{ \Utility::getValByName('company_city') }}, {{ \Utility::getValByName('company_address') }}</b></div>
-                                                    <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">TÃ©lÃ©phone : {{ \Utility::getValByName('company_telephone') }}</b></div>
+                                                    <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Téléphone : {{ \Utility::getValByName('company_telephone') }}</b></div>
                                                     <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Boite postale :  {{ \Utility::getValByName('company_zipcode') }}</b></div>
-                                                    <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">PÃ©riode :  {{$firstDay}} au {{$lastDay}}</b></div>
+                                                    <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Période :  {{$firstDay}} au {{$lastDay}}</b></div>
                                                     <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Horaire mensuelle :  173,33</b></div>
-                                                    <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Nombre de jours travaillÃ©s : {{$employee->tax_payer_id}} </b></div>
+                                                    <div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Nombre de jours travaillés : {{$employee->tax_payer_id}} </b></div>
 													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Grille salariale : <strong>{{ $sect }}</strong></b></div>
 												</td>
 												<td class="border border-dark" colspan ="5">
-													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Nom et PrÃ©nom :  {{ $employee->name }}</b></div>
+													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Nom et Prénom :  {{ $employee->name }}</b></div>
 													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Adresse :  {{ $employee->address }}</b></div>
 													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Situation matrimoniale : <b>{{ $situation }}</b></div>
-													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Enfants Ã  charge : <b>{{ $employee->enfant }}</b></div>
-													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">NumÃ©ro CNPS :  {{ $employee->num_cnps }}</b></div>
-													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">AnciennetÃ© :  {{$date_pa}} an(s) et {{$date_m}} mois</b></div>
+													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Enfants à charge : <b>{{ $employee->enfant }}</b></div>
+													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Numéro CNPS :  {{ $employee->num_cnps }}</b></div>
+													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Ancienneté :  {{$date_pa}} an(s) et {{$date_m}} mois</b></div>
 													@foreach($categorie as $cate)
 														@if($employee->categorie==$cate->id)
-															<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">CatÃ©gorie : {{$postevalue}} / {{$valueposte}}</b></div>
+															<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Catégorie : {{$postevalue}} / {{$valueposte}}</b></div>
 														@endif
 													@endforeach
 													<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1">Emploi :   {{ !empty(\Auth::user()->getDesignation($employee['designation_id'])) ? \Auth::user()->getDesignation($employee['designation_id'])->name : '-' }} </b></div>
@@ -906,8 +906,8 @@
 												</td>
 											</tr>
 											<tr>
-												<td bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">NÂ°</b></div></td>
-												<td bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">DÃ‰SIGNATION</b></div></td>
+												<td bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">N°</b></div></td>
+												<td bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">DÉSIGNATION</b></div></td>
 												<td bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">NOMBRE</b></div></td>
 												<td bgcolor="#C0C0C0" class="border border-dark" rowspan="2" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">BASE</b></div></td>
 												<td bgcolor="#C0C0C0" class="border border-dark" colspan="3" style="vertical-align: middle;"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">PART SALARIALE</b></div></td>
@@ -1008,7 +1008,7 @@
                                                                 @elseif($allowance->allowance_option == '11')
                                                                     @if(\Utility::getValByName('company_city') =='ABIDJAN' || \Utility::getValByName('company_city') == 'Abidjan' || \Utility::getValByName('company_city') =='abidjan' || strpos(\Utility::getValByName('company_city'), 'Abidjan') !== false)
                                                                         <div class="project-amnt pt-1" align="right"><b class="m-0">{{number_format(30000, 0 , '.' , ' ')}}</b></div>
-                                                                        @elseif (\Utility::getValByName('company_city')=='BouakÃ©' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouakÃ©')
+                                                                        @elseif (\Utility::getValByName('company_city')=='Bouaké' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouaké')
                                                                         <div class="project-amnt pt-1" align="right"><b class="m-0">{{number_format(round(24000), 0 , '.' , ' ')}}</b></div>
                                                                         @else
                                                                         <div class="project-amnt pt-1" align="right"><b class="m-0">{{number_format(round(22000), 0 , '.' , ' ')}}</b></div>
@@ -1039,7 +1039,7 @@
                                                                 @elseif($allowance->allowance_option == '11')
                                                                     @if(\Utility::getValByName('company_city') =='Abidjan' || \Utility::getValByName('company_city') =='ABIDJAN' || \Utility::getValByName('company_city') =='abidjan' || strpos(\Utility::getValByName('company_city'), 'Abidjan') !== false)
                                                                         <div class="project-amnt pt-1" align="right"><b class="m-0">{{number_format(30000/30, 0 , '.' , ' ')}}</b></div>
-                                                                        @elseif (\Utility::getValByName('company_city')=='BouakÃ©' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouakÃ©')
+                                                                        @elseif (\Utility::getValByName('company_city')=='Bouaké' || \Utility::getValByName('company_city')=='BOUAKE' || \Utility::getValByName('company_city')=='bouaké')
                                                                         <div class="project-amnt pt-1" align="right"><b class="m-0">{{number_format(round(24000/30), 0 , '.' , ' ')}}</b></div>
                                                                         @else
                                                                         <div class="project-amnt pt-1" align="right"><b class="m-0">{{number_format(round(22000/30), 0 , '.' , ' ')}}</b></div>
@@ -1104,7 +1104,7 @@
 													@if($overtimes->isEmpty())
 
 													@else
-														<div class="project-amnt pt-1"><b class="m-0">Heures SupplÃ©mentaires</b></div>
+														<div class="project-amnt pt-1"><b class="m-0">Heures Supplémentaires</b></div>
 													@endif
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
@@ -1220,7 +1220,7 @@
                                                                 <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-                                                                <div class="project-amnt pt-1"><b class="m-0">IndemnitÃ© de Gratification</b></div>
+                                                                <div class="project-amnt pt-1"><b class="m-0">Indemnité de Gratification</b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
                                                                 <div class="project-amnt pt-1"><b class="m-0"><br/></b></div>
@@ -1251,7 +1251,7 @@
                                                                 <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-                                                                <div class="project-amnt pt-1"><b class="m-0">Allocution congÃ©</b></div>
+                                                                <div class="project-amnt pt-1"><b class="m-0">Allocution congé</b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
                                                                 <div class="project-amnt pt-1"><b class="m-0"><br/></b></div>
@@ -1282,7 +1282,7 @@
                                                                 <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-                                                                <div class="project-amnt pt-1"><b class="m-0">IndemnitÃ© de prÃ©avis</b></div>
+                                                                <div class="project-amnt pt-1"><b class="m-0">Indemnité de préavis</b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
                                                                 <div class="project-amnt pt-1"><b class="m-0"><br/></b></div>
@@ -1313,7 +1313,7 @@
                                                                 <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-                                                                <div class="project-amnt pt-1"><b class="m-0">IndemnitÃ© de licenciement</b></div>
+                                                                <div class="project-amnt pt-1"><b class="m-0">Indemnité de licenciement</b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
                                                                 <div class="project-amnt pt-1"><b class="m-0"><br/></b></div>
@@ -1344,7 +1344,7 @@
                                                                 <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-                                                                <div class="project-amnt pt-1"><b class="m-0">Dommages et intÃ©rÃªts</b></div>
+                                                                <div class="project-amnt pt-1"><b class="m-0">Dommages et intérêts</b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
                                                                 <div class="project-amnt pt-1"><b class="m-0"><br/></b></div>
@@ -1375,7 +1375,7 @@
                                                                 <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-                                                                <div class="project-amnt pt-1"><b class="m-0">Dommages et intÃ©rÃªts</b></div>
+                                                                <div class="project-amnt pt-1"><b class="m-0">Dommages et intérêts</b></div>
                                                             </td>
                                                             <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
                                                                 <div class="project-amnt pt-1"><b class="m-0"><br/></b></div>
@@ -1436,7 +1436,7 @@
 													<div class="project-amnt pt-1" align="right"><b class="m-0">401</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-													<div class="project-amnt pt-1"><b class="m-0">ImpÃ´ts bruts avant RICF</b></div>
+													<div class="project-amnt pt-1"><b class="m-0">Impôts bruts avant RICF</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
 													<div class="project-amnt pt-1" align="right"><b class="m-0"></b><br/></div>
@@ -1462,7 +1462,7 @@
 													<div class="project-amnt pt-1" align="right"><b class="m-0">402</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-													<div class="project-amnt pt-1"><b class="m-0">RÃ©duction pour Charges de Famille</b></div>
+													<div class="project-amnt pt-1"><b class="m-0">Réduction pour Charges de Famille</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
 													<div class="project-amnt pt-1" align="right"><b class="m-0">{{$employee->parts}}</b></div>
@@ -1489,7 +1489,7 @@
 													<div class="project-amnt pt-1" align="right"><b class="m-0">403</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-													<div class="project-amnt pt-1"><b class="m-0">ImpÃ´ts Nets</b></div>
+													<div class="project-amnt pt-1"><b class="m-0">Impôts Nets</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
 													<div class="project-amnt pt-1" align="right"><b class="m-0"><br/></b></div>
@@ -1597,7 +1597,7 @@
 													<div class="project-amnt pt-1" align="right"><b class="m-0">410</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-													<div class="project-amnt pt-1"><b class="m-0">Contribution employeur (ExpatriÃ©)</b></div>
+													<div class="project-amnt pt-1"><b class="m-0">Contribution employeur (Expatrié)</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
 													<div class="project-amnt pt-1" align="right"><b class="m-0"><br/></b></div>
@@ -1644,7 +1644,7 @@
 													<div class="project-amnt pt-1" align="right"><b class="m-0">411</b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
-													<div class="project-amnt pt-1"><b class="m-0">Taxe dâ€™Apprentissage </b></div>
+													<div class="project-amnt pt-1"><b class="m-0">Taxe d’Apprentissage </b></div>
 												</td>
 												<td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;">
 													<div class="project-amnt pt-1" align="right"><b class="m-0"><br/></b></div>
@@ -1881,7 +1881,7 @@
                                                 <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;" align="right" >
                                                     <div class="project-amnt pt-1" align="right"><b class="m-0"><?php echo $code++; ?></b></div>
                                                 </td>
-                                                <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;"><div class="project-amnt pt-1" align="left"><b class="m-0">PrÃªts </b></div></td>
+                                                <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;"><div class="project-amnt pt-1" align="left"><b class="m-0">Prêts </b></div></td>
                                                 <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;"><p></p></td>
                                                 <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;" align="right"><div class="project-amnt pt-1" align="right"><b class="m-0">{{$payslip->loan}}</b></div></td>
                                                 <td style="border-left-color: black; border-right-color: black; border-bottom-color: black; border-top-color: black;"></td>
@@ -1898,7 +1898,7 @@
 													<div class="project-amnt pt-1" align="" style="color:#000;">
                                                         @foreach ($paytype as $type)
                                                             @if($type->id == $employee->paytype)
-                                                                <b><i>PayÃ© par : {{ $type->name }} </i></b>
+                                                                <b><i>Payé par : {{ $type->name }} </i></b>
                                                             @endif
                                                         @endforeach
 													</div>
@@ -1911,14 +1911,14 @@
 												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Charges patronales</b></div></td>
 												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Avantages en nature</b></div></td>
 												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Net imposable</b></div></td>
-												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Heures travaillÃ©es</b></div></td>
-												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Heures<br/>supplÃ©mentaires</b></div></td>
+												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Heures travaillées</b></div></td>
+												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Heures<br/>supplémentaires</b></div></td>
 												<td bgcolor="#C0C0C0" class="border border-dark"><div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">NET A PAYER</b></div></td>
 											</tr>
 											<tr>
 												<td class="border border-dark">
-													<div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">PÃ©riode</b></div><hr/>
-													<div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">AnnÃ©e</b></div></td>
+													<div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Période</b></div><hr/>
+													<div class="project-amnt pt-1" align="center" style="color:#000;"><b class="m-1">Année</b></div></td>
 												<td class="border border-dark">
 													<div class="project-amnt pt-1" align="right" style="color:#000;"><b class="m-1">{{number_format($employee->get_brut_salary(), 0 ,'.',' ')}}</b></div><hr/>
 													<div class="project-amnt pt-1" align="right" style="color:#000;"><b class="m-1">{{number_format($employee->getTotalSalarybrut(), 0 ,'.',' ')}}</b></div></td>
@@ -1950,7 +1950,7 @@
 												</td>
 											</tr>
 										</table>
-										<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1"><i> Pour vous aider Ã  faire valoir vos droits, conservez ce bulletin de paie sans limitation de durÃ©e.</i></b></div>
+										<div class="project-amnt pt-1" align="left" style="color:#000;"><b class="m-1"><i> Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.</i></b></div>
 										<div class="project-amnt pt-1" align="right" style="color:#000;"><u><strong> LA DIRECTION </storng></u></div>
 									</div>
 								</div>
@@ -2031,7 +2031,7 @@
 																	]) !!}
 																	<a class="mx-3 btn btn-sm  align-items-center bs-pass-para"
 																		data-bs-toggle="tooltip" title=""
-																		data-bs-original-title="Delete" aria-label="Delete"><i
+																		data-bs-original-title="Supprimer" aria-label="Supprimer"><i
 																			class="ti ti-trash text-white text-white"></i></a>
 																	</form>
 																</div>
@@ -2145,7 +2145,7 @@
 																		@if($overtimes->isEmpty())
 
 																		@else
-																			<div class="project-amnt pt-1">Heures SupplÃ©mentaires</div>
+																			<div class="project-amnt pt-1">Heures Supplémentaires</div>
 																		@endif
 																		<div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;">Total Brut (A)</b></div>
 																	</td>
@@ -2230,12 +2230,12 @@
                                                                 <tr>
                                                                     <td style="padding:5px;">
                                                                         <div class="project-amnt pt-1"><b class="m-0">Avantages en Nature ou en Argent</b></div>
-                                                                        <div class="project-amnt pt-1">Montant des avantages au barÃ¨me</div>
+                                                                        <div class="project-amnt pt-1">Montant des avantages au barème</div>
                                                                         <div class="project-amnt pt-1">Montant des autres avantages</div>
                                                                         <div class="project-amnt pt-1" align="left">Total des avantages</b></div>
                                                                     </td>
                                                                     <td style="padding:5px;border-right-color: #1c232f">
-                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant rÃ©el</b></div>
+                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant réel</b></div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($real, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($avtg_reat_arg, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" style="text-align: right;"><b class="m-0">{{number_format(($avtg_reat), 0 ,'.',' ')}}</b></div>
@@ -2244,7 +2244,7 @@
 
                                                                     </td>
                                                                     <td style="padding:5px;">
-                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant au barÃ¨me</b></div>
+                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant au barème</b></div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($bareme, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($avtg_reat_arg2, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" style="text-align: right;"><b class="m-0">(B) {{number_format(($avtg_bareme + $avtg_reat_arg2), 0 ,'.',' ')}} </b></div>
@@ -2264,7 +2264,7 @@
                                                                 </tr>
 																<tr>
 																	<td style="padding:5px;">
-                                                                        <div class="project-amnt pt-1"><b class="m-0">ExonÃ©rations</b></div>
+                                                                        <div class="project-amnt pt-1"><b class="m-0">Exonérations</b></div>
 																		@foreach ($allowances as $allowance)
 																			@if($allowance->allowance_option != '30')
 																				@if($allowance->trait_fisc =='' || $allowance->trait_fisc =='10% - Art 116-1')
@@ -2281,7 +2281,7 @@
 																				@endif
 																			@endif
 																		@endforeach
-																		<div class="project-amnt pt-1" align="left">Total des primes Ã  10%</div>
+																		<div class="project-amnt pt-1" align="left">Total des primes à 10%</div>
                                                                         <br>
                                                                         @foreach ($allowances as $allowance)
 																			@if($allowance->allowance_option != '30')
@@ -2294,7 +2294,7 @@
 																				@endif
 																			@endif
 																		@endforeach
-																		<div class="project-amnt pt-1" align="left">Total des primes exonÃ©rÃ©s Ã  100% dans la limite lÃ©gale</div>
+																		<div class="project-amnt pt-1" align="left">Total des primes exonérés à 100% dans la limite légale</div>
                                                                         <br>
 																	</td>
 																	<td style="padding:5px;border-right-color: #1c232f">
@@ -2418,7 +2418,7 @@
 																</tr>
                                                                 <tr>
                                                                     <td style="border-top-color: #1c232f;">
-                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;">Total des ExonÃ©rations (C )</b></div>
+                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;">Total des Exonérations (C )</b></div>
                                                                     </td>
                                                                     <td style="border-right-color: #1c232f !important; border-top-color: #1c232f;">
                                                                         <div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;"><br/></b></div>
@@ -2480,7 +2480,7 @@
 																		@if($overtimes->isEmpty())
 
 																		@else
-																			<div class="project-amnt pt-1">Heures SupplÃ©mentaires</div>
+																			<div class="project-amnt pt-1">Heures Supplémentaires</div>
 																		@endif
 																		<div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;">Total Brut (A)</b></div>
 																	</td>
@@ -2527,12 +2527,12 @@
                                                                 <tr>
                                                                     <td style="padding:5px;">
                                                                         <div class="project-amnt pt-1"><b class="m-0">Avantages en Nature ou en Argent</b></div>
-                                                                        <div class="project-amnt pt-1">Montant des avantages au barÃ¨me</div>
+                                                                        <div class="project-amnt pt-1">Montant des avantages au barème</div>
                                                                         <div class="project-amnt pt-1">Montant des autres avantages</div>
                                                                         <div class="project-amnt pt-1" align="left">Total des avantages</b></div>
                                                                     </td>
                                                                     <td style="padding:5px;border-right-color: #1c232f">
-                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant rÃ©el</b></div>
+                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant réel</b></div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($real, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($avtg_reat_arg, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" style="text-align: right;"><b class="m-0">{{number_format(($avtg_reat), 0 ,'.',' ')}}</b></div>
@@ -2541,7 +2541,7 @@
 
                                                                     </td>
                                                                     <td style="padding:5px;">
-                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant au barÃ¨me</b></div>
+                                                                        <div class="project-amnt pt-1" align="left"><b class="m-0">Montant au barème</b></div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($bareme, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" align="right">{{number_format($avtg_reat_arg2, 0 ,'.',' ')}}</div>
                                                                         <div class="project-amnt pt-1" style="text-align: right;"><b class="m-0">(B) {{number_format(($avtg_bareme + $avtg_reat_arg2), 0 ,'.',' ')}}</b></div>
@@ -2561,7 +2561,7 @@
                                                                 </tr>
 																<tr>
 																	<td style="padding:5px;">
-                                                                        <div class="project-amnt pt-1"><b class="m-0">ExonÃ©rations</b></div>
+                                                                        <div class="project-amnt pt-1"><b class="m-0">Exonérations</b></div>
                                                                         @foreach ($allowances as $allowance)
 																			@if($allowance->allowance_option != '30')
 																				@if(strpos($allowance->trait_fisc, '100% - Art 116') === 0)
@@ -2573,7 +2573,7 @@
 																				@endif
 																			@endif
 																		@endforeach
-																		<div class="project-amnt pt-1" align="left">Total des primes exonÃ©rÃ©s Ã  100% dans la limite lÃ©gale</div>
+																		<div class="project-amnt pt-1" align="left">Total des primes exonérés à 100% dans la limite légale</div>
                                                                         <br>
 																	</td>
 																	<td style="padding:5px;border-right-color: #1c232f">
@@ -2627,7 +2627,7 @@
                                                                     </td>
 																</tr>
                                                                 <tr>
-                                                                    <td><div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;">Total des ExonÃ©rations (C )</b></div></td>
+                                                                    <td><div class="project-amnt pt-1" align="left"><b class="m-0" style="color: #ddcd08;">Total des Exonérations (C )</b></div></td>
                                                                     <td style="padding:5px;border-right-color: #1c232f"></td>
                                                                     <td></td>
                                                                     <td><div class="project-amnt pt-1" align="right"><b class="m-0" style="color: #ddcd08;">{{number_format(($total), 0 ,'.',' ')}}</b></div></td>
@@ -2645,22 +2645,22 @@
 																<td colspan = "2"><strong>CMU</strong></td>
 															</tr>
 															<tr>
-																<td>Nombre de bÃ©nÃ©ficiaires : </td><td align="right"><strong> {{ ($cmu)}} </strong></td>
+																<td>Nombre de bénéficiaires : </td><td align="right"><strong> {{ ($cmu)}} </strong></td>
 															</tr>
 															<?php if( $cmu < '7'){ ?>
 																<tr>
-																	<td>LimitÃ© Ã  6 bÃ©nÃ©ficiaires : </td><td align="right"><strong>{{ (6 - $cmu)}} Restants</strong></td>
+																	<td>Limité à 6 bénéficiaires : </td><td align="right"><strong>{{ (6 - $cmu)}} Restants</strong></td>
 																</tr>
 															<?php }else{ ?>
 																<tr>
-																	<td colspan = "2">Limite de bÃ©nÃ©ficiaires atteint : <strong> 6 </strong></td>
+																	<td colspan = "2">Limite de bénéficiaires atteint : <strong> 6 </strong></td>
 																</tr>
 																<tr>
-																	<td colspan = "2">La part de l'employÃ© passe de 500 Ã  1000 FCFA par bÃ©nÃ©ficiaires pour <strong>{{($cmu - 6)}}</strong> bÃ©nÃ©ficiaire(s)</td>
+																	<td colspan = "2">La part de l'employé passe de 500 à 1000 FCFA par bénéficiaires pour <strong>{{($cmu - 6)}}</strong> bénéficiaire(s)</td>
 																</tr>
 															<?php } ?>
 															<tr>
-																<td>Part SalariÃ© :</td><td align="right"><strong>{{ number_format($resultcmu, 0 , '.' , ' ')}}</strong></td>
+																<td>Part Salarié :</td><td align="right"><strong>{{ number_format($resultcmu, 0 , '.' , ' ')}}</strong></td>
 															</tr>
 														</table>
 													</div>
@@ -2675,7 +2675,7 @@
 											<div class="card bg-dark shadow-none" style="padding:10px">
 												<div class="project-info-inner mr-3">
 													<div class="row">
-														<div class="project-info-inner mr-3 col-10"><strong>PrÃªts</strong></div>
+														<div class="project-info-inner mr-3 col-10"><strong>Prêts</strong></div>
 														{{--@can('Create Loan')
 															<div class="col-1">
 																<a data-url="{{ route('loanemp.create', $employee->id) }}" data-ajax-popup="true"
@@ -2694,7 +2694,7 @@
 													@php
 														setlocale(LC_TIME, 'fr_FR.utf8');
 													@endphp
-													<?php if($employee->id == $ids){$text=''; } else { echo 'Pas de prÃªt en cours. <hr/>';} ?>
+													<?php if($employee->id == $ids){$text=''; } else { echo 'Pas de prêt en cours. <hr/>';} ?>
 													@foreach ($loans as $loan)
 
 														@php
@@ -2710,7 +2710,7 @@
 														@endphp
 														<div class="project-amnt pt-1">
 															@if ($loan && !empty($loan->loan_option()))
-															 PrÃªt NÂ° {{ $cpte_loan++ }} - {{ $loan->loan_option()->name }} :
+															 Prêt N° {{ $cpte_loan++ }} - {{ $loan->loan_option()->name }} :
 															@endif
 															@if ($loan->type == 'fixed')
 																<b align="right">{{ number_format($loan->amount, 0 , '.' , ' ') }} FCFA</b>
@@ -2719,19 +2719,19 @@
 																	{{ number_format($loan->tota_allow, 0 , '.' , ' ') }} FCFA
 																</b>
 															@endif
-															 | Date de dÃ©but de prÃ©lÃ¨vement : {{$datepret->formatLocalized('%e %B %Y')}}
+															 | Date de début de prélèvement : {{$datepret->formatLocalized('%e %B %Y')}}
 														</div>
 														<br>
 														@if($loan->amountpaie === 0)
-                                                            <?php { echo 'PrÃªt remboursÃ©. <hr/>';} ?>
+                                                            <?php { echo 'Prêt remboursé. <hr/>';} ?>
                                                         @else
                                                             <table class="table" style="color: white;">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th><center>{{ __('Ã‰CHÃ‰ANCES') }}</center></th>
+                                                                        <th><center>{{ __('ÉCHÉANCES') }}</center></th>
                                                                         <th><center>{{ __('Date de paiement') }}</center></th>
                                                                         <th><center>{{ __('Retenue mensuelle') }}</center></th>
-                                                                        <th><center>{{ __('Solde du prÃªt') }}</center></th>
+                                                                        <th><center>{{ __('Solde du prêt') }}</center></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -2740,19 +2740,19 @@
                                                                             <tr>
                                                                                 <td align="center">
                                                                                     @php
-                                                                                        echo "Date du prÃªt";
+                                                                                        echo "Date du prêt";
                                                                                     @endphp
                                                                                 </td>
                                                                                 <td align="center">
                                                                                     {{ $datepret->formatLocalized('%e %B %Y') }}
                                                                                 </td>
-                                                                                <!-- Les deux premiÃ¨res colonnes ajoutÃ©es par dÃ©faut -->
+                                                                                <!-- Les deux premières colonnes ajoutées par défaut -->
 
                                                                                 @if (!empty($loanretenue) && $loanIndex < count($loanretenue))
-                                                                                    <!-- Si nous avons encore des Ã©lÃ©ments dans $loanretenue -->
+                                                                                    <!-- Si nous avons encore des éléments dans $loanretenue -->
                                                                                     @php
                                                                                         $loans = $loanretenue[$loanIndex];
-                                                                                        $loanIndex++; // IncrÃ©menter l'index pour passer Ã  l'Ã©lÃ©ment suivant
+                                                                                        $loanIndex++; // Incrémenter l'index pour passer à l'élément suivant
                                                                                         // Calculer le total du montant retenu ;
                                                                                         $totalAmountRetenue += $loans['amount_retenue'];
                                                                                         $totalSoldeAmount = $loans['solde_retenue'];
@@ -2772,7 +2772,7 @@
                                                                                     @endif
                                                                                     <!-- Remplissage des colonnes avec les valeurs de $loanretenue -->
                                                                                 @else
-                                                                                    <!-- Si nous avons Ã©puisÃ© tous les Ã©lÃ©ments de $loanretenue, laissez les colonnes vides -->
+                                                                                    <!-- Si nous avons épuisé tous les éléments de $loanretenue, laissez les colonnes vides -->
                                                                                     <td align="center">-</td>
                                                                                     <td align="center">-</td>
                                                                                 @endif
@@ -2781,19 +2781,19 @@
                                                                             <tr>
                                                                                 <td align="center">
                                                                                     @php
-                                                                                        echo "NÂ°".($i);
+                                                                                        echo "N°".($i);
                                                                                     @endphp
                                                                                 </td>
                                                                                 <td align="center">
                                                                                     {{ $start_date->formatLocalized('%B %Y') }}
                                                                                 </td>
-                                                                                <!-- Les deux premiÃ¨res colonnes ajoutÃ©es par dÃ©faut -->
+                                                                                <!-- Les deux premières colonnes ajoutées par défaut -->
 
                                                                                 @if ($loanIndex < count($loanretenue))
-                                                                                    <!-- Si nous avons encore des Ã©lÃ©ments dans $loanretenue -->
+                                                                                    <!-- Si nous avons encore des éléments dans $loanretenue -->
                                                                                     @php
                                                                                         $loans = $loanretenue[$loanIndex];
-                                                                                        $loanIndex++; // IncrÃ©menter l'index pour passer Ã  l'Ã©lÃ©ment suivant
+                                                                                        $loanIndex++; // Incrémenter l'index pour passer à l'élément suivant
                                                                                         // Calculer le total du montant retenu ;
                                                                                         $totalAmountRetenue += $loans['amount_retenue'];
                                                                                         $totalSoldeAmount = $loans['solde_retenue'];
@@ -2808,7 +2808,7 @@
                                                                                     @endif
                                                                                     <!-- Remplissage des colonnes avec les valeurs de $loanretenue -->
                                                                                 @else
-                                                                                    <!-- Si nous avons Ã©puisÃ© tous les Ã©lÃ©ments de $loanretenue, laissez les colonnes vides -->
+                                                                                    <!-- Si nous avons épuisé tous les éléments de $loanretenue, laissez les colonnes vides -->
                                                                                     <td align="center">-</td>
                                                                                     <td align="center">-</td>
                                                                                 @endif
@@ -2850,7 +2850,7 @@
 															<td align="right" width="25%"><strong>SBI : {{number_format($employee->get_salary_imposable(),0 , '.' , ' ')}} </strong></td>
 														</tr>
 														<tr>
-															<td>ImpÃ´ts brut : </td>
+															<td>Impôts brut : </td>
 															<td align="right" width="25%"><strong>{{ number_format($resultimpricf, 0 , '.' , ' ') }} </strong></td>
 														</tr>
 														<tr>
@@ -2858,7 +2858,7 @@
 															<td align="right" width="25%"><strong>{{ number_format($resultricf, 0 , '.' , ' ') }} </strong></td>
 														</tr>
 														<tr>
-															<td>ImpÃ´ts Net :</td>
+															<td>Impôts Net :</td>
 															<td align="right" width="25%">
 																<strong>@if($impots < 0)
 																	0
@@ -2891,22 +2891,22 @@
 															<td colspan = "2"><strong>CMU</strong></td>
 														</tr>
 														<tr>
-															<td>Nombre de bÃ©nÃ©ficiaires : </td><td align="right" width="25%"><strong> {{ ($cmu)}} </strong></td>
+															<td>Nombre de bénéficiaires : </td><td align="right" width="25%"><strong> {{ ($cmu)}} </strong></td>
 														</tr>
 														<?php if( $cmu < '7'){ ?>
 															<tr>
-																<td>LimitÃ© Ã  6 bÃ©nÃ©ficiaires : </td><td align="right" width="25%"><strong>{{ (6 - $cmu)}} Restants</strong></td>
+																<td>Limité à 6 bénéficiaires : </td><td align="right" width="25%"><strong>{{ (6 - $cmu)}} Restants</strong></td>
 															</tr>
 														<?php }else{ ?>
 															<tr>
-																<td colspan = "2">Limite de bÃ©nÃ©ficiaires atteint : <strong> 6 </strong></td>
+																<td colspan = "2">Limite de bénéficiaires atteint : <strong> 6 </strong></td>
 															</tr>
 															<tr>
-																<td colspan = "2">La part de l'employÃ© passe de 500 Ã  1000 FCFA par bÃ©nÃ©ficiaires pour <strong>{{($cmu - 6)}}</strong> bÃ©nÃ©ficiaire(s)</td>
+																<td colspan = "2">La part de l'employé passe de 500 à 1000 FCFA par bénéficiaires pour <strong>{{($cmu - 6)}}</strong> bénéficiaire(s)</td>
 															</tr>
 														<?php } ?>
 														<tr>
-															<td>Part SalariÃ© :</td><td align="right" width="25%"><strong>{{ number_format($resultcmu, 0 , '.' , ' ')}}</strong></td>
+															<td>Part Salarié :</td><td align="right" width="25%"><strong>{{ number_format($resultcmu, 0 , '.' , ' ')}}</strong></td>
 														</tr>
 													</table>
 												</div>
@@ -2927,12 +2927,12 @@
 															<td><strong>PRETS</strong></td><td align="right" width="25%"><strong> {{$cpte_lo}} </strong></td>
 														</tr>
                                                         @if($loans_emp->isEmpty())
-                                                            <tr><td colspan="2"><?php if($employee->id == $ids){$text=''; } else { echo 'Pas de prÃªt en cours.';} ?></td></tr>
+                                                            <tr><td colspan="2"><?php if($employee->id == $ids){$text=''; } else { echo 'Pas de prêt en cours.';} ?></td></tr>
                                                         @else
                                                             @foreach ($loans_emp as $loans_empployee)
                                                                 @if ($loans_empployee && !empty($loans_empployee->loan_option()))
                                                                     <tr>
-                                                                        <td>{{ $loans_empployee->loan_option()->name }} | Montant remboursÃ©</td><td align="right" width="25%"><strong> {{ !empty($loans_empployee->amountpaie) ? number_format($loans_empployee->amountpaie, 0 , '.' , ' ') : '0' }}</strong></td>
+                                                                        <td>{{ $loans_empployee->loan_option()->name }} | Montant remboursé</td><td align="right" width="25%"><strong> {{ !empty($loans_empployee->amountpaie) ? number_format($loans_empployee->amountpaie, 0 , '.' , ' ') : '0' }}</strong></td>
                                                                     </tr>
                                                                 @endif
                                                             @endforeach
@@ -2955,7 +2955,7 @@
 							<div class="card-header">
 								<div class="row">
 									<div class="col-11">
-										<h5>Heures SupplÃ©mentaires & Absences</h5>
+										<h5>Heures Supplémentaires & Absences</h5>
 									</div>
 									{{--@can('Create Overtime')
 										<div class="col-1 text-end">
@@ -2977,25 +2977,25 @@
 												<thead style="color: #fff;">
 													<tr>
 														<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>DATE</strong></td>
-														<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>HEURES TRAVAILLÃ‰ES</strong></td>
+														<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>HEURES TRAVAILLÉES</strong></td>
 														<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>GAINS</strong></td>
 													</tr>
 												</thead>
 												<tbody style="color: #fff;">
 													@if($overtimes->isEmpty())
 														<tr>
-															<td colspan="4" align="center">Pas d'heures supplÃ©mentaires constatÃ©es.</td>
+															<td colspan="4" align="center">Pas d'heures supplémentaires constatées.</td>
 														</tr>
 													@else
 														@foreach ($overtimes as $overtime)
 															<tr>
 																<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;">Du : {{ date('d-m-Y', strtotime($overtime->start_date)) }} <br/>au : {{ date('d-m-Y', strtotime($overtime->end_date)) }}</td>
 																<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;">
-																	De la 41Ã¨ Ã  la 46Ã¨ heure : <strong>{{ $overtime->quar_heure }}</strong><br/>
-																	Au dÃ©lÃ  de la 46Ã¨ heure : <strong>{{ $overtime->heure_audd }}</strong><br/>
-																	Jours ouvrÃ©s Nuit : <strong>{{ $overtime->heure_nuit_ferie }}</strong><br/>
-																	Dimanche et jours fÃ©riÃ©s : <strong>{{ $overtime->heure_dim_ferie }}</strong><br/>
-																	Nuit dimanche et jours fÃ©riÃ©s : <strong>{{ $overtime->heure_nuit_dim_ferie }}</strong><hr/>
+																	De la 41è à la 46è heure : <strong>{{ $overtime->quar_heure }}</strong><br/>
+																	Au délà de la 46è heure : <strong>{{ $overtime->heure_audd }}</strong><br/>
+																	Jours ouvrés Nuit : <strong>{{ $overtime->heure_nuit_ferie }}</strong><br/>
+																	Dimanche et jours fériés : <strong>{{ $overtime->heure_dim_ferie }}</strong><br/>
+																	Nuit dimanche et jours fériés : <strong>{{ $overtime->heure_nuit_dim_ferie }}</strong><hr/>
 																	<strong>Total : {{ $overtime->quar_heure+$overtime->heure_audd+$overtime->heure_nuit_ferie+$overtime->heure_dim_ferie+$overtime->heure_nuit_dim_ferie }}</strong>
 																</td>
 																<td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;">
@@ -3015,17 +3015,17 @@
                                             <table class="table-sm table-bordered" style="color: #fff;">
                                                 <thead>
                                                     <tr>
-                                                        <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>PÃ‰RIODE D'ABSENCES</strong></td>
+                                                        <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>PÉRIODE D'ABSENCES</strong></td>
                                                         <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>HEURES D'ABSENCES</strong></td>
-                                                        <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>JUSTIFIÃ‰E ?</strong></td>
-                                                        <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>DÃ‰DUCTIBLE ?</strong></td>
+                                                        <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>JUSTIFIÉE ?</strong></td>
+                                                        <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>DÉDUCTIBLE ?</strong></td>
                                                         <td align="center" style="border-left-style:solid;border-left-width:2pt; border-right-style:solid;border-right-width:2pt;"><strong>DEDUCTION </strong></td>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @if($timesheets->isEmpty())
                                                             <tr>
-                                                                <td colspan="4" align="center">Pas d'absence constatÃ©e.</td>
+                                                                <td colspan="4" align="center">Pas d'absence constatée.</td>
                                                             </tr>
                                                     @else
                                                         @foreach ($timesheets as $timeSheet)
@@ -3079,7 +3079,7 @@
 										<div class="card bg-dark shadow-none" style="padding:10px">
 											<table class="table-sm table-bordered" style="color: #fff;">
 												<tr>
-													<td><strong>ImpÃ´ts sur Salaire</strong></td>
+													<td><strong>Impôts sur Salaire</strong></td>
 													<td align="right" width="25%"><strong> SBI : {{number_format($employee->get_salary_imposable(),0 , '.' , ' ')}} </strong></td>
 												</tr>
 												<tr>
@@ -3088,17 +3088,17 @@
 												</tr>
 												@if($local=='local')
 													<tr>
-														<td>Contribution employeur (ExpatriÃ©) : </td>
+														<td>Contribution employeur (Expatrié) : </td>
 														<td align="right"><strong>  0 </strong></td>
 													</tr>
 												@else
 													<tr>
-														<td>Contribution employeur (ExpatriÃ©) : </td>
+														<td>Contribution employeur (Expatrié) : </td>
 														<td align="right"><strong>{{ number_format($resulttax2, 0 , '.' , ' ') }} </strong></td>
 													</tr>
 												@endif
 												<tr>
-													<td>Taxe dâ€™Apprentissage :<br/>Taxe Ã  la F. P. C. :  </td>
+													<td>Taxe d’Apprentissage :<br/>Taxe à la F. P. C. :  </td>
 													<td align="right"><strong>{{round($tax4)}}<br/>{{round($tax5)}} </strong></td>
 												</tr>
 												<tr>
@@ -3142,21 +3142,21 @@
 												</tr>
 												<?php if( $cmu < '7'){ ?>
 													<tr>
-														<td>BÃ©nÃ©ficiaires Ã  charges partagÃ©es LimitÃ©s Ã  6 : </td>
+														<td>Bénéficiaires à charges partagées Limités à 6 : </td>
 														<td align="right"><strong>{{($cmu)}}</strong></td>
 													</tr>
 													<tr>
-														<td>BÃ©nÃ©ficiaires restants: </td>
+														<td>Bénéficiaires restants: </td>
 														<td align="right"><strong>{{(6 - $cmu)}}</strong></td>
 													</tr>
 												<?php }else{ ?>
 													<tr>
-														<td>Limite de bÃ©nÃ©ficiaires atteint : </td>
+														<td>Limite de bénéficiaires atteint : </td>
 														<td align="right"> <strong> 6 </strong> </td>
 													</tr>
 													<tr>
-														<td>La part de l'employÃ© passe de 500 Ã  1000 FCFA par bÃ©nÃ©ficiaires pour </td>
-														<td align="right"><strong>{{($cmu - 6)}}</strong> bÃ©nÃ©ficiaire(s)</td>
+														<td>La part de l'employé passe de 500 à 1000 FCFA par bénéficiaires pour </td>
+														<td align="right"><strong>{{($cmu - 6)}}</strong> bénéficiaire(s)</td>
 													</tr>
 												<?php } ?>
 											</table>
@@ -3209,18 +3209,18 @@
         document.addEventListener('DOMContentLoaded', function() {
             primeancienete();
         });
-		// RÃ©cupÃ©rer tous les boutons de navigation
+		// Récupérer tous les boutons de navigation
 		var tabs = document.querySelectorAll('.nav-link');
 
 		// Parcourir chaque bouton de navigation
 		tabs.forEach(function(tab) {
-			// Ã‰couter l'Ã©vÃ©nement de clic sur chaque bouton
+			// Écouter l'événement de clic sur chaque bouton
 			tab.addEventListener('click', function() {
 				// Supprimer la classe "active bg-primary" de tous les boutons de navigation
 				tabs.forEach(function(t) {
 					t.classList.remove('active', 'bg-primary');
 				});
-				// Ajouter la classe "active bg-primary" au bouton cliquÃ©
+				// Ajouter la classe "active bg-primary" au bouton cliqué
 				this.classList.add('active', 'bg-primary');
 			});
 		});
