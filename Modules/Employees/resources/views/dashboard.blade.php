@@ -177,22 +177,19 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4 mb-3">
+                            {{-- Un seul bouton : le type (mensuel ou journalier) se choisit dans le
+                                 formulaire, champ "Type d'employé". --}}
                             <a href="{{ route('company.employees.create') }}" class="btn btn-primary w-100">
-                                <i class="fas fa-plus me-1"></i>Ajouter Employé Mensuel
+                                <i class="fas fa-plus me-1"></i>Ajouter un employé
                             </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="#" class="btn btn-primary w-100">
-                                <i class="fas fa-plus me-1"></i>Ajouter Employé Journalier
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4 mb-3">
                             <a href="{{ route('company.employees.index') }}" class="btn btn-outline-warning w-100">
                                 <i class="fas fa-list me-1"></i>Voir Tous les Employés
                             </a>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4 mb-3">
                             <a href="#" class="btn btn-outline-success w-100" onclick="exportReport()">
                                 <i class="fas fa-download me-1"></i>Exporter Rapport
                             </a>
