@@ -61,7 +61,7 @@
                                 <input class="form-check-input" type="radio" name="payment_method" 
                                         id="wave" value="wave" checked>
                                 <label class="form-check-label" for="wave">
-                                    <i class="fas fa-brand-wave me-2"></i>
+                                    <img src="{{ asset('images/WAVE.png') }}" alt="Wave" class="me-2" style="height: 22px; width: auto; object-fit: contain;">
                                     Wave
                                 </label>
                             </div>
@@ -70,7 +70,7 @@
                                 <input class="form-check-input" type="radio" name="payment_method" 
                                         id="orange" value="orange">
                                 <label class="form-check-label" for="orange">
-                                    <i class="fas fa-brand-orange me-2"></i>
+                                    <img src="{{ asset('images/OM.png') }}" alt="Orange Money" class="me-2" style="height: 22px; width: auto; object-fit: contain;">
                                     Orange Money
                                 </label>
                             </div>
@@ -79,7 +79,7 @@
                                 <input class="form-check-input" type="radio" name="payment_method" 
                                         id="mtn" value="mtn">
                                 <label class="form-check-label" for="mtn">
-                                    <i class="fas fa-brand-mtn me-2"></i>
+                                    <img src="{{ asset('images/MTN.png') }}" alt="MTN Mobile Money" class="me-2" style="height: 22px; width: auto; object-fit: contain;">
                                     MTN Mobile Money
                                 </label>
                             </div>
@@ -88,7 +88,7 @@
                                 <input class="form-check-input" type="radio" name="payment_method" 
                                         id="moov" value="moov">
                                 <label class="form-check-label" for="moov">
-                                    <i class="fas fa-brand-moov me-2"></i>
+                                    <img src="{{ asset('images/MOOV.png') }}" alt="Moov Money" class="me-2" style="height: 22px; width: auto; object-fit: contain;">
                                     Moov Money
                                 </label>
                             </div>

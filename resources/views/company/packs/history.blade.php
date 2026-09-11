@@ -30,7 +30,7 @@
         <div class="col-md-3">
             <div class="card border-primary">
                 <div class="card-body text-center">
-                    <h3 class="text-primary">{{ $orders->count() }}</h3>
+                    <h3 class="text-primary">{{ $stats['total'] }}</h3>
                     <p class="mb-0">Total commandes</p>
                 </div>
             </div>
@@ -38,7 +38,7 @@
         <div class="col-md-3">
             <div class="card border-success">
                 <div class="card-body text-center">
-                    <h3 class="text-success">{{ $orders->where('status', 'paid')->count() }}</h3>
+                    <h3 class="text-success">{{ $stats['paid'] }}</h3>
                     <p class="mb-0">Payées</p>
                 </div>
             </div>
@@ -46,7 +46,7 @@
         <div class="col-md-3">
             <div class="card border-warning">
                 <div class="card-body text-center">
-                    <h3 class="text-warning">{{ $orders->where('status', 'pending')->count() }}</h3>
+                    <h3 class="text-warning">{{ $stats['pending'] }}</h3>
                     <p class="mb-0">En attente</p>
                 </div>
             </div>
@@ -54,7 +54,7 @@
         <div class="col-md-3">
             <div class="card border-info">
                 <div class="card-body text-center">
-                    <h3 class="text-info">{{ number_format($orders->sum('total_amount'), 0, ',', ' ') }} FCFA</h3>
+                    <h3 class="text-info">{{ number_format($stats['amount'], 0, ',', ' ') }} FCFA</h3>
                     <p class="mb-0">Montant total</p>
                 </div>
             </div>
@@ -241,7 +241,7 @@
                                 sur {{ $orders->total() }} commandes
                             </small>
                         </div>
-                        {{ $orders->links() }}
+                        {{ $orders->withQueryString()->links() }}
                     </div>
                     @else
                     <div class="text-center py-5">

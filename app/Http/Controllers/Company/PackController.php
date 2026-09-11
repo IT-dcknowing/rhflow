@@ -264,12 +264,30 @@ class PackController extends Controller
     /**
      * Afficher l'historique des commandes
      */
-    public function history()
+    public function history(Request $request)
     {
         $user = Auth::user();
-        $orders = $user->orders()->with('plan')->latest()->paginate(10);
-        
-        return view('company.packs.history', compact('orders'));
+
+        // Les filtres du formulaire etaient ignores : la requete ne les lisait pas.
+        $query = $user->orders()
+            ->with('plan')
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->input('status')))
+            ->when($request->filled('payment_method'), fn ($q) => $q->where('payment_method', $request->input('payment_method')))
+            ->when($request->filled('date_from'), fn ($q) => $q->whereDate('created_at', '>=', $request->input('date_from')))
+            ->when($request->filled('date_to'), fn ($q) => $q->whereDate('created_at', '<=', $request->input('date_to')));
+
+        // Les compteurs portent sur l'ensemble filtre, pas sur la page affichee :
+        // additionner $orders (10 lignes) donnait un total faux des la 2e page.
+        $stats = [
+            'total' => (clone $query)->count(),
+            'paid' => (clone $query)->where('status', 'paid')->count(),
+            'pending' => (clone $query)->where('status', 'pending')->count(),
+            'amount' => (clone $query)->sum('total_amount'),
+        ];
+
+        $orders = $query->latest()->paginate(10)->withQueryString();
+
+        return view('company.packs.history', compact('orders', 'stats'));
     }
 
     /**

@@ -136,6 +136,14 @@
                         @if($plan->features)
                             @php
                                 $features = is_array($plan->features) ? $plan->features : explode("\n", $plan->features);
+                                // Les limites (utilisateurs, employes, stockage) sont deja affichees juste
+                                // en dessous a partir des champs du plan. On retire donc les lignes de
+                                // features qui ne font que les repeter, pour eviter le doublon.
+                                $features = collect($features)
+                                    ->map(fn ($f) => trim($f))
+                                    ->filter()
+                                    ->reject(fn ($f) => preg_match('/(\d+\s*(utilisateur|employ|go\b|gb\b)|illimit)/iu', $f))
+                                    ->values();
                             @endphp
                             @foreach($features as $feature)
                             <div class="d-flex align-items-center mb-2">
