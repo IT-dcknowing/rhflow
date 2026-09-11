@@ -794,10 +794,9 @@
 
             <!-- Logo -->
             <div class="sidebar-logo">
-                <a href="{{ auth()->user()->type === 'company' ? route('company.dashboard') : (auth()->user()->type === 'employee' ? route('employee.dashboard') : route('hr.dashboard')) }}"
-                    style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+                <div style="display:flex;align-items:center;gap:10px;">
                     <img src="{{ asset('img/logos/logo.png') }}" alt="RH Flow" style="height:40px;">
-                </a>
+                </div>
             </div>
 
             <!-- Navigation -->
@@ -929,9 +928,9 @@
                             <i class="fas fa-file-text"></i> Gestion des Contrats
                         </a>
                         <!-- <a href="{{ route('company.ruptures.index') }}"
-                                                class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.ruptures') ? 'active' : '' }}">
-                                                <i class="fas fa-exclamation-triangle"></i> Sanction &amp; Ruptures
-                                            </a> -->
+                                                    class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.ruptures') ? 'active' : '' }}">
+                                                    <i class="fas fa-exclamation-triangle"></i> Sanction &amp; Ruptures
+                                                </a> -->
                         <div class="submenu-group-title"><i class="fas fa-minus"></i> Gérer le temps</div>
                         @if(Auth::user()->attendance_type == 'manuel')
                             <a href="{{ route('company.times.absences.index') }}"
@@ -945,13 +944,13 @@
                             </a>
                         @endif
                         <!-- <a href="{{ route('company.times.overtime.index') }}"
-                                                class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.times.overtime.') ? 'active' : '' }}">
-                                                <i class="fas fa-clock"></i> Heures Supplémentaires
-                                            </a> -->
+                                                    class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.times.overtime.') ? 'active' : '' }}">
+                                                    <i class="fas fa-clock"></i> Heures Supplémentaires
+                                                </a> -->
                         <!-- <a href="{{ route('company.leaves.index') }}"
-                                                class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.leaves') ? 'active' : '' }}">
-                                                <i class="fas fa-plane"></i> Congés
-                                            </a> -->
+                                                    class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.leaves') ? 'active' : '' }}">
+                                                    <i class="fas fa-plane"></i> Congés
+                                                </a> -->
                     </div><!-- /submenu-view-employees -->
                 @endif
 
@@ -1129,7 +1128,7 @@
                         </a>
                         <a href="{{ route('company.settings.branches.index') }}"
                             class="submenu-item {{ Request::route()->getName() == 'company.settings.branches.index' ? 'active' : '' }}">
-                            <i class="fas fa-bank"></i> Siège et succursales
+                            <i class="fas fa-bank"></i> succursales
                         </a>
                         <a href="{{ route('company.settings.departments.index') }}"
                             class="submenu-item {{ Request::route()->getName() == 'company.settings.departments.index' ? 'active' : '' }}">
@@ -1180,19 +1179,19 @@
 
             @if($hasPaidPlan)
                 <a href="{{ asset('downloads/rhflow.apk') }}" download="RH_Flow_Mobile.apk" style="
-                        padding: 12px 16px;
-                        margin: 0 10px 0px;
-                        background: linear-gradient(135deg, #e6f7eb 0%, #d4f0df 100%);
-                        border: 1.5px solid #a7dcb9;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.2s;
-                        flex-shrink: 0;
-                        text-decoration: none;
-                    "
+                            padding: 12px 16px;
+                            margin: 0 10px 0px;
+                            background: linear-gradient(135deg, #e6f7eb 0%, #d4f0df 100%);
+                            border: 1.5px solid #a7dcb9;
+                            border-radius: 12px;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            transition: all 0.2s;
+                            flex-shrink: 0;
+                            text-decoration: none;
+                        "
                     onmouseover="this.style.background='linear-gradient(135deg,#28c848,#1faa3b)'; this.style.borderColor='#28c848'; this.querySelector('span.app-title').style.color='white'; this.querySelector('span.app-sub').style.color='rgba(255,255,255,0.8)'; this.querySelector('i').style.color='white';"
                     onmouseout="this.style.background='linear-gradient(135deg, #e6f7eb 0%, #d4f0df 100%)'; this.style.borderColor='#a7dcb9'; this.querySelector('span.app-title').style.color='#1eaa3a'; this.querySelector('span.app-sub').style.color='#28c848'; this.querySelector('i').style.color='#1eaa3a';">
                     <div
@@ -1253,19 +1252,6 @@
             <!-- NAVBAR SUPÉRIEURE -->
             <nav class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
                 <div class="container-xxl">
-                    <div class="navbar-brand app-brand demo d-none d-xl-flex py-0 me-4">
-                        <a href="index.html" class="app-brand-link gap-2">
-                            <!-- ========   change your logo hear   ============ -->
-                            <span class="app-brand-logo"><img src="{{ asset('img/logos/logo.png') }}"
-                                    alt="{{ config('app.name', 'RHFLOW') }}" class="logo logo-lg"
-                                    style="height: 50px;"></span>
-                        </a>
-
-                        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-xl-none">
-                            <i class="fas fa-x ti-sm align-middle"></i>
-                        </a>
-                    </div>
-
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                             <i class="fas fa-menu-2 ti-sm"></i>
@@ -1321,9 +1307,7 @@
                             </li>
                             <!-- Aide / Guide Premium -->
                             <li class="nav-item me-3 d-flex align-items-center">
-                                <button class="btn d-flex align-items-center gap-2"
-                                    onclick="openGuideModal()"
-                                    style="background: linear-gradient(135deg, rgba(37,62,135,0.08) 0%, rgba(26,43,92,0.05) 100%);
+                                <button class="btn d-flex align-items-center gap-2" onclick="openGuideModal()" style="background: linear-gradient(135deg, rgba(37,62,135,0.08) 0%, rgba(26,43,92,0.05) 100%);
                                            border: 1px solid rgba(37,62,135,0.18);
                                            color: #253e87;
                                            font-weight: 600;
@@ -1364,14 +1348,8 @@
                                         <h6 class="mb-1">{{ auth()->user()->name }}</h6>
                                         <small class="text-muted">{{ auth()->user()->type_label }}</small>
                                     </div>
-                                    <a href="{{ route('super-admin.profile.index') }}" class="dropdown-item">
-                                        <i class="fas fa-user me-2"></i>
-                                        <span>Mon Profil</span>
-                                    </a>
-                                    <a href="{{ route('super-admin.settings.index') }}" class="dropdown-item">
-                                        <i class="fas fa-cog me-2"></i>
-                                        <span>Paramètres</span>
-                                    </a>
+                                    {{-- Pas de "Mon Profil" / "Paramètres" ici : ces pages sont
+                                    reservees au super-admin et renvoyaient un 403. --}}
                                     <div class="dropdown-divider"></div>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
@@ -1536,14 +1514,25 @@
                     title: titre,
                     html: texte,
                     icon: icone,
-                    // Abonnement échu : plus d'échappatoire, seul le renouvellement est proposé
-                    showCancelButton: proprietaire && !expire,
+                    // Deux boutons et deux seulement, toujours en français.
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    showDenyButton: false,
                     confirmButtonText: proprietaire ? 'Renouveler maintenant' : 'J\'ai compris',
                     cancelButtonText: 'Plus tard',
-                    confirmButtonColor: '#001760',
-                    cancelButtonColor: '#6c757d',
+                    denyButtonText: 'Non',
+                    confirmButtonColor: '#253e87',
+                    cancelButtonColor: '#8592a3',
+                    // Abonnement échu : le rappel ne se ferme qu'avec l'un des deux boutons.
                     allowOutsideClick: !expire,
-                    allowEscapeKey: !expire
+                    allowEscapeKey: !expire,
+                    didOpen: function (popup) {
+                        // Filet de sécurité : aucun bouton « Non » résiduel ne doit rester affiché.
+                        var deny = popup.querySelector('.swal2-deny');
+                        if (deny) {
+                            deny.remove();
+                        }
+                    }
                 }).then(function (resultat) {
                     try {
                         window.localStorage.setItem(cle, Date.now().toString());
@@ -1560,47 +1549,46 @@
     <script src="{{asset('libs/select2/select2.js')}}"></script>
     <script src="{{asset('libs/flatpickr/flatpickr.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script>
     <!-- Moteur SmartGuard — Assistant Intelligent & Intercepteur d'Erreurs -->
     <script>
-        const SmartGuard = {
-            rules: [
-                {
-                    keywords: ['exercice de paie n\'est pas actif', 'exercice non actif', 'aucun exercice', 'exercice de paie requis', 'exercice requis'],
-                    title: '⚠️ Configuration d\'Exercice Requise',
-                    html: `<div style="text-align: left; font-size: 14px; line-height: 1.6; color: #4f5d75; font-family: 'Inter', sans-serif;">
-                             <p><strong>Oups !</strong> Pour pouvoir manipuler ou calculer les salaires, vous devez d'abord créer et activer l'exercice annuel de paie.</p>
-                             <ul style="margin: 10px 0; padding-left: 20px;">
-                               <li>Accédez à la configuration de la paie.</li>
-                               <li>Créez l'exercice pour l'année en cours.</li>
-                               <li>Marquez cet exercice comme <strong>Actif</strong>.</li>
-                             </ul>
-                           </div>`,
-                    buttonText: 'Créer l\'exercice maintenant',
-                    redirectUrl: "{{ Route::has('company.paiesalaries.exercices.create') ? route('company.paiesalaries.exercices.create') : '#' }}"
+            const SmartGuard = {
+                rules: [
+            {
+                keywords: ['exercice de paie n\'est pas actif', 'exercice non actif', 'aucun exercice', 'exercice de paie requis', 'exercice requis'],
+            title: '⚠️ Configuration d\'Exercice Requise',
+            html: `<div style="text-align: left; font-size: 14px; line-height: 1.6; color: #4f5d75; font-family: 'Inter', sans-serif;">
+                <p><strong>Oups !</strong> Pour pouvoir manipuler ou calculer les salaires, vous devez d'abord créer et activer l'exercice annuel de paie.</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Accédez à la configuration de la paie.</li>
+                    <li>Créez l'exercice pour l'année en cours.</li>
+                    <li>Marquez cet exercice comme <strong>Actif</strong>.</li>
+                </ul>
+            </div>`,
+            buttonText: 'Créer l\'exercice maintenant',
+            redirectUrl: "{{ Route::has('company.paiesalaries.exercices.create') ? route('company.paiesalaries.exercices.create') : '#' }}"
                 },
-                {
-                    keywords: ['contrat actif', 'sans contrat', 'contrat de travail'],
-                    title: '📋 Contrat de Travail Manquant',
-                    html: `<div style="text-align: left; font-size: 14px; line-height: 1.6; color: #4f5d75; font-family: 'Inter', sans-serif;">
-                             <p><strong>Attention !</strong> Certains salariés actifs n'ont pas encore de contrat de travail associé pour la période sélectionnée.</p>
-                             <ul style="margin: 10px 0; padding-left: 20px;">
-                               <li>Un contrat actif est obligatoire pour inclure un salarié dans le calcul de la paie.</li>
-                               <li>Associez un contrat (CDI, CDD, Stage) pour pouvoir continuer.</li>
-                             </ul>
-                           </div>`,
-                    buttonText: 'Gérer les contrats',
-                    redirectUrl: "{{ Route::has('company.contracts.create') ? route('company.contracts.create') : '#' }}"
+            {
+                keywords: ['contrat actif', 'sans contrat', 'contrat de travail'],
+            title: '📋 Contrat de Travail Manquant',
+            html: `<div style="text-align: left; font-size: 14px; line-height: 1.6; color: #4f5d75; font-family: 'Inter', sans-serif;">
+                <p><strong>Attention !</strong> Certains salariés actifs n'ont pas encore de contrat de travail associé pour la période sélectionnée.</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Un contrat actif est obligatoire pour inclure un salarié dans le calcul de la paie.</li>
+                    <li>Associez un contrat (CDI, CDD, Stage) pour pouvoir continuer.</li>
+                </ul>
+            </div>`,
+            buttonText: 'Gérer les contrats',
+            redirectUrl: "{{ Route::has('company.contracts.create') ? route('company.contracts.create') : '#' }}"
                 },
-                {
-                    keywords: ['période est clôturée', 'période clôturée', 'période fermée'],
-                    title: '🔒 Période de Paie Clôturée',
-                    html: `<div style="text-align: left; font-size: 14px; line-height: 1.6; color: #4f5d75; font-family: 'Inter', sans-serif;">
-                             <p>Cette période de paie est clôturée et archivée. Toutes les modifications ou recalculs de salaires y sont impossibles.</p>
-                             <p>Pour effectuer des régularisations, veuillez ajouter un élément de <strong>rappel</strong> sur la période active suivante.</p>
-                           </div>`,
-                    buttonText: 'Aller aux contrats',
-                    redirectUrl: "{{ Route::has('company.contracts.index') ? route('company.contracts.index') : '#' }}"
+            {
+                keywords: ['période est clôturée', 'période clôturée', 'période fermée'],
+            title: '🔒 Période de Paie Clôturée',
+            html: `<div style="text-align: left; font-size: 14px; line-height: 1.6; color: #4f5d75; font-family: 'Inter', sans-serif;">
+                <p>Cette période de paie est clôturée et archivée. Toutes les modifications ou recalculs de salaires y sont impossibles.</p>
+                <p>Pour effectuer des régularisations, veuillez ajouter un élément de <strong>rappel</strong> sur la période active suivante.</p>
+            </div>`,
+            buttonText: 'Aller aux contrats',
+            redirectUrl: "{{ Route::has('company.contracts.index') ? route('company.contracts.index') : '#' }}"
                 }
             ],
 
@@ -1608,107 +1596,107 @@
                 const messageLower = rawMessage.toLowerCase();
                 const matchedRule = this.rules.find(rule => 
                     rule.keywords.some(keyword => messageLower.includes(keyword))
-                );
+            );
 
-                if (matchedRule) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: matchedRule.title,
-                        html: matchedRule.html,
-                        showCancelButton: true,
-                        confirmButtonColor: '#253e87',
-                        cancelButtonColor: '#8592a3',
-                        confirmButtonText: matchedRule.buttonText,
-                        cancelButtonText: 'Fermer',
-                        background: '#ffffff',
-                        iconColor: '#253e87',
-                        customClass: {
-                            popup: 'animate__animated animate__fadeInUp'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = matchedRule.redirectUrl;
-                        }
-                    });
-                    return true;
+            if (matchedRule) {
+                Swal.fire({
+                    icon: 'info',
+                    title: matchedRule.title,
+                    html: matchedRule.html,
+                    showCancelButton: true,
+                    confirmButtonColor: '#253e87',
+                    cancelButtonColor: '#8592a3',
+                    confirmButtonText: matchedRule.buttonText,
+                    cancelButtonText: 'Fermer',
+                    background: '#ffffff',
+                    iconColor: '#253e87',
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInUp'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = matchedRule.redirectUrl;
+                    }
+                });
+            return true;
                 }
-                return false;
+            return false;
             },
 
             init: function() {
                 const firstInvalidField = document.querySelector('.is-invalid, .invalid-feedback');
-                if (firstInvalidField) {
+            if (firstInvalidField) {
                     const formGroup = firstInvalidField.closest('.mb-3, .form-group, .col-12, .col-md-6') || firstInvalidField.parentElement;
-                    if (formGroup) {
-                        formGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        const input = formGroup.querySelector('input, select, textarea');
-                        if (input) {
-                            setTimeout(() => input.focus(), 800);
+            if (formGroup) {
+                formGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const input = formGroup.querySelector('input, select, textarea');
+            if (input) {
+                setTimeout(() => input.focus(), 800);
                         }
                     }
 
-                    Swal.fire({
-                        icon: 'warning',
-                        title: '💡 Saisie Incomplète',
-                        text: 'Certains champs requis sont manquants ou incorrects. L\'assistant a surligné les erreurs en rouge pour vous aider à corriger la saisie.',
-                        confirmButtonColor: '#253e87',
-                        background: '#ffffff'
+            Swal.fire({
+                icon: 'warning',
+            title: '💡 Saisie Incomplète',
+            text: 'Certains champs requis sont manquants ou incorrects. L\'assistant a surligné les erreurs en rouge pour vous aider à corriger la saisie.',
+            confirmButtonColor: '#253e87',
+            background: '#ffffff'
                     });
                 }
 
-                this.renderWorkflowWidget();
+            this.renderWorkflowWidget();
             },
 
             renderWorkflowWidget: function() {
                 const path = window.location.pathname;
-                let steps = [];
-                let currentStepIndex = -1;
+            let steps = [];
+            let currentStepIndex = -1;
 
-                if (path.includes('/employees') || path.includes('/salariés')) {
-                    steps = [
-                        { label: 'Création Fiche', path: '/employees/create' },
-                        { label: 'Associer Contrat', path: '/contracts/create' },
-                        { label: 'Calcul Paie', path: '/paie' }
-                    ];
-                    currentStepIndex = path.includes('/create') ? 0 : 1;
+            if (path.includes('/employees') || path.includes('/salariés')) {
+                steps = [
+                    { label: 'Création Fiche', path: '/employees/create' },
+                    { label: 'Associer Contrat', path: '/contracts/create' },
+                    { label: 'Calcul Paie', path: '/paie' }
+                ];
+            currentStepIndex = path.includes('/create') ? 0 : 1;
                 } else if (path.includes('/paie') || path.includes('/calcul') || path.includes('/bulletins')) {
-                    steps = [
-                        { label: 'Ouvrir Exercice', path: '/exercices' },
-                        { label: 'Variables Brut', path: '/elements-brut' },
-                        { label: 'Lancer Calcul', path: '/calcul' }
-                    ];
-                    currentStepIndex = path.includes('/calcul') ? 2 : 1;
+                steps = [
+                    { label: 'Ouvrir Exercice', path: '/exercices' },
+                    { label: 'Variables Brut', path: '/elements-brut' },
+                    { label: 'Lancer Calcul', path: '/calcul' }
+                ];
+            currentStepIndex = path.includes('/calcul') ? 2 : 1;
                 }
 
                 if (steps.length > 0) {
                     const widgetHtml = `
-                        <div id="smartguard-workflow" style="position: fixed; bottom: 20px; left: 20px; background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(37,62,135,0.15); border: 1px solid rgba(37,62,135,0.15); padding: 10px 20px; z-index: 9999; display: flex; align-items: center; gap: 12px; font-family: 'Inter', sans-serif; transition: all 0.3s ease;">
-                            <div style="width: 10px; height: 10px; border-radius: 50%; background: #28c848; animation: pulse 2s infinite;"></div>
-                            <span style="font-size: 11px; font-weight: 700; color: #253e87; text-transform: uppercase; letter-spacing: 0.5px;">Assistant Workflow :</span>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                ${steps.map((step, idx) => {
-                                    const isActive = idx === currentStepIndex;
-                                    const isDone = idx < currentStepIndex;
-                                    const color = isActive ? '#253e87' : (isDone ? '#28c848' : '#9ca3af');
-                                    const weight = isActive ? '700' : '500';
-                                    const icon = isDone ? '✓' : (idx + 1);
-                                    return `
+            <div id="smartguard-workflow" style="position: fixed; bottom: 20px; left: 20px; background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(37,62,135,0.15); border: 1px solid rgba(37,62,135,0.15); padding: 10px 20px; z-index: 9999; display: flex; align-items: center; gap: 12px; font-family: 'Inter', sans-serif; transition: all 0.3s ease;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: #28c848; animation: pulse 2s infinite;"></div>
+                <span style="font-size: 11px; font-weight: 700; color: #253e87; text-transform: uppercase; letter-spacing: 0.5px;">Assistant Workflow :</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    ${steps.map((step, idx) => {
+                        const isActive = idx === currentStepIndex;
+                        const isDone = idx < currentStepIndex;
+                        const color = isActive ? '#253e87' : (isDone ? '#28c848' : '#9ca3af');
+                        const weight = isActive ? '700' : '500';
+                        const icon = isDone ? '✓' : (idx + 1);
+                        return `
                                         <div style="display: flex; align-items: center; gap: 4px; font-size: 12px;">
                                             <span style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: ${isActive ? '#253e87' : (isDone ? '#28c848' : '#e2e5ef')}; color: white; font-size: 10px; font-weight: bold;">${icon}</span>
                                             <span style="color: ${color}; font-weight: ${weight};">${step.label}</span>
                                             ${idx < steps.length - 1 ? '<span style="color: #cbd5e1;">➔</span>' : ''}
                                         </div>
                                     `;
-                                }).join('')}
-                            </div>
-                        </div>
-                        <style>
-                            @keyframes pulse {
-                                0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40,200,72,0.7); }
-                                70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(40,200,72,0); }
-                                100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40,200,72,0); }
+                    }).join('')}
+                </div>
+            </div>
+            <style>
+                @keyframes pulse {
+                    0 % { transform: scale(0.95); box- shadow: 0 0 0 0 rgba(40,200,72,0.7); }
+                70% {transform: scale(1); box-shadow: 0 0 0 6px rgba(40,200,72,0); }
+                100% {transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40,200,72,0); }
                             }
-                        </style>
+            </style>
                     `;
                     document.body.insertAdjacentHTML('beforeend', widgetHtml);
                 }
@@ -1771,54 +1759,54 @@
         // Initialisation de Select2
         $('.select2').select2({
             placeholder: 'Sélectionner une option',
-            allowClear: true,
-            width: '100%'
+        allowClear: true,
+        width: '100%'
         });
 
         // Fonction pour changer de thème
         function setTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('selectedTheme', themeName);
-            document.body.className = document.body.className.replace(/theme-\w+/g, '');
-            document.body.classList.add(`theme-${themeName}`);
+        localStorage.setItem('selectedTheme', themeName);
+        document.body.className = document.body.className.replace(/theme-\w+/g, '');
+        document.body.classList.add(`theme-${themeName}`);
         }
 
         // Fonction pour toggle dark mode
         function toggleDarkMode() {
             const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-bs-theme', newTheme);
-            localStorage.setItem('darkMode', newTheme);
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', newTheme);
+        localStorage.setItem('darkMode', newTheme);
         }
 
         // Charger les préférences sauvegardées
         document.addEventListener('DOMContentLoaded', function () {
             const savedTheme = localStorage.getItem('selectedTheme');
-            const savedDarkMode = localStorage.getItem('darkMode');
+        const savedDarkMode = localStorage.getItem('darkMode');
 
-            if (savedTheme) setTheme(savedTheme);
-            if (savedDarkMode) {
-                document.documentElement.setAttribute('data-bs-theme', savedDarkMode);
+        if (savedTheme) setTheme(savedTheme);
+        if (savedDarkMode) {
+            document.documentElement.setAttribute('data-bs-theme', savedDarkMode);
             } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.setAttribute('data-bs-theme', 'dark');
+            document.documentElement.setAttribute('data-bs-theme', 'dark');
             }
         });
 
         // Charger les préférences sauvegardées
         document.addEventListener('DOMContentLoaded', function () {
             const savedTheme = localStorage.getItem('selectedTheme');
-            const savedDarkMode = localStorage.getItem('darkMode');
+        const savedDarkMode = localStorage.getItem('darkMode');
 
-            if (savedTheme) {
-                setTheme(savedTheme);
+        if (savedTheme) {
+            setTheme(savedTheme);
             }
 
-            if (savedDarkMode) {
-                document.documentElement.setAttribute('data-bs-theme', savedDarkMode);
+        if (savedDarkMode) {
+            document.documentElement.setAttribute('data-bs-theme', savedDarkMode);
             } else {
                 // Détection automatique du mode sombre du système
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+            document.documentElement.setAttribute('data-bs-theme', 'dark');
                 }
             }
         });
@@ -1883,8 +1871,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             loadNotifications();
 
-            // Actualiser les notifications toutes les 30 secondes
-            setInterval(loadNotifications, 30000);
+        // Actualiser les notifications toutes les 30 secondes
+        setInterval(loadNotifications, 30000);
         });
 
         // Auto-dismiss notifications after 5 seconds
@@ -1924,12 +1912,15 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0" style="background: #f8faff; flex-grow: 1; overflow: hidden;">
-                    <iframe id="guideIframe" data-src="{{ route('guide-utilisateur') }}" style="width: 100%; height: 100%; border: none;"></iframe>
+                    <iframe id="guideIframe" data-src="{{ route('guide-utilisateur') }}"
+                        style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
                 <div class="modal-footer"
                     style="background: #ffffff; border-top: 1px solid #eef2f7; padding: 15px 24px; flex-shrink: 0;">
                     <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-primary" onclick="document.getElementById('guideIframe').contentWindow.print()">Imprimer le Guide</button>
+                    <button type="button" class="btn btn-primary"
+                        onclick="document.getElementById('guideIframe').contentWindow.print()">Imprimer le
+                        Guide</button>
                 </div>
             </div>
         </div>
@@ -1939,16 +1930,16 @@
     <script>
         function openGuideModal() {
             const modalEl = document.getElementById('modalGuide');
-            let modal = bootstrap.Modal.getInstance(modalEl);
-            if (!modal) {
-                modal = new bootstrap.Modal(modalEl);
+        let modal = bootstrap.Modal.getInstance(modalEl);
+        if (!modal) {
+            modal = new bootstrap.Modal(modalEl);
             }
-            
-            const iframe = document.getElementById('guideIframe');
-            if (iframe && !iframe.getAttribute('src')) {
-                iframe.setAttribute('src', iframe.getAttribute('data-src'));
+
+        const iframe = document.getElementById('guideIframe');
+        if (iframe && !iframe.getAttribute('src')) {
+            iframe.setAttribute('src', iframe.getAttribute('data-src'));
             }
-            modal.show();
+        modal.show();
         }
     </script>
 </body>

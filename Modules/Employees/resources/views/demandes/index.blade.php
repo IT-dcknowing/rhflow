@@ -93,7 +93,7 @@
                                                     @foreach($demandes as $demande)
                                                         <tr>
                                                             <td><span class="badge bg-info">{{ \Auth::user()->employeeIdFormat($demande->employee?->employee_id ?? 'N/A') }}</span></td>
-                                                            <td>{{ $demande->employee->name }}</td>
+                                                            <td>{{ $demande->employee?->name ?? 'Salarié introuvable' }}</td>
                                                             <td>{{ getCategorieLabel($demande->categorie_demandes) }}</td>
                                                             <td>{{ \Carbon\Carbon::parse($demande->start_date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($demande->end_date)->format('d/m/Y') }}</td>
                                                             <td>

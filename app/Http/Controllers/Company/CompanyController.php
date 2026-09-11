@@ -218,9 +218,18 @@ class CompanyController extends Controller
                 $getEmployeeDay = Employee::where('company_id', '=', $companyId)->where('is_active', '1')->where('salary_type', '!=', 1)->count();
                 $empMensuel = Employee::where('company_id', '=', $companyId)->where('is_active', '1')->where('salary_type', 1)->count();
   
-                $activeJob   = Employee::where('is_active', '1')->where('company_id', '=', $companyId)->count();
-                $inActiveJOb = Employee::where('is_active', '2')->where('company_id', '=', $companyId)->count();
-                $employesEnConge = Employee::where('is_active', '4')->where('company_id', '=', $companyId)->count();
+                // Effectif = employes (table employees) + comptes internes non-employes
+                // (compte entreprise, RH, paie) qui font aussi partie du personnel en poste.
+                $totalEmployes = Employee::where('company_id', '=', $companyId)->count() + $countUser;
+                $inActiveJOb = Employee::where('is_active', '0')->where('company_id', '=', $companyId)->count();
+                // Employes dont un conge valide couvre la date du jour
+                $employesEnConge = Leave::where('company_id', '=', $companyId)
+                    ->whereIn('status', ['Approuvé', 'Démarré'])
+                    ->whereDate('start_date', '<=', $currentDate)
+                    ->whereDate('end_date', '>=', $currentDate)
+                    ->distinct('employee_id')
+                    ->count('employee_id');
+                $activeJob   = max(0, $totalEmployes - $inActiveJOb - $employesEnConge);
                 
                 $countLeaves = Leave::where('company_id', '=', $companyId)->count();
                 $countTimeSheet = TimeSheet::where('motif_justify', 'Oui')->where('statut', '0')->where('company_id', '=', $companyId)->count();
@@ -496,6 +505,7 @@ class CompanyController extends Controller
                 'meetings', 
                 'countEmployee', 
                 'countUser', 
+                'totalEmployes', 
                 'countContract', 
                 'countPaylist', 
                 'countEmployee',

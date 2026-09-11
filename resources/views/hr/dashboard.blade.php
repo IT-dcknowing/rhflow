@@ -21,9 +21,6 @@
                     <a href="{{ route('notifications.index') }}" class="btn btn-outline-primary">
                         <i class="ti ti-bell me-1"></i>Notifications
                     </a>
-                    <a href="{{ route('super-admin.profile.index') }}" class="btn btn-primary">
-                        <i class="ti ti-user me-1"></i>Mon Profil
-                    </a>
                 </div>
             </div>
         </div>

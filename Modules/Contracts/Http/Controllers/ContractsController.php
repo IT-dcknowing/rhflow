@@ -91,7 +91,11 @@ class ContractsController extends Controller
                 'employee_id' => 'required|exists:employees,id',
                 'type_id' => 'required|exists:contract_types,id',
                 'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after_or_equal:start_date',
+                'end_date' => [
+                    $this->exigeDateDeFin($request->type_id) ? 'required' : 'nullable',
+                    'date',
+                    'after_or_equal:start_date',
+                ],
                 'duration' => 'nullable|string',
                 'value' => 'nullable|numeric',
                 'description' => 'nullable|string',
@@ -223,7 +227,11 @@ class ContractsController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'type_id' => 'required|exists:contract_types,id',
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'end_date' => [
+                $this->exigeDateDeFin($request->type_id) ? 'required' : 'nullable',
+                'date',
+                'after_or_equal:start_date',
+            ],
             'duration' => 'nullable|string',
             'value' => 'nullable|numeric',
             'status' => 'required|in:pending,accept,expired',
@@ -490,10 +498,27 @@ class ContractsController extends Controller
     /**
      * Enregistrer une signature
      */
+    /**
+     * Un contrat à durée déterminée ne peut pas être enregistré sans date de fin.
+     * On se fie au libellé du type plutôt qu'à son identifiant, qui varie d'une
+     * entreprise à l'autre.
+     */
+    private function exigeDateDeFin($typeId): bool
+    {
+        $nom = mb_strtolower((string) optional(ContractType::find($typeId))->name);
+
+        if ($nom === '' || str_contains($nom, 'indétermin') || str_contains($nom, 'indetermin') || str_contains($nom, 'cdi')) {
+            return false;
+        }
+
+        return str_contains($nom, 'détermin') || str_contains($nom, 'determin') || str_contains($nom, 'cdd');
+    }
+
     public function saveSignature(Request $request, $id)
     {
+        // Seul le salarié signe le contrat.
         $request->validate([
-            'signature_type' => 'required|in:employee,company',
+            'signature_type' => 'required|in:employee',
             'signature_data' => 'required|string',
         ]);
         
@@ -506,17 +531,19 @@ class ContractsController extends Controller
         $image_type = $image_type_aux[1];
         $image_base64 = base64_decode($image_parts[1]);
         
-        $signature_path = 'contracts/' . $contract->id . '/signatures/' . $request->signature_type . '_' . time() . '.' . $image_type;
-        Storage::disk('public')->put($signature_path, $image_base64);
-        
-        if ($request->signature_type == 'employee') {
-            $contract->employee_signature = $signature_path;
-            $contract->employee_signature_date = now();
-        } else {
-            $contract->company_signature = $signature_path;
-            $contract->company_signature_date = now();
+        // Même convention que les logos, signatures et cachets de l'entreprise :
+        // on écrit directement dans public/storage, qui est servi tel quel.
+        $signature_dir = public_path('storage/contracts/' . $contract->id . '/signatures');
+
+        if (!is_dir($signature_dir)) {
+            mkdir($signature_dir, 0755, true);
         }
-        
+
+        $signature_name = 'employee_' . time() . '.' . $image_type;
+        file_put_contents($signature_dir . DIRECTORY_SEPARATOR . $signature_name, $image_base64);
+
+        // La table contracts ne porte pas de colonne de date de signature.
+        $contract->employee_signature = 'contracts/' . $contract->id . '/signatures/' . $signature_name;
         $contract->save();
         
         return redirect()->route('company.contracts.show', $contract->id)

@@ -131,12 +131,14 @@ class User extends Authenticatable implements JWTSubject
     protected function isActive(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                // Vérifier que les colonnes existent avant d'y accéder
-                $isActive = property_exists($this, 'is_active') ? $this->is_active : true;
-                $activeStatus = property_exists($this, 'active_status') ? $this->active_status : true;
-                return (bool) $isActive && (bool) $activeStatus;
-            },
+            // On lit les colonnes explicitement plutot que le $value transmis :
+            // un acces en camelCase ($user->isActive) resout le meme accesseur mais
+            // sans valeur, ce qui rendait false pour tout le monde.
+            // property_exists() ne voit pas les attributs Eloquent (ce ne sont pas
+            // des proprietes PHP) et renvoyait toujours false : l'accesseur
+            // repondait alors true quoi qu'il y ait en base.
+            get: fn () => (bool) ($this->attributes['is_active'] ?? false)
+                && (bool) ($this->attributes['active_status'] ?? true),
         );
     }
 

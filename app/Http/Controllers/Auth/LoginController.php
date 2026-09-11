@@ -61,7 +61,7 @@ class LoginController extends Controller
         }
 
         // Vérifier si l'utilisateur est actif
-        if (!$user->isActive) {
+        if (!$user->is_active) {
             throw ValidationException::withMessages([
                 'email' => ['Votre compte a été désactivé. Contactez l\'administrateur.'],
             ])->redirectTo(route('login'));

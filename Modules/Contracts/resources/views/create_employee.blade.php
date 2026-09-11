@@ -203,11 +203,11 @@
             
             // Met à jour le champ subject selon la valeur sélectionnée
             if(selectedValue == 3){
-                $('#subject').val('CDI');
+                $('#subject').val('Contrat à durée indéterminée');
             }else if(selectedValue == 4){
-                $('#subject').val('CDD');
+                $('#subject').val('Contrat à durée déterminée');
             }else if(selectedValue == 9){
-                $('#subject').val('CEDD');
+                $('#subject').val('Contrat d’expatrié à durée déterminée');
             }else{
                 $('#subject').val(selectedData.text); // Utilise text au lieu de textContent
             }

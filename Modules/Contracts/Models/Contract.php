@@ -32,8 +32,7 @@ class Contract extends Model
 		'status',	
 		'description',	
 		'contract_description',	
-		'employee_signature',	
-		'company_signature',	
+		'employee_signature',
 		'company_id',
         'created_by',
         'updated_by'
@@ -62,5 +61,20 @@ class Contract extends Model
     public function avenants()
     {
         return $this->hasMany(ContractAvenant::class);
+    }
+
+    public function getSubjectAttribute($value)
+    {
+        $subject = trim($value ?? '');
+        if (strcasecmp($subject, 'cdi') === 0) {
+            return 'Contrat à durée indéterminée';
+        }
+        if (strcasecmp($subject, 'cdd') === 0) {
+            return 'Contrat à durée déterminée';
+        }
+        if (strcasecmp($subject, 'cedd') === 0) {
+            return 'Contrat d’expatrié à durée déterminée';
+        }
+        return $value;
     }
 }

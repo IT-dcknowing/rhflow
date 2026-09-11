@@ -252,11 +252,23 @@
                 </a>
             </div>
             
-            <!-- Barre de progression -->
-            <div class="alert alert-info mb-4">
-                <i class="fas fa-info-circle me-1"></i>
-                Tous les champs marqués d'un <span class="required"></span> sont obligatoires
-            </div>
+            @if($errors->any())
+                <div class="alert alert-warning alert-dismissible mb-4" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Veuillez corriger les erreurs suivantes :</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Tous les champs marqués d'un <span class="required"></span> sont obligatoires
+                </div>
+            @endif
 
             <form method="POST" action="{{ route('company.employees.update', $employee->id) }}" id="employeeForm" enctype="multipart/form-data">
                 @csrf
@@ -1087,6 +1099,7 @@
         
         function validateCurrentTab(tabId) {
             let isValid = true;
+            const champsManquants = [];
             const tabElement = document.getElementById(tabId);
             
             if (!tabElement) return true;
@@ -1110,6 +1123,7 @@
                     // Ajouter un message d'erreur
                     const label = $field.closest('.form-group, .col-md-3, .col-md-4, .col-md-6, .col-12').find('label').first().text().replace('*', '').trim();
                     const errorMsg = label ? `Le champ "${label}" est obligatoire` : 'Ce champ est obligatoire';
+                    champsManquants.push(label || ($field.attr('name') || 'Champ sans libellé'));
                     
                     const $errorDiv = $('<div class="invalid-feedback d-block">' + errorMsg + '</div>');
                     
@@ -1128,6 +1142,7 @@
                         isValid = false;
                         $field.addClass('is-invalid');
                         const $errorDiv = $('<div class="invalid-feedback d-block">Veuillez entrer une adresse email valide</div>');
+                        champsManquants.push('Email (format invalide)');
                         if ($field.parent().hasClass('input-group')) {
                             $field.parent().after($errorDiv);
                         } else {
@@ -1137,17 +1152,37 @@
                 }
             });
             
-            // Si des erreurs, afficher une notification et scroller
+            // Si des erreurs, dire precisement quelles informations manquent
             if (!isValid) {
-                const firstError = $(tabElement).find('.is-invalid').first();
-                if (firstError.length) {
-                    $('html, body').animate({
-                        scrollTop: firstError.offset().top - 150
-                    }, 300);
+                const nomOnglet = $('button[data-bs-target="#' + tabId + '"]').text().trim();
+
+                let html = '';
+                if (nomOnglet) {
+                    html += '<div class="text-start mb-2 fw-bold">Onglet « ' + nomOnglet + ' »</div>';
                 }
-                
-                // Afficher une alerte
-                showAlert('Veuillez remplir tous les champs obligatoires avant de continuer', 'danger');
+                html += '<div class="text-start"><ul class="mb-0 ps-3">';
+                champsManquants.forEach(function (libelle) {
+                    html += '<li>' + libelle + '</li>';
+                });
+                html += '</ul></div>';
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: champsManquants.length > 1
+                        ? champsManquants.length + ' informations manquantes'
+                        : 'Information manquante',
+                    html: html,
+                    width: 560,
+                    confirmButtonText: 'Compléter',
+                    customClass: { confirmButton: 'btn btn-primary' },
+                    buttonsStyling: false
+                }).then(function () {
+                    const firstError = $(tabElement).find('.is-invalid').first();
+                    if (firstError.length) {
+                        $('html, body').animate({ scrollTop: firstError.offset().top - 150 }, 300);
+                        firstError.trigger('focus');
+                    }
+                });
             }
             
             return isValid;
@@ -1322,14 +1357,21 @@
         document.getElementById("parts").value = Math.min(nombreDeParts, 5);
     }
 
-    // Génération automatique du nom d'utilisateur
+    // Génération automatique du nom d'utilisateur.
+    // En modification l'employé a deja un identifiant : on ne le regenere pas,
+    // sinon il changerait a chaque ouverture du formulaire et a chaque frappe.
     function generateUsername() {
+        const champUsername = document.getElementById('username');
+        if (champUsername.value.trim() !== '') {
+            return;
+        }
+
         const name = document.getElementById('name').value.replace(/\s+/g, '').toUpperCase();
         if (name.length >= 4) {
             let username = name.substring(0, 4);
             const randomNum = Math.floor(10 + Math.random() * 90);
             username = username + randomNum;
-            document.getElementById('username').value = username;
+            champUsername.value = username;
         }
     }
 
@@ -1373,11 +1415,6 @@
             });
         }
 
-        // Générer le nom d'utilisateur si le nom existe déjà
-        if (document.getElementById('name').value) {
-            generateUsername();
-        }
-
         var nameInput = document.getElementById('name');
 
         // Ajouter un écouteur d'événements pour détecter les modifications dans le champ "Nom & Prénoms"
@@ -1402,4 +1439,118 @@
         });
     });
 </script>
+@endpush
+
+@push('scripts')
+    @php
+        $messageTechnique = session('error');
+    @endphp
+    @if($errors->any() || $messageTechnique)
+        <script>
+            $(function () {
+                'use strict';
+
+                // Onglet dans lequel se trouve chaque champ du formulaire
+                const ongletsParChamp = {
+                    personal: ['name', 'dob', 'gender', 'charge_expat', 'nationality', 'cmu',
+                        'martalstatu_id', 'enfant', 'personneinf', 'parts', 'email', 'phone',
+                        'address', 'username', 'password', 'password_confirmation'],
+                    professional: ['employee_id', 'branch_id', 'department_id', 'designation_id',
+                        'salary_type', 'category_job_id', 'category_id', 'salaire_minima_horaire',
+                        'salaire_minima_mensuel', 'end_leave', 'charge_cmu', 'num_secu_soc',
+                        'charge_cnps', 'num_cnps', 'charge_its'],
+                    documents: ['document', 'emp_doc_id'],
+                    financial: ['account_holder_name', 'account_number', 'bank_name',
+                        'bank_identifier_code', 'orange_money', 'mtn_money', 'moov_money', 'wave_money']
+                };
+
+                const libellesOnglets = {
+                    personal: 'Informations Personnelles',
+                    professional: 'Données du poste',
+                    documents: 'Documents',
+                    financial: 'Informations Financières',
+                    autre: 'Autre'
+                };
+
+                const erreurs = @json($errors->toArray());
+                const messageTechnique = @json($messageTechnique);
+
+                function ongletDuChamp(champ) {
+                    const racine = champ.split('.')[0];
+                    for (const onglet in ongletsParChamp) {
+                        if (ongletsParChamp[onglet].indexOf(racine) !== -1) {
+                            return onglet;
+                        }
+                    }
+                    return 'autre';
+                }
+
+                // Regrouper les messages par onglet pour dire où se situe le problème
+                const parOnglet = {};
+                let premierChamp = null;
+
+                Object.keys(erreurs).forEach(function (champ) {
+                    const onglet = ongletDuChamp(champ);
+                    if (!parOnglet[onglet]) {
+                        parOnglet[onglet] = [];
+                    }
+                    erreurs[champ].forEach(function (message) {
+                        parOnglet[onglet].push(message);
+                    });
+                    if (!premierChamp) {
+                        premierChamp = champ.split('.')[0];
+                    }
+                });
+
+                let html = '';
+
+                Object.keys(parOnglet).forEach(function (onglet) {
+                    html += '<div class="text-start mb-3">';
+                    html += '<div class="fw-bold mb-1">Onglet « ' + libellesOnglets[onglet] + ' »</div>';
+                    html += '<ul class="mb-0 ps-3">';
+                    parOnglet[onglet].forEach(function (message) {
+                        html += '<li>' + message + '</li>';
+                    });
+                    html += '</ul></div>';
+                });
+
+                if (messageTechnique && Object.keys(erreurs).length === 0) {
+                    html += '<div class="text-start"><div class="small text-muted">' + messageTechnique + '</div></div>';
+                }
+
+                const nombre = Object.keys(erreurs).length;
+
+                Swal.fire({
+                    icon: 'error',
+                    title: nombre > 0
+                        ? nombre + (nombre > 1 ? ' champs à corriger' : ' champ à corriger')
+                        : "La modification n'a pas pu être enregistrée",
+                    html: html,
+                    width: 600,
+                    confirmButtonText: premierChamp ? 'Aller au premier problème' : 'Fermer',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                }).then(function () {
+                    if (!premierChamp) {
+                        return;
+                    }
+
+                    // Ouvrir l'onglet concerné puis mettre le focus sur le champ fautif
+                    const onglet = ongletDuChamp(premierChamp);
+                    const bouton = document.getElementById(onglet + '-tab');
+                    if (bouton) {
+                        bootstrap.Tab.getOrCreateInstance(bouton).show();
+                    }
+
+                    const champ = document.querySelector('[name="' + premierChamp + '"]');
+                    if (champ) {
+                        champ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        champ.focus({ preventScroll: true });
+                    }
+                });
+            });
+        </script>
+    @endif
 @endpush

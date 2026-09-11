@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">📝 Gestion des Contrats</h4>
+                    <h4 class="mb-1"> Gestion des Contrats</h4>
                     <p class="text-muted mb-0">Gérez tous les contrats de votre entreprise</p>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
@@ -89,7 +89,7 @@
     <!-- Liste des contrats -->
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Liste des contrats ({{ $contracts->count() }})</h5>
+            <h5 class="mb-0">Liste des contrats </h5>
             <div class="dropdown">
                 <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-download me-1"></i>Exporter
@@ -105,9 +105,8 @@
                 <table class="table table-hover" id="table_contract">
                     <thead>
                         <tr>
-                            <th>Référence</th>
                             <th>Employé</th>
-                            <th>Type</th>
+                            <th>Contrat</th>
                             <th>Date de début</th>
                             <th>Date de fin</th>
                             <th>Statut</th>
@@ -117,7 +116,6 @@
                     <tbody class="table-border-bottom-0">
                         @forelse($contracts as $contract)
                         <tr>
-                            <td><strong>{{ $contract->subject }}</strong></td>
                             <td>
                                 @if($contract->employee)
                                     {{ $contract->employee->name }}
@@ -184,7 +182,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="6" class="text-center py-4">
                                 <div class="d-flex flex-column align-items-center">
                                     <img src="{{ asset('img/illustrations/empty.svg') }}" alt="Aucun contrat" width="120" class="mb-3">
                                     <h6 class="mb-1">Aucun contrat trouvé</h6>
@@ -210,7 +208,7 @@
     // Initialisation de DataTable (seulement s'il y a des contrats)
     var table = $('#table_contract').DataTable({
         responsive: true,
-        order: [[1, 'desc']],
+        order: [[0, 'desc']],
         language: { 
             url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
         },

@@ -103,7 +103,7 @@
         <div class="col-xl-4 col-lg-6 mb-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0">🏭 Répartition par Services</h5>
+                    <h5 class="mb-0"> Répartition par Services</h5>
                 </div>
                 <div class="card-body">
                     <div class="chart-container" style="position: relative; height: 250px;">
@@ -117,7 +117,7 @@
         <div class="col-xl-4 col-lg-6 mb-4">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0">👨‍👩‍👧‍👦 Statut Matrimonial</h5>
+                    <h5 class="mb-0">Statut Matrimonial</h5>
                 </div>
                 <div class="card-body">
                     <div class="chart-container" style="position: relative; height: 250px;">
@@ -131,7 +131,7 @@
         <div class="col-xl-4 col-lg-12 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">🏢 Top Départements</h5>
+                    <h5 class="mb-0"> Top Départements</h5>
                     <span class="badge bg-label-primary">Top 5</span>
                 </div>
                 <div class="card-body">
@@ -176,7 +176,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">⚡ Actions Rapides</h5>
+                    <h5 class="mb-0">Actions Rapides</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">

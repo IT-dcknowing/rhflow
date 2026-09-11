@@ -30,7 +30,7 @@
             <div class="col-12 mb-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="mb-1">🏢 Dashboard Entreprise</h4>
+                        <h4 class="mb-1">Tableau De Bord </h4>
                         <p class="text-muted mb-0">Vue d'ensemble complète de votre activité</p>
                         <small class="text-primary">
                             <i class="fas fa-calendar me-1"></i>
@@ -40,9 +40,7 @@
                         </small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-primary" onclick="refreshDashboard()">
-                            <i class="fas fa-refresh me-1"></i>Actualiser
-                        </button>
+                        
                     </div>
                 </div>
             </div>
@@ -91,7 +89,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <h5 class="text-white mb-0 mt-2">Analyse du Personnel</h5>
-                                    <small>Total : {{ $countUser + $countEmployee }} Employés</small>
+                                    <small>Total : {{ $totalEmployes }} Employés</small>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1">
@@ -557,10 +555,7 @@
                                     <p class="mb-0">Employés</p>
                                     <small>Total: {{ number_format($partEmploye, 0, ',', ' ') }} FCFA</small>
                                     <input type="hidden" id="partEmploye" value="{{ $partEmploye }}">
-                                    <span class="btn btn-success" style="cursor: none; background-color: #00E396;">
-                                        <i class="fas fa-users me-2"></i>
-                                        Employés
-                                    </span>
+                                    
                                 </div>
                                 <ul class="p-0 m-0">
                                     <li class="d-flex gap-3 align-items-center mb-lg-3 pt-2 pb-1">
@@ -611,10 +606,7 @@
                                     <p class="mb-0 text-end">Patronales</p>
                                     <small class="mb-0">Total: {{ number_format($partEmployeur, 0, ',', ' ') }} FCFA</small>
                                     <input type="hidden" id="partEmployeur" value="{{ $partEmployeur }}">
-                                    <span class="btn btn-info" style="cursor: none; background-color: #008FFB;">
-                                        <i class="fas fa-home me-2"></i>
-                                        Patronales
-                                    </span>
+                                  
                                 </div>
                                 <ul class="p-0 m-0">
                                     <li class="d-flex gap-3 align-items-center mb-lg-3 pt-2 pb-1 justify-content-end">
@@ -664,11 +656,9 @@
             <div class="col-xl-6 col-lg-6 mb-4">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">👥 Ressources Humaines</h5>
+                        <h5 class="mb-0">Ressources Humaines</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('company.employees.dashboard') }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-eye me-1"></i>Voir
-                            </a>
+                           
                         </div>
                     </div>
                     <div class="card-body">
@@ -748,11 +738,9 @@
             <div class="col-xl-6 col-lg-6 mb-4">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">💰 Finances & Paie</h5>
+                        <h5 class="mb-0"> Finances & Paie</h5>
                         <div class="d-flex gap-2">
-                            <a href="#" class="btn btn-sm btn-outline-success">
-                                <i class="fas fa-eye me-1"></i>Voir
-                            </a>
+                           
                         </div>
                     </div>
                     <div class="card-body">
@@ -827,12 +815,9 @@
             <div class="col-xl-8 col-lg-7 mb-4">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">📋 Activité Récente</h5>
+                        <h5 class="mb-0"> Activité Récente</h5>
                         <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
-                                data-bs-toggle="dropdown">
-                                <i class="fas fa-filter me-1"></i>Filtrer
-                            </button>
+                           
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#" onclick="filterActivity('all')">Toutes</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="filterActivity('employees')">Employés</a>
@@ -873,7 +858,7 @@
             <div class="col-xl-4 col-lg-5 mb-4">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">🚨 Alertes & Notifications</h5>
+                        <h5 class="mb-0"> Alertes & Notifications</h5>
                         <span class="badge bg-label-danger">{{ count($alerts ?? []) }} urgentes</span>
                     </div>
                     <div class="card-body">
@@ -899,8 +884,8 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">⚡ Actions Rapides</h5>
-                        <span class="badge bg-label-primary">{{ count($quickActions ?? []) }} disponibles</span>
+                        <h5 class="mb-0"> Actions Rapides</h5>
+                       
                     </div>
                     <div class="card-body">
                         <div class="row">

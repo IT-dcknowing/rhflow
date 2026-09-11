@@ -50,15 +50,12 @@
                                 </div>
                             </div>
 
+                            {{-- Pas de champ Téléphone : la table users n'a pas de colonne phone,
+                                 la saisie etait acceptee puis silencieusement ignoree. --}}
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-12 mb-3">
                                     <label for="email" class="form-label">Adresse email <span class="text-danger">*</span></label>
                                     <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}" required>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label for="phone" class="form-label">Téléphone</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="{{ old('phone', $user->phone) }}">
                                 </div>
                             </div>
 

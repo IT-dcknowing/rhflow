@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Employés Mensuels')  
+@section('title', 'Dossiers des Employés')  
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <!-- En-tête des Paramètres -->
+    <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1 text-primary">👨‍💼 Dossiers des Employés</h4>
+                    <h4 class="mb-1 text-primary">Dossiers des Employés</h4>
                     <p class="text-muted mb-0">Gérez tous les dossiers des employés de votre entreprise</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
@@ -17,11 +18,7 @@
                         {{ now()->format('H:i') }}
                     </small>
                 </div>  
-                <div class="d-flex gap-2">
-                   <a href="{{ route('company.employees.create') }}" class="btn bg-primary text-white">
-                        <i class="fas fa-plus me-1"></i>Nouvel Employé
-                    </a>
-                </div>
+               
             </div>
         </div>
     </div>
@@ -100,8 +97,8 @@
     <!--/ User Pills -->
     
     <div class="row mb-4">
-        <div class="col-xl-12 col-lg-7 col-md-7 order-0 order-md-1">
-            <div class="tab-content" style="border: 1px solid #ccc; border-radius: 5px;">
+        <div class="col-12">
+            <div class="tab-content p-3" style="border: 1px solid #ccc; border-radius: 5px;">
                 <div id="actif" class="tab-pane active" role="tabpanel" aria-labelledby="actif-tab">
                     <div class="row">
                         @forelse($employeesActifs as $employee)
@@ -173,9 +170,21 @@
                             </div>
                         @endforelse
                     </div>
-                    @if($employeesActifs->hasPages())
-                        <div class="d-flex justify-content-center mt-3">
-                            {{ $employeesActifs->links() }}
+                    @if($filtreActif)
+                        @if($employeesActifs->hasPages())
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $employeesActifs->links() }}
+                            </div>
+                        @endif
+                    @elseif($employeesActifs->total() > $employeesActifs->count())
+                        {{-- Apercu limite : le reste se retrouve via la recherche --}}
+                        <div class="alert alert-light border text-center mt-3 mb-0">
+                            <i class="fas fa-search me-1"></i>
+                            {{ $employeesActifs->count() }} dossier(s) affiché(s) sur {{ $employeesActifs->total() }} actifs.
+                            <a href="#search" onclick="document.getElementById('search').focus(); return false;">
+                                Utilisez la recherche
+                            </a>
+                            pour retrouver les autres.
                         </div>
                     @endif
                 </div>
@@ -251,9 +260,21 @@
                             </div>
                         @endforelse
                     </div>
-                    @if($employeesInactifs->hasPages())
-                        <div class="d-flex justify-content-center mt-3">
-                            {{ $employeesInactifs->links() }}
+                    @if($filtreActif)
+                        @if($employeesInactifs->hasPages())
+                            <div class="d-flex justify-content-center mt-3">
+                                {{ $employeesInactifs->links() }}
+                            </div>
+                        @endif
+                    @elseif($employeesInactifs->total() > $employeesInactifs->count())
+                        {{-- Apercu limite : le reste se retrouve via la recherche --}}
+                        <div class="alert alert-light border text-center mt-3 mb-0">
+                            <i class="fas fa-search me-1"></i>
+                            {{ $employeesInactifs->count() }} dossier(s) affiché(s) sur {{ $employeesInactifs->total() }} inactifs.
+                            <a href="#search" onclick="document.getElementById('search').focus(); return false;">
+                                Utilisez la recherche
+                            </a>
+                            pour retrouver les autres.
                         </div>
                     @endif
                 </div>

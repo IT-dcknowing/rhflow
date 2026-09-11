@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">👥 Gestion des Utilisateurs</h4>
+                    <h4 class="mb-1"> Gestion des Utilisateurs</h4>
                     <p class="text-muted mb-0">Gérez les utilisateurs de votre entreprise et leurs permissions</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
@@ -35,7 +35,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">📊 Statistiques des Utilisateurs</h5>
+                    <h5 class="mb-0">Statistiques des Utilisateurs</h5>
                     <span class="badge bg-label-primary">Vue d'ensemble</span>
                 </div>
                 <div class="card-body">
@@ -158,7 +158,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">📋 Liste des Utilisateurs</h5>
+                    <h5 class="mb-0">Liste des Utilisateurs</h5>
                     <div class="d-flex gap-2">
                         <span class="badge bg-label-primary">{{ $stats['total'] }} utilisateurs</span>
                         <button class="btn btn-sm btn-outline-secondary" onclick="refreshUsers()">
@@ -172,14 +172,14 @@
                             <table class="table table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>👤 Utilisateur</th>
-                                        <th>📧 Email</th>
-                                        <th>🏷️ Type</th>
-                                        <th>📱 Téléphone</th>
-                                        <th>🏢 Affectation</th>
-                                        <th>📊 Statut</th>
-                                        <th>📅 Créé le</th>
-                                        <th>⚙️ Actions</th>
+                                        <th> Utilisateur</th>
+                                        <th>Email</th>
+                                        <th> Type</th>
+                                        <th> Téléphone</th>
+                                        <th> Affectation</th>
+                                        <th> Statut</th>
+                                        <th> Créé le</th>
+                                        <th> Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -253,11 +253,12 @@
                                         </td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <span class="badge {{ $userItem->is_active ? 'bg-label-success' : 'bg-label-warning' }} me-2">
+                                                <span class="badge {{ $userItem->is_active ? 'bg-label-success' : 'bg-label-warning' }} me-2"
+                                                    data-user-status-badge="{{ $userItem->id }}">
                                                     {{ $userItem->is_active ? '✅ Actif' : '❌ Inactif' }}
                                                 </span>
                                                 <div class="form-check form-switch">
-                                                    <input type="checkbox" class="form-check-input" id="userStatusCheckbox" onclick="toggleUserStatus({{ $userItem->id }}, event)" {{ $userItem->is_active ? 'checked' : '' }}>
+                                                    <input type="checkbox" class="form-check-input" onclick="toggleUserStatus({{ $userItem->id }}, event)" {{ $userItem->is_active ? 'checked' : '' }}>
                                                 </div>
                                             </div>
                                         </td>
@@ -342,7 +343,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">👤 Détails de l'Utilisateur</h5>
+                <h5 class="modal-title"> Détails de l'Utilisateur</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="userDetailsContent">
@@ -515,6 +516,14 @@
                 // Mettre à jour l'état du checkbox
                 checkbox.checked = data.is_active;
 
+                // Mettre le badge en face en accord avec le nouveau statut
+                const badge = document.querySelector(`[data-user-status-badge="${userId}"]`);
+                if (badge) {
+                    badge.textContent = data.is_active ? '✅ Actif' : '❌ Inactif';
+                    badge.classList.toggle('bg-label-success', data.is_active);
+                    badge.classList.toggle('bg-label-warning', !data.is_active);
+                }
+
                 // Afficher une notification
                 showNotification(data.message, 'success');
             } else {
@@ -603,7 +612,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">📤 Import d'Utilisateurs</h5>
+                        <h5 class="modal-title"> Import d'Utilisateurs</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">

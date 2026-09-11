@@ -107,8 +107,9 @@ Route::middleware(['auth', 'super.admin'])->prefix('super-admin')->name('super-a
     // Support et tickets
     Route::get('/support', [SuperAdminController::class, 'support'])->name('support.index');
 
-    // Profile
-    Route::get('/profile', [SuperAdminController::class, 'profile'])->name('profile.index');
+    // Profile : le controleur traite l'affichage (GET) et l'enregistrement (POST)
+    // sur la meme URL, le formulaire poste sur super-admin.profile.index.
+    Route::match(['get', 'post'], '/profile', [SuperAdminController::class, 'profile'])->name('profile.index');
 
     // Système de recherche global
     Route::get('/search', [SuperAdminController::class, 'search'])->name('search.ajax');

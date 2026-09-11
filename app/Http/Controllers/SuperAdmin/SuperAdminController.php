@@ -2969,19 +2969,35 @@ class SuperAdminController extends Controller
             return redirect()->route('super-admin.settings.index')->with('success', 'Paramètres mis à jour avec succès!');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur de validation',
-                'errors' => $e->errors()
-            ], 422);
-            
+            // #settingsForm est un formulaire HTML classique : repondre en JSON
+            // affichait le JSON brut dans le navigateur au lieu du formulaire.
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur de validation',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors($e->validator);
+
         } catch (\Exception $e) {
             \Log::error('Erreur lors de la mise à jour des paramètres: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la mise à jour des paramètres: ' . $e->getMessage()
-            ], 500);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la mise à jour des paramètres: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Erreur lors de la mise à jour des paramètres : ' . $e->getMessage());
         }
     }
     
@@ -3112,7 +3128,6 @@ class SuperAdminController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $user->id,
                 'username' => 'required|string|unique:users,username,' . $user->id,
-                'phone' => 'nullable|string|max:20',
                 'current_password' => 'nullable|required_with:password',
                 'password' => 'nullable|min:8|confirmed',
                 'avatar' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif|max:2048',
@@ -3130,16 +3145,28 @@ class SuperAdminController extends Controller
                 if ($request->hasFile('avatar')) {
                     $avatar = $request->file('avatar');
                     if ($avatar->isValid()) {
-                        // Supprimer l'ancien avatar s'il existe
-                        if ($user->avatar_url && file_exists(public_path($user->avatar_url))) {
-                            unlink(public_path($user->avatar_url));
+                        // Supprimer l'ancien fichier : $user->avatar est le chemin
+                        // stocke, alors que $user->avatar_url est un accesseur qui
+                        // renvoie une URL complete et ne correspond a aucun fichier.
+                        $ancien = $user->getRawOriginal('avatar');
+                        if ($ancien && file_exists(public_path($ancien))) {
+                            unlink(public_path($ancien));
                         }
 
                         // Nouveau nom d'avatar
                         $avatarName = 'super-admin-' . time() . '.' . $avatar->getClientOriginalExtension();
                         $avatar->move(public_path('storage/avatars'), $avatarName);
-                        $validated['avatar_url'] = 'storage/avatars/' . $avatarName;
+                        $validated['avatar'] = 'storage/avatars/' . $avatarName;
                     }
+                }
+
+                // current_password ne doit pas partir en base, et un mot de passe
+                // vide effacerait celui du compte (le cast 'hashed' laisse passer
+                // null) : on ne garde la cle que si un nouveau mot de passe est saisi.
+                unset($validated['current_password']);
+
+                if (empty($validated['password'])) {
+                    unset($validated['password']);
                 }
 
                 // Mise à jour du profil

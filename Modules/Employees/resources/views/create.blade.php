@@ -251,11 +251,12 @@
             </div>
 
             <!-- Barre de progression -->
-            @if(session('error'))
+            {{-- store() renvoie view(...)->with('error', ...) : variable de vue, pas flash --}}
+            @if(($error ?? session('error')))
                 <div class="alert alert-danger alert-dismissible mb-4" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Erreur !</strong> {{ session('error') }}
+                    <strong>Erreur !</strong> {{ $error ?? session('error') }}
                 </div>
             @endif
 
@@ -479,10 +480,17 @@
                                         <label for="username" class="form-label">Nom d'utilisateur</label>
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-at"></i></span>
-                                            <input type="text" class="form-control" id="username"
-                                                    name="username" value="{{ old('username') }}" readonly>
+                                            <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                                    id="username" name="username" value="{{ old('username') }}" readonly>
+                                            <button class="btn btn-outline-secondary" type="button" id="regenerateUsername"
+                                                title="Générer un autre identifiant">
+                                                <i class="fas fa-rotate"></i>
+                                            </button>
                                         </div>
-                                        <small class="text-muted">Généré automatiquement</small>
+                                        @error('username')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                        <small class="text-muted">Généré automatiquement, puis figé : il sert à la connexion de l'employé.</small>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="password" class="form-label">Mot de passe</label>
@@ -582,6 +590,18 @@
                                         $jobCategories = '';
                                         $jobCategories = $company->sector->getJobCategorieAttribute();
                                     @endphp
+                                    <div class="col-md-6 mb-3">
+                                        <label for="salary_type" class="form-label required">Type d'employé</label>
+                                        <select name="salary_type" class="form-select @error('salary_type') is-invalid @enderror" id="salary_type" required>
+                                            <option value="">-- Sélectionner le type --</option>
+                                            <option value="1" {{ old('salary_type') == 1 ? 'selected' : '' }}>Mensuel</option>
+                                            <option value="2" {{ old('salary_type') == 2 ? 'selected' : '' }}>Journalier</option>
+                                        </select>
+                                        <small class="text-muted">Mensuel : rémunéré au salaire mensuel. Journalier : rémunéré au taux horaire.</small>
+                                        @error('salary_type')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="category_job_id" class="form-label required">Sélectionner le type de catégorie</label>
                                         <select type="text" name="category_job_id" class="form-select" id="category_job_id">
@@ -966,14 +986,42 @@
         });
 
         // Fonction pour gérer la visibilité des champs de catégorie et salaire
+        var categorieVisible = true;
+
         function toggleCategoryFields(show) {
+            categorieVisible = show;
             if (show) {
-                $('#cat_id, #hor_sal_id, #mens_sal_id').show();
+                $('#cat_id').show();
+                appliquerTypeSalaire();
             } else {
                 $('#cat_id, #hor_sal_id, #mens_sal_id').hide();
                 $('#category_id, #salaire_minima_horaire, #salaire_minima_mensuel').val('');
             }
         }
+
+        // Mensuel : on met en avant le salaire mensuel. Journalier : le taux horaire.
+        // Les deux champs restent renseignes (meme ligne de grille categorielle) et
+        // sont soumis meme masques, le controleur en a besoin pour calculer la paie.
+        function appliquerTypeSalaire() {
+            if (!categorieVisible) {
+                return;
+            }
+
+            var type = $('#salary_type').val();
+
+            if (type === '1') {
+                $('#mens_sal_id').show();
+                $('#hor_sal_id').hide();
+            } else if (type === '2') {
+                $('#hor_sal_id').show();
+                $('#mens_sal_id').hide();
+            } else {
+                $('#hor_sal_id, #mens_sal_id').show();
+            }
+        }
+
+        $('#salary_type').on('change', appliquerTypeSalaire);
+        appliquerTypeSalaire();
 
         // Gestion du changement de type de catégorie
         $('#category_job_id').on('change', function() {
@@ -1279,14 +1327,27 @@
         document.getElementById("parts").value = Math.min(nombreDeParts, 5);
     }
 
-    // Génération automatique du nom d'utilisateur
-    function generateUsername() {
+    // Génération automatique du nom d'utilisateur.
+    // Une fois pose, l'identifiant ne bouge plus : c'est celui que l'employe
+    // utilisera pour se connecter (application mobile comprise). Le bouton
+    // "regenerer" reste le seul moyen d'en obtenir un autre.
+    function construireUsername() {
         const name = document.getElementById('name').value.replace(/\s+/g, '').toUpperCase();
-        if (name.length >= 4) {
-            let username = name.substring(0, 4);
-            const randomNum = Math.floor(10 + Math.random() * 90);
-            username = username + randomNum;
-            document.getElementById('username').value = username;
+        if (name.length < 4) {
+            return null;
+        }
+        return name.substring(0, 4) + Math.floor(10 + Math.random() * 90);
+    }
+
+    function generateUsername(forcer = false) {
+        const champUsername = document.getElementById('username');
+        if (!forcer && champUsername.value.trim() !== '') {
+            return;
+        }
+
+        const username = construireUsername();
+        if (username) {
+            champUsername.value = username;
         }
     }
 
@@ -1330,9 +1391,28 @@
             });
         }
 
-        // Générer le nom d'utilisateur si le nom existe déjà
+        // Générer le nom d'utilisateur si le nom est saisi et qu'aucun
+        // identifiant n'a encore été attribué
         if (document.getElementById('name').value) {
             generateUsername();
+        }
+
+        const boutonRegenerer = document.getElementById('regenerateUsername');
+        if (boutonRegenerer) {
+            boutonRegenerer.addEventListener('click', function () {
+                if (!construireUsername()) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Nom complet requis',
+                        text: "Saisissez d'abord le nom complet (4 caractères minimum) pour générer un identifiant.",
+                        confirmButtonText: 'Compris',
+                        customClass: { confirmButton: 'btn btn-primary' },
+                        buttonsStyling: false
+                    });
+                    return;
+                }
+                generateUsername(true);
+            });
         }
 
         var nameInput = document.getElementById('name');
@@ -1454,4 +1534,121 @@
         });
     });
 </script>
+@endpush
+
+@push('scripts')
+    @php
+        // Les deux chemins d'erreur de EmployeesController::store() renvoient
+        // view(...)->with('error', ...) : c'est une variable de vue, pas un flash.
+        $messageTechnique = $error ?? session('error');
+    @endphp
+    @if($errors->any() || $messageTechnique)
+        <script>
+            $(function () {
+                'use strict';
+
+                // Onglet dans lequel se trouve chaque champ du formulaire
+                const ongletsParChamp = {
+                    personal: ['name', 'dob', 'gender', 'charge_expat', 'nationality', 'cmu',
+                        'martalstatu_id', 'enfant', 'personneinf', 'parts', 'email', 'phone',
+                        'address', 'username', 'password', 'password_confirmation'],
+                    professional: ['employee_id', 'branch_id', 'department_id', 'designation_id',
+                        'salary_type', 'category_job_id', 'category_id', 'salaire_minima_horaire',
+                        'salaire_minima_mensuel', 'end_leave', 'charge_cmu', 'num_secu_soc',
+                        'charge_cnps', 'num_cnps', 'charge_its'],
+                    documents: ['document', 'emp_doc_id'],
+                    financial: ['account_holder_name', 'account_number', 'bank_name',
+                        'bank_identifier_code', 'orange_money', 'mtn_money', 'moov_money', 'wave_money']
+                };
+
+                const libellesOnglets = {
+                    personal: 'Informations Personnelles',
+                    professional: 'Données du poste',
+                    documents: 'Documents',
+                    financial: 'Informations Financières',
+                    autre: 'Autre'
+                };
+
+                const erreurs = @json($errors->toArray());
+                const messageTechnique = @json($messageTechnique);
+
+                function ongletDuChamp(champ) {
+                    const racine = champ.split('.')[0];
+                    for (const onglet in ongletsParChamp) {
+                        if (ongletsParChamp[onglet].indexOf(racine) !== -1) {
+                            return onglet;
+                        }
+                    }
+                    return 'autre';
+                }
+
+                // Regrouper les messages par onglet pour dire où se situe le problème
+                const parOnglet = {};
+                let premierChamp = null;
+
+                Object.keys(erreurs).forEach(function (champ) {
+                    const onglet = ongletDuChamp(champ);
+                    if (!parOnglet[onglet]) {
+                        parOnglet[onglet] = [];
+                    }
+                    erreurs[champ].forEach(function (message) {
+                        parOnglet[onglet].push(message);
+                    });
+                    if (!premierChamp) {
+                        premierChamp = champ.split('.')[0];
+                    }
+                });
+
+                let html = '';
+
+                Object.keys(parOnglet).forEach(function (onglet) {
+                    html += '<div class="text-start mb-3">';
+                    html += '<div class="fw-bold mb-1">Onglet « ' + libellesOnglets[onglet] + ' »</div>';
+                    html += '<ul class="mb-0 ps-3">';
+                    parOnglet[onglet].forEach(function (message) {
+                        html += '<li>' + message + '</li>';
+                    });
+                    html += '</ul></div>';
+                });
+
+                if (messageTechnique) {
+                    html += '<div class="text-start"><div class="fw-bold mb-1">Détail technique</div>' +
+                        '<div class="small text-muted">' + messageTechnique + '</div></div>';
+                }
+
+                const nombre = Object.keys(erreurs).length;
+
+                Swal.fire({
+                    icon: 'error',
+                    title: nombre > 0
+                        ? nombre + (nombre > 1 ? ' champs à corriger' : ' champ à corriger')
+                        : "L'employé n'a pas pu être créé",
+                    html: html,
+                    width: 600,
+                    confirmButtonText: premierChamp ? 'Aller au premier problème' : 'Fermer',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                }).then(function () {
+                    if (!premierChamp) {
+                        return;
+                    }
+
+                    // Ouvrir l'onglet concerné puis mettre le focus sur le champ fautif
+                    const onglet = ongletDuChamp(premierChamp);
+                    const bouton = document.getElementById(onglet + '-tab');
+                    if (bouton) {
+                        bootstrap.Tab.getOrCreateInstance(bouton).show();
+                    }
+
+                    const champ = document.querySelector('[name="' + premierChamp + '"]');
+                    if (champ) {
+                        champ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        champ.focus({ preventScroll: true });
+                    }
+                });
+            });
+        </script>
+    @endif
 @endpush

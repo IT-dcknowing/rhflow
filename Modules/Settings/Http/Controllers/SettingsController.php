@@ -351,15 +351,15 @@ class SettingsController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
+            'days' => 'required|integer|min:1|max:365',
         ]);
 
         $user = Auth::user();
         $company = $user->company;
 
-        // Plus de nombre de jours a la creation : la duree d'un conge se deduit de ses
-        // dates de debut et de fin. La colonne days garde son defaut (0).
         LeaveType::create([
             'title' => $request->title,
+            'days' => $request->days,
             'created_by' => $user->id,
             'company_id' => $company->id,
             'is_active' => true,
@@ -386,7 +386,7 @@ class SettingsController extends Controller
             $leaveType->update([
                 'title' => $request->title,
                 'days' => $request->days,
-                'is_active' => $request->is_active ?? true,
+                'is_active' => $request->boolean('is_active'),
             ]);
 
             return redirect()->back()->with('success', 'Type de congé mis à jour avec succès.');
@@ -490,7 +490,8 @@ class SettingsController extends Controller
 
         $company = $user->company;
         $workLocations = WorkLocation::forCompany($company->id)->orderBy('name')->get();
-        $branches = $company->branches;
+        // Seules les succursales actives peuvent recevoir un nouvel emplacement
+        $branches = $company->branches()->where('is_active', 1)->orderBy('name')->get();
         $country = Country::All();
 
         return view('settings::work-locations', compact('user', 'company', 'workLocations', 'branches','users','country'));
@@ -642,7 +643,7 @@ class SettingsController extends Controller
             'has_time_clock' => $request->has_time_clock ?? false,
             'branch_id' => $request->branch_id,
             'manager_id' => $request->manager_id,
-            'is_active' => $request->is_active ?? true,
+            'is_active' => $request->boolean('is_active'),
         ];
 
         // Ajouter les coordonnées GPS seulement si elles sont fournies
@@ -981,20 +982,19 @@ class SettingsController extends Controller
 
         $currentUser = Auth::user();
         $company = $currentUser->company;
-        
-        // Récupérer les branches, départements et postes pour les sélecteurs
-        $branches = $company->branches;
-        $departments = $company->departments;
-        $designations = $company->designations;
+
+        // Ne pas exposer un utilisateur d'une autre entreprise
+        if ($user->company_id !== $company->id) {
+            return response()->json(['success' => false, 'message' => 'Utilisateur introuvable.'], 404);
+        }
+
+        $user->loadMissing(['branch', 'department', 'designation', 'creator']);
         $employee = Employee::where('user_id', $user->id)->first();
 
+        // Le JS attend { success, html } : on rend le partiel cote serveur.
         return response()->json([
-            'user' => $user,
-            'company' => $company,
-            'branches' => $branches,
-            'departments' => $departments,
-            'designations' => $designations,
-            'employee' => $employee,
+            'success' => true,
+            'html' => view('settings::partials.user-details', compact('user', 'company', 'employee'))->render(),
         ]);
     }
 
@@ -1161,7 +1161,9 @@ class SettingsController extends Controller
             return response()->json(['success' => false, 'message' => 'Vous ne pouvez pas désactiver votre propre compte.']);
         }
 
-        $user->update(['is_active' => !$user->is_active]);
+        // Basculer la colonne brute : $user->is_active est un accesseur qui combine
+        // is_active et active_status (desactivation cote super-admin).
+        $user->update(['is_active' => !(bool) $user->getRawOriginal('is_active')]);
 
         return response()->json([
             'success' => true,
@@ -1355,7 +1357,9 @@ class SettingsController extends Controller
                 'email' => $request->email,
                 'manager_id' => $request->manager_id,
                 'company_id' => $company->id,
-                'is_active' => $request->has('is_active')
+                // has() est toujours vrai (champ hidden is_active=0 dans le formulaire) :
+                // il faut lire la valeur envoyee, pas la presence du champ.
+                'is_active' => $request->boolean('is_active')
             ]);
 
             \Log::info('Branch created successfully', ['branch_id' => $branch->id]);
@@ -1405,7 +1409,7 @@ class SettingsController extends Controller
             'phone' => $request->phone,
             'email' => $request->email,
             'manager_id' => $request->manager_id,
-            'is_active' => $request->is_active
+            'is_active' => $request->boolean('is_active')
         ]);
 
         return redirect()->back()->with('success', 'Succursale mise à jour avec succès.');
@@ -1577,7 +1581,7 @@ class SettingsController extends Controller
             'manager_id' => $request->manager_id,
             'branch_id' => $request->branch_id,
             'company_id' => $company->id,
-            'is_active' => $request->is_active
+            'is_active' => $request->boolean('is_active')
         ]);
 
         return redirect()->back()->with('success', 'Service créé avec succès.');
@@ -1617,7 +1621,7 @@ class SettingsController extends Controller
             'description' => $request->description,
             'manager_id' => $request->manager_id,
             'branch_id' => $request->branch_id,
-            'is_active' => $request->is_active
+            'is_active' => $request->boolean('is_active')
         ]);
 
         return redirect()->back()->with('success', 'Service mis à jour avec succès.');
@@ -1756,7 +1760,7 @@ class SettingsController extends Controller
                 'description' => $request->description,
                 'department_id' => $request->department_id,
                 'company_id' => $company->id,
-                'is_active' => $request->is_active
+                'is_active' => $request->boolean('is_active')
             ]);
 
             return redirect()->back()->with('success', 'Poste créé avec succès.');
@@ -1797,7 +1801,7 @@ class SettingsController extends Controller
                 'code' => $request->code,
                 'description' => $request->description,
                 'department_id' => $request->department_id,
-                'is_active' => $request->is_active
+                'is_active' => $request->boolean('is_active')
             ]);
 
             return redirect()->back()->with('success', 'Poste mis à jour avec succès.');

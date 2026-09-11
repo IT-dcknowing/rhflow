@@ -163,8 +163,9 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Periode:</strong></td>
-                                    @if($demande->periode_id)
-                                        <td>{{ $demande->periode->nom }} {{ $demande->periode->exercice->nom }}</td>
+                                    {{-- On teste la relation et non la clé : la période peut avoir été supprimée. --}}
+                                    @if($demande->periode)
+                                        <td>{{ $demande->periode->nom }} {{ $demande->periode->exercice?->nom }}</td>
                                     @else
                                         <td id="td-periode">
                                             <div class="d-flex align-items-center justify-content-end">

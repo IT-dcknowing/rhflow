@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Employés Mensuels')
+@section('title', 'Employés')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -9,8 +9,8 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="mb-1 text-primary">👨‍💼 Employés Mensuels </h4>
-                        <p class="text-muted mb-0">Gérez tous les employés mensuels de votre entreprise</p>
+                        <h4 class="mb-1 text-primary"> Employés </h4>
+                        <p class="text-muted mb-0">Gérez les employés mensuels et journaliers de votre entreprise</p>
                         <small class="text-primary">
                             <i class="fas fa-calendar me-1"></i>
                             {{ now()->format('l d F Y') }} •
@@ -98,8 +98,20 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des Employés Mensuels</h5>
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des Employés</h5>
                     </div>
+                    {{-- Filtrage serveur sur salary_type : le lien recharge la page --}}
+                    <ul class="nav nav-tabs px-3 pt-2">
+                        @foreach(['tous' => 'Tous', 'mensuel' => 'Mensuels', 'journalier' => 'Journaliers'] as $cle => $libelle)
+                            <li class="nav-item">
+                                <a class="nav-link {{ $type === $cle ? 'active' : '' }}"
+                                    href="{{ route('company.employees.index', $cle === 'tous' ? [] : ['type' => $cle]) }}">
+                                    {{ $libelle }}
+                                    <span class="badge bg-label-primary ms-1">{{ $countTypes[$cle] }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                     <div class="card-body">
                         <!-- Table des employés -->
                         <div class="table-responsive">
@@ -109,9 +121,10 @@
                                         <th>
                                             <input type="checkbox" class="form-check-input" id="selectAll">
                                         </th>
-                                        <th>ID Employé</th>
+                                        <th>Matricule</th>
                                         <th>Nom</th>
                                         <th>Succursale </th>
+                                        <th>Type</th>
                                         <th>Salaire de base</th>
                                         <th>Statut</th>
                                         <th>Actions</th>
@@ -150,6 +163,13 @@
                                                     class="text-muted me-2">{{ $employee->designation->name ?? '-' }}</small>
                                             </td>
                                             <td>
+                                                @if($employee->salary_type == 2)
+                                                    <span class="badge bg-label-warning">Journalier</span>
+                                                @else
+                                                    <span class="badge bg-label-info">Mensuel</span>
+                                                @endif
+                                            </td>
+                                            <td>
                                                 <span class="fw-bold text-success">
                                                     {{ number_format($employee->salary, 0, ',', ' ') }} FCFA
                                                 </span>
@@ -176,14 +196,14 @@
                                                             <i class="fas fa-edit me-1"></i>Modifier
                                                         </a>
                                                         @if($employee->is_active)
-                                                            <a class="dropdown-item" href="#"
-                                                                onclick="activateEmployee({{ $employee->id }})">
-                                                                <i class="fas fa-check me-1"></i>Activer
+                                                            <a class="dropdown-item text-warning" href="#"
+                                                                onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', true)">
+                                                                <i class="fas fa-times me-1"></i>Désactiver
                                                             </a>
                                                         @else
-                                                            <a class="dropdown-item" href="#"
-                                                                onclick="deactivateEmployee({{ $employee->id }})">
-                                                                <i class="fas fa-times me-1"></i>Désactiver
+                                                            <a class="dropdown-item text-success" href="#"
+                                                                onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', false)">
+                                                                <i class="fas fa-check me-1"></i>Activer
                                                             </a>
                                                         @endif
                                                         <div class="dropdown-divider"></div>
@@ -210,7 +230,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="7" class="text-center py-5">
+                                            <td colspan="8" class="text-center py-5">
                                                 <div class="empty-state">
                                                     <i class="fas fa-users fa-4x text-muted mb-3"></i>
                                                     <h5 class="text-muted">Aucun employé mensuel</h5>
@@ -366,32 +386,78 @@
 
 @push('scripts')
     <script>
+        // Activer / desactiver un employe (route POST company.employees.toggle)
+        function toggleEmployee(id, nom, estActif) {
+            Swal.fire({
+                title: estActif ? 'Désactiver cet employé ?' : 'Activer cet employé ?',
+                text: nom,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: estActif ? 'Oui, désactiver' : 'Oui, activer',
+                cancelButtonText: 'Annuler',
+                customClass: {
+                    confirmButton: estActif ? 'btn btn-warning me-3' : 'btn btn-success me-3',
+                    cancelButton: 'btn btn-label-secondary'
+                },
+                buttonsStyling: false
+            }).then(function (result) {
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                fetch(`{{ url('company/employees') }}/${id}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: data.message,
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Échec', text: data.message });
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire({ icon: 'error', title: 'Erreur', text: 'La mise à jour du statut a échoué.' });
+                    });
+            });
+        }
+
         // Initialisation de DataTable (seulement s'il y a des employés)
         @if($employees->count() > 0)
-        var table = $('#employeesTable').DataTable({
-            responsive: true,
-            order: [[1, 'desc']],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
-            },
-            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        });
+            var table = $('#employeesTable').DataTable({
+                responsive: true,
+                order: [[1, 'desc']],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+                },
+                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            });
         @endif
 
         // Recherche personnalisée liée à DataTable
-        $('#searchInput').on('keyup', function() {
+        $('#searchInput').on('keyup', function () {
             @if($employees->count() > 0)
-            table.search(this.value).draw();
+                table.search(this.value).draw();
             @else
-            // Filtrage simple quand DataTable n'est pas initialisé
-            var val = this.value.toLowerCase();
-            $('#employeesTable tbody tr').filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
-            });
+                                            // Filtrage simple quand DataTable n'est pas initialisé
+                                            var val = this.value.toLowerCase();
+                $('#employeesTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+                });
             @endif
-        });
+                        });
         // Sélection multiple
         document.getElementById('selectAll').addEventListener('change', function () {
             const checkboxes = document.querySelectorAll('.employee-checkbox');

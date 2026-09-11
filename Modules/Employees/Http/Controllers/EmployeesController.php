@@ -218,19 +218,47 @@ class EmployeesController extends Controller
     // ==============================================
 
     /**
-     * Liste des employés mensuels
+     * Liste des employés (onglets Tous / Mensuels / Journaliers)
      */
-    public function index()
+    public function index(Request $request)
     {
-        $companyId = auth()->user()->company_id; 
-        $employees = Employee::where('company_id', $companyId)
-                                 ->where('is_active', 1)
-                                 ->paginate(15);
+        $companyId = auth()->user()->company_id;
+        $type = in_array($request->query('type'), ['mensuel', 'journalier']) ? $request->query('type') : 'tous';
+
+        $base = fn() => Employee::where('company_id', $companyId)->where('is_active', 1);
+
+        // salary_type n'existe que depuis l'ajout du choix Mensuel/Journalier a la
+        // creation : les fiches anterieures sont a NULL et venaient toutes du
+        // formulaire mensuel, on les rattache donc aux mensuels.
+        $mensuels = function ($q) {
+            return $q->where(function ($sub) {
+                $sub->where('salary_type', 1)->orWhereNull('salary_type');
+            });
+        };
+        $journaliers = function ($q) {
+            return $q->where('salary_type', 2);
+        };
+
+        $query = $base();
+        if ($type === 'mensuel') {
+            $mensuels($query);
+        } elseif ($type === 'journalier') {
+            $journaliers($query);
+        }
+
+        $employees = $query->paginate(15)->appends(['type' => $type]);
+
+        $countTypes = [
+            'tous' => $base()->count(),
+            'mensuel' => $mensuels($base())->count(),
+            'journalier' => $journaliers($base())->count(),
+        ];
+
         $departments = Department::where('company_id', $companyId)->where('is_active', 1)->get();
         $designations = Designation::where('company_id', $companyId)->where('is_active', 1)->get();
 
-        return view('employees::index', compact('employees', 'departments', 'designations'));
-    } 
+        return view('employees::index', compact('employees', 'departments', 'designations', 'type', 'countTypes'));
+    }
 
     /**
      * Créer un employé mensuel
@@ -353,6 +381,7 @@ class EmployeesController extends Controller
                     'branch_id' => 'required|integer|exists:branches,id',
                     'department_id' => 'required|integer|exists:departments,id',
                     'designation_id' => 'required|integer|exists:designations,id',
+                    'salary_type' => 'required|in:1,2',
                     'category_job_id' => 'nullable|integer',
                     'category_id' => 'nullable|integer',
                     'salaire_minima_horaire' => 'nullable|integer|min:0',
@@ -376,6 +405,8 @@ class EmployeesController extends Controller
                     'employee_id.unique' => 'L\'ID Employé est déjà attribué. Veuillez rafraîchir la page pour en générer un nouveau.',
                     'num_secu_soc.digits' => 'Le numéro CMU doit contenir exactement 13 chiffres.',
                     'num_cnps.digits' => 'Le numéro CNPS doit contenir exactement 12 chiffres.',
+                    'salary_type.required' => "Veuillez indiquer si l'employé est mensuel ou journalier (onglet Données du poste).",
+                    'salary_type.in' => "Le type d'employé doit être Mensuel ou Journalier.",
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 DB::rollBack();
@@ -501,6 +532,7 @@ class EmployeesController extends Controller
                 'wave_money' => $validated['wave_money'] ?? null,
                 'tax_payer_id' => 30,
                 'sous_categorie' => $validated['category_id'] ?? null,
+                'salary_type' => $validated['salary_type'],
                 'salary_horaire' => !empty($validated['salaire_minima_horaire']) ? $validated['salaire_minima_horaire'] : round($validated['salaire_minima_mensuel'] / 173.33),    
                 'salary' => $validated['salaire_minima_mensuel'],
                 'charge_its' => $validated['charge_its'] ?? null,
@@ -843,15 +875,25 @@ class EmployeesController extends Controller
             return $query->orderBy('name');
         };
 
-        // Un paginateur distinct par onglet, 10 par page, pour que les deux
-        // listes se paginent indépendamment l'une de l'autre.
+        // Sans recherche ni filtre on ne montre qu'un apercu de 3 dossiers par
+        // onglet : le reste se retrouve via la recherche. Des qu'un critere est
+        // saisi, on repasse sur une pagination classique de 10.
+        $filtreActif = $search !== ''
+            || !empty($request->branch)
+            || !empty($request->department)
+            || !empty($request->designation);
+
+        $parPage = $filtreActif ? 10 : 3;
+
+        // Un paginateur distinct par onglet, pour que les deux listes se
+        // paginent indépendamment l'une de l'autre.
         $employeesActifs = $baseQuery()->where('is_active', 1)
-            ->paginate(10, ['*'], 'page_actif')
+            ->paginate($parPage, ['*'], 'page_actif')
             ->withQueryString()
             ->fragment('actif');
 
         $employeesInactifs = $baseQuery()->where('is_active', 0)
-            ->paginate(10, ['*'], 'page_inactif')
+            ->paginate($parPage, ['*'], 'page_inactif')
             ->withQueryString()
             ->fragment('inactif');
 
@@ -875,7 +917,7 @@ class EmployeesController extends Controller
         $designations->prepend('Tous', '');
 
         return view('employees::dossiers.index', compact(
-            'employeesActifs', 'employeesInactifs', 'avatar', 'departments', 'designations', 'brances', 'search'
+            'employeesActifs', 'employeesInactifs', 'avatar', 'departments', 'designations', 'brances', 'search', 'filtreActif'
         ));
     }
 
@@ -1010,11 +1052,19 @@ class EmployeesController extends Controller
             // Mise à jour de l'utilisateur
             $user = User::find($employee->user_id);
             if ($user) {
-                $user->update([
+                // L'identifiant de connexion ne suit pas le nom : le modifier ferait
+                // perdre a l'employe son acces (notamment cote mobile). On ne le pose
+                // que s'il n'en a pas encore.
+                $donnees = [
                     'name' => $validated['name'],
                     'email' => $validated['email'],
-                    'username' => $validated['username'],
-                ]);
+                ];
+
+                if (empty($user->username)) {
+                    $donnees['username'] = $validated['username'];
+                }
+
+                $user->update($donnees);
 
                 // Mise à jour du mot de passe si fourni
                 if (!empty($validated['password'])) {

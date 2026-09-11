@@ -35,7 +35,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Informations du contrat</h5>
                 </div>
-                <form action="{{ route('company.contracts.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="form_contrat" action="{{ route('company.contracts.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="row g-3">
@@ -46,7 +46,18 @@
                                     <select class="select2 form-select @error('type_id') is-invalid @enderror" id="type_id" name="type_id" required>
                                         <option value="">Sélectionner un type</option>
                                         @foreach($contractTypes as $type)
-                                            <option value="{{ $type->id }}" {{ old('type_id') == $type->id ? 'selected' : '' }}>
+                                            @php
+                                                // Un contrat à durée déterminée impose une date de fin.
+                                                $nomType = mb_strtolower($type->name ?? '');
+                                                $typeEstCdd = !str_contains($nomType, 'indétermin')
+                                                    && !str_contains($nomType, 'indetermin')
+                                                    && !str_contains($nomType, 'cdi')
+                                                    && (str_contains($nomType, 'détermin')
+                                                        || str_contains($nomType, 'determin')
+                                                        || str_contains($nomType, 'cdd'));
+                                            @endphp
+                                            <option value="{{ $type->id }}" data-cdd="{{ $typeEstCdd ? '1' : '0' }}"
+                                                {{ old('type_id') == $type->id ? 'selected' : '' }}>
                                                 {{ $type->name }}
                                             </option>
                                         @endforeach
@@ -59,7 +70,8 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="subject" class="form-label">Intitulé du contrat <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('subject') is-invalid @enderror" id="subject" name="subject" value="{{ old('subject') }}" required>
+                                    <input type="text" class="form-control bg-light @error('subject') is-invalid @enderror" id="subject" name="subject" value="{{ old('subject') }}" required readonly tabindex="-1">
+                                    <small class="text-muted">Rempli automatiquement d'après le type de contrat</small>
                                     @error('subject')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -106,9 +118,11 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
-                                    <label for="end_date" class="form-label">Date de fin</label>
+                                    <label for="end_date" class="form-label">Date de fin
+                                        <span class="text-danger d-none" id="end_date_requis">*</span>
+                                    </label>
                                     <input type="date" class="form-control @error('end_date') is-invalid @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}">
-                                    <small class="text-muted">Laisser vide pour un contrat à durée indéterminée</small>
+                                    <small class="text-muted" id="end_date_aide">Laisser vide pour un contrat à durée indéterminée</small>
                                     @error('end_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -202,13 +216,64 @@
             
             // Met à jour le champ subject selon la valeur sélectionnée
             if(selectedValue == 3){
-                $('#subject').val('CDI');
+                $('#subject').val('Contrat à durée indéterminée');
             }else if(selectedValue == 4){
-                $('#subject').val('CDD');
+                $('#subject').val('Contrat à durée déterminée');
             }else if(selectedValue == 9){
-                $('#subject').val('CEDD');
+                $('#subject').val('Contrat d’expatrié à durée déterminée');
             }else{
                 $('#subject').val(selectedData.text); // Utilise text au lieu de textContent
+            }
+
+            majObligationDateFin();
+        });
+
+        // Un contrat à durée déterminée ne peut pas être enregistré sans date de fin.
+        var champTypeContrat = document.getElementById('type_id');
+        var champDateFin = document.getElementById('end_date');
+        var marqueurRequis = document.getElementById('end_date_requis');
+        var aideDateFin = document.getElementById('end_date_aide');
+
+        function typeSelectionneEstCdd() {
+            var option = champTypeContrat.options[champTypeContrat.selectedIndex];
+            return !!option && option.getAttribute('data-cdd') === '1';
+        }
+
+        function majObligationDateFin() {
+            var cdd = typeSelectionneEstCdd();
+
+            champDateFin.required = cdd;
+            marqueurRequis.classList.toggle('d-none', !cdd);
+            aideDateFin.textContent = cdd
+                ? 'Obligatoire pour un contrat à durée déterminée'
+                : 'Laisser vide pour un contrat à durée indéterminée';
+
+            if (!cdd) {
+                champDateFin.classList.remove('is-invalid');
+            }
+        }
+
+        champTypeContrat.addEventListener('change', majObligationDateFin);
+        majObligationDateFin();
+
+        document.getElementById('form_contrat').addEventListener('submit', function (e) {
+            if (typeSelectionneEstCdd() && !champDateFin.value) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                champDateFin.classList.add('is-invalid');
+                champDateFin.focus();
+
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Date de fin manquante',
+                        text: 'Un contrat à durée déterminée doit comporter une date de fin.',
+                        confirmButtonColor: '#253e87'
+                    });
+                } else {
+                    alert('Un contrat à durée déterminée doit comporter une date de fin.');
+                }
             }
         });
 
