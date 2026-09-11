@@ -274,7 +274,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <small>{{ Carbon\Carbon::parse($bulletin->periode)->translatedFormat('M Y') }}</small>
+                                        <small>{{ $bulletin->periode?->nom ?? ($bulletin->periode?->date_debut ? \Carbon\Carbon::parse($bulletin->periode->date_debut)->translatedFormat('M Y') : '—') }}</small>
                                     </td>
                                     <td>
                                         <span class="badge bg-{{ $bulletin->type === 'Annuel' ? 'success' : 'primary' }}">
