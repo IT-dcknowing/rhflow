@@ -23,6 +23,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Modules\Employees\Models\Employee;
 use Modules\Employees\Models\EmployeeDay;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\Settings\Exports\UsersExport;
+use Modules\Settings\Imports\UsersImport;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -1324,8 +1326,11 @@ class SettingsController extends Controller
                 'address' => 'nullable|string',
                 'phone' => 'nullable|string|max:20',
                 'email' => 'nullable|email|max:255',
-                'manager_id' => 'nullable|exists:users,id',
+                'manager_id' => 'required|exists:users,id',
                 'is_active' => 'nullable|boolean'
+            ], [
+                'manager_id.required' => 'Le manager du site est obligatoire.',
+                'manager_id.exists' => "Le manager sélectionné n'existe pas.",
             ]);
         } catch (\Exception $validationException) {
             \Log::error('Validation error', [
@@ -1398,8 +1403,11 @@ class SettingsController extends Controller
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
-            'manager_id' => 'nullable|exists:users,id',
+            'manager_id' => 'required|exists:users,id',
             'is_active' => 'nullable|boolean'
+        ], [
+            'manager_id.required' => 'Le manager du site est obligatoire.',
+            'manager_id.exists' => "Le manager sélectionné n'existe pas.",
         ]);
 
         $branch->update([
@@ -1567,11 +1575,15 @@ class SettingsController extends Controller
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:departments,code',
             'description' => 'nullable|string',
-            'manager_id' => 'nullable|exists:users,id',
-            'branch_id' => 'nullable|exists:branches,id',
+            'manager_id' => 'required|exists:users,id',
+            'branch_id' => 'required|exists:branches,id',
             'is_active' => 'nullable|boolean'
         ], [
-            'manager_id.unique' => 'Ce gestionnaire est déjà assigné à un autre service.'
+            'manager_id.unique' => 'Ce gestionnaire est déjà assigné à un autre service.',
+            'manager_id.required' => 'Le manager du service est obligatoire.',
+            'manager_id.exists' => "Le manager sélectionné n'existe pas.",
+            'branch_id.required' => 'La succursale est obligatoire.',
+            'branch_id.exists' => "La succursale sélectionnée n'existe pas.",
         ]);
 
         $department = Department::create([
@@ -1608,11 +1620,15 @@ class SettingsController extends Controller
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:departments,code,' . $department->id,
             'description' => 'nullable|string',
-            'manager_id' => 'nullable|exists:users,id',
-            'branch_id' => 'nullable|exists:branches,id',
+            'manager_id' => 'required|exists:users,id',
+            'branch_id' => 'required|exists:branches,id',
             'is_active' => 'nullable|boolean'
         ], [
-            'manager_id.unique' => 'Ce gestionnaire est déjà assigné à un autre service.'
+            'manager_id.unique' => 'Ce gestionnaire est déjà assigné à un autre service.',
+            'manager_id.required' => 'Le manager du service est obligatoire.',
+            'manager_id.exists' => "Le manager sélectionné n'existe pas.",
+            'branch_id.required' => 'La succursale est obligatoire.',
+            'branch_id.exists' => "La succursale sélectionnée n'existe pas.",
         ]);
 
         $department->update([

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Settings\app\Imports;
+namespace Modules\Settings\Imports;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;

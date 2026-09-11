@@ -237,7 +237,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Succursale<span class="text-danger">*</span></label>
-                                <select class="form-select" name="branch_id">
+                                <select class="form-select" name="branch_id" required>
                                     <option value="">Sélectionner une succursale</option>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -249,17 +249,17 @@
                                 @if($companyUsers->count() > 0)
                                     @if($companyUsers->count() > 10)
                                         <!-- Select avec recherche pour plus de 100 utilisateurs -->
-                                        <select class="form-select select2" name="manager_id"
+                                        <select class="form-select select2" name="manager_id" required
                                             data-placeholder="Rechercher un utilisateur...">
-                                            <option value="">Aucun manager</option>
+                                            <option value="">Sélectionner un manager</option>
                                             @foreach($companyUsers as $user)
                                                 <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                                             @endforeach
                                         </select>
                                     @else
                                         <!-- Select simple pour moins de 100 utilisateurs -->
-                                        <select class="form-select" name="manager_id">
-                                            <option value="">Aucun manager</option>
+                                        <select class="form-select" name="manager_id" required>
+                                            <option value="">Sélectionner un manager</option>
                                             @foreach($companyUsers as $user)
                                                 <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
                                             @endforeach
@@ -327,8 +327,8 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Succursale</label>
-                                <select class="form-select" name="branch_id" id="editBranchId">
+                                <label class="form-label">Succursale <span class="text-danger">*</span></label>
+                                <select class="form-select" name="branch_id" id="editBranchId" required>
                                     <option value="">Sélectionner une succursale</option>
                                     @foreach($branches as $branch)
                                         <option value="{{ $branch->id }}" {{ $branch->id == old('branch_id', $department->branch_id ?? '') ? 'selected' : '' }}>{{ $branch->name }}</option>
@@ -336,11 +336,11 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Manager du Service</label>
+                                <label class="form-label">Manager du Service <span class="text-danger">*</span></label>
                                 @if($companyUsers->count() > 0)
                                     @if($companyUsers->count() > 10)
                                         <!-- Select avec recherche pour plus de 10 utilisateurs -->
-                                        <select class="form-select select2" name="manager_id" id="editManagerId"
+                                        <select class="form-select select2" name="manager_id" id="editManagerId" required
                                             data-placeholder="Rechercher un utilisateur...">
                                             @foreach($companyUsers as $user)
                                                 <option value="{{ $user->id }}" {{ $user->id == old('manager_id', $department->manager_id ?? '') ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
@@ -348,7 +348,7 @@
                                         </select>
                                     @else
                                         <!-- Select simple pour moins de 10 utilisateurs -->
-                                        <select class="form-select" name="manager_id" id="editManagerId">
+                                        <select class="form-select" name="manager_id" id="editManagerId" required>
                                             @foreach($companyUsers as $user)
                                                 <option value="{{ $user->id }}" {{ $user->id == old('manager_id', $department->manager_id ?? '') ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
                                             @endforeach
