@@ -45,7 +45,7 @@
                             </button>
                         </form>
                         
-                        <a href="{{ route('qr-code.index') }}" class="btn btn-secondary me-3">
+                        <a href="{{ route('qr-code.index') }}" class="btn btn-outline-secondary me-3">
                             <i class="fas fa-arrow-left me-2"></i> {{ __('Retour') }}
                         </a>
 

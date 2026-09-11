@@ -16,7 +16,7 @@
                     <i class="ti ti-refresh me-2"></i>
                     Actualiser
                 </button>
-                <a href="{{ route('super-admin.enterprises.create') }}" class="btn btn-primary bg-primary text-white">
+                <a href="{{ route('super-admin.enterprises.create') }}" class="btn btn-primary">
                     <i class="ti ti-plus me-2"></i>
                     Nouvelle Entreprise
                 </a>

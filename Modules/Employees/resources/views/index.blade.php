@@ -13,7 +13,7 @@
                         <p class="text-muted mb-0">Gérez les employés mensuels et journaliers de votre entreprise</p>
                         <small class="text-primary">
                             <i class="fas fa-calendar me-1"></i>
-                            {{ now()->format('l d F Y') }} •
+                            {{ now()->translatedFormat('l d F Y') }} •
                             <i class="fas fa-clock me-1"></i>
                             {{ now()->format('H:i') }}
                         </small>
@@ -237,7 +237,7 @@
                                                     <p class="text-muted mb-4">Commencez par ajouter votre premier employé
                                                         mensuel</p>
                                                     <a href="{{ route('company.employees.create') }}"
-                                                        class="btn bg-primary text-white">
+                                                        class="btn btn-primary">
                                                         <i class="fas fa-plus me-1"></i>Ajouter un employé
                                                     </a>
                                                 </div>
@@ -270,7 +270,7 @@
                                     <button class="btn btn-sm btn-outline-warning" onclick="changeStatus('inactive')">
                                         <i class="fas fa-user-off me-1"></i>Désactiver
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteSelected()">
+                                    <button class="btn btn-sm btn-danger" onclick="deleteSelected()">
                                         <i class="fas fa-trash me-1"></i>Supprimer
                                     </button>
                                 </div>
@@ -319,7 +319,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary">Lancer l'importation</button>
                     </div>
                 </form>

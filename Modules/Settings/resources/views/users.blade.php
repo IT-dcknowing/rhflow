@@ -13,13 +13,13 @@
                     <p class="text-muted mb-0">Gérez les utilisateurs de votre entreprise et leurs permissions</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('company.settings.config') }}" class="btn btn-outline-info">
+                    <a href="{{ route('company.settings.config') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                     <a href="{{ route('company.settings.users.create') }}" class="btn btn-primary">

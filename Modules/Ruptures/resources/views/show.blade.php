@@ -337,7 +337,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="approveForm" class="btn btn-success">Approuver</button>
             </div>
         </div>
@@ -363,7 +363,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="rejectForm" class="btn btn-danger">Rejeter</button>
             </div>
         </div>
@@ -393,7 +393,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="completeForm" class="btn btn-info">Terminer</button>
             </div>
         </div>
@@ -416,7 +416,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="deleteForm" class="btn btn-danger">Supprimer</button>
             </div>
         </div>

@@ -1917,7 +1917,7 @@
                 </div>
                 <div class="modal-footer"
                     style="background: #ffffff; border-top: 1px solid #eef2f7; padding: 15px 24px; flex-shrink: 0;">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                     <button type="button" class="btn btn-primary"
                         onclick="document.getElementById('guideIframe').contentWindow.print()">Imprimer le
                         Guide</button>

@@ -65,19 +65,19 @@
 
 {{-- Pour Bulletin 1 --}}
 <button class="btn btn-sm btn-primary" id="mainDownloadButton" 
-    onclick="downloadBulletinsAuto(1, {{ $periode->id }}, 'bulletin_v1_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+    onclick="downloadBulletinsAuto(1, {{ $periode->id }}, 'bulletin_v1_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
     <span class="fa fa-download me-1"></span> Télécharger
 </button>
 
 {{-- Pour Bulletin 2 --}}
 <button class="btn btn-sm btn-primary" id="mainDownloadButton2" 
-    onclick="downloadBulletinsAuto(2, {{ $periode->id }}, 'bulletin_v2_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+    onclick="downloadBulletinsAuto(2, {{ $periode->id }}, 'bulletin_v2_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
     <span class="fa fa-download me-1"></span> Télécharger
 </button>
 
 {{-- Pour Bulletin 3 --}}
 <button class="btn btn-sm btn-primary" id="mainDownloadButton3" 
-    onclick="downloadBulletinsAuto(3, {{ $periode->id }}, 'bulletin_v3_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+    onclick="downloadBulletinsAuto(3, {{ $periode->id }}, 'bulletin_v3_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
     <span class="fa fa-download me-1"></span> Télécharger
 </button>
 

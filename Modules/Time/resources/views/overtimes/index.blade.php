@@ -515,7 +515,7 @@
                                             <button type="button" class="btn btn-danger mark-as-unpaid ${overtime.statut == 'pending' || overtime.statut == 'rejected' ? 'd-none' : ''}" data-id="${overtime.id}">
                                                 <i class="fa fa-check me-2"></i> Marquer comme annulé
                                             </button>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                                         </div>
                                     </div>
                                 </div>

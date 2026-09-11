@@ -21,7 +21,7 @@
                             <h4 class="mb-1 text-white">{{ $notification->title }}</h4>
                             <p class="mb-0 opacity-75 text-white">
                                 <i class="ti ti-clock me-1 text-white"></i>
-                                {{ $notification->created_at->format('d F Y à H:i') }}
+                                {{ $notification->created_at->translatedFormat('d F Y à H:i') }}
                                 <span class="ms-2">•</span>
                                 <span class="ms-2 text-white">{{ $notification->created_at->diffForHumans() }}</span>
                             </p>

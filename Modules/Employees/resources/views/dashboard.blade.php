@@ -9,11 +9,11 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">📊 Dashboard RH</h4>
+                    <h4 class="mb-1"> Tableau de bord  RH</h4>
                     <p class="text-muted mb-0">Vue d'ensemble de la gestion des employés</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>
@@ -181,12 +181,12 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <a href="{{ route('company.employees.create') }}" class="btn btn-outline-primary w-100">
+                            <a href="{{ route('company.employees.create') }}" class="btn btn-primary w-100">
                                 <i class="fas fa-plus me-1"></i>Ajouter Employé Mensuel
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="#" class="btn btn-outline-info w-100">
+                            <a href="#" class="btn btn-primary w-100">
                                 <i class="fas fa-plus me-1"></i>Ajouter Employé Journalier
                             </a>
                         </div>

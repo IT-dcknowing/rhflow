@@ -21,7 +21,7 @@
                             <i class="ti ti-eye me-2"></i>
                             Voir
                         </a>
-                        <a href="{{ route('super-admin.packs.index') }}" class="btn btn-outline-primary bg-label-primary">
+                        <a href="{{ route('super-admin.packs.index') }}" class="btn btn-outline-secondary">
                             <i class="ti ti-arrow-left me-2"></i>
                             Retour
                         </a>
@@ -258,7 +258,7 @@
                                         <i class="ti ti-check me-2"></i>
                                         Sauvegarder les modifications
                                     </button>
-                                    <a href="{{ route('super-admin.packs.show', $pack) }}" class="btn btn-danger">
+                                    <a href="{{ route('super-admin.packs.show', $pack) }}" class="btn btn-outline-secondary">
                                         <i class="ti ti-x me-2"></i>
                                         Annuler
                                     </a>
@@ -277,7 +277,7 @@
                                         <p class="text-muted mb-3">
                                             Ce pack a {{ $pack->company_count }} abonnement(s). La suppression est irréversible.
                                         </p>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete()">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete()">
                                             <i class="ti ti-trash me-2"></i>
                                             Supprimer ce pack
                                         </button>
@@ -308,7 +308,7 @@
                 </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form method="POST" action="{{ route('super-admin.packs.delete', $pack) }}" class="d-inline">
                     @csrf
                     @method('DELETE')

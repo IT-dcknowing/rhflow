@@ -51,7 +51,7 @@
 
         <div class="tab-content mb-4">
             <div class="text-end  mb-3">
-                <input type="hidden" name="salary_month" id="salary_month" value="{{ \Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}">
+                <input type="hidden" name="salary_month" id="salary_month" value="{{ \Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}">
             </div>
 
             <!-- Bulletin 1 -->
@@ -72,7 +72,7 @@
                     </div>
                     <!-- Bouton télécharger unique -->
                     <button class="btn btn-sm btn-primary" id="mainDownloadButton"
-                        onclick="downloadBulletinsAuto(1, {{ $periode->id }}, 'bulletin_v1_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+                        onclick="downloadBulletinsAuto(1, {{ $periode->id }}, 'bulletin_v1_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
                         <span class="fa fa-download me-1"></span> Télécharger
                     </button>
                 </div>
@@ -542,7 +542,7 @@
                         <button class="btn btn-warning" id="mainHidelogo" onclick="cacheLogSign4()">{{ __('Sans logo') }}</button>
                     </div>
                     <button class="btn btn-sm btn-primary" id="mainDownloadButton4"
-                        onclick="downloadBulletinsAuto(4, {{ $periode->id }}, 'bulletin_v4_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+                        onclick="downloadBulletinsAuto(4, {{ $periode->id }}, 'bulletin_v4_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
                         <span class="fa fa-download me-1"></span> Télécharger
                     </button>
                 </div>
@@ -882,7 +882,7 @@
                     </div>
                     <!-- Bouton télécharger unique -->
                     <button class="btn btn-sm btn-primary" id="mainDownloadButton2"
-                        onclick="downloadBulletinsAuto(2, {{ $periode->id }}, 'bulletin_v2_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+                        onclick="downloadBulletinsAuto(2, {{ $periode->id }}, 'bulletin_v2_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
                         <span class="fa fa-download me-1"></span> Télécharger
                     </button>
                 </div>
@@ -1385,7 +1385,7 @@
                     </div>
                     <!-- Bouton télécharger unique -->
                     <button class="btn btn-sm btn-primary" id="mainDownloadButton3"
-                        onclick="downloadBulletinsAuto(3, {{ $periode->id }}, 'bulletin_v3_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+                        onclick="downloadBulletinsAuto(3, {{ $periode->id }}, 'bulletin_v3_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
                         <span class="fa fa-download me-1"></span> Télécharger
                     </button>
                 </div>
@@ -1839,7 +1839,7 @@
             <div class="tab-pane fade" id="bull4show">
                 <div class="d-flex justify-content-end align-items-center mb-3">
                     <button class="btn btn-sm btn-primary" id="mainDownloadButton4"
-                        onclick="downloadBulletinsAuto(4, {{ $periode->id }}, 'bulletin_v4_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+                        onclick="downloadBulletinsAuto(4, {{ $periode->id }}, 'bulletin_v4_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
                         <span class="fa fa-download me-1"></span> Télécharger
                     </button>
                 </div>
@@ -1854,7 +1854,7 @@
             <div class="tab-pane fade" id="bull5show">
                 <div class="d-flex justify-content-end align-items-center mb-3">
                     <button class="btn btn-sm btn-primary" id="mainDownloadButton5"
-                        onclick="downloadBulletinsAuto(5, {{ $periode->id }}, 'bulletin_v5_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->format('F Y') }}')">
+                        onclick="downloadBulletinsAuto(5, {{ $periode->id }}, 'bulletin_v5_{{$company->name}}_{{\Carbon\Carbon::parse($periode->date_debut)->translatedFormat('F Y') }}')">
                         <span class="fa fa-download me-1"></span> Télécharger
                     </button>
                 </div>

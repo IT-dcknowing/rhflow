@@ -30,7 +30,7 @@
                         <a href="{{ route('company.employees.edit', $employee->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit me-1"></i>Modifier
                         </a>
-                        <a href="{{ route('company.employees.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('company.employees.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Retour
                         </a>
                     </div>
@@ -453,7 +453,7 @@
                                     <tbody>
                                         @forelse($paySlips as $paySlip)
                                         <tr>
-                                            <td>{{ \Carbon\Carbon::parse($paySlip->salary_month)->format('F Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</td>
                                             <td>{{ number_format($paySlip->salary_brut ?? 0, 0, ',', ' ') }} FCFA</td>
                                             <td>{{ number_format($paySlip->net_imposable ?? 0, 0, ',', ' ') }} FCFA</td>                                            
                                             <td class="text-danger fw-bold">
@@ -604,7 +604,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" onclick="saveFamilyMember()">Enregistrer</button>
             </div>
         </div>
@@ -683,7 +683,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" onclick="updateFamilyMember()">Mettre à jour</button>
             </div>
         </div>
@@ -714,7 +714,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" onclick="saveDocument()">Enregistrer</button>
             </div>
         </div>
@@ -740,7 +740,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>

@@ -35,7 +35,7 @@
                         <i class="ti ti-eye me-2"></i>
                         Voir détails
                     </a>
-                    <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-primary bg-label-primary">
+                    <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour à la liste
                     </a>
@@ -487,7 +487,7 @@
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between">
-                                        <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-danger">
+                                        <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-secondary">
                                             <i class="ti ti-arrow-left me-2"></i>
                                             Annuler
                                         </a>

@@ -300,7 +300,7 @@
                             
                             @if(auth()->check())
                                 <div class="mt-3">
-                                    <button class="btn btn-outline-primary btn-sm" id="addParticipantsBtn">
+                                    <button class="btn btn-primary btn-sm" id="addParticipantsBtn">
                                         <i class="fas fa-user-plus me-1"></i> Ajouter des participants
                                     </button>
                                 </div>
@@ -583,7 +583,7 @@
                                     </button>
                                 @endif
                             @if(auth()->check())
-                                    <button class="btn btn-outline-danger text-start" data-bs-toggle="modal" data-bs-target="#deleteEventModal">
+                                    <button class="btn btn-danger text-start" data-bs-toggle="modal" data-bs-target="#deleteEventModal">
                                         <i class="fas fa-trash-alt me-2"></i> Supprimer l'événement
                                     </button>
                                 @endif

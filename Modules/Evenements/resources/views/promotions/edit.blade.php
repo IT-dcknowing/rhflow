@@ -301,7 +301,7 @@
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <button type="button" class="btn btn-label-danger" data-bs-toggle="modal" data-bs-target="#deletePromotionModal">
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePromotionModal">
                                             <i class="fas fa-trash me-1"></i> Supprimer
                                         </button>
                                     </div>
@@ -338,7 +338,7 @@
                 <p class="mb-0"><strong>Date :</strong> {{ $promotion->promotion_date->format('d/m/Y') }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
@@ -364,7 +364,7 @@
                 <p class="text-danger">Cette action est irréversible.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form id="deleteAttachmentForm" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')

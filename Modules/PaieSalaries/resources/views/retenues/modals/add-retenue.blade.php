@@ -112,7 +112,7 @@
     </div>
 
     <div class="mt-4 d-flex justify-content-end">
-        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">Annuler</button>
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-save me-2"></i>Enregistrer
         </button>

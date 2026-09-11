@@ -34,7 +34,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a class="btn btn-primary bg-primary text-white" href="{{ route('super-admin.packs.create') }}">
+                    <a class="btn btn-primary" href="{{ route('super-admin.packs.create') }}">
                         <i class="ti ti-plus me-2"></i>
                         Nouveau Pack
                     </a>

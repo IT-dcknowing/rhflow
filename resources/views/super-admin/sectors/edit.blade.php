@@ -15,7 +15,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('super-admin.sectors.index') }}" class="btn btn-outline-primary bg-label-primary">
+                    <a href="{{ route('super-admin.sectors.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour à la liste
                     </a>
@@ -172,7 +172,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between pt-3 border-top">
-                                <a href="{{ route('super-admin.sectors.index') }}" class="btn btn-outline-danger">
+                                <a href="{{ route('super-admin.sectors.index') }}" class="btn btn-outline-secondary">
                                     <i class="ti ti-x me-2"></i>
                                     Annuler
                                 </a>
@@ -183,7 +183,7 @@
                                         Réinitialiser
                                     </button>
 
-                                    <button type="submit" class="btn btn-primary bg-primary text-white">
+                                    <button type="submit" class="btn btn-primary">
                                         <i class="ti ti-check me-2"></i>
                                         Enregistrer les modifications
                                     </button>

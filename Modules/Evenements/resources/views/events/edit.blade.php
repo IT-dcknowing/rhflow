@@ -406,7 +406,7 @@
                         </div>
                         
                         <div class="d-flex justify-content-between mt-4">
-                            <button type="button" class="btn btn-outline-danger" id="deleteEvent" 
+                            <button type="button" class="btn btn-danger" id="deleteEvent" 
                                     data-bs-toggle="modal" data-bs-target="#deleteEventModal">
                                 <i class="fas fa-trash me-2"></i> Supprimer
                             </button>

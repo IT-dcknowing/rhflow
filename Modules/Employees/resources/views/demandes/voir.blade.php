@@ -63,7 +63,7 @@
     </div>
     <div class="modal-footer justify-content-between">
         <div>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
         </div>
         @if ($demande->status == 'Pending')
             <div>
@@ -71,7 +71,7 @@
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="status" value="Approved">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa fa-check-circle me-1"></i> Valider
                     </button>
                 </form>
@@ -109,7 +109,7 @@
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="status" value="Approved">
-                    <button type="submit" class="btn btn-success disabled">
+                    <button type="submit" class="btn btn-primary disabled">
                         <i class="fa fa-check-circle me-1"></i> Valider
                     </button>
                 </form>
@@ -136,7 +136,7 @@
                     @csrf
                     @method('PATCH')
                     <input type="hidden" name="status" value="Approved">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa fa-check-circle me-1"></i> Valider
                     </button>
                 </form>

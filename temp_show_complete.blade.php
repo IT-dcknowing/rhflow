@@ -30,7 +30,7 @@
                         <a href="{{ route('company.employees.edit', $employee->id) }}" class="btn btn-primary">
                             <i class="ti ti-edit me-1"></i>Modifier
                         </a>
-                        <a href="{{ route('company.employees.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('company.employees.index') }}" class="btn btn-outline-secondary">
                             <i class="ti ti-arrow-left me-1"></i>Retour
                         </a>
                     </div>
@@ -572,7 +572,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" onclick="saveFamilyMember()">Enregistrer</button>
             </div>
         </div>
@@ -603,7 +603,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" onclick="saveDocument()">Enregistrer</button>
             </div>
         </div>

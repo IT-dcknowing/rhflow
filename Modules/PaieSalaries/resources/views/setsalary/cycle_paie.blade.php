@@ -20,7 +20,7 @@
     <div class="container-fluid">
         <!--<div class="row mb-4">
             <div class="col-md-9">
-                <a href="{{ route('payslip.payroll') }}" class="btn btn-outline-primary">
+                <a href="{{ route('payslip.payroll') }}" class="btn btn-outline-secondary">
                     <i class="ti ti-arrow-left me-1"></i>{{ __('Retour') }}
                 </a>
             </div>

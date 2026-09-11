@@ -390,7 +390,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                             <button type="submit" class="btn btn-primary retenue-btn">Enregistrer</button>
                         </div>
                     </form>
@@ -484,7 +484,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                             <button type="submit" class="btn btn-primary">Enregistrer</button>
                         </div>
                     </form>

@@ -92,7 +92,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
         <button type="submit" class="btn btn-primary save-absence-btn"><i class="ti ti-save me-1"></i> {{ __('Mettre à jour') }}</button>
     </div>
 </form>

@@ -30,7 +30,7 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTypeModal">
                         <i class="ti ti-plus me-1"></i> Ajouter un type
                     </button>
-                    <a href="{{ route('company.ruptures.index') }}" class="btn btn-outline-primary">
+                    <a href="{{ route('company.ruptures.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i> Retour
                     </a>
                 </div>
@@ -128,7 +128,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="addTypeForm" class="btn btn-primary">Ajouter</button>
             </div>
         </div>
@@ -165,7 +165,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="editTypeForm" class="btn btn-primary">Enregistrer</button>
             </div>
         </div>
@@ -195,7 +195,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="submit" form="deleteTypeForm" class="btn btn-danger">Supprimer</button>
             </div>
         </div>

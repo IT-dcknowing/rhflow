@@ -27,7 +27,7 @@
                     <h5 class="mb-0 text-primary"><i class="ti ti-ticket me-2"></i>Gestion des Coupons</h5>
                     <small class="text-muted">Statistiques sur les coupons</small>
                 </div>
-                <button type="button" class="btn btn-primary bg-primary text-white" data-bs-toggle="modal" data-bs-target="#createCouponModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCouponModal">
                     <i class="ti ti-plus me-1"></i>Créer un coupon
                 </button>
             </div>
@@ -269,8 +269,8 @@
                     <input type="hidden" name="is_active" value="1">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-outline bg-primary text-white">Créer</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer</button>
                 </div>
             </form>
         </div>

@@ -16,7 +16,7 @@
                     <p class="text-muted mb-0">Calculez précisément le salaire brut à partir du net souhaité</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->locale('fr')->format('l d F Y') }} •
+                        {{ now()->locale('fr')->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>

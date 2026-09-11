@@ -13,7 +13,7 @@
                     <p class="text-muted mb-0">Personnalisez l'apparence de votre interface</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>

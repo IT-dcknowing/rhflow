@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">Créer une nouvelle réunion</h4>
-                    <a href="{{ route('company.meetings.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('company.meetings.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i> Retour
                     </a>
                 </div>
@@ -183,7 +183,7 @@
                         
                         <div class="row mt-4">
                             <div class="col-12 text-end">
-                                <button type="button" class="btn btn-light me-2" onclick="window.history.back()">Annuler</button>
+                                <button type="button" class="btn btn-outline-secondary me-2" onclick="window.history.back()">Annuler</button>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-calendar-plus me-2"></i> Créer la réunion
                                 </button>
@@ -225,7 +225,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>

@@ -379,7 +379,7 @@ class DeclarationsController extends Controller
                     'id' => $bulletin->id,
                     'employee_name' => $bulletin->employee ? $bulletin->employee->name : 'Employé inconnu',
                     'emploi' => $bulletin->emploi,
-                    'salary_month_formatted' => Carbon::parse($bulletin->salary_month)->format('M Y'),
+                    'salary_month_formatted' => Carbon::parse($bulletin->salary_month)->translatedFormat('M Y'),
                     'basic_salary' => $bulletin->basic_salary,
                     'salary_brut' => $bulletin->salary_brut,
                     'total_retenue' => $bulletin->total_retenue,

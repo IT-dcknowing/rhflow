@@ -21,7 +21,7 @@
 <body>
     <div class="header">
         <h2>BULLETIN DE PAIE</h2>
-        <p>Période: {{ \Carbon\Carbon::now()->format('F Y') }}</p>
+        <p>Période: {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</p>
         <p>Matricule: {{ $employee->employee_id }}</p>
     </div>
 

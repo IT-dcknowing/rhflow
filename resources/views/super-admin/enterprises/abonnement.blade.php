@@ -35,7 +35,7 @@
                         <i class="ti ti-eye me-2"></i>
                         Voir l'entreprise
                     </a>
-                    <a href="{{ route('super-admin.enterprises.index') }}" class="btn bg-label-primary">
+                    <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour à la liste
                     </a>
@@ -333,7 +333,7 @@
                 <p class="text-muted">L'entreprise ne pourra plus accéder aux fonctionnalités payantes jusqu'à reactivation.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form action="{{ route('super-admin.enterprises.suspend', $enterprise) }}" method="GET" class="d-inline">
                     <button type="submit" class="btn btn-warning">Suspendre</button>
                 </form>
@@ -355,7 +355,7 @@
                 <p class="text-muted">L'entreprise pourra accéder à toutes les fonctionnalités de son plan.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form action="{{ route('super-admin.enterprises.activate', $enterprise) }}" method="GET" class="d-inline">
                     <button type="submit" class="btn btn-success">Activer</button>
                 </form>
@@ -401,7 +401,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-primary">Changer de plan</button>
                 </div>
             </form>
@@ -422,7 +422,7 @@
                 <p>Voulez-vous renouveler l'abonnement avec le même plan ?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form action="{{ route('super-admin.enterprises.subscription.renew', $enterprise) }}" method="POST" class="d-inline">
                     @csrf
                     <button type="submit" class="btn btn-primary">Renouveler</button>

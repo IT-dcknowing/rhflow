@@ -14,7 +14,7 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Nouvel exercice de paie</h5>
-                    <a href="{{ route('company.paiesalaries.exercices.index') }}" class="btn btn-sm btn-label-info">
+                    <a href="{{ route('company.paiesalaries.exercices.index') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i> Retour
                     </a>
                 </div>

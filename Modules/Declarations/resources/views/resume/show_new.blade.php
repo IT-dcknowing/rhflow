@@ -53,7 +53,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('company.declarations.resume.index') }}" class="btn btn-primary">
+                    <a href="{{ route('company.declarations.resume.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                 </div>
@@ -69,7 +69,7 @@
                     <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#bull3show" id="affichebull3"><i class="ti ti-note ti-xs me-1"></i> Bulletin 3</a></li>
                     <li class="nav-item"><a class="nav-link" href="javascript:void(0);" data-bs-toggle="tab" data-bs-target="#bull4show" id="affichebull4"><i class="ti ti-note ti-xs me-1"></i> Bulletin 4</a></li>
                 </ul>
-                <h5 class="mb-0">PÃ©riode : {{ \Carbon\Carbon::parse($paySlip->salary_month)->format('F Y') }}</h5>
+                <h5 class="mb-0">PÃ©riode : {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</h5>
             </div>
         </div>
         <hr>
@@ -93,7 +93,7 @@
                                 <tr class="table-success">
                                     <td colspan="9" class="text-center">
                                         <h4 style="font-size: 24px;"><strong>BULLETIN DE PAIE</strong></h4>
-                                        <p class="mb-1">PÃ©riode: {{ \Carbon\Carbon::parse($paySlip->salary_month)->format('F Y') }}</p>
+                                        <p class="mb-1">PÃ©riode: {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</p>
                                     </td>
                                 </tr>
                                 <!-- Informations employÃ© -->
@@ -367,7 +367,7 @@
                             <tr>
                                 <td colspan="9" style="background-color: {{ isset($company) ? ($company->getThemeHeaderBgColor() ?? '#8c6b5d') : '#8c6b5d' }}; color: {{ isset($company) ? (($company->getThemeHeaderBgColor() ?? '#8c6b5d') == '#ffffff' ? '#000000' : '#ffffff') : '#ffffff' }}; text-align: center; padding: 10px; border: 1px solid #000;">
                                     <h2 style="margin: 0; font-size: 18px;">BULLETIN DE PAIE</h2>
-                                    <p style="margin: 5px 0 0 0;">PÃ©riode : {{ \Carbon\Carbon::parse($paySlip->salary_month)->format('F Y') }}</p>
+                                    <p style="margin: 5px 0 0 0;">PÃ©riode : {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}</p>
                                 </td>
                             </tr>
 

@@ -26,7 +26,7 @@
               <h5 class="mb-0 text-primary"><i class="ti ti-ticket me-2"></i>Modifier le Coupon : {{ $coupon->code }}</h5>
               <small class="text-muted">Modifier les informations du coupon</small>
           </div>
-          <a href="{{ route('super-admin.commandes.coupons.index') }}" class="btn btn-primary bg-label-primary">
+          <a href="{{ route('super-admin.commandes.coupons.index') }}" class="btn btn-outline-secondary">
             <i class="ti ti-arrow-left me-1"></i>Retour
           </a>
       </div>
@@ -82,7 +82,7 @@
                 </div>
               </div>
               <div class="mt-3">
-                <button type="submit" class="btn btn-primary bg-primary text-white">
+                <button type="submit" class="btn btn-primary">
                   <i class="ti ti-device-floppy me-1"></i>Enregistrer
                 </button>
               </div>

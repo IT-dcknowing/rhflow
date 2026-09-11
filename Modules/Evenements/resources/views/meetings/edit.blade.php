@@ -11,7 +11,7 @@
                         <a href="{{ route('company.meetings.show', $meeting->id) }}" class="btn btn-outline-secondary me-2">
                             <i class="fas fa-eye me-1"></i> Voir
                         </a>
-                        <a href="{{ route('company.meetings.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('company.meetings.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i> Retour
                         </a>
                     </div>
@@ -371,7 +371,7 @@
                                 </button>
                                 @endif
                                 
-                                <a href="{{ route('company.meetings.index') }}" class="btn btn-light">
+                                <a href="{{ route('company.meetings.index') }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-times me-1"></i> Annuler
                                 </a>
                             </div>
@@ -398,7 +398,7 @@
                 <form id="deleteAttachmentForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-danger">Supprimer</button>
                 </form>
             </div>
@@ -435,7 +435,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>

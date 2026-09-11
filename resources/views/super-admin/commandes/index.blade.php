@@ -31,7 +31,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('super-admin.sectors.create') }}" class="btn btn-primary bg-primary text-white">
+                    <a href="{{ route('super-admin.sectors.create') }}" class="btn btn-primary">
                         <i class="ti ti-plus me-2"></i>
                         Nouveau Secteur
                     </a>

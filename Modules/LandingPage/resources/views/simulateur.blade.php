@@ -892,7 +892,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-end">
-                                    <button class="btn-submit btn btn-warning" id="update" onclick="updatetab()"
+                                    <button class="btn-submit btn btn-primary" id="update" onclick="updatetab()"
                                         disabled>
                                         {{ __('Modifier') }}
                                     </button>

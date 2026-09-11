@@ -92,7 +92,7 @@
                                     </small>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary bg-primary text-white">
+                                <button type="submit" class="btn btn-primary">
                                     <i class="ti ti-check me-1"></i>
                                     Enregistrer les modifications
                                 </button>

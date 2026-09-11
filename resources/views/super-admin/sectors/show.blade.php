@@ -17,11 +17,11 @@
                 </div>
 
                 <div class="d-flex gap-2">
-                    <a href="{{ route('super-admin.sectors.edit', $sector) }}" class="btn btn-primary bg-primary text-white">
+                    <a href="{{ route('super-admin.sectors.edit', $sector) }}" class="btn btn-primary">
                         <i class="ti ti-marker-alt me-2"></i>
                         Modifier
                     </a>
-                    <a href="{{ route('super-admin.sectors.index') }}" class="btn btn-outline-primary bg-label-primary">
+                    <a href="{{ route('super-admin.sectors.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour à la liste
                     </a>

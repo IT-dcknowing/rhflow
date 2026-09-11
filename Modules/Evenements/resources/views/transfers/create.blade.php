@@ -11,13 +11,13 @@
                     <p class="text-muted mb-0">Créé un transfert pour un employé</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small> 
                 </div>
                 <div>
-                    <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-primary">
+                    <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                 </div>
@@ -206,7 +206,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-times me-2"></i> Annuler
                             </a>
                             <button type="submit" class="btn btn-primary">

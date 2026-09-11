@@ -136,7 +136,7 @@
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Enregistrer les modifications') }}</button>
                     </div>
                 </form>

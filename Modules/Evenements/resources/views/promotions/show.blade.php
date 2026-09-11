@@ -400,7 +400,7 @@
                         @endcan
                         
                         @can('delete', $promotion)
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             <i class="fas fa-trash-alt me-1"></i> Supprimer
                         </button>
                         @endcan
@@ -432,7 +432,7 @@
                 <p class="mb-0"><strong>Date :</strong> {{ $promotion->promotion_date->format('d/m/Y') }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
@@ -460,7 +460,7 @@
                 <p class="text-danger">Cette action est irréversible.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <form id="deleteAttachmentForm" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
@@ -502,7 +502,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check-circle me-1"></i> Confirmer l'approbation
                     </button>
@@ -533,7 +533,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-warning">
                         <i class="fas fa-pause-circle me-1"></i> Mettre en attente
                     </button>
@@ -564,7 +564,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-times-circle me-1"></i> Confirmer le rejet
                     </button>
@@ -613,7 +613,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check-double me-1"></i> Confirmer l'application
                     </button>
@@ -695,7 +695,7 @@
                 @endif
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>

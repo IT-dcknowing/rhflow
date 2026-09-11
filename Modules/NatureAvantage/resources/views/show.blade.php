@@ -165,7 +165,7 @@
                     <p>Êtes-vous sûr de vouloir supprimer cette nature d'avantage ?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <form id="deleteForm" action="{{ route('company.avantages.destroy', $avantage->id) }}" method="POST">
                         @csrf
                         @method('DELETE')

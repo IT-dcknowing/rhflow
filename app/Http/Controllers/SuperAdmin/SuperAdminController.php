@@ -232,7 +232,7 @@ class SuperAdminController extends Controller
                 ->sum('total_amount');
 
             $months[] = [
-                'month' => $date->format('M'),
+                'month' => $date->translatedFormat('M'),
                 'current_year' => $monthly_revenue,
                 'last_year' => $last_year_revenue,
             ];

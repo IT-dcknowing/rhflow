@@ -16,7 +16,7 @@
                     <p class="text-muted mb-0">Gérez les grilles salariales des employés de votre entreprise</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>
@@ -158,7 +158,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                     <button type="submit" class="btn btn-primary retenue-btn">Enregistrer</button>
                 </div>
             </form>
@@ -186,7 +186,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                     <button type="submit" class="btn btn-primary retenue-btn">Mettre à jour</button>
                 </div>
             </form>

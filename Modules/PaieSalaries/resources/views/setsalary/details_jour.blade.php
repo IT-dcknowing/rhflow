@@ -93,7 +93,7 @@
                                         <div class="result" id="resultat"></div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
                                         <button type="button" class="btn btn-primary" id="applyToGroup">{{ __('Appliquer') }}</button>
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@
                                         <div class="result" id="resultat_team"></div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
                                         <button type="button" class="btn btn-primary" id="applyToTeam">{{ __('Appliquer') }}</button>
                                     </div>
                                 </div>
@@ -211,7 +211,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
                                         <button type="button" class="btn btn-primary" id="saveTeam">{{ __('Créer l\'équipe') }}</button>
                                     </div>
                                 </div>
@@ -352,14 +352,14 @@
                                                 </select>
                                             </div>
                                             <div class="text-end mt-3">
-                                                <button type="button" class="btn btn-secondary" id="cancel-add">{{ __('Annuler') }}</button>
+                                                <button type="button" class="btn btn-outline-secondary" id="cancel-add">{{ __('Annuler') }}</button>
                                                 <button type="button" class="btn btn-primary" id="confirm-add">{{ __('Confirmer') }}</button>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" id="ajoutEmpTeam" class="btn btn-primary">{{ __('Ajouter des membres') }}</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
                                     </div>
                                 </div>
                             </div>

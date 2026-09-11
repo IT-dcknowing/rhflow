@@ -64,11 +64,11 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-outline-secondary rounded" data-bs-dismiss="modal">Fermer</button>
         @if($leave->status == 'Approuvé' || $leave->status == 'Rejeté' || $leave->status == 'Terminé')
-            <button type="submit" class="btn btn-success rounded" disabled>Valider</button>
+            <button type="submit" class="btn btn-primary rounded" disabled>Valider</button>
         @else
-            <button type="submit" class="btn btn-success rounded">Valider</button>
+            <button type="submit" class="btn btn-primary rounded">Valider</button>
         @endif
     </div>
 </form>

@@ -16,7 +16,7 @@
           </small>
         </div>
         <div class="d-flex gap-2">
-          <a href="{{ route('super-admin.enterprises.show', $enterprise) }}" class="btn btn-outline-primary bg-label-primary">
+          <a href="{{ route('super-admin.enterprises.show', $enterprise) }}" class="btn btn-outline-secondary">
             <i class="ti ti-arrow-left me-1"></i>Retour
           </a>
         </div>

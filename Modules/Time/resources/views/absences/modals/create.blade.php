@@ -109,7 +109,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Annuler') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Enregistrer') }}</button>
                 </div>
             </form>

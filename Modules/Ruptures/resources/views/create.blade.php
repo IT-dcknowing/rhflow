@@ -27,7 +27,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('company.ruptures.index') }}" class="btn bg-label-primary">
+                    <a href="{{ route('company.ruptures.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-1"></i> Retour
                     </a>
                 </div>
@@ -195,7 +195,7 @@
         </div>
         <div class="row">
             <div class="col-12 d-flex justify-content-between">
-                <button type="button" class="btn btn-label-danger" onclick="window.history.back();">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="window.history.back();">Annuler</button>
                 <button type="submit" class="btn btn-primary">Enregistrer</button>
             </div>
         </div>

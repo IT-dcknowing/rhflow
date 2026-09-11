@@ -37,11 +37,11 @@
                         <i class="ti ti-settings me-2"></i>
                         Gérer les Modules
                     </a>
-                    <a href="{{ route('super-admin.packs.edit', $pack) }}" class="btn btn-primary bg-primary text-white">
+                    <a href="{{ route('super-admin.packs.edit', $pack) }}" class="btn btn-primary">
                         <i class="ti ti-pencil me-2"></i>
                         Modifier
                     </a>
-                    <a href="{{ route('super-admin.packs.index') }}" class="btn btn-outline-primary bg-label-primary">
+                    <a href="{{ route('super-admin.packs.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour
                     </a>

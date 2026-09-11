@@ -30,7 +30,7 @@
                         Remplissez les informations de l'entreprise
                     </small>
                 </div>
-                <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-primary bg-label-primary">
+                <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-secondary">
                     <i class="ti ti-arrow-left me-2"></i>
                     Retour à la liste
                 </a>
@@ -520,11 +520,11 @@
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between">
-                                        <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-danger">
+                                        <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-secondary">
                                             <i class="ti ti-arrow-left me-2"></i>
                                             Annuler
                                         </a>
-                                        <button type="submit" class="btn btn-primary btn-lg text-white" id="submitBtn">
+                                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                                             <i class="ti ti-check me-2"></i>
                                             Créer l'Entreprise
                                         </button>

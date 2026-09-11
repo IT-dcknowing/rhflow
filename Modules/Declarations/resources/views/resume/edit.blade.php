@@ -14,7 +14,7 @@
                         <small class="text-primary">
                             <i class="fas fa-user me-1"></i>{{ $paySlip->employee->name ?? 'Employé inconnu' }} •
                             <i
-                                class="fas fa-calendar me-1"></i>{{ Carbon\Carbon::parse($paySlip->salary_month)->format('F Y') }}
+                                class="fas fa-calendar me-1"></i>{{ Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}
                         </small>
                     </div>
                     <div class="d-flex gap-2">

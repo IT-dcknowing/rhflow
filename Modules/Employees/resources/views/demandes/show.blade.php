@@ -238,7 +238,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('company.employees.demandes.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('company.employees.demandes.index') }}" class="btn btn-outline-secondary">
                                     <i class="fa fa-arrow-left me-1"></i> Retour à la liste
                                 </a>
                                 

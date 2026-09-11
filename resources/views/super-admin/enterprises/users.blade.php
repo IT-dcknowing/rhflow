@@ -17,7 +17,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('super-admin.users.create', $enterprise) }}" class="btn bg-primary text-white">
+                    <a href="{{ route('super-admin.users.create', $enterprise) }}" class="btn btn-primary">
                         <i class="ti ti-plus me-2"></i>
                         Ajouter un utilisateur
                     </a>

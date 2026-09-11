@@ -11,13 +11,13 @@
                     <p class="text-muted mb-0">Détails du transfert</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small> 
                 </div>
                 <div>
-                    <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour à la liste
                     </a>
                 </div>
@@ -265,7 +265,7 @@
                         </div>
                         
                         <div>
-                            <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Retour à la liste
                             </a>
                             
@@ -309,7 +309,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-times"></i> Confirmer le rejet
                     </button>
@@ -337,7 +337,7 @@
                     <p class="mb-0"><strong>Tous les documents associés seront également supprimés.</strong></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash"></i> Supprimer définitivement
                     </button>
@@ -374,7 +374,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-upload"></i> Téléverser
                     </button>
@@ -401,7 +401,7 @@
                     <p>Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-trash"></i> Supprimer
                     </button>

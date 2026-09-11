@@ -209,7 +209,7 @@ $title = ($leave->employee->gender == 'Male') ? 'Monsieur' : (($leave->employee-
 
             <!-- Boutons d'action en pied de page - cachés à l'impression -->
             <div class="modal-footer hide-on-print">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
                 <button class="btn btn-sm btn-primary" onclick="printDocument()">
                     <i class="ti ti-printer"></i> {{ __('Imprimer') }}
                 </button>

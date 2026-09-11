@@ -261,7 +261,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Fermer</button>
             </div>
         </div>
     </div>

@@ -32,7 +32,7 @@
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('super-admin.enterprises.create') }}" class="btn btn-primary bg-primary text-white">
+                    <a href="{{ route('super-admin.enterprises.create') }}" class="btn btn-primary">
                         <i class="ti ti-plus me-2"></i>
                         Nouvelle Entreprise
                     </a>
@@ -257,7 +257,7 @@
                                                             <a class="btn btn-outline-primary bg-primary text-white modalManageLink" href="{{ route('super-admin.enterprises.subscription', $enterprise->user_id ?? $enterprise) }}">
                                                                 <i class="ti ti-settings me-1"></i>Gérer l'abonnement
                                                             </a>
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
                                                         </div>
                                                     </div>
                                                 </div>

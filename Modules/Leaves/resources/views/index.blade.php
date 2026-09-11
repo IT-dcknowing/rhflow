@@ -57,7 +57,7 @@
                     <a href="{{ route('company.leaves.calendar') }}" class="btn btn-outline-primary">
                         <i class="fas fa-calendar me-1"></i>Vue Calendrier
                     </a>
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createLeaveTypeModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createLeaveTypeModal">
                         <i class="fas fa-tags me-1"></i>Nouveau Type de Congé
                     </button>
                     <a href="{{ route('company.leaves.create') }}?periode_id={{$periode->id}}" class="btn btn-primary">

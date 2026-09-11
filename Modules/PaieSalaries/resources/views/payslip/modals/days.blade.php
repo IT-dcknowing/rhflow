@@ -44,7 +44,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
     <button type="button" class="btn btn-primary" onclick="updateDaysWork({{ $employee->id }})">Enregistrer</button>
 </div>
 <script>

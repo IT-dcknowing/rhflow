@@ -193,7 +193,7 @@
                             </div>
 
                             <div class="col-12 d-flex justify-content-between">
-                                <button type="button" class="btn btn-label-secondary" onclick="window.history.back();">Retour</button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="window.history.back();">Retour</button>
                                 <button type="submit" class="btn btn-primary">Enregistrer</button>
                             </div>
                         </form>

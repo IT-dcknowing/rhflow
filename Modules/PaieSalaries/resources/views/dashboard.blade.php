@@ -155,7 +155,7 @@
                                             </div>
                                             <div>
                                                 <h6 class="mb-0">{{ $paie->employee ? $paie->employee->name : 'Employé inconnu' }}</h6>
-                                                <small class="text-muted">{{ date('M Y', strtotime($paie->periode)) }}</small>
+                                                <small class="text-muted">{{ \Carbon\Carbon::parse($paie->periode)->translatedFormat('M Y') }}</small>
                                             </div>
                                         </div>
                                     </td>

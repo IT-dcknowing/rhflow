@@ -269,7 +269,7 @@
                         </small>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('company.declarations.resume.index') }}" class="btn btn-primary">
+                        <a href="{{ route('company.declarations.resume.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Retour
                         </a>
                     </div>
@@ -1765,7 +1765,7 @@
                                             style="background-color: {{ isset($company) ? ($company->getThemeHeaderBgColor() ?? '#8c6b5d') : '#8c6b5d' }}; color: {{ isset($company) ? (($company->getThemeHeaderBgColor() ?? '#8c6b5d') == '#ffffff' ? '#000000' : '#ffffff') : '#ffffff' }}; text-align: center; padding: 10px; border: 1px solid #000;">
                                             <h2 style="margin: 0; font-size: 24px;">BULLETIN DE PAIE</h2>
                                             <p style="margin: 5px 0 0 0;">Période :
-                                                {{ \Carbon\Carbon::parse($paySlip->salary_month)->format('F Y') }}
+                                                {{ \Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('F Y') }}
                                             </p>
                                         </td>
                                     </tr>

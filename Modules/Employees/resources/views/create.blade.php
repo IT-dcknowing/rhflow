@@ -245,7 +245,7 @@
                     <i class="fas fa-user-plus  me-2"></i>
                     Création d'un Nouvel Employé
                 </h4>
-                <a href="{{ route('company.employees.index') }}" class="btn btn-outline-info">
+                <a href="{{ route('company.employees.index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Retour à la liste
                 </a>
             </div>

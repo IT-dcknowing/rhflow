@@ -227,7 +227,7 @@ use Carbon\Carbon;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-info" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Fermer') }}</button>
                 </div>
             </div>
         </div>

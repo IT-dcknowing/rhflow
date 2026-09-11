@@ -288,7 +288,7 @@
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('promotions.index') }}" class="btn btn-label-secondary">
+                                    <a href="{{ route('promotions.index') }}" class="btn btn-outline-secondary">
                                         <i class="fas fa-times me-1"></i> Annuler
                                     </a>
                                     <div>

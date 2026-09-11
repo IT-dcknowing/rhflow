@@ -26,7 +26,7 @@
               <h5 class="mb-0 text-primary"><i class="ti ti-ticket me-2"></i>Détails du Coupon : {{ $coupon->code }}</h5>
               <small class="text-muted">Information sur le coupon créé le {{ $coupon->created_at->format('d/m/Y') }}</small>
           </div>
-          <a href="{{ route('super-admin.commandes.coupons.index') }}" class="btn btn-primary bg-label-primary">
+          <a href="{{ route('super-admin.commandes.coupons.index') }}" class="btn btn-outline-secondary">
             <i class="ti ti-arrow-left me-1"></i>Retour
           </a>
       </div>

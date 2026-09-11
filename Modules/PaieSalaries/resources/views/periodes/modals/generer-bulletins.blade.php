@@ -22,7 +22,7 @@
                     </div>-->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-cogs me-1"></i>Générer les bulletins
                     </button>

@@ -13,7 +13,7 @@
                     <p class="text-muted mb-0">Planifiez et gérez les réunions de votre entreprise</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>
@@ -357,7 +357,7 @@
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-3">
                             <div class="d-grid">
-                                <a href="{{ route('company.evenements.meetings.create') }}" class="btn btn-outline-primary">
+                                <a href="{{ route('company.evenements.meetings.create') }}" class="btn btn-primary">
                                     <div class="d-flex align-items-center justify-content-center">
                                         <i class="fas fa-plus-circle me-2"></i>
                                         <span>Nouvelle Réunion</span>
@@ -414,7 +414,7 @@
                 <p>Êtes-vous sûr de vouloir supprimer cette réunion ? Cette action est irréversible.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-danger" id="confirmDelete">Supprimer</button>
             </div>
         </div>
@@ -437,7 +437,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-primary" id="confirmStart">Démarrer</button>
             </div>
         </div>

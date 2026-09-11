@@ -11,13 +11,13 @@
                     <p class="text-muted mb-0">Modifier un transfert pour un employé</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small> 
                 </div>
                 <div>
-                    <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-primary">
+                    <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                 </div>
@@ -30,7 +30,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Modifier le Transfert</h3>
                     <div class="card-tools">
-                        <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-secondary btn-sm">
+                        <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary btn-sm">
                             <i class="fas fa-arrow-left"></i> Retour à la liste
                         </a>
                     </div>
@@ -236,7 +236,7 @@
                                     <i class="fas fa-save"></i> Enregistrer les modifications
                                 </button>
                             @endif
-                            <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('company.evenements.transfers.index') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Retour à la liste
                             </a>
                             
@@ -272,7 +272,7 @@
                 Êtes-vous sûr de vouloir approuver ce transfert ? Cette action est irréversible.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Annuler</button>
                 <form id="approve-form" method="POST" action="">
                     @csrf
                     @method('POST')
@@ -303,7 +303,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Annuler</button>
                 <form id="reject-form" method="POST" action="">
                     @csrf
                     @method('POST')

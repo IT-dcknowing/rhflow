@@ -168,8 +168,8 @@
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <div class="d-flex justify-content-between">
-                                        <a href="{{ route('super-admin.users.index') }}" class="btn btn-danger">Annuler</a>
-                                        <button type="submit" class="btn btn-primary text-white">Créer l'Utilisateur</button>
+                                        <a href="{{ route('super-admin.users.index') }}" class="btn btn-outline-secondary">Annuler</a>
+                                        <button type="submit" class="btn btn-primary">Créer l'Utilisateur</button>
                                     </div>
                                 </div>
                             </div>

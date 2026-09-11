@@ -13,7 +13,7 @@
                         <p class="text-muted mb-0">Configurez et gérez tous les paramètres de votre entreprise</p>
                         <small class="text-primary">
                             <i class="fas fa-calendar me-1"></i>
-                            {{ now()->format('l d F Y') }} •
+                            {{ now()->translatedFormat('l d F Y') }} •
                             <i class="fas fa-clock me-1"></i>
                             {{ now()->format('H:i') }}
                         </small>
@@ -591,7 +591,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary">Mettre à jour</button>
                     </div>
                 </form>
@@ -623,7 +623,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary">Mettre à jour</button>
                     </div>
                 </form>
@@ -655,7 +655,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                         <button type="submit" class="btn btn-primary">Mettre à jour</button>
                     </div>
                 </form>

@@ -183,7 +183,7 @@
                                 </div>
                             </div>
                             <div class="col-12 d-flex justify-content-between mt-4">
-                                <button type="reset" class="btn btn-label-danger">Annuler</button>
+                                <button type="reset" class="btn btn-outline-secondary">Annuler</button>
                                 <button type="submit" class="btn btn-primary">Enregistrer</button>
                             </div>
                         </form>

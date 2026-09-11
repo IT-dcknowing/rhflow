@@ -11,13 +11,13 @@
                     <p class="text-muted mb-0">Modifier les annonces et distinctions des employés</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small> 
                 </div>
                 <div>
-                    <a href="{{ route('company.evenements.annonces.index') }}" class="btn btn-primary">
+                    <a href="{{ route('company.evenements.annonces.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                 </div>
@@ -178,7 +178,7 @@
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    <button type="button" class="btn btn-light" onclick="window.history.back()">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">
                                         <i class="fas fa-arrow-left mr-2"></i> Annuler
                                     </button>
                                     <div>

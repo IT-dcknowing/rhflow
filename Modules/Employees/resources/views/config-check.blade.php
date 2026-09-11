@@ -78,7 +78,7 @@
                                 <p class="text-muted mb-0">Vous pourrez revenir à cette page pour créer votre employé</p>
                             </div>
                             <div>
-                                <a href="{{ route('company.employees.index') }}" class="btn btn-secondary me-2">
+                                <a href="{{ route('company.employees.index') }}" class="btn btn-outline-secondary me-2">
                                     <i class="fas fa-arrow-left me-2"></i>
                                     Retour à la liste
                                 </a>

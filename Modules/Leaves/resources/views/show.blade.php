@@ -57,7 +57,7 @@
                     </nav>
                 </div>
                 <div class="align-items-center">
-                    <a href="{{ $retourUrl }}" class="btn btn-outline-primary me-2">
+                    <a href="{{ $retourUrl }}" class="btn btn-outline-secondary me-2">
                         <i class="fas fa-arrow-left me-2"></i>Retour
                     </a>
                     @if($leave->status == 'Approuvé' || $leave->status == 'Démarré')

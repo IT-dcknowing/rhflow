@@ -274,7 +274,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <small>{{ Carbon\Carbon::parse($bulletin->periode)->format('M Y') }}</small>
+                                        <small>{{ Carbon\Carbon::parse($bulletin->periode)->translatedFormat('M Y') }}</small>
                                     </td>
                                     <td>
                                         <span class="badge bg-{{ $bulletin->type === 'Annuel' ? 'success' : 'primary' }}">
@@ -402,7 +402,7 @@
                             </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <a href="#" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 100px;">
+                            <a href="#" class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 100px;">
                                 <i class="fas fa-building fa-2x mb-2"></i>
                                 <span>Nouvelle déclaration CNPS</span>
                             </a>

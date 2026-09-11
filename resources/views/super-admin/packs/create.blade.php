@@ -208,11 +208,11 @@
 
                                     <!-- Actions -->
                                     <div class="d-grid gap-2">
-                                        <button type="submit" class="btn btn-primary text-white">
+                                        <button type="submit" class="btn btn-primary">
                                             <i class="ti ti-check me-2"></i>
                                             Créer le pack
                                         </button>
-                                        <a href="{{ route('super-admin.packs.index') }}" class="btn btn-danger">
+                                        <a href="{{ route('super-admin.packs.index') }}" class="btn btn-outline-secondary">
                                             <i class="ti ti-x me-2"></i>
                                             Annuler
                                         </a>

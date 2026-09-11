@@ -13,13 +13,13 @@
                     <p class="text-muted mb-0">Modifiez les informations et permissions de l'utilisateur</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
-                        {{ now()->format('l d F Y') }} •
+                        {{ now()->translatedFormat('l d F Y') }} •
                         <i class="fas fa-clock me-1"></i>
                         {{ now()->format('H:i') }}
                     </small>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('company.settings.users.index') }}" class="btn btn-outline-primary">
+                    <a href="{{ route('company.settings.users.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Retour
                     </a>
                     <button class="btn btn-info" onclick="previewForm()">
@@ -247,7 +247,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('company.settings.users.index') }}" class="btn btn-outline-danger">
+                                    <a href="{{ route('company.settings.users.index') }}" class="btn btn-outline-secondary">
                                         <i class="fas fa-times me-1"></i>Annuler
                                     </a>
                                     <div class="d-flex gap-2">

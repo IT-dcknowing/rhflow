@@ -33,11 +33,11 @@
                     </small>
                     </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('super-admin.enterprises.edit', $enterprise) }}" class="btn btn-primary bg-primary text-white">
+                    <a href="{{ route('super-admin.enterprises.edit', $enterprise) }}" class="btn btn-primary">
                         <i class="ti ti-pencil me-2"></i>
                         Modifier
                     </a>
-                    <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-primary bg-label-primary">
+                    <a href="{{ route('super-admin.enterprises.index') }}" class="btn btn-outline-secondary">
                         <i class="ti ti-arrow-left me-2"></i>
                         Retour
                     </a>
@@ -194,7 +194,7 @@
                                             <form action="{{ route('super-admin.enterprises.delete', $enterprise) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger col-md-12" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action est irréversible.')">
+                                                <button type="submit" class="btn btn-danger col-md-12" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action est irréversible.')">
                                                     <i class="ti ti-trash me-2"></i>
                                                     Supprimer
                                                 </button>

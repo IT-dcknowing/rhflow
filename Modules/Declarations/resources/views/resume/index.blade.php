@@ -183,7 +183,7 @@
                                 </div>
                             </td>
                             <td>
-                                <small>{{ Carbon\Carbon::parse($paySlip->salary_month)->format('M Y') }}</small>
+                                <small>{{ Carbon\Carbon::parse($paySlip->salary_month)->translatedFormat('M Y') }}</small>
                             </td>
                             <td align="right">
                                 <span class="fw-semibold">{{ number_format($paySlip->basic_salary, 0, ',', ' ') }} FCFA</span>
@@ -265,13 +265,13 @@
                     </span>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-success" onclick="bulkValidate()">
+                    <button class="btn btn-primary" onclick="bulkValidate()">
                         <i class="fas fa-check me-1"></i>Valider
                     </button>
                     <button class="btn btn-outline-info" onclick="bulkExport()">
                         <i class="fas fa-download me-1"></i>Exporter
                     </button>
-                    <button class="btn btn-outline-danger" onclick="bulkDelete()">
+                    <button class="btn btn-danger" onclick="bulkDelete()">
                         <i class="fas fa-trash me-1"></i>Supprimer
                     </button>
                 </div>
