@@ -93,7 +93,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">📅 Période et Type</h5>
+                            <h5 class="mb-0">Période et Type</h5>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
@@ -513,7 +513,7 @@
             if (partsFloat > 5) {
                 baseReduction = 44000;
             }
-            
+
             let resultricf = 0;
             if (nbre_jours < 30 && nbre_jours > 0) {
                 resultricf = Math.round((baseReduction / 30) * nbre_jours);
@@ -594,9 +594,9 @@
             notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
             notification.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
 
             document.body.appendChild(notification);
 

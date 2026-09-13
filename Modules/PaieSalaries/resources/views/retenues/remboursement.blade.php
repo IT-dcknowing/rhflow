@@ -12,7 +12,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="mb-1">✅ Gestion des remboursements de frais
+                        <h4 class="mb-1"> Gestion des remboursements de frais
                             @if($periode) | Exercice :
                                 {{ $periode->exercice->nom }} - Statut : <span
                                     class="badge bg-label-{{ $periode->statut === 'en_cours' ? 'success' : ($periode->statut === 'cloture' ? 'secondary' : 'warning') }}">
@@ -29,7 +29,8 @@
                                 <li class="breadcrumb-item active">Remboursements de frais @if($periode) - Période :
                                     {{ $periode->nom }} | Statut : <span
                                         class="badge bg-label-{{ $periode->statut === 'en_cours' ? 'success' : ($periode->statut === 'cloture' ? 'secondary' : 'warning') }}">{{ ucfirst($periode->statut) }}</span>
-                                @endif</li>
+                                @endif
+                                </li>
                             </ol>
                         </nav>
                         <small class="text-primary">

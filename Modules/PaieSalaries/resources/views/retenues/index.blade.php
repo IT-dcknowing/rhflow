@@ -12,7 +12,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="mb-1">⛔ Gestion des retenues
+                        <h4 class="mb-1"> Gestion des retenues
                             @if($periode) | Exercice :
                                 {{ $periode->exercice->nom }} - Statut : <span
                                     class="badge bg-label-{{ $periode->statut === 'en_cours' ? 'success' : ($periode->statut === 'cloture' ? 'secondary' : 'warning') }}">
@@ -49,7 +49,7 @@
                                 data-bs-target="#addRetenueModal">
                                 <i class="fas fa-plus me-2"></i>Ajouter une retenue
                             </button>
-                            {{-- 
+                            {{--
                             <button type="button" class="btn btn-success" id="btnApplyAllDefault">
                                 <i class="fas fa-check-double me-2"></i>Appliquer à tous
                             </button>
@@ -118,9 +118,9 @@
                                                             @php
                                                                 $status = $employee->retenues()
                                                                     ->where('periode_id', $periode->id)
-                                                                    ->where(function($query) {
+                                                                    ->where(function ($query) {
                                                                         $query->where('type', 'default')
-                                                                              ->orWhereIn('code', [301, 302, 403]);
+                                                                            ->orWhereIn('code', [301, 302, 403]);
                                                                     })
                                                                     ->count();
                                                             @endphp
@@ -286,7 +286,8 @@
                                         <div class="timeline-item">
                                             <div class="timeline-badge d-flex align-items-center">
                                                 <h5 class="text-muted"> <i class="fas fa-calendar-alt me-2 text-primary"></i> Exercice :
-                                                    {{ $exercice->nom }}</h5>
+                                                    {{ $exercice->nom }}
+                                                </h5>
                                             </div>
                                             <div class="card mb-3">
                                                 <div class="card-body">
@@ -819,7 +820,7 @@
         });
 
         // Automatisation : Appliquer à tous
-        $(document).on('click', '#btnApplyAllDefault', function() {
+        $(document).on('click', '#btnApplyAllDefault', function () {
             let periodeId = "{{ $periode->id ?? '' }}";
             if (!periodeId) return;
 
@@ -850,7 +851,7 @@
                             _token: "{{ csrf_token() }}",
                             periode_id: periodeId
                         },
-                        success: function(response) {
+                        success: function (response) {
                             if (response.success) {
                                 Swal.fire('Succès !', response.message, 'success').then(() => {
                                     location.reload();
@@ -859,7 +860,7 @@
                                 Swal.fire('Erreur !', response.message, 'error');
                             }
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire('Erreur !', 'Une erreur technique est survenue.', 'error');
                         }
                     });
@@ -870,7 +871,7 @@
 
     <!-- Guide IA pour les Retenues -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             function runRetenueGuide() {
                 if (typeof showAiTip !== 'function') {
                     setTimeout(runRetenueGuide, 1000);

@@ -7,7 +7,7 @@
     $base_ce = null;
     $amount_ce = null;
     foreach ($retenues as $r) {
-        if ((string)($r['code'] ?? '') === '409') {
+        if ((string) ($r['code'] ?? '') === '409') {
             $base_ce = $r['base'] ?? null;
             $amount_ce = $r['amount'] ?? 0;
             break;
@@ -15,7 +15,7 @@
     }
     if ($amount_ce !== null || $base_ce !== null) {
         foreach ($retenues as &$r) {
-            if (in_array((string)($r['code'] ?? ''), ['411', '412'])) {
+            if (in_array((string) ($r['code'] ?? ''), ['411', '412'])) {
                 $r['base'] = $base_ce;
                 $r['amount'] = $amount_ce;
             }
@@ -59,9 +59,9 @@
 @section('content')
     <style>
         /* ======================================================
-                   FIX BORDURES — Bulletins 1, 2, 3, 4
-                   Lignes continues sans quadrillage noir — couleur Bootstrap légère
-                   ====================================================== */
+                       FIX BORDURES — Bulletins 1, 2, 3, 4
+                       Lignes continues sans quadrillage noir — couleur Bootstrap légère
+                       ====================================================== */
 
         /* --- Bull1 & Bull2 : table légère, séparateurs horizontaux ---*/
         #payslipContentBull1 table,
@@ -127,10 +127,10 @@
         }
 
         /* ======================================================
-                   MODÈLE 2 — bulletin épuré, sans quadrillage
-                   Les règles ci-dessous viennent après celles des bulletins
-                   1/3/4 et neutralisent leurs bordures pour ce modèle.
-                   ====================================================== */
+                       MODÈLE 2 — bulletin épuré, sans quadrillage
+                       Les règles ci-dessous viennent après celles des bulletins
+                       1/3/4 et neutralisent leurs bordures pour ce modèle.
+                       ====================================================== */
         #payslipContentBull2 table,
         #payslipContentBull2 table tr,
         #payslipContentBull2 table td,
@@ -259,7 +259,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="mb-1">📋 Gestion des Bulletins de Paie</h4>
+                        <h4 class="mb-1"> Gestion des Bulletins de Paie</h4>
                         <p class="text-muted mb-0">Consultez et modifiez les bulletins de paie générés</p>
                         <small class="text-primary">
                             <i class="fas fa-calendar me-1"></i>
@@ -576,13 +576,17 @@
                                                                 } elseif ($code_val == 411) {
                                                                     $fallback_taux = '0,40';
                                                                     // Forcer la même base et montant que Contribution Employeur (409)
-                                                                    if (isset($base_ce) && $base_ce !== null) $base_val = $base_ce;
-                                                                    if (isset($amount_ce) && $amount_ce !== null) $retenue['amount'] = $amount_ce;
+                                                                    if (isset($base_ce) && $base_ce !== null)
+                                                                        $base_val = $base_ce;
+                                                                    if (isset($amount_ce) && $amount_ce !== null)
+                                                                        $retenue['amount'] = $amount_ce;
                                                                 } elseif ($code_val == 412) {
                                                                     $fallback_taux = '1,20';
                                                                     // Forcer la même base et montant que Contribution Employeur (409)
-                                                                    if (isset($base_ce) && $base_ce !== null) $base_val = $base_ce;
-                                                                    if (isset($amount_ce) && $amount_ce !== null) $retenue['amount'] = $amount_ce;
+                                                                    if (isset($base_ce) && $base_ce !== null)
+                                                                        $base_val = $base_ce;
+                                                                    if (isset($amount_ce) && $amount_ce !== null)
+                                                                        $retenue['amount'] = $amount_ce;
                                                                 } elseif ($code_val == 305) {
                                                                     $fallback_taux = '3,00';
                                                                 } elseif ($code_val == 306) {
@@ -794,8 +798,8 @@
                                         // Lignes mixtes : part salariale et part patronale sur la même ligne
                                         $cnpsSal2 = $findRet2(301);   // Cotisation Retraite CNPS (salarié)
                                         $cnpsPat2 = $findRet2(308);   // Cotisation retraite employeur
-                                        $cmuSal2  = $findRet2(302);   // Couverture Maladie Universelle (salarié)
-                                        $cmuPat2  = $findRet2(307);   // CMU Employeur
+                                        $cmuSal2 = $findRet2(302);   // Couverture Maladie Universelle (salarié)
+                                        $cmuPat2 = $findRet2(307);   // CMU Employeur
 
                                         // Lignes exclusivement patronales, dans l'ordre du modèle
                                         $patronales2 = [];
@@ -1008,13 +1012,17 @@
                                             @if($cnpsSal2 || $cnpsPat2)
                                                 <tr>
                                                     <td>{{ ($cnpsSal2['code'] ?? $cnpsPat2['code'] ?? '') }}
-                                                        {{ $cnpsSal2['libelle'] ?? 'Cotisation Retraite CNPS' }}</td>
+                                                        {{ $cnpsSal2['libelle'] ?? 'Cotisation Retraite CNPS' }}
+                                                    </td>
                                                     <td class="bp2-num">{{ $cnpsSal2 ? $base2($cnpsSal2) : '' }}</td>
                                                     <td class="bp2-num">{{ $cnpsSal2 ? $taux2($cnpsSal2) : '' }}</td>
-                                                    <td class="bp2-num">{{ $cnpsSal2 ? $money2($cnpsSal2['amount'] ?? 0) : '' }}</td>
-                                                    <td class="bp2-num bp2-grp-sep">{{ $cnpsPat2 ? $base2($cnpsPat2) : '' }}</td>
+                                                    <td class="bp2-num">{{ $cnpsSal2 ? $money2($cnpsSal2['amount'] ?? 0) : '' }}
+                                                    </td>
+                                                    <td class="bp2-num bp2-grp-sep">{{ $cnpsPat2 ? $base2($cnpsPat2) : '' }}
+                                                    </td>
                                                     <td class="bp2-num">{{ $cnpsPat2 ? $taux2($cnpsPat2) : '' }}</td>
-                                                    <td class="bp2-num">{{ $cnpsPat2 ? $money2($cnpsPat2['amount'] ?? 0) : '' }}</td>
+                                                    <td class="bp2-num">{{ $cnpsPat2 ? $money2($cnpsPat2['amount'] ?? 0) : '' }}
+                                                    </td>
                                                 </tr>
                                             @endif
 
@@ -1022,13 +1030,16 @@
                                             @if($cmuSal2 || $cmuPat2)
                                                 <tr>
                                                     <td>{{ ($cmuSal2['code'] ?? $cmuPat2['code'] ?? '') }}
-                                                        {{ $cmuSal2['libelle'] ?? 'Couverture Maladie Universelle' }}</td>
+                                                        {{ $cmuSal2['libelle'] ?? 'Couverture Maladie Universelle' }}
+                                                    </td>
                                                     <td class="bp2-num">{{ $cmuSal2 ? $base2($cmuSal2) : '' }}</td>
                                                     <td class="bp2-num">{{ $cmuSal2 ? $taux2($cmuSal2) : '' }}</td>
-                                                    <td class="bp2-num">{{ $cmuSal2 ? $money2($cmuSal2['amount'] ?? 0) : '' }}</td>
+                                                    <td class="bp2-num">{{ $cmuSal2 ? $money2($cmuSal2['amount'] ?? 0) : '' }}
+                                                    </td>
                                                     <td class="bp2-num bp2-grp-sep">{{ $cmuPat2 ? $base2($cmuPat2) : '' }}</td>
                                                     <td class="bp2-num">{{ $cmuPat2 ? $taux2($cmuPat2) : '' }}</td>
-                                                    <td class="bp2-num">{{ $cmuPat2 ? $money2($cmuPat2['amount'] ?? 0) : '' }}</td>
+                                                    <td class="bp2-num">{{ $cmuPat2 ? $money2($cmuPat2['amount'] ?? 0) : '' }}
+                                                    </td>
                                                 </tr>
                                             @endif
 
@@ -1090,13 +1101,15 @@
                                         <table class="bp2-table bp2-pied">
                                             <tr>
                                                 <td class="bp2-w-lib">
-                                                    Mode de règlement : <em class="bp2-strong">{{ $paySlip->employee->paytypeEmp->name ?? '-' }}</em>
+                                                    Mode de règlement : <em
+                                                        class="bp2-strong">{{ $paySlip->employee->paytypeEmp->name ?? '-' }}</em>
                                                 </td>
                                                 <td class="bp2-lbl-tot">BRUT TOTAL</td>
                                                 <td class="bp2-num bp2-tot">{{ $money2($gainsTotal2) }}</td>
                                             </tr>
                                             <tr>
-                                                <td>Date : {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}</td>
+                                                <td>Date : {{ \Carbon\Carbon::parse($periode->date_fin)->format('d/m/Y') }}
+                                                </td>
                                                 <td class="bp2-lbl-tot">RETENUES</td>
                                                 <td class="bp2-num bp2-tot">{{ $money2($cumulSal2) }}</td>
                                             </tr>
@@ -1122,8 +1135,8 @@
                                                             id="signatureShow2"
                                                             style="width: 200px; height: 70px; position: relative; display: inline-block;">
                                                             @if($company->electronic_stamp)
-                                                                <img src="{{ url($company->electronic_stamp_url) }}" alt="Cachet"
-                                                                    width="80px" style="position: absolute;">
+                                                                <img src="{{ url($company->electronic_stamp_url) }}"
+                                                                    alt="Cachet" width="80px" style="position: absolute;">
                                                             @else
                                                                 <div class="avatar-initial bg-label-secondary rounded"
                                                                     style="position: absolute;">

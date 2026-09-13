@@ -801,7 +801,7 @@
                     </ol>
                 </nav>
                 <div class="d-flex align-items-center gap-2">
-                    <h4 class="periode-header-title mb-0">📅 {{ $periode->nom }}</h4>
+                    <h4 class="periode-header-title mb-0"> {{ $periode->nom }}</h4>
                     <span
                         class="badge-statut badge bg-label-{{ $periode->statut === 'validee' ? 'success' : ($periode->statut === 'payee' ? 'info' : ($periode->statut === 'annulee' ? 'danger' : 'warning')) }}">
                         {{ $periode->statut }}
