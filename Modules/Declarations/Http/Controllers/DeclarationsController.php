@@ -100,7 +100,7 @@ class DeclarationsController extends Controller
         }
 
         // Bulletins récents depuis la base de données
-        $derniersBulletins = PaySlip::with('employee')
+        $derniersBulletins = PaySlip::with(['employee', 'periode'])
             ->where('company_id', $companyId)
             ->latest('created_at')
             ->limit(5)
@@ -109,7 +109,12 @@ class DeclarationsController extends Controller
                 return (object) [
                     'id' => $bulletin->id,
                     'employee' => (object) ['name' => $bulletin->employee->name ?? 'Employé inconnu'],
-                    'periode' => $bulletin->salary_month,
+                    // La vue lit periode->nom / periode->date_debut : on passe un objet, pas la chaine salary_month
+                    'periode' => (object) [
+                        'nom' => $bulletin->periode->nom
+                            ?? ($bulletin->salary_month ? Carbon::parse($bulletin->salary_month)->translatedFormat('M Y') : null),
+                        'date_debut' => $bulletin->periode->date_debut ?? null,
+                    ],
                     'type' => ucfirst($bulletin->pay_type ?? 'mensuel'),
                     'salaire_net' => $bulletin->net_payble ?? 0,
                     'statut' => $bulletin->status === 'validated' ? 'Validé' : ($bulletin->status === 'generated' ? 'Généré' : 'Brouillon'),

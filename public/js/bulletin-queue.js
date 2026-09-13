@@ -51,6 +51,17 @@ class BulletinQueueManager {
 
             const data = await response.json();
 
+            // Periode sans bulletin : simple avertissement, ce n'est pas une panne
+            if (!data.success && data.empty) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Aucun bulletin',
+                    text: data.message
+                });
+                this.isProcessing = false;
+                return;
+            }
+
             if (!data.success) {
                 throw new Error(data.message || "Erreur lors du lancement de la génération");
             }

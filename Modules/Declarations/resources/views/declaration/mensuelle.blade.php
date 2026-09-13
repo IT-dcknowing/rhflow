@@ -1,7 +1,8 @@
-<?php
-    $version ='<?xml version="1.0" encoding="utf-8"?>';
-    echo '<?xml version="1.0" encoding="utf-8"?>';
-?>
+@php
+    // Declaration XML decoupee pour ne pas etre lue comme balise d'ouverture/fermeture PHP par l'editeur
+    $version = '<' . '?xml version="1.0" encoding="utf-8"?' . '>';
+    echo $version;
+@endphp
 @extends('layouts.app')
 
 @section('title', 'Gestion des Livres de Paie')
@@ -13,7 +14,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">📋 Gestion des déclarations mensuelles</h4>
+                    <h4 class="mb-1"> Gestion des déclarations mensuelles</h4>
                     <p class="text-muted mb-0">Consultez et modifiez les déclarations EDI ITS, EFI ITS, CNPS et CMU  mensuelles générées</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>

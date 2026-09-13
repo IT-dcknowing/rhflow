@@ -26,6 +26,30 @@ class BulletinQueueController extends Controller
                 ], 400);
             }
 
+            // La periode doit appartenir a l'entreprise de l'utilisateur et contenir des bulletins :
+            // sinon on renvoie un message clair au lieu de laisser le job echouer en erreur 500.
+            $companyId = Auth::user()->company_id;
+            $periode = \App\Models\PaiePeriode::where('id', $periodeId)->where('company_id', $companyId)->first();
+
+            if (!$periode) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Période introuvable pour votre entreprise.'
+                ], 404);
+            }
+
+            $nbBulletins = \Modules\PaieSalaries\Models\PaySlip::where('company_id', $companyId)
+                ->where('periode_id', $periodeId)
+                ->count();
+
+            if ($nbBulletins === 0) {
+                return response()->json([
+                    'success' => false,
+                    'empty' => true,
+                    'message' => "Aucun bulletin de paie n'a été généré pour la période « {$periode->nom} ». Lancez d'abord le calcul de la paie."
+                ], 200);
+            }
+
             // Dispatcher le job de manière SYNCHRONE pour éviter les problèmes de worker
             // On augmente le temps d'exécution pour ce script
             set_time_limit(600); // 10 minutes

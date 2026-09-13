@@ -59,10 +59,21 @@
                                         </span>
                                         @endif
                                     </p>
-                                    <p class="mb-2"><strong>Utilisateurs:</strong> {{ auth()->user()->company->users_count ?? 0 }} / {{ auth()->user()->company->companyPlan->max_users == 0 ? 'Illimité' : auth()->user()->company->companyPlan->max_users }}</p>
+                                    @php
+                                        // users_count / employees_count ne sont jamais charges : on compte directement.
+                                        // Les utilisateurs sont rattaches par company_id (la relation users() utilise config_company).
+                                        $currentCompany = auth()->user()->company;
+                                        $currentPlan = $currentCompany->companyPlan;
+                                        $nbTotal = \App\Models\User::where('company_id', $currentCompany->id)->count()
+                                            + $currentCompany->employees()->count();
+                                        // 0 signifie illimite : si l'une des deux limites l'est, le total l'est aussi
+                                        $maxTotal = ($currentPlan->max_users == 0 || $currentPlan->max_employees == 0)
+                                            ? 'Illimité'
+                                            : $currentPlan->max_users + $currentPlan->max_employees;
+                                    @endphp
+                                    <p class="mb-2"><strong>Utilisateurs / Employés:</strong> {{ $nbTotal }} / {{ $maxTotal }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p class="mb-2"><strong>Employés:</strong> {{ auth()->user()->company->employees_count ?? 0 }} / {{ auth()->user()->company->companyPlan->max_employees == 0 ? 'Illimité' : auth()->user()->company->companyPlan->max_employees }}</p>
                                     <p class="mb-2"><strong>Stockage:</strong> {{ number_format(auth()->user()->company->storage_used ?? 0, 2) }} GB / {{ auth()->user()->company->companyPlan->storage_limit == 0 ? 'Illimité' : auth()->user()->company->companyPlan->storage_limit }} GB</p>
                                     @if(auth()->user()->company->subscription_expires_at)
                                     <p class="mb-2"><strong>Expire le:</strong> {{ auth()->user()->company->subscription_expires_at->format('d/m/Y') }}</p>
@@ -125,11 +136,10 @@
                         <h5 class="card-title">{{ $plan->name }}</h5>
                         <div class="pricing-price mb-2">
                             <span class="price">{{ $plan->formatted_price }}</span>
-                            <span class="period">/{{ $plan->duration > 1 ? $plan->duration . ' mois' : 'mois' }}</span>
+                            {{-- duration peut contenir du texte ("Mois") en base : on le convertit en entier pour eviter "Mois mois" --}}
+                            <span class="period">/{{ (int) $plan->duration > 1 ? (int) $plan->duration . ' mois' : 'mois' }}</span>
                         </div>
-                        @if($plan->price_yearly)
-                        <small class="text-muted">ou {{ number_format($plan->price_yearly, 0,'.',' ') }}/an</small>
-                        @endif
+                        <small class="text-muted">ou {{ number_format($plan->price_yearly ?? 0, 0, ',', ' ') }} FCFA/an</small>
                     </div>
 
                     <div class="features-list mb-4">
@@ -382,7 +392,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6>${plan.name}</h6>
-                                    <p class="mb-2">${plan.formatted_price}/${plan.duration > 1 ? plan.duration + ' mois' : 'mois'}</p>
+                                    <p class="mb-2">${plan.formatted_price}/${parseInt(plan.duration, 10) > 1 ? parseInt(plan.duration, 10) + ' mois' : 'mois'}</p>
                                     <button class="btn btn-sm btn-primary w-100" onclick="upgradeToPlan(${plan.id})">
                                         Changer vers ce plan
                                     </button>

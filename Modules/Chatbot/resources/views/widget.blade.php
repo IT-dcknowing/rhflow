@@ -490,13 +490,6 @@
         content.innerHTML = message;
         bubble.style.display = 'block';
         if(badge) badge.style.display = 'block';
-        
-        // Vibration légère pour attirer l'attention
-        const btn = document.getElementById('chatbot-toggle-btn');
-        if(btn) {
-            btn.style.transform = 'scale(1.1) rotate(5deg)';
-            setTimeout(() => { btn.style.transform = 'scale(1) rotate(0deg)'; }, 300);
-        }
 
         if (duration > 0) {
             setTimeout(() => {
@@ -511,53 +504,6 @@
         if(bubble) bubble.style.display = 'none';
         if(badge) badge.style.display = 'none';
     };
-
-    // --- Robot Suiveur de Souris (Version Définitive) ---
-    let mouseX = window.innerWidth - 85;
-    let mouseY = window.innerHeight - 85;
-    let robotX = mouseX;
-    let robotY = mouseY;
-    let chatbotWidget = null;
-
-    document.addEventListener('mousemove', (e) => {
-        if (e.clientX < 320) {
-            mouseX = e.clientX + 40; 
-            mouseY = e.clientY; 
-        } else {
-            mouseX = window.innerWidth - 85;
-            mouseY = window.innerHeight - 85;
-        }
-    });
-
-    function animateRobot() {
-        if (!chatbotWidget) {
-            chatbotWidget = document.getElementById('ai-assistant-wrapper');
-            if (chatbotWidget) {
-                chatbotWidget.style.bottom = 'auto';
-                chatbotWidget.style.right = 'auto';
-                chatbotWidget.style.transition = 'none';
-                chatbotWidget.style.display = 'flex';
-                chatbotWidget.style.flexDirection = 'column';
-                chatbotWidget.style.alignItems = 'flex-end';
-            }
-        }
-
-        const chatWindow = document.getElementById('chatbot-container');
-        const isChatOpen = chatWindow && (chatWindow.style.display === 'flex' || chatWindow.style.display === 'block');
-
-        // On ne suit la souris que si le chat est FERMÉ
-        if (chatbotWidget && !isChatOpen) {
-            robotX += (mouseX - robotX) * 0.12; // Un peu plus rapide (0.12)
-            robotY += (mouseY - robotY) * 0.12;
-            
-            chatbotWidget.style.left = Math.round(robotX - 30) + 'px';
-            chatbotWidget.style.top = Math.round(robotY - (chatbotWidget.offsetHeight || 60) + 30) + 'px';
-        }
-        requestAnimationFrame(animateRobot);
-    }
-    
-    // Forcer le premier démarrage
-    animateRobot();
 
     // --- Dictionnaire d'Expertise RH (Intelligence Navigation) ---
     const appExpertise = {
@@ -626,12 +572,6 @@
         
         content.innerHTML = message;
         bubble.style.display = 'block';
-        
-        const btn = document.getElementById('chatbot-toggle-btn');
-        if(btn) {
-            btn.style.transform = 'scale(1.2) rotate(10deg)';
-            setTimeout(() => { btn.style.transform = 'scale(1) rotate(0deg)'; }, 400);
-        }
 
         if (window.aiTipTimeout) clearTimeout(window.aiTipTimeout);
         if (duration > 0) {
@@ -652,15 +592,9 @@
             pointer-events: none !important; 
             z-index: 1000000 !important; 
         }
-        #chatbot-toggle-btn, #ai-tip-bubble { 
-            pointer-events: auto !important; 
+        #chatbot-toggle-btn, #ai-tip-bubble {
+            pointer-events: auto !important;
         }
-        @keyframes aiPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(105, 108, 255, 0.6); }
-            100% { transform: scale(1); }
-        }
-        #chatbot-toggle-btn { animation: aiPulse 4s infinite ease-in-out; }
     `;
     document.head.appendChild(robotStyle);
 
@@ -668,8 +602,7 @@
         renderMessages();
         initMenuGuide();
         initActionNarrator();
-        animateRobot();
-        
+
         setTimeout(() => {
             if (chatHistory.length <= 1) {
                 window.showAiTip("Je suis là pour vous aider ! 😊", 15000);
