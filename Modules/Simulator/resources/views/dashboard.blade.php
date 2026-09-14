@@ -3,7 +3,7 @@
 @section('title', 'Simulateur de paie - Interface améliorée')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <!-- En-tête améliorée -->
     <div class="row mb-4">
         <div class="col-12">

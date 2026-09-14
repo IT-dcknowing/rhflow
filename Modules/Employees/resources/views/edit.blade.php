@@ -238,7 +238,7 @@
     $dobFormatted = $employee->dob ? $employee->dob->format('Y-m-d') : '';
 @endphp
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <div class="row">
         <div class="col-12">
             <!-- En-tête de la page -->

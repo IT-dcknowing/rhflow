@@ -1,7 +1,7 @@
 @extends('evenements::layouts.master')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <!-- En-tête -->
     <div class="row mb-4">
         <div class="col-12">

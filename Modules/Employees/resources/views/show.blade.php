@@ -3,7 +3,7 @@
 @section('title', 'Détails Employé - ' . $employee->name)
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <!-- En-tête avec informations principales -->
     <div class="row mb-4">
         <div class="col-xl-12">

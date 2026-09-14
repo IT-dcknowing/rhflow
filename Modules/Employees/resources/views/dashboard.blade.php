@@ -3,7 +3,7 @@
 @section('title', 'Tableau de bord RH - Gestion des Employés')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <!-- En-tête du Dashboard -->
     <div class="row mb-4">
         <div class="col-12">
@@ -231,11 +231,11 @@
                     datasets: [{
                         data: sectorData.map(item => item.count),
                         backgroundColor: [
-                            '#696cff',
-                            '#71dd37',
-                            '#ff3e1d',
-                            '#03c3ec',
-                            '#6f42c1'
+                            '#253e87',
+                            '#4f6cc8',
+                            '#8aa0e0',
+                            '#c7d2fe',
+                            '#1f7a4d'
                         ],
                         borderWidth: 0
                     }]
@@ -278,10 +278,10 @@
                     datasets: [{
                         data: maritalData.map(item => item.count),
                         backgroundColor: [
-                            '#696cff',
-                            '#71dd37',
-                            '#ffab00',
-                            '#8592a3'
+                            '#253e87',
+                            '#4f6cc8',
+                            '#96650a',
+                            '#a0a8c0'
                         ],
                         borderWidth: 0
                     }]

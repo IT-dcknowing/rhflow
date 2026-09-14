@@ -3,7 +3,7 @@
 @section('title', 'Tableau de bord Employé')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid ds">
     <div class="row">
         <div class="col-12">
             <!-- Header -->

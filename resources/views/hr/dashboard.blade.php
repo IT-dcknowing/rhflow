@@ -3,7 +3,7 @@
 @section('title', $estPaie ? 'Tableau de bord Paie' : 'Tableau de bord RH')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
 
     <!-- Header -->
     <div class="row mb-4">

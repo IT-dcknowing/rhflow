@@ -6,7 +6,7 @@
 @section('title', 'Types de contrats - RH Flow')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <!-- En-tête de la page -->
     <div class="row mb-4">
         <div class="col-12">

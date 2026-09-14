@@ -37,7 +37,7 @@
 @endpush
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
@@ -116,12 +116,13 @@
                         <div class="timeline">
                             @foreach($exercice->periodes as $periode)
                             <div class="timeline-item">
-                                <div class="card mb-3">
+                                <div class="card mb-3 periode-card">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
                                                 <h5 class="mb-1">
-                                                    <a href="{{ route('company.paiesalaries.periodes.show', $periode->id) }}" class="text-primary">{{ $periode->nom }}</a>
+                                                    {{-- stretched-link : toute la carte ouvre la période --}}
+                                                    <a href="{{ route('company.paiesalaries.periodes.show', $periode->id) }}" class="text-primary stretched-link">{{ $periode->nom }}</a>
                                                 </h5>
                                                 <p class="mb-1">
                                                     <span class="text-muted">Du</span> 
@@ -138,8 +139,9 @@
                                                     </span>
                                                 </p>
                                             </div>
-                                            <div class="dropdown">
-                                                <button class="btn p-0" type="button" id="periodeActions{{ $periode->id }}" 
+                                            {{-- Au-dessus du lien étendu pour que le menu reste cliquable --}}
+                                            <div class="dropdown position-relative" style="z-index: 2;">
+                                                <button class="btn p-0" type="button" id="periodeActions{{ $periode->id }}"
                                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
@@ -185,6 +187,25 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    /* Carte de période entièrement cliquable */
+    .periode-card {
+        cursor: pointer;
+        transition: border-color .15s, background-color .15s;
+    }
+
+    .periode-card:hover {
+        border-color: var(--navy-line, #c7d2fe) !important;
+        background-color: var(--navy-tint-2, #f8faff) !important;
+    }
+
+    .periode-card .stretched-link {
+        text-decoration: none;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>

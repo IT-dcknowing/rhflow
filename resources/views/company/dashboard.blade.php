@@ -23,7 +23,7 @@
 @section('title', 'Tableau de bord Entreprise - RH Flow')
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="container-xxl flex-grow-1 container-p-y ds">
 
         <!-- En-tête du Dashboard -->
         <div class="row mb-4">
