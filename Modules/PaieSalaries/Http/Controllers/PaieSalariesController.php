@@ -386,6 +386,13 @@ class PaieSalariesController extends Controller
         $exercice->created_by = auth()->id();
         $exercice->save();
 
+        // Créé depuis « Paie du mois » : on y revient pour ouvrir directement le mois suivant
+        if ($request->input('retour') === 'paie-du-mois') {
+            return redirect()
+                ->route("company.paiesalaries.paie-du-mois", ['nouvelle' => 1])
+                ->with("success", "Exercice créé avec succès.");
+        }
+
         return redirect()
             ->route("company.paiesalaries.exercices.show", $exercice->id)
             ->with("success", "Exercice créé avec succès.");
@@ -501,21 +508,47 @@ class PaieSalariesController extends Controller
             "notes" => "nullable|string",
         ]);
 
-        $periode = new PaiePeriode();
-        $periode->nom = $validated["nom"];
-        $periode->code = PaiePeriode::genererCode(
-            $exercice,
-            $validated["type_periode"],
-        );
-        $periode->exercice_id = $exercice->id;
-        $periode->date_debut = $validated["date_debut"];
-        $periode->date_fin = $validated["date_fin"];
-        $periode->date_paiement = $validated["date_paiement"];
-        $periode->type_periode = $validated["type_periode"];
-        $periode->notes = $validated["notes"] ?? null;
-        $periode->company_id = Auth::user()->company_id;
-        $periode->created_by = auth()->id();
-        $periode->save();
+        // Verrou sur l'exercice : deux envois simultanés (double clic) ne créent qu'une seule période
+        $doublon = null;
+        $periode = DB::transaction(function () use ($exercice, $validated, &$doublon) {
+            PaieExercice::whereKey($exercice->id)->lockForUpdate()->first();
+
+            $doublon = PaiePeriode::where('company_id', Auth::user()->company_id)
+                ->where('type_periode', $validated["type_periode"])
+                ->whereDate('date_debut', $validated["date_debut"])
+                ->whereDate('date_fin', $validated["date_fin"])
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($doublon) {
+                return null;
+            }
+
+            $periode = new PaiePeriode();
+            $periode->nom = $validated["nom"];
+            $periode->code = PaiePeriode::genererCode(
+                $exercice,
+                $validated["type_periode"],
+            );
+            $periode->exercice_id = $exercice->id;
+            $periode->date_debut = $validated["date_debut"];
+            $periode->date_fin = $validated["date_fin"];
+            $periode->date_paiement = $validated["date_paiement"];
+            $periode->type_periode = $validated["type_periode"];
+            $periode->notes = $validated["notes"] ?? null;
+            $periode->company_id = Auth::user()->company_id;
+            $periode->created_by = auth()->id();
+            $periode->save();
+
+            return $periode;
+        });
+
+        // La période existe déjà (second envoi du même formulaire) : on l'affiche au lieu d'en créer une autre
+        if (!$periode) {
+            return redirect()
+                ->route("company.paiesalaries.periodes.show", $doublon->id)
+                ->with("success", __("La période :nom est déjà ouverte.", ['nom' => $doublon->nom]));
+        }
 
         // DEBUT DE L'AUTOMATISATION DU REPORT (Retenues, Primes, Prêts)
         try {
@@ -655,7 +688,7 @@ class PaieSalariesController extends Controller
         // FIN DE L'AUTOMATISATION DU REPORT
 
         return redirect()
-            ->route("company.paiesalaries.exercices.show", $exercice->id)
+            ->route("company.paiesalaries.periodes.show", $periode->id)
             ->with("success", "Période de paie créée avec succès.");
     }
 
@@ -673,6 +706,9 @@ class PaieSalariesController extends Controller
         $periode = PaiePeriode::with([
                         "exercice",
                     ])->findOrFail($id);
+
+        // Retenues légales appliquées à tous les salariés tant que les bulletins ne sont pas générés
+        app(\App\Services\SalaryService::class)->appliquerRetenuesLegalesPeriode($periode);
         $retenues = Retenue::whereHas('periode', function($query) use ($periode) {
                         $query->where('id', $periode->id);
                     })->where('type', 'add')->where('code', '!=', '500')->get();
@@ -743,118 +779,84 @@ class PaieSalariesController extends Controller
             }
         }
 
-        // Récupérer les éléments de la période précédente pour le reporting
-        $previousPeriode = PaiePeriode::where('exercice_id', $periode->exercice_id)
+        // Période précédente dans le temps : c'est d'elle que storePeriode a repris les éléments à l'ouverture
+        $previousPeriode = PaiePeriode::where('company_id', $companyId)
             ->where('id', '!=', $periode->id)
-            ->where('company_id', $companyId)
+            ->where('date_fin', '<', $periode->date_debut)
+            ->orderBy('date_fin', 'desc')
             ->first();
 
-        $previousElements = [];
-        if ($previousPeriode) {
-            // Récupérer les retenues de la période précédente
-            $previousRetenues = Retenue::where('periode_id', $previousPeriode->id)
-                ->where('company_id', $companyId)
-                ->where('type', 'add')
-                ->where('code', '!=', '500')
-                ->with('employee')
-                ->get();
+        // Salariés de la période : même sélection que la page « Calcul salaire »
+        $employees = Employee::active()
+            ->where('company_id', $companyId)
+            ->where('start_date', '<=', $periode->date_fin)
+            ->where(function ($query) use ($periode) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>=', $periode->date_debut);
+            })
+            ->get();
 
-            // Récupérer les allocations de la période précédente
-            $previousAllowances = Allowance::where('periode_id', $previousPeriode->id)
-                ->where('company_id', $companyId)
-                ->with('employee')
-                ->get();
+        // La période affichée devient la période active (sélecteur du haut, livre de paie)
+        session(['active_periode_id' => $periode->id, 'active_exercice_id' => $periode->exercice_id]);
 
-            // Récupérer les avantages de la période précédente
-            $previousAvantages = Avantage::where('periode_id', $previousPeriode->id)
-                ->where('company_id', $companyId)
-                ->with('employee')
-                ->get();
+        return view("paiesalaries::periodes.show", compact("periode", "activeLoans", "loans",  "totalPaid", "remainingAmount", "repaymentPercentage", "repaymentSchedule", "retenuesLoan", "loanPayments", "retenues", "allowances", "avantages", "previousPeriode", "employees"));
+    }
 
-            // Récupérer les prêts de la période précédente qui ont pour échéancier à cette période
-            $previousLoans = Loan::where('periode_id', $previousPeriode->id)
-                ->where('company_id', $companyId)
-                ->where('statut', 'running')
-                ->where('start_date', '<=', $periode->date_fin)
-                ->where('end_date', '>=', $periode->date_debut)
-                ->with('employee')
-                ->get();
+    /**
+     * Paie du mois : affiche la période à traiter, ou l'écran d'ouverture du mois suivant
+     */
+    public function paieDuMois(Request $request)
+    {
+        $companyId = Auth::user()->company_id;
 
-            // Regrouper tous les éléments par employé
-            $allEmployees = collect();
+        $dernierePeriode = PaiePeriode::where('company_id', $companyId)
+            ->orderBy('date_debut', 'desc')
+            ->orderBy('id', 'desc')
+            ->first();
 
-            // Ajouter les employés des retenues
-            foreach ($previousRetenues as $retenue) {
-                if ($retenue->employee && $retenue->employee->is_active) {
-                    $employeeId = $retenue->employee->id;
-                    if (!$allEmployees->has($employeeId)) {
-                        $allEmployees->put($employeeId, [
-                            'employee' => $retenue->employee,
-                            'retenues' => collect(),
-                            'allowances' => collect(),
-                            'avantages' => collect(),
-                            'loans' => collect(),
-                        ]);
-                    }
-                    $allEmployees->get($employeeId)['retenues']->push($retenue);
-                }
-            }
-
-            // Ajouter les employés des allocations
-            foreach ($previousAllowances as $allowance) {
-                if ($allowance->employee && $allowance->employee->is_active) {
-                    $employeeId = $allowance->employee->id;
-                    if (!$allEmployees->has($employeeId)) {
-                        $allEmployees->put($employeeId, [
-                            'employee' => $allowance->employee,
-                            'retenues' => collect(),
-                            'allowances' => collect(),
-                            'avantages' => collect(),
-                            'loans' => collect()
-                        ]);
-                    }
-                    $allEmployees->get($employeeId)['allowances']->push($allowance);
-                }
-            }
-
-            // Ajouter les employés des avantages
-            foreach ($previousAvantages as $avantage) {
-                if ($avantage->employee && $avantage->employee->is_active) {
-                    $employeeId = $avantage->employee->id;
-                    if (!$allEmployees->has($employeeId)) {
-                        $allEmployees->put($employeeId, [
-                            'employee' => $avantage->employee,
-                            'retenues' => collect(),
-                            'allowances' => collect(),
-                            'avantages' => collect(),
-                            'loans' => collect()
-                        ]);
-                    }
-                    $allEmployees->get($employeeId)['avantages']->push($avantage);
-                }
-            }
-
-            // Ajouter les employés des prêts
-            foreach ($previousLoans as $loan) {
-                if ($loan->employee && $loan->employee->is_active) {
-                    $employeeId = $loan->employee->id;
-                    if (!$allEmployees->has($employeeId)) {
-                        $allEmployees->put($employeeId, [
-                            'employee' => $loan->employee,
-                            'retenues' => collect(),
-                            'allowances' => collect(),
-                            'avantages' => collect(),
-                            'loans' => collect()
-                        ]);
-                    }
-                    $allEmployees->get($employeeId)['loans']->push($loan);
-                }
-            }
-
-            $previousElements = $allEmployees->sortBy('employee.name');
+        // La dernière période n'est pas terminée : on la reprend directement
+        if (!$request->query('nouvelle') && $dernierePeriode
+            && !in_array($dernierePeriode->statut, ['payee', 'cloture', 'annulee'])) {
+            return redirect()->route('company.paiesalaries.periodes.show', $dernierePeriode->id);
         }
 
-        return view("paiesalaries::periodes.show", compact("periode", "activeLoans", "loans",  "totalPaid", "remainingAmount", "repaymentPercentage", "repaymentSchedule", "retenuesLoan", "loanPayments", "retenues", "allowances", "avantages", "previousElements", "previousPeriode"));
+        // Mois à ouvrir : celui qui suit la dernière période, sinon le mois en cours
+        $debut = $dernierePeriode
+            ? Carbon::parse($dernierePeriode->date_fin)->addDay()->startOfMonth()
+            : now()->startOfMonth();
+        $fin = $debut->copy()->endOfMonth();
+
+        // Une période couvre déjà ce mois : on l'affiche au lieu d'en créer une seconde
+        $existante = PaiePeriode::where('company_id', $companyId)
+            ->where('date_debut', '<=', $fin->toDateString())
+            ->where('date_fin', '>=', $debut->toDateString())
+            ->orderBy('date_debut', 'desc')
+            ->first();
+
+        if ($existante) {
+            if (!in_array($existante->statut, ['payee', 'cloture', 'annulee'])) {
+                return redirect()->route('company.paiesalaries.periodes.show', $existante->id);
+            }
+
+            return redirect()->route('company.paiesalaries.exercices.show', $existante->exercice_id)
+                ->with('error', __('Une période existe déjà pour ce mois. Créez la période suivante depuis l\'exercice.'));
+        }
+
+        $moisFr = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        $nomMois = ucfirst($moisFr[$debut->month - 1]) . ' ' . $debut->year;
+
+        $exercice = PaieExercice::where('company_id', $companyId)
+            ->where('date_debut', '<=', $debut->toDateString())
+            ->where('date_fin', '>=', $fin->toDateString())
+            ->orderBy('date_debut', 'desc')
+            ->first();
+
+        if (!$exercice) {
+            return redirect()->route('company.paiesalaries.exercices.create', ['retour' => 'paie-du-mois', 'annee' => $debut->year])
+                ->with('error', __('Aucun exercice ne couvre :mois. Créez l\'exercice :annee pour ouvrir cette paie.', ['mois' => $nomMois, 'annee' => $debut->year]));
+        }
+
+        return view('paiesalaries::periodes.ouvrir', compact('exercice', 'debut', 'fin', 'nomMois', 'dernierePeriode'));
     }
 
     /**
@@ -1347,6 +1349,11 @@ class PaieSalariesController extends Controller
                     }
                     $retenue->save();
                 }
+            }
+
+            // Retenues légales recalculées (et créées si absentes) avec le calcul de référence
+            if ($periode_id && ($periodeRetenues = PaiePeriode::find($periode_id))) {
+                app(\App\Services\SalaryService::class)->appliquerRetenuesLegales($employee->refresh(), $periodeRetenues);
             }
 
             \DB::commit();
@@ -2040,6 +2047,9 @@ class PaieSalariesController extends Controller
         $typesRetenues = TypeRetenue::where("id",'!=', 5)
             ->get();
 
+        // Retenues légales toujours appliquées : plus d'action manuelle sur cette page
+        app(\App\Services\SalaryService::class)->appliquerRetenuesLegalesPeriode($periode);
+
         $employees = Employee::active()
             ->with("retenues")
             ->where("company_id", Auth::user()->company_id)
@@ -2591,6 +2601,11 @@ class PaieSalariesController extends Controller
             );
         } else {
             $periode = $this->getActivePeriode();
+        }
+
+        // Retenues légales à jour avant l'aperçu des salaires
+        if ($periode) {
+            app(\App\Services\SalaryService::class)->appliquerRetenuesLegalesPeriode($periode);
         }
 
         $employees = Employee::active()
@@ -3345,6 +3360,9 @@ public function storeRemboursement(Request $request)
             if ($missing_payslips->count() > 0) {
                 foreach ($missing_payslips as $employee_id) {
                     $employee = Employee::where('id', $employee_id)->where('is_active', 1)->first();
+
+                    // Aucun bulletin sans ITS, CNPS et CMU : retenues légales appliquées juste avant le calcul
+                    app(\App\Services\SalaryService::class)->appliquerRetenuesLegales($employee, $periode);
 
                     $payslipEmployee = new PaySlip();
                     $payslipEmployee->employee_id = $employee->id;

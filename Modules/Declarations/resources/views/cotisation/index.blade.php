@@ -3,7 +3,7 @@
 @section('title', __('État des cotisations'))
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="container-xxl flex-grow-1 container-p-y ds">
         <!-- En-tête de la page -->
         <div class="row mb-4">
             <div class="col-12">
@@ -125,6 +125,12 @@
 
                             periodesSelect.append('<option value="' + periode.id + '" data-pdebut="' + periode.date_debut + '" data-pfin="' + periode.date_fin + '">' + periode.nom + '</option>');
                         });
+
+                        // Période demandée dans l'adresse (lien depuis « Paie du mois »)
+                        var periodeDemandee = new URLSearchParams(window.location.search).get('periode_id');
+                        if (periodeDemandee && periodesSelect.find('option[value="' + periodeDemandee + '"]').length) {
+                            periodesSelect.val(periodeDemandee);
+                        }
 
                         // Déclencher le chargement des données si une période est sélectionnée
                         if (periodesSelect.val()) {
@@ -638,6 +644,12 @@
         }
 
         $(document).ready(function () {
+            // Exercice demandé dans l'adresse (lien depuis « Paie du mois »)
+            var exerciceDemande = new URLSearchParams(window.location.search).get('exercice_id');
+            if (exerciceDemande && $('#exercice option[value="' + exerciceDemande + '"]').length) {
+                $('#exercice').val(exerciceDemande).trigger('change.select2');
+            }
+
             callperiodepaie();
 
             // Si vous avez un champ d'année qui peut changer

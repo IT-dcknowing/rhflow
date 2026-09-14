@@ -349,6 +349,81 @@ class SalaryService
         return $rubriques;
     }
 
+    /**
+     * Enregistre (crée ou met à jour) les retenues légales d'un salarié pour une période :
+     * ITS, CNPS, CMU et charges patronales. Remplace l'application manuelle « Voir/Appliquer ».
+     */
+    public function appliquerRetenuesLegales(Employee $employee, PaiePeriode $periode): void
+    {
+        foreach ($this->getDefaultDeductionsDetails($employee, $periode->id) as $ded) {
+            // Colonne « NOMBRE » du bulletin : parts pour la réduction, bénéficiaires pour la CMU
+            $nombre = null;
+            if ($ded['code'] === '402') {
+                $nombre = $employee->parts;
+            } elseif (in_array($ded['code'], ['302', '307'], true)) {
+                $nombre = $employee->cmu;
+            }
+
+            \Modules\PaieSalaries\Models\Retenue::updateOrCreate(
+                [
+                    'employee_id' => $employee->id,
+                    'periode_id' => $periode->id,
+                    'code' => $ded['code'],
+                ],
+                [
+                    'libelle' => $ded['libelle'],
+                    'type_retenue_id' => $ded['type_id'],
+                    'ordre' => $ded['ordre'],
+                    'salariale' => $ded['salariale'],
+                    'patronale' => $ded['patronale'],
+                    'base' => $ded['base'],
+                    'taux' => $ded['taux'],
+                    'amount' => $ded['amount'],
+                    'jours_work' => $nombre,
+                    'date_application' => now(),
+                    'is_active' => 1,
+                    'type' => 'default',
+                    'month_paie' => \Carbon\Carbon::parse($periode->date_debut)->format('Y-m'),
+                    'company_id' => $employee->company_id,
+                ]
+            );
+        }
+    }
+
+    /**
+     * Applique les retenues légales à tous les salariés actifs de la période.
+     * Sans effet une fois les bulletins générés ou la période payée : l'historique ne bouge plus.
+     *
+     * @return int Nombre de salariés traités
+     */
+    public function appliquerRetenuesLegalesPeriode(PaiePeriode $periode): int
+    {
+        if (in_array($periode->statut, ['payee', 'cloture', 'annulee'], true) || $periode->bulletins()->exists()) {
+            return 0;
+        }
+
+        $employees = Employee::active()
+            ->where('company_id', $periode->company_id)
+            ->where('start_date', '<=', $periode->date_fin)
+            ->where(function ($query) use ($periode) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>=', $periode->date_debut);
+            })
+            ->get();
+
+        $traites = 0;
+        foreach ($employees as $employee) {
+            try {
+                $this->appliquerRetenuesLegales($employee, $periode);
+                $traites++;
+            } catch (\Throwable $e) {
+                \Log::warning("Retenues légales non appliquées pour l'employé #{$employee->id}, période #{$periode->id} : " . $e->getMessage());
+            }
+        }
+
+        return $traites;
+    }
+
     // -------------------------------------------------------
     // HEURES SUPPLÉMENTAIRES — Taux légaux (Décret n°96-203)
     // -------------------------------------------------------

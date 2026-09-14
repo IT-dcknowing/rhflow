@@ -8,6 +8,9 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
     //Dashboard
     Route::get('paiesalaries/dashboard', [PaieSalariesController::class, 'dashboard'])->name('paiesalaries.dashboard');
 
+    // Paie du mois : ouvre la période à traiter ou propose d'ouvrir le mois suivant
+    Route::get('paiesalaries/paie-du-mois', [PaieSalariesController::class, 'paieDuMois'])->name('paiesalaries.paie-du-mois');
+
     // Routes pour les exercices
     Route::get('paiesalaries/exercices', [PaieSalariesController::class, 'indexExercice'])->name('paiesalaries.exercices.index');
     Route::get('paiesalaries/exercices/create', [PaieSalariesController::class, 'createExercice'])->name('paiesalaries.exercices.create');

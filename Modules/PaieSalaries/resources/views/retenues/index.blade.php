@@ -7,7 +7,7 @@
 @section('title', 'Gestion des retenues')
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="container-xxl flex-grow-1 container-p-y ds">
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
@@ -89,7 +89,6 @@
                                                     <th>Charges Employé</th>
                                                     <th>Charges Employeur</th>
                                                     <th>Statut</th>
-                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -124,36 +123,16 @@
                                                                     })
                                                                     ->count();
                                                             @endphp
+                                                            {{-- Appliquées automatiquement chaque mois (SalaryService) : aucune action manuelle --}}
                                                             @if($status > 0)
-                                                                <span class="badge bg-success">
-                                                                    Appliqué
+                                                                <span class="badge bg-success" title="Calculées et enregistrées automatiquement">
+                                                                    Appliqué automatiquement
                                                                 </span>
                                                             @else
-                                                                <span class="badge bg-warning">
+                                                                <span class="badge bg-warning" title="Bulletins déjà générés avant l'application automatique">
                                                                     Non appliqué
                                                                 </span>
                                                             @endif
-                                                        </td>
-                                                        <td>
-                                                            <div class="btn-group">
-                                                                <button type="button" class="btn btn-light btn-sm dropdown-toggle"
-                                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                                    <i class="fas fa-ellipsis-v"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu">
-                                                                    <li>
-                                                                        <a class="dropdown-item bg-label-success btn-apply-retenue"
-                                                                            href="#" data-bs-toggle="modal" data-bs-size="xl"
-                                                                            data-bs-target="#applyRetenueModal"
-                                                                            data-employee-id="{{ $employee->id }}"
-                                                                            data-employee-name="{{ $employee->name }}"
-                                                                            data-periode-id="{{ $periode->id }}" @if($status > 0)
-                                                                            data-status="{{ $status }}" @endif>
-                                                                            <i class="fas fa-check me-2"></i>Voir/Appliquer
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
                                                         </td>
                                                     </tr>
                                                 @empty
@@ -367,34 +346,6 @@
         @endif
     </div>
     @if($periode)
-        <!-- Modal pour appliquer les retenues -->
-        <div class="modal fade" id="applyRetenueModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                    <div class="card-header modal-header">
-                        <h5 class="modal-title mb-3">Appliquer les retenues</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('company.paiesalaries.retenues.storeApply') }}" id="applyRetenueForm" method="POST">
-                        @csrf
-                        <input type="text" id="periode_id" name="periode_id" value="{{$periode->id}}" hidden="">
-                        <div class="modal-body" id="modalBodyContent">
-                            <!-- Le contenu sera chargé dynamiquement via AJAX -->
-                            <div class="text-center my-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Chargement...</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
-                            <button type="submit" class="btn btn-primary retenue-btn">Enregistrer</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <!-- Modal Ajout Retenue -->
         <div class="modal fade" id="addRetenueModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
@@ -580,30 +531,6 @@
                     },
                     error: function () {
                         $('#addEmployeeRetenueModalBody').html(
-                            '<div class="alert alert-danger">Une erreur est survenue lors du chargement du formulaire.</div>'
-                        );
-                    }
-                });
-            });
-
-            // Gérer l'ouverture du modal d'ajout d'éléments
-            $('.btn-apply-retenue').on('click', function () {
-                var employeeId = $(this).data('employee-id');
-                var periodeId = $(this).data('periode-id');
-                var employeeName = $(this).data('employee-name');
-                var status = $(this).data('status');
-                // Mettre à jour le titre du modal
-                $('#applyRetenueModal .modal-title').text('Appliquer les retenues pour ' + employeeName);
-
-                // Charger le formulaire via AJAX
-                $.ajax({
-                    url: '{{ route("company.paiesalaries.retenues.apply", [":id", ":periode_id"]) }}'.replace(':id', employeeId).replace(':periode_id', periodeId),
-                    type: 'GET',
-                    success: function (response) {
-                        $('#modalBodyContent').html(response);
-                    },
-                    error: function () {
-                        $('#modalBodyContent').html(
                             '<div class="alert alert-danger">Une erreur est survenue lors du chargement du formulaire.</div>'
                         );
                     }
@@ -895,7 +822,7 @@
                         highlight: "retenues-tab-created"
                     },
                     {
-                        msg: "🔍 <b>Vérification :</b> Cliquez sur <span class='badge bg-success'>Voir/Appliquer</span> dans le tableau pour vérifier le détail d'un employé.",
+                        msg: "✅ <b>Automatique :</b> les retenues légales sont appliquées à chaque salarié, tous les mois, sans action de votre part.",
                         delay: 10000
                     }
                 ];

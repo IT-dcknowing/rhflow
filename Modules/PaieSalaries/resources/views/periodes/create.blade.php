@@ -9,7 +9,7 @@
 @endpush
 
 @section('content')
-    <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="container-xxl flex-grow-1 container-p-y ds">
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
@@ -433,6 +433,11 @@
                             text: 'La date de paiement doit être postérieure ou égale à la date de fin',
                             confirmButtonText: 'OK'
                         });
+                    }
+
+                    // Un seul envoi : un double clic créait la même période deux fois
+                    if (!e.isDefaultPrevented()) {
+                        $(this).find('button[type="submit"]').prop('disabled', true);
                     }
                 });
             });

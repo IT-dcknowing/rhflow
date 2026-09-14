@@ -723,6 +723,11 @@
             z-index: 1050 !important;
         }
     </style>
+
+    <!-- Nouveau design : polices + cadre commun (chargé après les anciens styles pour les remplacer) -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('css/rhflow-design.css') }}?v={{ filemtime(public_path('css/rhflow-design.css')) }}">
     @stack('styles')
 </head>
 
@@ -966,19 +971,17 @@
                         </div>
                         <a href="{{ route('company.paiesalaries.dashboard') }}"
                             class="submenu-item {{ Request::route()->getName() == 'company.paiesalaries.dashboard' ? 'active' : '' }}">
-                            <i class="fas fa-home"></i> Accueil Paie
+                            <i class="fas fa-home"></i> Tableau de bord
                         </a>
-                        @if(session('active_periode_id'))
-                            <a href="{{ route('company.paiesalaries.periodes.show', session('active_periode_id')) }}"
-                                class="submenu-item {{ Request::route()->getName() == 'company.paiesalaries.periodes.show' && Request::route('id') == session('active_periode_id') ? 'active' : '' }}">
-                                <i class="fas fa-cogs"></i> Traitement Paie
-                            </a>
-                        @endif
-                        <div class="submenu-group-title"><i class="fas fa-minus"></i> Gérer la paie</div>
                         <a href="{{ route('company.paiesalaries.exercices.index') }}"
-                            class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.paiesalaries.exercices') || Str::contains(Request::route()->getName(), 'company.paiesalaries.periodes') ? 'active' : '' }}">
-                            <i class="fas fa-clipboard"></i> Listing des exercices
+                            class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.paiesalaries.exercices') || (Str::contains(Request::route()->getName(), 'company.paiesalaries.periodes') && Request::route()->getName() != 'company.paiesalaries.periodes.show') ? 'active' : '' }}">
+                            <i class="fas fa-history"></i> Exercices et périodes
                         </a>
+                        <a href="{{ route('company.paiesalaries.paie-du-mois') }}"
+                            class="submenu-item {{ in_array(Request::route()->getName(), ['company.paiesalaries.paie-du-mois', 'company.paiesalaries.periodes.show']) ? 'active' : '' }}">
+                            <i class="fas fa-wallet"></i> Paie du mois
+                        </a>
+                        <div class="submenu-group-title"><i class="fas fa-minus"></i> Paramètres de paie</div>
                         <a href="{{ route('company.paiesalaries.allowance.index') }}"
                             class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.paiesalaries.allowance') ? 'active' : '' }}">
                             <i class="fas fa-outdent"></i> Eléments du brut
@@ -987,7 +990,6 @@
                             class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.avantages') ? 'active' : '' }}">
                             <i class="fas fa-plus"></i> Avantage en nature
                         </a>
-                        <div class="submenu-group-title"><i class="fas fa-minus"></i> Gérer les retenues</div>
                         <a href="{{ route('company.paiesalaries.retenues.index') }}"
                             class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.paiesalaries.retenues') ? 'active' : '' }}">
                             <i class="fas fa-arrow-circle-left"></i> Retenues salaire
@@ -1000,15 +1002,9 @@
                             class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.settings.loan-types') ? 'active' : '' }}">
                             <i class="fas fa-list-ul"></i> Types de Prêts
                         </a>
-                        <div class="submenu-group-title"><i class="fas fa-minus"></i> Gérer les Remboursements</div>
                         <a href="{{ route('company.paiesalaries.remboursements') }}"
                             class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.paiesalaries.remboursements') ? 'active' : '' }}">
                             <i class="fas fa-minus-square"></i> Remboursements de frais
-                        </a>
-                        <div class="submenu-group-title"><i class="fas fa-minus"></i> Gérer les calculs</div>
-                        <a href="{{ route('company.paiesalaries.calcule') }}"
-                            class="submenu-item {{ Str::contains(Request::route()->getName(), 'company.paiesalaries.calcule') ? 'active' : '' }}">
-                            <i class="fas fa-calculator"></i> Calcul salaire
                         </a>
                     </div><!-- /submenu-view-salary -->
                 @endif
@@ -1052,15 +1048,9 @@
                             <i class="fas fa-file-code"></i> Déclarations Mensuelles
                         </a>
                         {{-- Déclarations Annuelles : non disponible --}}
-                        <span class="submenu-item"
-                            style="opacity:0.45; cursor:not-allowed; pointer-events:none; display:flex; align-items:center; justify-content:space-between;">
-                            <span style="display:flex; align-items:center; gap:8px;">
-                                <i class="fas fa-file-code"></i> Déclarations Annuelles
-                            </span>
-                            <span
-                                style="font-size:9px; background:#8592a3; color:white; padding:2px 7px; border-radius:10px; font-weight:700; letter-spacing:0.3px; flex-shrink:0;">
-                                Bientôt
-                            </span>
+                        <span class="submenu-item disabled">
+                            <i class="fas fa-file-code"></i> Déclarations Annuelles
+                            <span class="soon">Bientôt</span>
                         </span>
                     </div><!-- /submenu-view-declarations -->
                 @endif
@@ -1164,83 +1154,6 @@
 
             </div><!-- /sidebar-nav -->
 
-            <!-- ====== TÉLÉCHARGER L'APP — Toujours visible en bas ====== -->
-            @php
-                $hasPaidPlan = false;
-                if (auth()->check()) {
-                    $user = auth()->user();
-                    if ($user->userPlan && $user->userPlan->price > 0) {
-                        $hasPaidPlan = true;
-                    } elseif ($user->creator && $user->creator->userPlan && $user->creator->userPlan->price > 0) {
-                        $hasPaidPlan = true;
-                    }
-                }
-            @endphp
-
-            @if($hasPaidPlan)
-                <a href="{{ asset('downloads/rhflow.apk') }}" download="RH_Flow_Mobile.apk" style="
-                            padding: 12px 16px;
-                            margin: 0 10px 0px;
-                            background: linear-gradient(135deg, #e6f7eb 0%, #d4f0df 100%);
-                            border: 1.5px solid #a7dcb9;
-                            border-radius: 12px;
-                            cursor: pointer;
-                            display: flex;
-                            align-items: center;
-                            gap: 10px;
-                            transition: all 0.2s;
-                            flex-shrink: 0;
-                            text-decoration: none;
-                        "
-                    onmouseover="this.style.background='linear-gradient(135deg,#28c848,#1faa3b)'; this.style.borderColor='#28c848'; this.querySelector('span.app-title').style.color='white'; this.querySelector('span.app-sub').style.color='rgba(255,255,255,0.8)'; this.querySelector('i').style.color='white';"
-                    onmouseout="this.style.background='linear-gradient(135deg, #e6f7eb 0%, #d4f0df 100%)'; this.style.borderColor='#a7dcb9'; this.querySelector('span.app-title').style.color='#1eaa3a'; this.querySelector('span.app-sub').style.color='#28c848'; this.querySelector('i').style.color='#1eaa3a';">
-                    <div
-                        style="width:32px; height:32px; background:rgba(40,200,72,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                        <i class="fas fa-download" style="color:#1eaa3a; font-size:14px; transition:color 0.2s;"></i>
-                    </div>
-                    <div style="flex:1; min-width:0;">
-                        <span class="app-title"
-                            style="font-weight:700; font-size:12.5px; color:#1eaa3a; display:block; transition:color 0.2s;">Télécharger
-                            l'App</span>
-                        <span class="app-sub"
-                            style="font-size:10px; color:#28c848; white-space:nowrap; transition:color 0.2s;">APK Android
-                            disponible</span>
-                    </div>
-                    <span
-                        style="font-size:9px; background:#1eaa3a; color:white; padding:2px 6px; border-radius:10px; font-weight:700; letter-spacing:0.5px;">NOUVEAU</span>
-                </a>
-            @endif
-
-            <!-- ====== ASSISTANT IA — Toujours visible en bas ====== -->
-            <div id="sidebar-ai-btn" onclick="toggleChatbot()" style="
-                    padding: 12px 16px;
-                    margin: 8px 10px 12px;
-                    background: linear-gradient(135deg, #eef1ff 0%, #e0e7ff 100%);
-                    border: 1.5px solid #c7d2fe;
-                    border-radius: 12px;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    transition: all 0.2s;
-                    flex-shrink: 0;
-                "
-                onmouseover="this.style.background='linear-gradient(135deg,#253e87,#1a2d64)'; this.style.borderColor='#253e87'; this.querySelector(\'span\').style.color='white'; this.querySelector(\'i\').style.color='white';"
-                onmouseout="this.style.background='linear-gradient(135deg, #eef1ff 0%, #e0e7ff 100%)'; this.style.borderColor='#c7d2fe'; this.querySelector(\'span\').style.color='#253e87'; this.querySelector(\'i\').style.color='#253e87';">
-                <div
-                    style="width:32px; height:32px; background:rgba(37,62,135,0.12); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    <i class="fas fa-robot" style="color:#253e87; font-size:14px; transition:color 0.2s;"></i>
-                </div>
-                <div style="flex:1; min-width:0;">
-                    <span
-                        style="font-weight:700; font-size:12.5px; color:#253e87; display:block; transition:color 0.2s;">Assistant
-                        IA</span>
-                    <span style="font-size:10px; color:#7a8bbf; white-space:nowrap;">Expert RH &amp; Paie</span>
-                </div>
-                <span
-                    style="font-size:9px; background:#253e87; color:white; padding:2px 6px; border-radius:10px; font-weight:700; letter-spacing:0.5px;">IA</span>
-            </div>
-
         </div><!-- /unified-sidebar -->
 
 
@@ -1262,13 +1175,49 @@
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Quick links  -->
                             <li class="nav-item dropdown">
-                                <a href="{{ route('company.plan.pricing') }}" class="btn btn-primary me-3"
-                                    id="quickLinksDropdown" style="background-color: #253e87; border-color: #253e87;">
-                                    <span style="color: white;">Abonnement</span> <i class="ti-layout-grid2 ms-2"
-                                        style="font-size: 20px; color: white;"></i>
+                                <a href="{{ route('company.plan.pricing') }}" class="btn nb-sub me-3"
+                                    id="quickLinksDropdown">
+                                    <span>Abonnement</span> <i class="ti-layout-grid2"></i>
                                 </a>
                             </li>
                             <!-- Quick links -->
+
+                            <!-- Télécharger l'App (offres payantes) -->
+                            @php
+                                $hasPaidPlan = false;
+                                if (auth()->check()) {
+                                    $user = auth()->user();
+                                    if ($user->userPlan && $user->userPlan->price > 0) {
+                                        $hasPaidPlan = true;
+                                    } elseif ($user->creator && $user->creator->userPlan && $user->creator->userPlan->price > 0) {
+                                        $hasPaidPlan = true;
+                                    }
+                                }
+                            @endphp
+                            @if($hasPaidPlan)
+                                <li class="nav-item">
+                                    <a href="{{ asset('downloads/rhflow.apk') }}" download="RH_Flow_Mobile.apk"
+                                        class="nb-card nb-app me-3" title="Télécharger l'App — APK Android disponible">
+                                        <span class="bx"><i class="fas fa-download"></i></span>
+                                        <span class="nb-card-text">
+                                            <span class="nb-card-title">Télécharger l'App</span>
+                                            <span class="nb-card-sub">APK Android disponible</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            @endif
+
+                            <!-- Assistant IA -->
+                            <li class="nav-item">
+                                <button type="button" id="navbar-ai-btn" onclick="toggleChatbot()"
+                                    class="nb-card nb-ia me-3" title="Assistant IA — Expert RH & Paie">
+                                    <span class="bx"><i class="fas fa-robot"></i></span>
+                                    <span class="nb-card-text">
+                                        <span class="nb-card-title">Assistant IA</span>
+                                        <span class="nb-card-sub">Expert RH &amp; Paie</span>
+                                    </span>
+                                </button>
+                            </li>
 
                             <!-- Sélecteur de période -->
                             @if(auth()->user()->type === 'company' && isModuleActive('salary'))
@@ -1307,22 +1256,10 @@
                             </li>
                             <!-- Aide / Guide Premium -->
                             <li class="nav-item me-3 d-flex align-items-center">
-                                <button class="btn d-flex align-items-center gap-2" onclick="openGuideModal()" style="background: linear-gradient(135deg, rgba(37,62,135,0.08) 0%, rgba(26,43,92,0.05) 100%);
-                                           border: 1px solid rgba(37,62,135,0.18);
-                                           color: #253e87;
-                                           font-weight: 600;
-                                           font-size: 13px;
-                                           padding: 8px 16px;
-                                           border-radius: 30px;
-                                           box-shadow: 0 2px 8px rgba(37,62,135,0.04);
-                                           transition: all 0.25s ease;
-                                           cursor: pointer;
-                                           height: 38px;"
-                                    onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(37,62,135,0.1)'; this.style.background='linear-gradient(135deg, rgba(37,62,135,0.12) 0%, rgba(26,43,92,0.08) 100%)'; this.style.borderColor='rgba(37,62,135,0.3)';"
-                                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(37,62,135,0.04)'; this.style.background='linear-gradient(135deg, rgba(37,62,135,0.08) 0%, rgba(26,43,92,0.05) 100%)'; this.style.borderColor='rgba(37,62,135,0.18)';"
+                                <button class="btn guide-btn" onclick="openGuideModal()"
                                     title="Guide d'utilisation complet">
-                                    <i class="fas fa-book-open" style="font-size: 14px; color: #253e87;"></i>
-                                    <span style="font-family: 'Inter', sans-serif;">Guide d'Utilisation</span>
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Guide d'Utilisation</span>
                                 </button>
                             </li>
 

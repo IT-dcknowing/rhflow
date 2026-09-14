@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="container-xxl flex-grow-1 container-p-y ds">
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">
@@ -21,6 +21,8 @@
                 <div class="card-body">
                     <form action="{{ route('company.paiesalaries.exercices.store') }}" method="POST" id="formExercice">
                         @csrf
+                        {{-- Venu de « Paie du mois » : on y revient après l'enregistrement --}}
+                        <input type="hidden" name="retour" value="{{ old('retour', request('retour')) }}">
                         
                         <div class="row mb-3">
                             <div class="col-md-3 mb-3">
@@ -31,7 +33,7 @@
                                             id="nom" name="nom" required>
                                         <option value="">Sélectionner une année...</option>
                                         @for($year = 2020; $year <= 2030; $year++)
-                                            <option value="{{ $year }}" {{ old('nom') == $year ? 'selected' : '' }}>
+                                            <option value="{{ $year }}" {{ old('nom', request('annee')) == $year ? 'selected' : '' }}>
                                                 {{ $year }}
                                             </option>
                                         @endfor
@@ -108,6 +110,13 @@
             locale: 'fr'
         });
 
+        // Date au format YYYY-MM-DD en heure locale (toISOString passe en UTC et recule d'un jour)
+        function formaterDateLocale(date) {
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${date.getFullYear()}-${mm}-${dd}`;
+        }
+
         // Calcul automatique de la date de fin
         function calculerDateFin() {
             const dateDebut = $('#date_debut').val();
@@ -119,7 +128,7 @@
                 const dateFin = new Date(anneeSelectionnee, 11, 31); // mois 11 = décembre, jour 31
                 
                 // Formater la date en YYYY-MM-DD
-                const dateFinFormatee = dateFin.toISOString().split('T')[0];
+                const dateFinFormatee = formaterDateLocale(dateFin);
                 $('#date_fin').val(dateFinFormatee);
             }
         }
@@ -130,7 +139,7 @@
             if (anneeSelectionnee) {
                 // Par défaut, commencer le 1er janvier de l'année sélectionnée
                 const dateDebut = new Date(anneeSelectionnee, 0, 1); // mois 0 = janvier, jour 1
-                const dateDebutFormatee = dateDebut.toISOString().split('T')[0];
+                const dateDebutFormatee = formaterDateLocale(dateDebut);
                 $('#date_debut').val(dateDebutFormatee);
                 
                 // Calculer la date de fin
@@ -150,6 +159,11 @@
         $('#date_debut').on('change', function() {
             calculerDateFin();
         });
+
+        // Année déjà choisie (lien depuis « Paie du mois ») : remplir les dates
+        if ($('#nom').val() && !$('#date_debut').val()) {
+            synchroniserDateDebut();
+        }
 
         // Validation du formulaire
         $('#formExercice').on('submit', function(e) {

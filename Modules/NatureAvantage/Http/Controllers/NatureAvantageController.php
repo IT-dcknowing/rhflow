@@ -271,32 +271,6 @@ class NatureAvantageController extends Controller
         $periode = \App\Models\PaiePeriode::find($periode_id);
         if (!$periode || $periode->statut === 'cloture') return;
 
-        $salaryService = app(\App\Services\SalaryService::class);
-        $deductions = $salaryService->getDefaultDeductionsDetails($employee, $periode_id);
-
-        foreach ($deductions as $ded) {
-            \Modules\PaieSalaries\Models\Retenue::updateOrCreate(
-                [
-                    'employee_id' => $employee->id,
-                    'periode_id' => $periode_id,
-                    'code' => $ded['code'],
-                ],
-                [
-                    'libelle' => $ded['libelle'],
-                    'type_retenue_id' => $ded['type_id'],
-                    'ordre' => $ded['ordre'],
-                    'salariale' => $ded['salariale'],
-                    'patronale' => $ded['patronale'],
-                    'base' => $ded['base'],
-                    'taux' => $ded['taux'],
-                    'amount' => $ded['amount'],
-                    'date_application' => now(),
-                    'is_active' => 1,
-                    'type' => 'default',
-                    'month_paie' => $periode->date_debut->format('Y-m'),
-                    'company_id' => $employee->company_id,
-                ]
-            );
-        }
+        app(\App\Services\SalaryService::class)->appliquerRetenuesLegales($employee, $periode);
     }
 }
