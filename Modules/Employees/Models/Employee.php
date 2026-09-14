@@ -1050,6 +1050,9 @@ public function get_salary_social($periode_id = null)
 
     public function get_Situation()
     {
+        // Situation non renseignée (ou valeur inconnue) : on n'interrompt pas la génération du bulletin
+        $situation = '-';
+
         if ($this->martalstatu_id == '1') {
             $situation = 'Célibataire';
         } else if ($this->martalstatu_id == '2') {
@@ -1102,7 +1105,7 @@ public function get_salary_social($periode_id = null)
 
     public function get_Categorie()
     {
-        $postevalue = $this->categorieEmp->title;
+        $postevalue = $this->categorieEmp->title ?? '-';
         $valueposte = $this->sous_categorie;
 
         $categories = $postevalue . ' / ' . $valueposte;

@@ -457,24 +457,25 @@
                                                             Période<hr/>
                                                             Année
                                                         </td>
+                                                        @php $cotisationsPeriode = $paySlip->cotisations(); $cumulsAnnee = $paySlip->cumulsAnnee(); @endphp
                                                         <td class="text-center">
                                                             {{number_format($paySlip->salary_brut ?? 0, 0, '.', ' ')}}<hr/>
-                                                            {{number_format($toto_brut, 0, '.', ' ')}}</td>
+                                                            {{number_format($cumulsAnnee['brut'], 0, '.', ' ')}}</td>
                                                         <td class="text-center">
                                                             {{number_format(round($totalretenuessal + $total_cantine), 0, '.', ' ')}}<hr/>
-                                                            {{number_format($toto_retenue, 0, '.', ' ')}}</td>
+                                                            {{number_format($cumulsAnnee['salariales'], 0, '.', ' ')}}</td>
                                                         <td class="text-center">
-                                                            {{number_format(round($totalretenuesemp), 0, '.', ' ')}}<hr/>
-                                                            {{number_format($toto_patronales, 0, '.', ' ')}}</td>
+                                                            {{number_format($cotisationsPeriode['patronales'], 0, '.', ' ')}}<hr/>
+                                                            {{number_format($cumulsAnnee['patronales'], 0, '.', ' ')}}</td>
                                                         <td class="text-center">
                                                             {{number_format($amount_avtg, 0, '.', ' ')}}<hr/>
-                                                            {{number_format(($cpteAvtg * $amount_avtg), 0, '.', ' ')}}</td>
+                                                            {{number_format($cumulsAnnee['avantages'], 0, '.', ' ')}}</td>
                                                         <td class="text-center">
                                                             {{number_format($paySlip->net_imposable ?? 0, 0, '.', ' ')}}<hr/>
-                                                            {{number_format($toto_impos, 0, '.', ' ')}}</td>
+                                                            {{number_format($cumulsAnnee['net_imposable'], 0, '.', ' ')}}</td>
                                                         <td class="text-center">
                                                             173,33<hr/>
-                                                            {{round(173.33 * $compte)}}</td>
+                                                            {{round(173.33 * $cumulsAnnee['nombre'])}}</td>
                                                         <td class="text-center">
                                                             {{number_format($totoverstimes, 0, '.', ' ')}}<hr/>{{(number_format($totoverstimes, 0, '.', ' '))}}</td>
                                                         <td class="text-center">
@@ -837,7 +838,8 @@
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center;">Période</td>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$paySlip->salary_brut ?? 0, 0, '.', ' ')}}</td>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$totalretenuessal4, 0, '.', ' ')}}</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$totalretenuesemp4, 0, '.', ' ')}}</td>
+                                                        @php $cotisationsPeriode = $paySlip->cotisations(); $cumulsAnnee = $paySlip->cumulsAnnee(); @endphp
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$cotisationsPeriode['patronales'], 0, '.', ' ')}}</td>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$amount_avtg, 0, '.', ' ')}}</td>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$paySlip->net_imposable ?? 0, 0, '.', ' ')}}</td>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">173,33</td>
@@ -848,12 +850,12 @@
                                                     </tr>
                                                     <tr>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center;">Année</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$toto_brut, 0, '.', ' ')}}</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$toto_retenue, 0, '.', ' ')}}</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$toto_patronales, 0, '.', ' ')}}</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)($cpteAvtg * $amount_avtg), 0, '.', ' ')}}</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$toto_impos, 0, '.', ' ')}}</td>
-                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{round(173.33 * $compte)}}</td>
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$cumulsAnnee['brut'], 0, '.', ' ')}}</td>
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$cumulsAnnee['salariales'], 0, '.', ' ')}}</td>
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$cumulsAnnee['patronales'], 0, '.', ' ')}}</td>
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$cumulsAnnee['avantages'], 0, '.', ' ')}}</td>
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{number_format((float)$cumulsAnnee['net_imposable'], 0, '.', ' ')}}</td>
+                                                        <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">{{round(173.33 * $cumulsAnnee['nombre'])}}</td>
                                                         <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;">0</td>
                                                     </tr>
                                                 </table>
@@ -1297,24 +1299,25 @@
                                                             Période<hr/>
                                                             Année
                                                         </td>
+                                                        @php $cotisationsPeriode = $paySlip->cotisations(); $cumulsAnnee = $paySlip->cumulsAnnee(); @endphp
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$paySlip->salary_brut ?? 0, 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_brut ?? 0, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['brut'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)round($totalretenuessal2 + $total_cantine3), 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_retenue, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['salariales'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
-                                                            {{number_format((float)round($totalretenuesemp2), 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_patronales, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cotisationsPeriode['patronales'], 0, '.', ' ')}}<hr/>
+                                                            {{number_format((float)$cumulsAnnee['patronales'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$amount_avtg, 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)($cpteAvtg * $amount_avtg), 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['avantages'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$paySlip->net_imposable ?? 0, 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_impos ?? 0, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['net_imposable'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             173,33<hr/>
-                                                            {{round(173.33 * $compte)}}</td>
+                                                            {{round(173.33 * $cumulsAnnee['nombre'])}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$totoverstimes2, 0, '.', ' ')}}<hr/>{{(number_format((float)$totoverstimes, 0, '.', ' '))}}
                                                         </td>
@@ -1765,24 +1768,25 @@
                                                             Période<hr/>
                                                             Année
                                                         </td>
+                                                        @php $cotisationsPeriode = $paySlip->cotisations(); $cumulsAnnee = $paySlip->cumulsAnnee(); @endphp
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$paySlip->salary_brut ?? 0, 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_brut ?? 0, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['brut'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)round($totalretenuessal3 + $total_cantine3), 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_retenue, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['salariales'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
-                                                            {{number_format((float)round($totalretenuesemp3), 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_patronales, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cotisationsPeriode['patronales'], 0, '.', ' ')}}<hr/>
+                                                            {{number_format((float)$cumulsAnnee['patronales'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$amount_avtg, 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)($cpteAvtg * $amount_avtg), 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['avantages'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$paySlip->net_imposable ?? 0, 0, '.', ' ')}}<hr/>
-                                                            {{number_format((float)$toto_impos ?? 0, 0, '.', ' ')}}</td>
+                                                            {{number_format((float)$cumulsAnnee['net_imposable'], 0, '.', ' ')}}</td>
                                                         <td class="border border-dark montant">
                                                             173,33<hr/>
-                                                            {{round(173.33 * $compte)}}</td>
+                                                            {{round(173.33 * $cumulsAnnee['nombre'])}}</td>
                                                         <td class="border border-dark montant">
                                                             {{number_format((float)$totoverstimes3, 0, '.', ' ')}}<hr/>{{(number_format((float)$totoverstimes, 0, '.', ' '))}}</td>
                                                         <td style="vertical-align:middle; border-top-style:solid;border-top-width:3pt;border-left-style:solid;border-left-width:3pt;border-bottom-style:solid;border-bottom-width:3pt;border-right-style:solid;border-right-width:3pt; border-right-color: #000; border-left-color: #000; border-top-color: #000; border-bottom-color: #000">
