@@ -215,8 +215,11 @@ class CompanyController extends Controller
                 $employees     = User::where('type', '=', 'employee')->where('company_id', '=', $companyId)->get();
                 $countEmployee = count($employees);
                 $getEmployee = Employee::where('company_id', '=', $companyId)->where('is_active', '1')->get();
-                $getEmployeeDay = Employee::where('company_id', '=', $companyId)->where('is_active', '1')->where('salary_type', '!=', 1)->count();
-                $empMensuel = Employee::where('company_id', '=', $companyId)->where('is_active', '1')->where('salary_type', 1)->count();
+                // Employés actifs par type de salaire. Les fiches antérieures au choix Mensuel/Journalier
+                // ont salary_type à NULL : elles sont mensuelles (même règle que la liste des employés).
+                $getEmployeeDay = Employee::where('company_id', '=', $companyId)->where('is_active', '1')->where('salary_type', 2)->count();
+                $empMensuel = Employee::where('company_id', '=', $companyId)->where('is_active', '1')
+                    ->where(fn ($q) => $q->where('salary_type', 1)->orWhereNull('salary_type'))->count();
   
                 // Effectif = employes (table employees) + comptes internes non-employes
                 // (compte entreprise, RH, paie) qui font aussi partie du personnel en poste.
@@ -254,10 +257,11 @@ class CompanyController extends Controller
 
                 $stats = [
                     // Effectifs
-                    'total_employees' => $countUser + $countEmployee,
-                    'monthly_employees' => $countEmployee,
+                    // Employés actifs uniquement (les comptes entreprise, RH et paie ne sont pas des journaliers)
+                    'total_employees' => $empMensuel + $getEmployeeDay,
+                    'monthly_employees' => $empMensuel,
                     'monthly_growth' => 5,
-                    'daily_employees' => $countUser,
+                    'daily_employees' => $getEmployeeDay,
                     'daily_growth' => 0,
                     'new_employees_this_month' => Employee::where('company_id', $companyId)
                         ->whereMonth('created_at', now()->month)
@@ -273,6 +277,7 @@ class CompanyController extends Controller
                     'current_leaves' => $employesEnConge,
                     'recent_departures' => Rupture::where('company_id', $companyId)
                         ->whereMonth('notice_date', now()->month)
+                        ->whereYear('notice_date', now()->year)
                         ->count(),
                     'payroll_processed' => $countEmployee > 0 ? (int)(($countPaylist / $countEmployee) * 100) : 0,
                     'pending_payroll' => $countEmployee > 0 ? max(0, 100 - (int)(($countPaylist / $countEmployee) * 100)) : 0,

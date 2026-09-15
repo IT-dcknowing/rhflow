@@ -256,17 +256,12 @@
                     $totalcnpspat = 0;
                     $partEmploye = 0;
                     $partEmployeur = 0;
-                    $empMensuel = 0;
-                    $empJour = 0;
+                    // Mensuels / journaliers : comptés par le contrôleur (fiches sans type = mensuels)
+                    $empJour = $getEmployeeDay;
                 @endphp
                 @foreach ($getEmployee as $employee)
                     @php
                         if ($periode) {
-                            if ($employee->salary_type == 1) {
-                                $empMensuel++;
-                            } else {
-                                $empJour++;
-                            }
                             $totalNet += $employee->get_net_salary($periode->id);
                             $totalBrut += $employee->get_brut_salary($periode->id);
                             $totalBrutImposable += $employee->get_salary_imposable($periode->id);
@@ -322,16 +317,10 @@
                 <div class="card h-100">
                     <div class="card-header">
                         <div class="d-flex justify-content-between">
-                            <small class="d-block mb-1 text-muted">Analyse des types de salaires</small>
-                            <p class="card-text {{ ($empMensuel > $getEmployeeDay) ? 'text-success' : 'text-info' }}">
-                                @if($getEmployeeDay != 0)
-                                    {{ ($empMensuel > $getEmployeeDay) ? '+' : '-' }}{{ number_format(abs(($empMensuel / ($empMensuel + $getEmployeeDay)) * 100), 1) }}%
-                                @else
-                                    100%
-                                @endif
-                            </p>
+                            <small class="d-block mb-1 text-muted">Mensuels et journaliers</small>
                         </div>
-                        <h4 class="card-title mb-1">{{ $empMensuel + $getEmployeeDay }} Employés</h4>
+                        <h4 class="card-title mb-1">{{ $empMensuel + $getEmployeeDay }} employés actifs</h4>
+                        <small class="text-muted">Mensuel : salaire mensuel · Journalier : taux horaire</small>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -671,7 +660,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <h6 class="mb-0">{{ $stats['monthly_employees'] ?? 0 }}</h6>
+                                        <h6 class="mb-0">{{ $stats['total_employees'] ?? 0 }}</h6>
                                         <small class="text-muted">Employés actifs</small>
                                     </div>
                                 </div>
@@ -711,7 +700,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0">{{ $stats['recent_departures'] ?? 0 }}</h6>
-                                        <small class="text-muted">Départs récents</small>
+                                        <small class="text-muted">Départs ce mois</small>
                                     </div>
                                 </div>
                             </div>
@@ -729,7 +718,7 @@
                                 <div class="progress-bar bg-warning" style="width: 0%"></div>
                             @endif
                         </div>
-                        <small class="text-muted">Répartition Mensuels/Journaliers</small>
+                        <small class="text-muted">Employés actifs : mensuels (vert) et journaliers (orange). Congés en cours : congés approuvés qui couvrent aujourd'hui.</small>
                     </div>
                 </div>
             </div>
