@@ -228,20 +228,71 @@ class DeclarationsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(15);
         
-        // Statistiques
-        $totalBulletins = PaySlip::where('company_id', $companyId)->count();
-        $bulletinsValides = PaySlip::where('company_id', $companyId)->where('status', 1)->count();
-        $bulletinsEnCours = PaySlip::where('company_id', $companyId)->where('status', 0)->count();
-        $masseSalariale = PaySlip::where('company_id', $companyId)->sum('net_payble');
-        
+        // Statistiques du mois en cours de traitement (et non de tous les bulletins)
+        $periodeCourante = $this->periodeEnCoursDeTraitement($companyId);
+        $stats = $this->statsBulletinsPeriode($companyId, $periodeCourante);
+
         return view('declarations::resume.index', compact(
             'paySlips',
-            'totalBulletins',
-            'bulletinsValides',
-            'bulletinsEnCours',
-            'masseSalariale',
+            'stats',
+            'periodeCourante',
             'exercices'
         ));
+    }
+
+    /**
+     * Mois en cours de traitement : même règle que « Paie du mois »,
+     * la dernière période non payée, clôturée ou annulée, sinon la dernière période.
+     */
+    private function periodeEnCoursDeTraitement($companyId)
+    {
+        $periodes = PaiePeriode::where('company_id', $companyId)
+            ->orderBy('date_debut', 'desc')
+            ->orderBy('id', 'desc');
+
+        return (clone $periodes)->whereNotIn('statut', ['payee', 'cloture', 'annulee'])->first()
+            ?? $periodes->first();
+    }
+
+    /**
+     * KPI des bulletins d'une période, comparés à la période précédente.
+     */
+    private function statsBulletinsPeriode($companyId, $periode): array
+    {
+        $calcul = function ($p) use ($companyId) {
+            $bulletins = PaySlip::where('company_id', $companyId)
+                ->where('periode_id', $p->id)
+                ->whereNull('deleted_at')
+                ->get(['status', 'net_payble']);
+
+            return [
+                'total' => $bulletins->count(),
+                'valides' => $bulletins->where('status', 1)->count(),
+                'encours' => $bulletins->where('status', 0)->count(),
+                'masse_salariale' => (int) $bulletins->sum('net_payble'),
+            ];
+        };
+
+        if (!$periode) {
+            return ['total' => 0, 'valides' => 0, 'encours' => 0, 'masse_salariale' => 0,
+                'periode' => null, 'periode_precedente' => null, 'evolution_total' => null, 'evolution_masse' => null];
+        }
+
+        $stats = $calcul($periode);
+        $precedente = PaiePeriode::where('company_id', $companyId)
+            ->where('date_debut', '<', $periode->date_debut)
+            ->orderBy('date_debut', 'desc')
+            ->orderBy('id', 'desc')
+            ->first();
+        $avant = $precedente ? $calcul($precedente) : null;
+        $evolution = fn ($maintenant, $auparavant) => $auparavant > 0 ? round(($maintenant - $auparavant) / $auparavant * 100, 1) : null;
+
+        return $stats + [
+            'periode' => $periode->nom,
+            'periode_precedente' => $precedente->nom ?? null,
+            'evolution_total' => $avant ? $evolution($stats['total'], $avant['total']) : null,
+            'evolution_masse' => $avant ? $evolution($stats['masse_salariale'], $avant['masse_salariale']) : null,
+        ];
     }
 
     /**
@@ -370,13 +421,8 @@ class DeclarationsController extends Controller
                 ->orderBy('salary_month', 'desc')
                 ->get();
             
-            // Calculer les statistiques
-            $stats = [
-                'total' => $bulletins->count(),
-                'valides' => $bulletins->where('status', 1)->count(),
-                'encours' => $bulletins->where('status', 0)->count(),
-                'masse_salariale' => $bulletins->sum('net_payble')
-            ];
+            // Statistiques de la période choisie, comparées à la période précédente
+            $stats = $this->statsBulletinsPeriode($companyId, $periode);
             
             // Formater les bulletins pour l'affichage
             $bulletinsFormatted = $bulletins->map(function ($bulletin) {

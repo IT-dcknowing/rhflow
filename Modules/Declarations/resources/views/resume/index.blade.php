@@ -32,13 +32,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Total bulletins</span>
-                                <h3 class="card-title mb-0">{{ number_format($totalBulletins, 0, ',', ' ') }}</h3>
+                                <span class="fw-semibold d-block mb-1 text-muted">Bulletins · <span class="kpi-periode">{{ $stats['periode'] ?? 'aucune période' }}</span></span>
+                                <h3 class="card-title mb-0">{{ number_format($stats['total'], 0, ',', ' ') }}</h3>
                                 <div class="d-flex align-items-center mt-2">
-                                    <small class="text-success me-1">
-                                        <i class="fas fa-arrow-up"></i> 12%
-                                    </small>
-                                    <small class="text-muted">vs mois dernier</small>
+                                    <small id="evolTotal" class="text-muted"></small>
                                 </div>
                             </div>
                             <div class="text-primary">
@@ -55,10 +52,10 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <span class="fw-semibold d-block mb-1 text-muted">Bulletins validés</span>
-                                <h3 class="card-title mb-0">{{ number_format($bulletinsValides, 0, ',', ' ') }}</h3>
+                                <h3 class="card-title mb-0">{{ number_format($stats['valides'], 0, ',', ' ') }}</h3>
                                 <div class="progress mx-auto" style="width: 80%; height: 6px;">
                                     <div class="progress-bar bg-success"
-                                        style="width: {{ $totalBulletins > 0 ? round(($bulletinsValides / $totalBulletins * 100), 1) : 0 }}%">
+                                        style="width: {{ $stats['total'] > 0 ? round(($stats['valides'] / $stats['total'] * 100), 1) : 0 }}%">
                                     </div>
                                 </div>
                             </div>
@@ -75,11 +72,11 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">En cours</span>
-                                <h3 class="card-title mb-0">{{ number_format($bulletinsEnCours, 0, ',', ' ') }}</h3>
+                                <span class="fw-semibold d-block mb-1 text-muted">Générés, à valider</span>
+                                <h3 class="card-title mb-0">{{ number_format($stats['encours'], 0, ',', ' ') }}</h3>
                                 <div class="progress mx-auto" style="width: 80%; height: 6px;">
                                     <div class="progress-bar bg-warning"
-                                        style="width: {{ $totalBulletins > 0 ? round(($bulletinsEnCours / $totalBulletins * 100), 1) : 0 }}%">
+                                        style="width: {{ $stats['total'] > 0 ? round(($stats['encours'] / $stats['total'] * 100), 1) : 0 }}%">
                                     </div>
                                 </div>
                             </div>
@@ -96,13 +93,10 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Masse salariale</span>
-                                <h3 class="card-title mb-0">{{ number_format($masseSalariale, 0, ',', ' ') }} FCFA</h3>
+                                <span class="fw-semibold d-block mb-1 text-muted">Net à payer · <span class="kpi-periode">{{ $stats['periode'] ?? 'aucune période' }}</span></span>
+                                <h3 class="card-title mb-0">{{ number_format($stats['masse_salariale'], 0, ',', ' ') }} FCFA</h3>
                                 <div class="d-flex align-items-center mt-2">
-                                    <small class="text-info me-1">
-                                        <i class="fas fa-arrow-up"></i> 8.2%
-                                    </small>
-                                    <small class="text-muted">vs mois dernier</small>
+                                    <small id="evolMasse" class="text-muted"></small>
                                 </div>
                             </div>
                             <div class="text-info">
@@ -126,7 +120,7 @@
                             <select id="exercice" class="form-select select2" name="exercice" tabindex="-1"
                                 aria-hidden="true">
                                 @foreach($exercices as $exercice)
-                                    <option value="{{ $exercice->id }}">
+                                    <option value="{{ $exercice->id }}" {{ optional($periodeCourante)->exercice_id == $exercice->id ? 'selected' : '' }}>
                                         {{ $exercice->nom }}
                                     </option>
                                 @endforeach
@@ -216,34 +210,19 @@
                                         </span>
                                     </td>
                                     <td align="center">
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-outline-primary" type="button"
-                                                data-bs-toggle="dropdown">
-                                                <i class="fas fa-ellipsis-v"></i>
+                                        <div class="d-inline-flex gap-1">
+                                            <a href="{{ route('company.declarations.resume.show', $paySlip->id) }}"
+                                                class="btn btn-sm btn-icon btn-outline-primary" title="Voir le bulletin" aria-label="Voir le bulletin">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('company.declarations.resume.edit', $paySlip->id) }}"
+                                                class="btn btn-sm btn-icon btn-outline-warning" title="Modifier le bulletin" aria-label="Modifier le bulletin">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger"
+                                                onclick="deleteBulletin({{ $paySlip->id }})" title="Supprimer le bulletin" aria-label="Supprimer le bulletin">
+                                                <i class="fas fa-trash"></i>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('company.declarations.resume.show', $paySlip->id) }}">
-                                                        <i class="fas fa-eye me-2"></i>Voir
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('company.declarations.resume.edit', $paySlip->id) }}">
-                                                        <i class="fas fa-edit me-2"></i>Modifier
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item text-danger" href="#"
-                                                        onclick="deleteBulletin({{ $paySlip->id }})">
-                                                        <i class="fas fa-trash me-2"></i>Supprimer
-                                                    </a>
-                                                </li>
-                                            </ul>
                                         </div>
                                     </td>
                                 </tr>
@@ -342,7 +321,8 @@
                         });
 
                         // Période demandée dans l'adresse (lien depuis « Paie du mois »)
-                        var periodeDemandee = new URLSearchParams(window.location.search).get('periode_id');
+                        // sinon le mois en cours de traitement
+                        var periodeDemandee = new URLSearchParams(window.location.search).get('periode_id') || @json(optional($periodeCourante)->id);
                         if (periodeDemandee && periodesSelect.find('option[value="' + periodeDemandee + '"]').length) {
                             periodesSelect.val(periodeDemandee);
                         }
@@ -638,16 +618,10 @@
                     html += '<span class="badge bg-' + statusClass + '">' + statusText + '</span>';
                     html += '</td>';
                     html += '<td align="center">';
-                    html += '<div class="dropdown">';
-                    html += '<button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="dropdown">';
-                    html += '<i class="fas fa-ellipsis-v"></i>';
-                    html += '</button>';
-                    html += '<ul class="dropdown-menu">';
-                    html += '<li><a class="dropdown-item" href="resume/' + bulletin.id + '"><i class="fas fa-eye me-2"></i>Voir</a></li>';
-                    html += '<li><a class="dropdown-item" href="resume/' + bulletin.id + '/edit"><i class="fas fa-edit me-2"></i>Modifier</a></li>';
-                    html += '<li><hr class="dropdown-divider"></li>';
-                    html += '<li><a class="dropdown-item text-danger" href="#" onclick="deleteBulletin(' + bulletin.id + ')"><i class="fas fa-trash me-2"></i>Supprimer</a></li>';
-                    html += '</ul>';
+                    html += '<div class="d-inline-flex gap-1">';
+                    html += '<a href="' + @json(route('company.declarations.resume.show', '__ID__')).replace('__ID__', bulletin.id) + '" class="btn btn-sm btn-icon btn-outline-primary" title="Voir le bulletin" aria-label="Voir le bulletin"><i class="fas fa-eye"></i></a>';
+                    html += '<a href="' + @json(route('company.declarations.resume.edit', '__ID__')).replace('__ID__', bulletin.id) + '" class="btn btn-sm btn-icon btn-outline-warning" title="Modifier le bulletin" aria-label="Modifier le bulletin"><i class="fas fa-edit"></i></a>';
+                    html += '<button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="deleteBulletin(' + bulletin.id + ')" title="Supprimer le bulletin" aria-label="Supprimer le bulletin"><i class="fas fa-trash"></i></button>';
                     html += '</div>';
                     html += '</td>';
                     html += '</tr>';
@@ -668,15 +642,31 @@
                 $('.stat-card h3').eq(1).text(formatNumber(stats.valides || 0));
                 $('.stat-card h3').eq(2).text(formatNumber(stats.encours || 0));
                 $('.stat-card h3').eq(3).text(formatNumber(stats.masse_salariale || 0) + ' FCFA');
+                $('.kpi-periode').text(stats.periode || 'aucune période');
+                afficherEvolution('#evolTotal', stats.evolution_total, stats.periode_precedente);
+                afficherEvolution('#evolMasse', stats.evolution_masse, stats.periode_precedente);
 
                 // Mettre à jour les barres de progression
                 var total = stats.total || 0;
-                if (total > 0) {
-                    $('.progress-bar').eq(0).css('width', round((stats.valides / total * 100), 1) + '%');
-                    $('.progress-bar').eq(1).css('width', round((stats.encours / total * 100), 1) + '%');
-                }
+                $('.stat-card .progress-bar').eq(0).css('width', (total > 0 ? Math.round(stats.valides / total * 1000) / 10 : 0) + '%');
+                $('.stat-card .progress-bar').eq(1).css('width', (total > 0 ? Math.round(stats.encours / total * 1000) / 10 : 0) + '%');
             }
         }
+
+        // Évolution par rapport à la période précédente (vide s'il n'y a rien à comparer)
+        function afficherEvolution(selecteur, valeur, periodePrecedente) {
+            var $el = $(selecteur);
+            if (valeur === null || valeur === undefined || !periodePrecedente) {
+                $el.attr('class', 'text-muted').text(periodePrecedente ? 'Pas de bulletin en ' + periodePrecedente : 'Première période');
+                return;
+            }
+            var signe = valeur > 0 ? '+' : '';
+            $el.attr('class', valeur >= 0 ? 'text-success' : 'text-danger')
+                .text(signe + String(valeur).replace('.', ',') + ' % vs ' + periodePrecedente);
+        }
+
+        // KPI affichés au chargement : mois en cours de traitement
+        $(function () { updateStatistics(@json($stats)); });
 
         // Réinitialiser les écouteurs d'événements après mise à jour du tableau
         function reinitializeEventListeners() {
