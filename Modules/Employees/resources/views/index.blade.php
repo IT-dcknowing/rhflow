@@ -101,7 +101,8 @@
                         <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des Employés</h5>
                     </div>
                     {{-- Filtrage serveur sur salary_type : le lien recharge la page --}}
-                    <ul class="nav nav-tabs px-3 pt-2">
+                    {{-- mx-0 : une règle du thème donne aux onglets des marges négatives, ils dépassaient de la carte --}}
+                    <ul class="nav nav-tabs px-3 pt-2 mx-0">
                         @foreach(['tous' => 'Tous', 'mensuel' => 'Mensuels', 'journalier' => 'Journaliers'] as $cle => $libelle)
                             <li class="nav-item">
                                 <a class="nav-link {{ $type === $cle ? 'active' : '' }}"
@@ -150,7 +151,7 @@
                                                     </div>
                                                     <div>
                                                         <h6 class="mb-0">{{ $employee->name }}</h6>
-                                                        <small class="text-muted">{{ $employee->email ?? '-' }}</small><br>
+                                                        <small class="text-muted text-break">{{ $employee->email ?? '-' }}</small><br>
                                                         <small class="text-muted">{{ $employee->phone ?? '-' }}</small>
                                                     </div>
                                                 </div>
@@ -437,6 +438,8 @@
             var table = $('#employeesTable').DataTable({
                 responsive: true,
                 order: [[1, 'desc']],
+                // Pas de tri (ni de flèches) sur la case à cocher et les actions
+                columnDefs: [{ orderable: false, targets: [0, 7] }],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
                 },

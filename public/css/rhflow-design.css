@@ -910,6 +910,29 @@
     color: var(--muted);
 }
 
+/* Icônes de tri : le thème les dessine avec une police d'icônes qui n'a pas ces caractères
+   (petits carrés dans les en-têtes) ; on revient à des flèches simples. */
+.ds table.dataTable thead > tr > :is(th, td):is(.sorting, .sorting_asc, .sorting_desc)::before,
+.ds table.dataTable thead > tr > :is(th, td):is(.sorting, .sorting_asc, .sorting_desc)::after {
+    font-family: inherit !important;
+    font-size: 8px;
+    line-height: 1;
+}
+
+.ds table.dataTable thead > tr > :is(th, td):is(.sorting, .sorting_asc, .sorting_desc)::before {
+    content: "▲" !important;
+}
+
+.ds table.dataTable thead > tr > :is(th, td):is(.sorting, .sorting_asc, .sorting_desc)::after {
+    content: "▼" !important;
+}
+
+/* La colonne de contenu ne s'élargit plus au-delà de l'écran (élément flex en min-width: auto) :
+   un tableau trop large défile dans son .table-responsive au lieu de faire déborder la page. */
+.app-main-content > * {
+    min-width: 0;
+}
+
 /* ---------- Formulaires ---------- */
 :is(.ds, body:has(.ds) .modal) :is(.form-control, .form-select) {
     min-height: 36px;
