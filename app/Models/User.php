@@ -349,6 +349,30 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Company::class, 'user_id');
     }
 
+    /**
+     * Identifiant de connexion d'un employé, au format du formulaire de création :
+     * 4 premières lettres du nom en majuscules + 2 chiffres (ex. KOUA70), unique.
+     */
+    public static function genererUsername(string $nom): string
+    {
+        $lettres = strtoupper(preg_replace('/[^A-Za-z]/', '', \Illuminate\Support\Str::ascii($nom)));
+        $prefixe = substr(str_pad($lettres, 4, 'X'), 0, 4);
+
+        for ($essai = 0; $essai < 50; $essai++) {
+            $username = $prefixe . random_int(10, 99);
+            if (!static::where('username', $username)->exists()) {
+                return $username;
+            }
+        }
+
+        // Les 90 combinaisons à 2 chiffres sont prises : on passe à 3 chiffres
+        do {
+            $username = $prefixe . random_int(100, 999);
+        } while (static::where('username', $username)->exists());
+
+        return $username;
+    }
+
     public function lastLogin()
     {
         return $this->hasOne(User::class, 'last_login');

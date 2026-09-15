@@ -57,7 +57,8 @@ class GlobalAgentTool
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'] ?? null,
-                'username' => $data['username'] ?? strtolower(str_replace(' ', '.', $data['name'])),
+                // Même format que le formulaire de création (ex. KOUA15)
+                'username' => $data['username'] ?? User::genererUsername($data['name']),
                 'password' => Hash::make($data['password'] ?? 'RHFlow2024!'),
                 'type' => 'employee',
                 'company_id' => $companyId,

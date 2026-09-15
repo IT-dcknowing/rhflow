@@ -1033,9 +1033,13 @@ class SettingsController extends Controller
         $currentUser = Auth::user();
         $company = $currentUser->company;
 
+        // L'identifiant de connexion attribué à la création ne change plus (ex. KOUA15) :
+        // ni un changement de nom ni une valeur envoyée par le formulaire ne le remplacent.
+        $usernameFige = !empty($user->username);
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'username' => [$usernameFige ? 'nullable' : 'required', 'string', 'max:255', 'unique:users,username,' . $user->id],
             'email' => 'required|email|unique:users,email,' . $user->id . '|max:255',
             'password' => 'nullable|string|min:8|confirmed',
             'type' => 'required|string|in:company,hr,payroll,employee',
@@ -1049,7 +1053,7 @@ class SettingsController extends Controller
         // Mettre à jour l'utilisateur
         $updateData = [
             'name' => $request->name,
-            'username' => $request->username,
+            'username' => $usernameFige ? $user->username : $request->username,
             'email' => $request->email,
             'type' => $request->type,
             'phone' => $request->phone,

@@ -115,13 +115,15 @@ class EmployeesImport implements ToCollection, WithHeadingRow, WithCustomCsvSett
                 // Créer l'utilisateur
                 $username = $this->resolveValue($data, ['nom_dutilisateur', 'username', 'login', 'nom_utilisateur']);
                 if (empty($username)) {
-                    $username = Str::slug($nomComplet, '.') . rand(10, 99);
-                }
-                // S'assurer que le username est unique
-                $baseUsername = $username;
-                $counter = 1;
-                while (User::where('username', $username)->exists()) {
-                    $username = $baseUsername . $counter++;
+                    // Même format que le formulaire de création : 4 lettres du nom + 2 chiffres (ex. KOUA70)
+                    $username = User::genererUsername($nomComplet);
+                } else {
+                    // S'assurer que le username fourni est unique
+                    $baseUsername = $username;
+                    $counter = 1;
+                    while (User::where('username', $username)->exists()) {
+                        $username = $baseUsername . $counter++;
+                    }
                 }
 
                 $user = User::create([
