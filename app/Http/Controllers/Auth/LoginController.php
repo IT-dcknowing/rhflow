@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 
@@ -138,34 +141,35 @@ class LoginController extends Controller
     public function sendResetLink(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
+        ], [
+            'email.required' => 'Veuillez saisir votre adresse email.',
+            'email.email' => "L'adresse email n'est pas valide.",
         ]);
 
-        // Générer un code de réinitialisation
-        $user = User::where('email', $request->email)->first();
-        $resetCode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        // Lien envoyé par email (jeton Laravel, valable config auth.passwords.users.expire minutes).
+        // Le code n'est jamais affiché, et le même message est rendu que le compte existe ou non :
+        // on ne révèle pas quelles adresses sont inscrites.
+        try {
+            Password::broker()->sendResetLink($request->only('email'));
+        } catch (\Throwable $e) {
+            Log::error('Envoi du lien de réinitialisation impossible : ' . $e->getMessage());
 
-        $user->update([
-            'password_code' => $resetCode,
-        ]);
+            return back()->withInput()->with('error', "L'email n'a pas pu être envoyé pour le moment. Réessayez dans quelques minutes.");
+        }
 
-        // Ici vous pourriez envoyer un email avec le code
-        // Pour l'instant, on affiche le code en développement
-        return back()->with('success', "Code de réinitialisation : {$resetCode} (Envoi d'email à implémenter)");
+        return back()->with('success', 'Si un compte correspond à cette adresse, un lien de réinitialisation vient de vous être envoyé. Il est valable ' . config('auth.passwords.users.expire') . ' minutes.');
     }
 
     /**
-     * Afficher le formulaire de réinitialisation de mot de passe
+     * Afficher le formulaire de réinitialisation de mot de passe (lien reçu par email)
      */
-    public function showResetPasswordForm($code)
+    public function showResetPasswordForm(Request $request, $code)
     {
-        $user = User::where('password_code', $code)->first();
-
-        if (!$user) {
-            abort(404, 'Code de réinitialisation invalide.');
-        }
-
-        return view('auth.reset-password', compact('code'));
+        return view('auth.reset-password', [
+            'code' => $code,
+            'email' => old('email', $request->query('email')),
+        ]);
     }
 
     /**
@@ -174,19 +178,38 @@ class LoginController extends Controller
     public function resetPassword(Request $request, $code)
     {
         $request->validate([
+            'email' => 'required|email',
             'password' => 'required|string|min:8|confirmed',
+        ], [
+            'email.required' => 'Veuillez saisir votre adresse email.',
+            'email.email' => "L'adresse email n'est pas valide.",
+            'password.required' => 'Veuillez saisir un nouveau mot de passe.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'Les deux mots de passe ne correspondent pas.',
         ]);
 
-        $user = User::where('password_code', $code)->first();
+        $statut = Password::broker()->reset(
+            [
+                'email' => $request->email,
+                'password' => $request->password,
+                'password_confirmation' => $request->password_confirmation,
+                'token' => $code,
+            ],
+            function ($user, $password) {
+                // Le cast « hashed » du modèle chiffre le mot de passe ; les sessions « se souvenir de moi » sont invalidées
+                $user->forceFill([
+                    'password' => $password,
+                    'password_code' => null,
+                    'remember_token' => Str::random(60),
+                ])->save();
+            }
+        );
 
-        if (!$user) {
-            abort(404, 'Code de réinitialisation invalide.');
+        if ($statut !== Password::PASSWORD_RESET) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau.']);
         }
-
-        $user->update([
-            'password' => $request->password,
-            'password_code' => null,
-        ]);
 
         return redirect()->route('login')->with('success', 'Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.');
     }

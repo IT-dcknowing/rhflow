@@ -7,8 +7,26 @@
 <form method="POST" action="{{ route('password.reset', $code) }}" class="needs-validation" novalidate>
     @csrf
 
-    <!-- Code de réinitialisation (caché) -->
-    <input type="hidden" name="code" value="{{ $code }}">
+    <!-- Email du compte (prérempli depuis le lien reçu) -->
+    <div class="mb-3">
+        <label for="email" class="form-label">Adresse email</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="ti ti-mail"></i>
+            </span>
+            <input type="email"
+                   class="form-control @error('email') is-invalid @enderror"
+                   id="email"
+                   name="email"
+                   value="{{ $email }}"
+                   required
+                   autocomplete="email"
+                   placeholder="votre@email.com">
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
 
     <!-- Nouveau mot de passe -->
     <div class="mb-3">

@@ -27,7 +27,7 @@
             @enderror
         </div>
         <div class="form-text">
-            Entrez votre adresse email pour recevoir un code de réinitialisation.
+            Entrez l'adresse email de votre compte : vous recevrez un lien pour choisir un nouveau mot de passe.
         </div>
     </div>
 
@@ -35,7 +35,7 @@
     <div class="d-grid mb-3">
         <button type="submit" class="btn btn-primary btn-lg text-white">
             <i class="ti ti-send me-2"></i>
-            Envoyer le code de réinitialisation
+            Envoyer le lien de réinitialisation
         </button>
     </div>
 

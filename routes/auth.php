@@ -32,11 +32,12 @@ Route::middleware('guest')->group(function () {
 
     // Mot de passe oublié
     Route::get('/forgot-password', [LoginController::class, 'showForgotPasswordForm'])->name('password.request');
-    Route::post('/forgot-password', [LoginController::class, 'sendResetLink'])->name('password.email');
+    // Limité à 6 envois par minute : évite l'envoi massif d'emails et le test d'adresses en rafale
+    Route::post('/forgot-password', [LoginController::class, 'sendResetLink'])->middleware('throttle:6,1')->name('password.email');
 
-    // Réinitialisation de mot de passe
+    // Réinitialisation de mot de passe (lien reçu par email)
     Route::get('/reset-password/{code}', [LoginController::class, 'showResetPasswordForm'])->name('password.reset');
-    Route::post('/reset-password/{code}', [LoginController::class, 'resetPassword'])->name('password.update');
+    Route::post('/reset-password/{code}', [LoginController::class, 'resetPassword'])->middleware('throttle:6,1')->name('password.update');
 });
 
 // Routes nécessitant une authentification
