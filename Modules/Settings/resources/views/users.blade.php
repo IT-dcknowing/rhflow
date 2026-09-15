@@ -616,7 +616,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="POST" action="/company/settings/users/import" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('company.settings.users.import') }}" enctype="multipart/form-data">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <div class="mb-3">
                                 <label class="form-label">Fichier Excel</label>
                                 <input type="file" class="form-control" name="file" accept=".xlsx,.xls" required>
@@ -624,7 +625,7 @@
                             </div>
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="skip_duplicates" id="skipDuplicates">
+                                    <input class="form-check-input" type="checkbox" name="skip_duplicates" id="skipDuplicates" value="1">
                                     <label class="form-check-label" for="skipDuplicates">
                                         Ignorer les doublons
                                     </label>

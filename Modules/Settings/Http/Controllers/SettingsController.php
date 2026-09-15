@@ -1219,7 +1219,7 @@ class SettingsController extends Controller
 
         try {
             // Importer le fichier
-            Excel::import(new UsersImport($company, $user, $request->skip_duplicates), $request->file('file'));
+            Excel::import(new UsersImport($company, $user, $request->boolean('skip_duplicates')), $request->file('file'));
 
             return redirect()->back()->with('success', 'Utilisateurs importés avec succès.');
         } catch (\Exception $e) {
