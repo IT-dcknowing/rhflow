@@ -440,9 +440,12 @@
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
                 },
-                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                // La pagination est faite par Laravel (15 par page, liens sous le tableau) :
+                // sans ces options, DataTables repaginait la page et affichait une seconde numérotation.
+                paging: false,
+                info: false,
+                lengthChange: false,
+                dom: "<'row'<'col-sm-12'tr>>",
             });
         @endif
 

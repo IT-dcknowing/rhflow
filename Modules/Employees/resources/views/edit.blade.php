@@ -315,8 +315,7 @@
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-user"></i></span>
                                             <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                                     id="name" name="name" value="{{ old('name', $employee->name) }}" required
-                                                     oninput="generateUsername()">
+                                                     id="name" name="name" value="{{ old('name', $employee->name) }}" required>
                                             @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -334,7 +333,7 @@
                                         <label class="form-label required mb-2">Genre</label>
                                         <div class="radio-modern d-flex justify-content-start">
                                             <div class="radio-item me-3">
-                                                <input class="form-check-input" type="radio" name="gender" id="g_male"
+                                                <input class="form-check-input" type="radio" name="gender" id="g_male" required
                                                         value="Male" {{ old('gender', $employee->gender) == 'Male' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="g_male">
                                                     <i class="fas fa-mars me-1"></i> Homme
@@ -353,7 +352,7 @@
                                         <label class="form-label required mb-2">Type d'employé</label>
                                         <div class="radio-modern d-flex justify-content-start ">
                                             <div class="radio-item me-3">
-                                                <input class="form-check-input" type="radio" name="charge_expat" id="local"
+                                                <input class="form-check-input" type="radio" name="charge_expat" id="local" required
                                                         value="local" {{ old('charge_expat', $employee->charge_expat) == 'local' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="local">
                                                     <i class="fas fa-home me-1"></i> Local
@@ -454,10 +453,12 @@
                                     <div class="col-12">
                                         <label for="address" class="form-label">Adresse (Localisation)</label>
                                         <textarea class="form-control @error('address') is-invalid @enderror"
-                                                    id="address" name="address" rows="2">{{ old('address', $employee->address) }}</textarea>
+                                                    id="address" name="address" rows="2"
+                                                    placeholder="Commune, quartier… (suggestions dès 2 lettres)">{{ old('address', $employee->address) }}</textarea>
                                         @error('address')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
+                                        @include('employees::partials.address-autocomplete')
                                     </div>
                                 </div>
                             </div>
@@ -474,9 +475,9 @@
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="fas fa-at"></i></span>
                                             <input type="text" class="form-control" id="username"
-                                                    name="username" value="{{ old('username', $employee->username) }}" readonly>
+                                                    name="username" value="{{ $employee->user->username ?? old('username') }}" readonly>
                                         </div>
-                                        <small class="text-muted">Généré automatiquement</small>
+                                        <small class="text-muted">Identifiant de connexion de l'employé, non modifiable</small>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="password" class="form-label">Mot de passe</label>
@@ -554,6 +555,9 @@
                                             <select class="form-select @error('department_id') is-invalid @enderror"
                                                     name="department_id" id="department_id" required>
                                                 <option value="">Sélectionner un service</option>
+                                                @foreach($servicesAgence as $serviceId => $serviceNom)
+                                                    <option value="{{ $serviceId }}" {{ (string) old('department_id', $employee->department_id) === (string) $serviceId ? 'selected' : '' }}>{{ $serviceNom }}</option>
+                                                @endforeach
                                             </select>
                                             @error('department_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -566,6 +570,9 @@
                                             <select class="form-select @error('designation_id') is-invalid @enderror"
                                                     name="designation_id" id="designation_id" required>
                                                 <option value="">Sélectionner un poste</option>
+                                                @foreach($postesService as $posteId => $posteNom)
+                                                    <option value="{{ $posteId }}" {{ (string) old('designation_id', $employee->designation_id) === (string) $posteId ? 'selected' : '' }}>{{ $posteNom }}</option>
+                                                @endforeach
                                             </select>
                                             @error('designation_id')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -578,30 +585,41 @@
                                     @endphp
                                     <div class="col-md-6 mb-3">
                                         <label for="category_job_id" class="form-label required">Sélectionner le type de catégorie</label>
-                                        <select type="text" name="category_job_id" class="form-select" id="category_job_id">
+                                        <select type="text" name="category_job_id" class="form-select" id="category_job_id" required>
                                             <option value="">-- Sélectionner un type de catégorie --</option>
                                             @foreach($jobCategories as $jobCategorie) 
-                                                <option value="{{ $jobCategorie->id }}" {{ old('category_job_id', $employee->categorie) == $jobCategorie->id ? 'selected' : '' }}>{{ $jobCategorie->title }}</option>
+                                                <option value="{{ $jobCategorie->id }}" {{ old('category_job_id', $typeCategorieActuel) == $jobCategorie->id ? 'selected' : '' }}>{{ $jobCategorie->title }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3" id="cat_id">
-                                        <label for="category_id" class="form-label">Sélectionner la catégorie</label>
-                                        <select type="text" name="category_id" class="form-select" id="category_id">
+                                        <label for="category_id" class="form-label required">Sélectionner la catégorie</label>
+                                        <select type="text" name="category_id" class="form-select" id="category_id" required>
+                                            <option value="">Sélectionner une catégorie</option>
+                                            @foreach($categoriesType as $categorieGrille)
+                                                <option value="{{ $categorieGrille['id'] }}"
+                                                    data-salaireminie="{{ $categorieGrille['salaire_minima_horaire'] ?? '' }}"
+                                                    data-salairemensuel="{{ $categorieGrille['salaire_minima_mensuel'] ?? '' }}"
+                                                    {{ (string) old('category_id', $categorieActuelle) === (string) $categorieGrille['id'] ? 'selected' : '' }}>
+                                                    Catégorie : {{ $categorieGrille['categorie'] ?? '' }} / S. Horaire : {{ $categorieGrille['salaire_minima_horaire'] ?? '' }} / S. Mensuel : {{ $categorieGrille['salaire_minima_mensuel'] ?? '' }}
+                                                </option>
+                                            @endforeach
                                             
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3" id="hor_sal_id">
                                         <label for="salaire_minima_horaire" class="form-label">Salaire Catégoriel Horaire</label>
-                                        <input type="number" name="salaire_minima_horaire" class="form-control" id="salaire_minima_horaire" readonly>
+                                        <input type="number" name="salaire_minima_horaire" class="form-control" id="salaire_minima_horaire" readonly
+                                            value="{{ old('salaire_minima_horaire', $salaireHoraireAffiche) }}">
                                     </div>
                                     <div class="col-md-6 mb-3" id="mens_sal_id">
                                         <label for="salaire_minima_mensuel" class="form-label">Salaire Catégoriel mensuel</label>
-                                        <input type="number" name="salaire_minima_mensuel" class="form-control" id="salaire_minima_mensuel" readonly>
+                                        <input type="number" name="salaire_minima_mensuel" class="form-control" id="salaire_minima_mensuel" readonly
+                                            value="{{ old('salaire_minima_mensuel', $salaireMensuelAffiche) }}">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="end_leave" class="form-label">Retour du dernier congé</label>
-                                        <input type="date" name="end_leave" class="form-control" id="end_leave" value="{{old('end_leave')}}">
+                                        <input type="date" name="end_leave" class="form-control" id="end_leave" value="{{ old('end_leave', optional($employee->end_leave)->format('Y-m-d')) }}">
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="charge_cmu"class="form-label">Prise en charge CMU</label>
@@ -888,26 +906,8 @@
         // CHARGEMENT AUTOMATIQUE DES DONNÉES AU DÉMARRAGE
         // ==============================================
         
-        // Attendre un peu pour que le DOM soit complètement chargé
-        setTimeout(function() {
-            // Charger les départements et postes si une branche est déjà sélectionnée
-            var initialBranchId = $('select[name="branch_id"]').val();
-            if (initialBranchId) {
-                loadDepartments(initialBranchId, function() {
-                    // Charger les postes si un département est déjà sélectionné
-                    var initialDepartmentId = $('select[name="department_id"]').val();
-                    if (initialDepartmentId) {
-                        loadDesignations(initialDepartmentId);
-                    }
-                });
-            }
-            
-            // Charger les catégories si un type de catégorie est déjà sélectionné
-            var initialCategoryJobId = $('#category_job_id').val();
-            if (initialCategoryJobId) {
-                loadCategories(initialCategoryJobId);
-            }
-        }, 100); // 100ms de délai
+        // Service, poste et catégorie arrivent déjà remplis et sélectionnés depuis le serveur :
+        // on ne les recharge qu'au changement d'agence, de service ou de type de catégorie.
         
         // Fonction pour charger les départements
         function loadDepartments(branchId, callback) {
@@ -999,8 +999,8 @@
                         
                         if (data && data.length > 0) {
                             $.each(data, function(key, value) {
-                                var selected = key == "{{ $employee->category_id ?? '' }}" ? 'selected' : '';
-                                $categorySelect.append('<option value="'+ key +'" data-salaireminie="' + value.salaire_minima_horaire + '" data-salairemensuel="' + value.salaire_minima_mensuel + '" '+ selected +'>Catégorie : ' + value.categorie +' / S. Horaire : '+ value.salaire_minima_horaire +' / S. Mensuel : '+ value.salaire_minima_mensuel +'</option>');
+                                var selected = value.id == "{{ $categorieActuelle ?? '' }}" ? 'selected' : '';
+                                $categorySelect.append('<option value="'+ value.id +'" data-salaireminie="' + value.salaire_minima_horaire + '" data-salairemensuel="' + value.salaire_minima_mensuel + '" '+ selected +'>Catégorie : ' + value.categorie +' / S. Horaire : '+ value.salaire_minima_horaire +' / S. Mensuel : '+ value.salaire_minima_mensuel +'</option>');
                             });
                         }
                     },
@@ -1108,27 +1108,47 @@
             $(tabElement).find('.is-invalid').removeClass('is-invalid');
             $(tabElement).find('.invalid-feedback').remove();
             
-            // Récupérer tous les champs requis visibles
-            const requiredFields = $(tabElement).find('[required]').filter(':visible');
-            
+            // Champs requis de l'onglet, même s'il n'est pas affiché (contrôle avant l'enregistrement)
+            // et même masqués par select2 ; seuls les blocs cachés volontairement sont ignorés.
+            const radiosVus = {};
+            const requiredFields = $(tabElement).find('[required]').filter(function () {
+                const $champ = $(this);
+                if ($champ.is(':disabled') || $champ.attr('type') === 'hidden') return false;
+                const blocCache = $champ.parentsUntil(tabElement).filter(function () { return this.style.display === 'none'; }).length > 0;
+                if (blocCache) return false;
+                if ($champ.attr('type') === 'radio') {
+                    const groupe = $champ.attr('name');
+                    if (radiosVus[groupe]) return false;
+                    radiosVus[groupe] = true;
+                }
+                return true;
+            });
+
             requiredFields.each(function() {
                 const $field = $(this);
-                const value = $field.val();
-                
+                const estRadio = $field.attr('type') === 'radio';
+                const value = estRadio
+                    ? $(tabElement).find('input[type="radio"][name="' + $field.attr('name') + '"]:checked').val()
+                    : $field.val();
+
                 // Vérifier si le champ est vide
                 if (!value || (typeof value === 'string' && !value.trim())) {
                     isValid = false;
                     $field.addClass('is-invalid');
-                    
+
                     // Ajouter un message d'erreur
                     const label = $field.closest('.form-group, .col-md-3, .col-md-4, .col-md-6, .col-12').find('label').first().text().replace('*', '').trim();
                     const errorMsg = label ? `Le champ "${label}" est obligatoire` : 'Ce champ est obligatoire';
                     champsManquants.push(label || ($field.attr('name') || 'Champ sans libellé'));
-                    
+
                     const $errorDiv = $('<div class="invalid-feedback d-block">' + errorMsg + '</div>');
-                    
+
                     // Insérer le message d'erreur
-                    if ($field.parent().hasClass('input-group')) {
+                    if (estRadio) {
+                        $field.closest('.radio-modern').after($errorDiv);
+                    } else if ($field.next('.select2-container').length) {
+                        $field.next('.select2-container').after($errorDiv);
+                    } else if ($field.parent().hasClass('input-group')) {
                         $field.parent().after($errorDiv);
                     } else {
                         $field.after($errorDiv);
@@ -1301,18 +1321,32 @@
             const targetTab = $(this);
             const currentTab = $('.nav-tabs .nav-link.active');
             
-            // Si on essaie d'aller à un onglet suivant
-            if (targetTab.parent().index() > currentTab.parent().index()) {
-                const currentHref = currentTab.attr('data-bs-target');
-                if (currentHref) {
-                    const currentTabId = currentHref.substring(1);
-                    
-                    // Valider l'onglet actuel
-                    if (!validateCurrentTab(currentTabId)) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
+            // Si on essaie d'aller à un onglet suivant : chaque onglet sauté doit être complet
+            const depart = currentTab.parent().index();
+            const arrivee = targetTab.parent().index();
+            for (let i = depart; i < arrivee; i++) {
+                const $onglet = $('.nav-tabs .nav-item').eq(i).find('.nav-link');
+                const ongletId = ($onglet.attr('data-bs-target') || '').substring(1);
+                if (ongletId && !validateCurrentTab(ongletId)) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    if (i !== depart) {
+                        $onglet.tab('show');
                     }
+                    return false;
+                }
+            }
+        });
+
+        // Enregistrement : aucun onglet ne doit avoir de champ obligatoire vide
+        $('#employeeForm').on('submit', function (e) {
+            const onglets = $('.nav-tabs .nav-link').toArray();
+            for (const onglet of onglets) {
+                const ongletId = ($(onglet).attr('data-bs-target') || '').substring(1);
+                if (ongletId && !validateCurrentTab(ongletId)) {
+                    e.preventDefault();
+                    $(onglet).tab('show');
+                    return false;
                 }
             }
         });
@@ -1357,16 +1391,20 @@
         document.getElementById("parts").value = Math.min(nombreDeParts, 5);
     }
 
-    // Génération automatique du nom d'utilisateur.
-    // En modification l'employé a deja un identifiant : on ne le regenere pas,
-    // sinon il changerait a chaque ouverture du formulaire et a chaque frappe.
+    // Nom d'utilisateur : en modification on garde toujours celui attribué à la création.
+    // Il n'est généré qu'une fois, au chargement, pour un ancien compte qui n'en aurait pas.
+    document.addEventListener('DOMContentLoaded', function () { generateUsername(); });
+
     function generateUsername() {
         const champUsername = document.getElementById('username');
         if (champUsername.value.trim() !== '') {
             return;
         }
 
-        const name = document.getElementById('name').value.replace(/\s+/g, '').toUpperCase();
+        // Lettres seules, sans accents ni apostrophes, comme à la création
+        const name = document.getElementById('name').value
+            .normalize('NFD').replace(/[̀-ͯ]/g, '')
+            .replace(/[^A-Za-z]/g, '').toUpperCase();
         if (name.length >= 4) {
             let username = name.substring(0, 4);
             const randomNum = Math.floor(10 + Math.random() * 90);

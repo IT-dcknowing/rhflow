@@ -261,6 +261,58 @@ class EmployeesController extends Controller
     }
 
     /**
+     * Suggestions du champ « Adresse » : d'abord les adresses déjà saisies dans la société (les plus fréquentes),
+     * puis les communes, quartiers et villes de Côte d'Ivoire (config/localites.php). Aucun service externe.
+     */
+    public function addressSuggestions(Request $request)
+    {
+        $saisie = trim((string) $request->query('q', ''));
+        if (mb_strlen($saisie) < 2) {
+            return response()->json([]);
+        }
+
+        // Comparaison sans accents, tirets ni majuscules : « port bouet » trouve « Port-Bouët »
+        $normaliser = fn ($texte) => trim(preg_replace('/[^a-z0-9]+/', ' ', strtolower(\Illuminate\Support\Str::ascii((string) $texte))));
+        $cherche = $normaliser($saisie);
+        $commencePar = fn ($cle) => str_starts_with($cle, $cherche) || str_contains($cle, ' ' . $cherche);
+
+        $suggestions = [];
+
+        // 1. Adresses déjà utilisées pour les employés de la société
+        $existantes = Employee::where('company_id', auth()->user()->company_id)
+            ->whereNotNull('address')
+            ->where('address', '!=', '')
+            ->select('address', \Illuminate\Support\Facades\DB::raw('COUNT(*) as total'))
+            ->groupBy('address')
+            ->orderByDesc('total')
+            ->limit(500)
+            ->get();
+
+        foreach ($existantes as $ligne) {
+            $adresse = trim(preg_replace('/\s+/', ' ', $ligne->address));
+            $cle = $normaliser($adresse);
+            if ($cle !== '' && !isset($suggestions[$cle]) && str_contains($cle, $cherche)) {
+                $suggestions[$cle] = ['texte' => $adresse, 'detail' => $ligne->total . ' employé(s)', 'source' => 'societe'];
+            }
+            if (count($suggestions) >= 5) {
+                break;
+            }
+        }
+
+        // 2. Localités de Côte d'Ivoire, celles qui commencent par la saisie en premier
+        $localites = collect(config('localites.cote_ivoire', []))
+            ->map(fn ($lieu) => ['texte' => $lieu, 'cle' => $normaliser($lieu)])
+            ->filter(fn ($lieu) => !isset($suggestions[$lieu['cle']]) && str_contains($lieu['cle'], $cherche))
+            ->sortBy(fn ($lieu) => ($commencePar($lieu['cle']) ? '0' : '1') . $lieu['cle']);
+
+        foreach ($localites as $lieu) {
+            $suggestions[$lieu['cle']] = ['texte' => $lieu['texte'], 'detail' => "Côte d'Ivoire", 'source' => 'localite'];
+        }
+
+        return response()->json(array_slice(array_values($suggestions), 0, 8));
+    }
+
+    /**
      * Créer un employé mensuel
      */
     public function create()
@@ -655,12 +707,9 @@ class EmployeesController extends Controller
             ->limit(12)
             ->get();
         
-        if($employee->start_date != null){
-            return view('employees::show', compact('employee', 'ruptures', 'periode', 'familyMembers', 'events', 'documents', 'paySlips'));
-        }else{
-            return redirect()->route('company.contracts.employee', $employee->id);
-        }
-        
+        // « Voir détails » ouvre toujours la fiche de l'employé, même sans date d'embauche
+        // (sans contrat) : la fiche propose alors d'associer un contrat.
+        return view('employees::show', compact('employee', 'ruptures', 'periode', 'familyMembers', 'events', 'documents', 'paySlips'));
     }
 
     public function showBulletin($id)
@@ -955,7 +1004,68 @@ class EmployeesController extends Controller
             ['id' => 4, 'name' => 'Contrat de travail (signé)', 'is_required' => 0],
         ];
         
-        return view('employees::edit', compact('employee', 'branches', 'employeesId', 'departments', 'designations', 'countries', 'maritalstatus', 'documents', 'company'));
+        // Listes de l'onglet « Poste » affichées déjà sélectionnées : chargées seulement par le script,
+        // elles arrivaient vides, le formulaire redemandait service, poste et catégorie et le salaire était effacé.
+        $servicesAgence = Department::where('branch_id', $employee->branch_id)
+            ->where('company_id', $companyId)
+            ->where('is_active', 1)
+            ->pluck('name', 'id');
+        if ($employee->department_id && !$servicesAgence->has($employee->department_id) && ($service = Department::find($employee->department_id))) {
+            $servicesAgence->put($service->id, $service->name);
+        }
+
+        $postesService = Designation::where('department_id', $employee->department_id)
+            ->where('company_id', $companyId)
+            ->where('is_active', 1)
+            ->pluck('name', 'id');
+        if ($employee->designation_id && !$postesService->has($employee->designation_id) && ($poste = Designation::find($employee->designation_id))) {
+            $postesService->put($poste->id, $poste->name);
+        }
+
+        // Type et catégorie pré-remplis : valeur enregistrée si elle existe dans la grille, sinon
+        // ancienne fiche (catégorie enregistrée par son rang) ou salaire égal à un seul minimum de la grille.
+        $grilleDuType = function ($type) {
+            try {
+                $donnees = $this->getCategoriesByType($type)->getData(true);
+                return is_array($donnees) ? array_values($donnees) : [];
+            } catch (\Throwable $e) {
+                return [];
+            }
+        };
+
+        $typeCategorieActuel = $employee->categorie;
+        $categorieActuelle = $employee->sous_categorie;
+        $categoriesType = $typeCategorieActuel ? $grilleDuType($typeCategorieActuel) : [];
+        $salaireMensuel = (int) round((float) $employee->salary);
+
+        if ($categoriesType && !in_array((string) $categorieActuelle, array_map('strval', array_column($categoriesType, 'id')), true)) {
+            $parSalaire = array_values(array_filter($categoriesType, fn ($c) => (int) $c['salaire_minima_mensuel'] === $salaireMensuel));
+            if (count($parSalaire) === 1) {
+                $categorieActuelle = $parSalaire[0]['id'];
+            } elseif (is_numeric($categorieActuelle) && isset($categoriesType[(int) $categorieActuelle])) {
+                $categorieActuelle = $categoriesType[(int) $categorieActuelle]['id'];
+            }
+        } elseif (!$typeCategorieActuel && $salaireMensuel > 0) {
+            $trouves = [];
+            foreach (collect(optional($company->sector)->getJobCategorieAttribute() ?? []) as $type) {
+                foreach ($grilleDuType($type->id) as $c) {
+                    if ((int) $c['salaire_minima_mensuel'] === $salaireMensuel) {
+                        $trouves[] = [$type->id, $c['id']];
+                    }
+                }
+            }
+            if (count($trouves) === 1) {
+                [$typeCategorieActuel, $categorieActuelle] = $trouves[0];
+                $categoriesType = $grilleDuType($typeCategorieActuel);
+            }
+        }
+
+        // Salaires catégoriels : ceux de la fiche, sinon ceux de la catégorie retrouvée
+        $categorieGrille = collect($categoriesType)->first(fn ($c) => (string) $c['id'] === (string) $categorieActuelle);
+        $salaireHoraireAffiche = (float) $employee->salary_horaire > 0 ? (int) round($employee->salary_horaire) : ($categorieGrille['salaire_minima_horaire'] ?? '');
+        $salaireMensuelAffiche = $salaireMensuel > 0 ? $salaireMensuel : ($categorieGrille['salaire_minima_mensuel'] ?? '');
+
+        return view('employees::edit', compact('employee', 'branches', 'employeesId', 'departments', 'designations', 'countries', 'maritalstatus', 'documents', 'company', 'servicesAgence', 'postesService', 'categoriesType', 'typeCategorieActuel', 'categorieActuelle', 'salaireHoraireAffiche', 'salaireMensuelAffiche'));
     }
 
     /**
@@ -967,6 +1077,29 @@ class EmployeesController extends Controller
         try {
             $employee = Employee::findOrFail($id);
             $companyId = auth()->user()->company_id;
+
+            // Le nom d'utilisateur vit sur le compte (users) et ne change pas en modification :
+            // il n'est exigé que si le compte n'en a pas encore.
+            $compte = User::find($employee->user_id);
+            $usernameExistant = $compte && !empty($compte->username);
+
+            // Numéros CNPS / CMU déjà enregistrés et non modifiés (souvent « 0 » ou un ancien format) :
+            // leur format n'est plus revérifié à chaque modification. Un « 0 » nouvellement saisi vaut « pas de numéro ».
+            $numerosInchanges = [];
+            foreach (['num_cnps', 'num_secu_soc'] as $champNumero) {
+                $saisi = trim((string) $request->input($champNumero));
+                if ($saisi !== '' && $saisi === trim((string) $employee->{$champNumero})) {
+                    $numerosInchanges[$champNumero] = $employee->{$champNumero};
+                    $request->merge([$champNumero => null]);
+                } elseif ($saisi === '0') {
+                    $request->merge([$champNumero => null]);
+                }
+            }
+
+            // La catégorie est obligatoire, sauf pour un stagiaire (le formulaire masque alors ce champ)
+            $typesCategorie = collect(optional(optional(Company::find($companyId))->sector)->getJobCategorieAttribute() ?? []);
+            $typeChoisi = $typesCategorie->firstWhere('id', (int) $request->input('category_job_id'));
+            $estStagiaire = $typeChoisi && strcasecmp(trim((string) $typeChoisi->title), 'Stagiaire') === 0;
 
             // Validation des données
             try {
@@ -984,7 +1117,11 @@ class EmployeesController extends Controller
                     'email' => 'nullable|email',
                     'phone' => 'nullable|string|max:20',
                     'address' => 'nullable|string|max:255',
-                    'username' => 'required|string|unique:users,username,' . $employee->user_id,
+                    'username' => [
+                        $usernameExistant ? 'nullable' : 'required',
+                        'string',
+                        Rule::unique('users', 'username')->ignore($employee->user_id),
+                    ],
                     'password' => 'nullable|string|min:8',
                     'employee_id' => [
                         'required',
@@ -996,8 +1133,8 @@ class EmployeesController extends Controller
                     'branch_id' => 'required|integer|exists:branches,id',
                     'department_id' => 'required|integer|exists:departments,id',
                     'designation_id' => 'required|integer|exists:designations,id',
-                    'category_job_id' => 'nullable|integer',
-                    'category_id' => 'nullable|integer',
+                    'category_job_id' => 'required|integer',
+                    'category_id' => [$estStagiaire ? 'nullable' : 'required', 'integer'],
                     'salaire_minima_horaire' => 'nullable|integer|min:0',
                     'salaire_minima_mensuel' => 'nullable|integer|min:0',
                     'charge_cmu' => 'nullable|integer|min:0',
@@ -1019,6 +1156,8 @@ class EmployeesController extends Controller
                     'employee_id.unique' => 'L\'ID Employé est déjà attribué. Veuillez rafraîchir la page pour en générer un nouveau.',
                     'num_secu_soc.digits' => 'Le numéro CMU doit contenir exactement 13 chiffres.',
                     'num_cnps.digits' => 'Le numéro CNPS doit contenir exactement 12 chiffres.',
+                    'category_job_id.required' => 'Veuillez sélectionner le type de catégorie (onglet Données du poste).',
+                    'category_id.required' => 'Veuillez sélectionner la catégorie (onglet Données du poste).',
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 DB::rollBack();
@@ -1047,6 +1186,11 @@ class EmployeesController extends Controller
                         'size' => $document->getSize(),
                     ];
                 }
+            }
+
+            // Numéros inchangés : on les remet tels qu'ils étaient enregistrés
+            foreach ($numerosInchanges as $champNumero => $valeurEnregistree) {
+                $validated[$champNumero] = $valeurEnregistree;
             }
 
             // Mise à jour de l'utilisateur
@@ -1089,7 +1233,7 @@ class EmployeesController extends Controller
                 'charge_expat' => $validated['charge_expat'],
                 'num_cnps' => $validated['num_cnps'] ?? null,
                 'num_secu_soc' => $validated['num_secu_soc'] ?? null,
-                'categorie' => $validated['category_job_id'],
+                'categorie' => $validated['category_job_id'] ?? $employee->categorie,
                 'address' => $validated['address'] ?? null,
                 'email' => $validated['email'],
                 'employee_id' => $validated['employee_id'],
@@ -1105,9 +1249,12 @@ class EmployeesController extends Controller
                 'mtn_money' => $validated['mtn_money'] ?? null,
                 'moov_money' => $validated['moov_money'] ?? null,
                 'wave_money' => $validated['wave_money'] ?? null,
-                'sous_categorie' => $validated['category_id'] ?? null,
-                'salary_horaire' => !empty($validated['salaire_minima_horaire']) ? $validated['salaire_minima_horaire'] : round($validated['salaire_minima_mensuel'] / 173.33),
-                'salary' => $validated['salaire_minima_mensuel'],
+                // Champ vide (catégorie non rechoisie) : on garde la valeur enregistrée au lieu de l'effacer
+                'sous_categorie' => filled($validated['category_id'] ?? null) ? $validated['category_id'] : $employee->sous_categorie,
+                'salary_horaire' => filled($validated['salaire_minima_horaire'] ?? null)
+                    ? $validated['salaire_minima_horaire']
+                    : (filled($validated['salaire_minima_mensuel'] ?? null) ? round($validated['salaire_minima_mensuel'] / 173.33) : $employee->salary_horaire),
+                'salary' => filled($validated['salaire_minima_mensuel'] ?? null) ? $validated['salaire_minima_mensuel'] : $employee->salary,
                 'charge_its' => $validated['charge_its'] ?? null,
                 'charge_cnps' => $validated['charge_cnps'] ?? null,
                 'charge_cmu' => $validated['charge_cmu'] ?? null,

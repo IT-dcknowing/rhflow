@@ -461,10 +461,12 @@
                                     <div class="col-12">
                                         <label for="address" class="form-label">Adresse (Localisation)</label>
                                         <textarea class="form-control @error('address') is-invalid @enderror"
-                                                    id="address" name="address" rows="2">{{ old('address') }}</textarea>
+                                                    id="address" name="address" rows="2"
+                                                    placeholder="Commune, quartier… (suggestions dès 2 lettres)">{{ old('address') }}</textarea>
                                         @error('address')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
+                                        @include('employees::partials.address-autocomplete')
                                     </div>
                                 </div>
                             </div>
@@ -1332,11 +1334,14 @@
     // utilisera pour se connecter (application mobile comprise). Le bouton
     // "regenerer" reste le seul moyen d'en obtenir un autre.
     function construireUsername() {
-        const name = document.getElementById('name').value.replace(/\s+/g, '').toUpperCase();
-        if (name.length < 4) {
+        // Lettres seules, sans accents ni apostrophes : « N'DA Éric » donne NDAE
+        const lettres = document.getElementById('name').value
+            .normalize('NFD').replace(/[̀-ͯ]/g, '')
+            .replace(/[^A-Za-z]/g, '').toUpperCase();
+        if (lettres.length < 4) {
             return null;
         }
-        return name.substring(0, 4) + Math.floor(10 + Math.random() * 90);
+        return lettres.substring(0, 4) + Math.floor(10 + Math.random() * 90);
     }
 
     function generateUsername(forcer = false) {

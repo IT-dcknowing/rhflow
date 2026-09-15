@@ -16,6 +16,8 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
         // Employés mensuels
         Route::get('/', [EmployeesController::class, 'index'])->name('index');
         Route::get('create', [EmployeesController::class, 'create'])->name('create');
+        // Suggestions du champ adresse (formulaires de création et de modification)
+        Route::get('adresses/suggestions', [EmployeesController::class, 'addressSuggestions'])->name('address-suggestions');
         Route::post('import', [EmployeesController::class, 'import'])->name('import');
         Route::get('import-template', [EmployeesController::class, 'downloadTemplate'])->name('import.template');
 
