@@ -74,7 +74,17 @@
                                     <p class="mb-2"><strong>Utilisateurs / Employés:</strong> {{ $nbTotal }} / {{ $maxTotal }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p class="mb-2"><strong>Stockage:</strong> {{ number_format(auth()->user()->company->storage_used ?? 0, 2) }} GB / {{ auth()->user()->company->companyPlan->storage_limit == 0 ? 'Illimité' : auth()->user()->company->companyPlan->storage_limit }} GB</p>
+                                    @php
+                                        // Espace réellement occupé par les fichiers de l'entreprise (logo, contrats, documents, justificatifs…)
+                                        $octetsStockage = \App\Services\StockageEntreprise::octetsUtilises($currentCompany);
+                                        $limiteStockage = (float) ($currentPlan->storage_limit ?? 0);
+                                    @endphp
+                                    <p class="mb-2"><strong>Stockage :</strong> {{ \App\Services\StockageEntreprise::formater($octetsStockage) }} / {{ $limiteStockage == 0 ? 'Illimité' : rtrim(rtrim(number_format($limiteStockage, 2, ',', ' '), '0'), ',') . ' Go' }}
+                                        @if($limiteStockage > 0)
+                                            @php $pourcentStockage = min(100, $octetsStockage / ($limiteStockage * 1073741824) * 100); @endphp
+                                            <small class="text-muted">({{ $octetsStockage > 0 && $pourcentStockage < 0.1 ? 'moins de 0,1' : number_format($pourcentStockage, 1, ',', ' ') }} %)</small>
+                                        @endif
+                                    </p>
                                     @if(auth()->user()->company->subscription_expires_at)
                                     <p class="mb-2"><strong>Expire le:</strong> {{ auth()->user()->company->subscription_expires_at->format('d/m/Y') }}</p>
                                     @endif
@@ -144,18 +154,9 @@
 
                     <div class="features-list mb-4">
                         @if($plan->features)
-                            @php
-                                $features = is_array($plan->features) ? $plan->features : explode("\n", $plan->features);
-                                // Les limites (utilisateurs, employes, stockage) sont deja affichees juste
-                                // en dessous a partir des champs du plan. On retire donc les lignes de
-                                // features qui ne font que les repeter, pour eviter le doublon.
-                                $features = collect($features)
-                                    ->map(fn ($f) => trim($f))
-                                    ->filter()
-                                    ->reject(fn ($f) => preg_match('/(\d+\s*(utilisateur|employ|go\b|gb\b)|illimit)/iu', $f))
-                                    ->values();
-                            @endphp
-                            @foreach($features as $feature)
+                            {{-- Les limites (utilisateurs, employés, stockage) sont affichées juste en dessous :
+                                 les lignes qui les répètent (« 150 salariés max ») et les « + » sont retirés. --}}
+                            @foreach($plan->fonctionnalites_affichees as $feature)
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-check text-success me-2"></i>
                                 <small>{{ $feature }}</small>
@@ -175,7 +176,7 @@
                         
                         <div class="d-flex align-items-center mb-2">
                             <i class="fas fa-cloud text-success me-2"></i>
-                            <small>{{ $plan->storage_limit == 0 ? 'Stockage illimité' : $plan->storage_limit . ' GB stockage' }}</small>
+                            <small>{{ $plan->storage_limit == 0 ? 'Stockage illimité' : rtrim(rtrim(number_format((float) $plan->storage_limit, 2, ',', ' '), '0'), ',') . ' Go de stockage' }}</small>
                         </div>
                     </div>
 

@@ -191,11 +191,9 @@
                         <div class="col-md-4">
                             <h6>Fonctionnalités</h6>
                             @if($order->plan->features)
-                                @php
-                                    $features = is_array($order->plan->features) ? $order->plan->features : explode("\n", $order->plan->features);
-                                @endphp
+                                {{-- Limites déjà listées à gauche : pas de « salariés max » en double ni de « + » --}}
                                 <ul class="list-unstyled">
-                                    @foreach($features as $feature)
+                                    @foreach($order->plan->fonctionnalites_affichees as $feature)
                                     <li><i class="fas fa-check text-success me-2"></i> {{ $feature }}</li>
                                     @endforeach
                                 </ul>

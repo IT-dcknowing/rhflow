@@ -166,6 +166,20 @@ class Plan extends Model
     }
 
     /**
+     * Fonctionnalités à afficher à côté des limites du plan : sans « + » ni retours chariot,
+     * et sans les lignes qui répètent ces limites (salariés, utilisateurs, stockage).
+     */
+    public function getFonctionnalitesAfficheesAttribute(): array
+    {
+        return collect($this->features_list)
+            ->map(fn ($f) => trim(preg_replace('/\s*\+\s*/u', ' ', (string) $f)))
+            ->filter()
+            ->reject(fn ($f) => preg_match('/(\d+\s*(salari|utilisateur|employ|go\b|gb\b)|illimit)/iu', $f))
+            ->values()
+            ->all();
+    }
+
+    /**
      * Vérifier si le plan supporte un nombre d'utilisateurs donné
      */
     public function supportsUserCount(int $count): bool

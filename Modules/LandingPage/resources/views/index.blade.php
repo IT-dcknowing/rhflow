@@ -1679,12 +1679,13 @@
 
                         <ul class="space-y-4 mb-8 flex-grow">
                             @php
-                                $features = $pack->features;
+                                // Les limites ne sont pas affichées ailleurs sur cette carte : on garde « X salariés max », sans les « + »
+                                $features = collect($pack->features ?? [])->map(fn ($f) => trim(preg_replace('/\s*\+\s*/u', ' ', (string) $f)))->filter();
                             @endphp
                             @foreach ($features as $feature)
                                 <li class="flex items-start">
                                     <i class="ri-check-double-line text-green-500 mr-3 text-xl flex-shrink-0"></i>
-                                    <span class="text-gray-700">{{ trim($feature) }}</span>
+                                    <span class="text-gray-700">{{ $feature }}</span>
                                 </li>
                             @endforeach
                         </ul>
