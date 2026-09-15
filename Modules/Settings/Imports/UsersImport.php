@@ -9,15 +9,25 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsOnError;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Illuminate\Validation\Rule;
 
-class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnError
+/**
+ * Import d'utilisateurs depuis le même format que l'export (Nom Complet, Email, Type, Statut…).
+ * Une ligne invalide est écartée et signalée, sans bloquer les autres.
+ */
+class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnError, SkipsOnFailure
 {
-    use SkipsErrors;
+    use SkipsErrors, SkipsFailures;
 
     protected $company;
     protected $creator;
     protected $skipDuplicates;
+
+    /** Comptes créés et doublons ignorés, pour le message de fin d'import */
+    public int $importes = 0;
+    public int $ignores = 0;
 
     public function __construct($company, $creator, $skipDuplicates = false)
     {
@@ -31,31 +41,37 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
      */
     public function model(array $row)
     {
-        // Vérifier si l'utilisateur existe déjà
-        if ($this->skipDuplicates) {
-            $existingUser = User::where('email', $row['email'])
-                ->where('company_id', $this->company->id)
-                ->first();
-
-            if ($existingUser) {
-                return null; // Ignorer cette ligne
-            }
+        // Doublon (compte existant ou ligne répétée dans le fichier) : l'email est unique en base
+        if (User::where('email', $row['email'])->exists()) {
+            $this->ignores++;
+            return null;
         }
 
-        // Créer l'utilisateur
+        $this->importes++;
+
         return new User([
             'name' => $row['nom_complet'],
+            'username' => User::genererUsername($row['nom_complet']),
             'email' => $row['email'],
             'password' => Hash::make($row['mot_de_passe'] ?? 'password123'),
-            'type' => $this->convertType($row['type']),
-            'phone' => $row['telephone'] ?? null,
+            'type' => $row['type'],
             'company_id' => $this->company->id,
-            'branch_id' => $this->findBranchId($row['branche']),
-            'department_id' => $this->findDepartmentId($row['departements']),
-            'designation_id' => $this->findDesignationId($row['poste']),
-            'is_active' => $this->convertStatus($row['statut']),
+            'is_active' => $this->convertStatus($row['statut'] ?? null),
             'created_by' => $this->creator->id,
         ]);
+    }
+
+    /**
+     * Libellés du fichier (« Entreprise », « RH », « Paie », « Employé ») convertis avant la validation
+     */
+    public function prepareForValidation($data, $index)
+    {
+        $data['nom_complet'] = trim((string) ($data['nom_complet'] ?? ''));
+        $data['email'] = trim((string) ($data['email'] ?? ''));
+        $data['type'] = $this->convertType($data['type'] ?? '');
+        $data['statut'] = ($data['statut'] ?? null) !== null ? mb_strtolower(trim((string) $data['statut'])) : null;
+
+        return $data;
     }
 
     /**
@@ -65,20 +81,28 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
     {
         return [
             'nom_complet' => 'required|string|max:255',
-            'email' => [
+            // Avec « Ignorer les doublons », un email existant est écarté dans model() au lieu d'être refusé
+            'email' => array_filter([
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->where(function ($query) {
-                    return $query->where('company_id', $this->company->id);
-                })
-            ],
+                $this->skipDuplicates ? null : Rule::unique('users', 'email'),
+            ]),
             'type' => 'required|string|in:company,hr,payroll,employee',
-            'telephone' => 'nullable|string|max:20',
-            'branche' => 'nullable|string',
-            'departements' => 'nullable|string',
-            'poste' => 'nullable|string',
-            'statut' => 'nullable|string|in:actif,inactif,Actif,Inactif',
+            'statut' => 'nullable|string|in:actif,inactif,active,inactive,oui,non,1,0',
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            'nom_complet.required' => 'le nom complet est obligatoire.',
+            'email.required' => "l'email est obligatoire.",
+            'email.email' => "l'email n'est pas valide.",
+            'email.unique' => 'cet email est déjà utilisé (cochez « Ignorer les doublons » pour passer ces lignes).',
+            'type.required' => 'le type est obligatoire (Entreprise, RH, Paie ou Employé).',
+            'type.in' => 'type inconnu, utilisez Entreprise, RH, Paie ou Employé.',
+            'statut.in' => 'statut inconnu, utilisez Actif ou Inactif.',
         ];
     }
 
@@ -91,35 +115,32 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
             'nom_complet' => 'Nom Complet',
             'email' => 'Email',
             'type' => 'Type',
-            'telephone' => 'Téléphone',
-            'branche' => 'Branche',
-            'departements' => 'Département',
-            'poste' => 'Poste',
             'statut' => 'Statut',
         ];
     }
 
     /**
-     * Convertir le type d'utilisateur du format Excel vers le format base de données
+     * Convertir le type d'utilisateur du format Excel vers le format base de données.
+     * Une valeur inconnue est laissée telle quelle pour être signalée par la validation.
      */
     private function convertType($type): string
     {
+        $valeur = mb_strtolower(trim((string) $type));
         $typeMap = [
             'entreprise' => 'company',
-            'Entreprise' => 'company',
             'company' => 'company',
             'rh' => 'hr',
-            'RH' => 'hr',
+            'responsable rh' => 'hr',
             'hr' => 'hr',
             'paie' => 'payroll',
-            'Paie' => 'payroll',
+            'responsable paie' => 'payroll',
             'payroll' => 'payroll',
             'employé' => 'employee',
-            'Employé' => 'employee',
+            'employe' => 'employee',
             'employee' => 'employee',
         ];
 
-        return $typeMap[strtolower($type)] ?? 'employee';
+        return $typeMap[$valeur] ?? $valeur;
     }
 
     /**
@@ -127,60 +148,10 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
      */
     private function convertStatus($status): bool
     {
-        if (!$status) {
+        if ($status === null || $status === '') {
             return true; // Par défaut actif
         }
 
-        $activeStatuses = ['actif', 'Actif', 'active', 'Active', '1', 'true', 'oui', 'Oui'];
-
-        return in_array(strtolower($status), $activeStatuses);
-    }
-
-    /**
-     * Trouver l'ID de la branche par son nom
-     */
-    private function findBranchId($branchName)
-    {
-        if (!$branchName) {
-            return null;
-        }
-
-        $branch = $this->company->branches()
-            ->where('name', 'LIKE', '%' . $branchName . '%')
-            ->first();
-
-        return $branch ? $branch->id : null;
-    }
-
-    /**
-     * Trouver l'ID du département par son nom
-     */
-    private function findDepartmentId($departmentName)
-    {
-        if (!$departmentName) {
-            return null;
-        }
-
-        $department = $this->company->departments()
-            ->where('name', 'LIKE', '%' . $departmentName . '%')
-            ->first();
-
-        return $department ? $department->id : null;
-    }
-
-    /**
-     * Trouver l'ID du poste par son titre
-     */
-    private function findDesignationId($designationTitle)
-    {
-        if (!$designationTitle) {
-            return null;
-        }
-
-        $designation = $this->company->designations()
-            ->where('title', 'LIKE', '%' . $designationTitle . '%')
-            ->first();
-
-        return $designation ? $designation->id : null;
+        return in_array(mb_strtolower((string) $status), ['actif', 'active', '1', 'true', 'oui']);
     }
 }

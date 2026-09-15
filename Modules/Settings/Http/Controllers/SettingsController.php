@@ -1218,10 +1218,26 @@ class SettingsController extends Controller
         $company = $user->company;
 
         try {
-            // Importer le fichier
-            Excel::import(new UsersImport($company, $user, $request->boolean('skip_duplicates')), $request->file('file'));
+            // Importer le fichier : les lignes invalides sont écartées et listées
+            $import = new UsersImport($company, $user, $request->boolean('skip_duplicates'));
+            Excel::import($import, $request->file('file'));
 
-            return redirect()->back()->with('success', 'Utilisateurs importés avec succès.');
+            $message = $import->importes . ' utilisateur(s) importé(s).';
+            if ($import->ignores) {
+                $message .= ' ' . $import->ignores . ' doublon(s) ignoré(s).';
+            }
+
+            $refus = collect($import->failures())
+                ->map(fn ($echec) => 'ligne ' . $echec->row() . ' : ' . implode(' ', $echec->errors()))
+                ->unique()
+                ->values();
+            if ($refus->isNotEmpty()) {
+                $message .= ' ' . $refus->count() . ' ligne(s) refusée(s) — ' . $refus->take(5)->implode(' · ') . ($refus->count() > 5 ? ' …' : '');
+
+                return redirect()->back()->with('error', $message);
+            }
+
+            return redirect()->back()->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur lors de l\'import: ' . $e->getMessage());
         }

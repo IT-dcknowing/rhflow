@@ -1649,7 +1649,7 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Succès',
-                text: "{{ session('success') }}",
+                text: @json(session('success')),
                 timer: 4000,
                 showConfirmButton: false,
                 toast: true,
@@ -1663,11 +1663,13 @@
         @endif
 
         @if(session('error'))
-            if (!SmartGuard.analyzeError("{{ session('error') }}")) {
+            // Message encodé en JSON : il s'affiche tel quel (apostrophes non transformées en &#039;)
+            const messageErreurSession = @json(session('error'));
+            if (!SmartGuard.analyzeError(messageErreurSession)) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erreur',
-                    text: "{{ session('error') }}",
+                    text: messageErreurSession,
                     confirmButtonColor: '#253e87',
                     background: '#ffffff',
                     iconColor: '#ff4d4f',
