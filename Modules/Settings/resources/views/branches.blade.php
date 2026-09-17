@@ -61,6 +61,7 @@
                                         <tr>
                                             <th>Code</th>
                                             <th>Site</th>
+                                            <th>Type</th>
                                             <th>Coordonnées</th>
                                             <th>Manager</th>
                                             <th>Services</th>
@@ -79,6 +80,12 @@
                                                             <small class="text-muted">{{ $branch->address }}</small>
                                                         @endif
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        class="badge {{ $branch->type === 'siege' ? 'bg-label-primary' : 'bg-label-secondary' }}">
+                                                        {{ $branch->type === 'siege' ? 'Siège' : 'Succursale' }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     @if($branch->phone)
@@ -191,6 +198,16 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Type de site <span class="text-danger">*</span></label>
+                                <select class="form-select" name="type" required id="branchType">
+                                    <option value="succursale">Succursale</option>
+                                    <option value="siege">Siège</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Adresse</label>
                             <textarea class="form-control" name="address" rows="2"
@@ -211,24 +228,19 @@
                         <div class="mb-3">
                             <label class="form-label">Manager du Site <span class="text-danger">*</span></label>
                             @if($companyUsers->count() > 0)
-                                @if($companyUsers->count() > 10)
-                                    <!-- Select avec recherche pour plus de 100 utilisateurs -->
-                                    <select class="form-select select2" name="manager_id" required
-                                        data-placeholder="Rechercher un utilisateur...">
-                                        <option value="">Sélectionner un manager</option>
-                                        @foreach($companyUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <!-- Select simple pour moins de 100 utilisateurs -->
-                                    <select class="form-select" name="manager_id" required>
-                                        <option value="">Sélectionner un manager</option>
-                                        @foreach($companyUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                        @endforeach
-                                    </select>
-                                @endif
+                                {{-- Une seule liste, quel que soit le nombre d'utilisateurs. Le markup était
+                                     auparavant dupliqué selon un seuil (« > 10 »), avec deux rendus différents
+                                     pour le même champ. Toutes les options restent dans le DOM, mais la liste
+                                     déroulante n'en propose que LIMITE_MANAGERS à la fois (voir initSelect2) :
+                                     les autres s'atteignent par la barre de recherche. --}}
+                                <select class="form-select select2" name="manager_id" required
+                                    data-placeholder="Sélectionner un manager">
+                                    <option value="">Sélectionner un manager</option>
+                                    @foreach($companyUsers as $user)
+                                        {{-- Parenthèses seulement si l'email existe, sinon le libellé se terminait par « () ». --}}
+                                        <option value="{{ $user->id }}">{{ $user->name }}@if($user->email) ({{ $user->email }})@endif</option>
+                                    @endforeach
+                                </select>
                             @else
                                 <div class="alert alert-warning">
                                     <i class="fas fa-exclamation-triangle me-1"></i>
@@ -236,6 +248,52 @@
                                 </div>
                                 <input type="hidden" name="manager_id" value="">
                             @endif
+                        </div>
+
+                        {{-- Création d'un manager sans quitter la modale. Les champs n'ont volontairement
+                             ni « name » ni « required » : ils ne doivent ni partir avec le formulaire du
+                             site, ni bloquer sa validation. --}}
+                        <div class="mb-3">
+                            <button class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#nouveauManager">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Créer un manager</span>
+                            </button>
+
+                            <div class="collapse mt-3" id="nouveauManager">
+                                <div class="border rounded p-3">
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nom complet <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="managerNom">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control" id="managerEmail">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Téléphone</label>
+                                            <input type="text" class="form-control" id="managerTelephone">
+                                        </div>
+                                    </div>
+
+                                    {{-- Le mot de passe n'est plus saisi ici : il est généré à la création
+                                         et affiché une seule fois ci-dessous, à transmettre au manager. --}}
+                                    <div id="managerMotDePasseGenere" class="alert alert-success mt-3 mb-0 d-none">
+                                    </div>
+
+                                    <div id="managerErreur" class="text-danger small mt-2 d-none"></div>
+
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button type="button"
+                                            class="btn btn-sm btn-primary d-inline-flex align-items-center gap-2"
+                                            id="enregistrerManager">
+                                            <i class="fas fa-save"></i>
+                                            <span>Enregistrer le manager</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <input type="hidden" name="is_active" value="0">
@@ -282,6 +340,16 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Type de site <span class="text-danger">*</span></label>
+                                <select class="form-select" name="type" required id="editBranchType">
+                                    <option value="succursale">Succursale</option>
+                                    <option value="siege">Siège</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Adresse</label>
                             <textarea class="form-control" name="address" rows="2"
@@ -304,24 +372,17 @@
                         <div class="mb-3">
                             <label class="form-label">Manager du Site <span class="text-danger">*</span></label>
                             @if($companyUsers->count() > 0)
-                                @if($companyUsers->count() > 10)
-                                    <!-- Select avec recherche pour plus de 10 utilisateurs -->
-                                    <select class="form-select select2" name="manager_id" id="editBranchManager" required
-                                        data-placeholder="Rechercher un utilisateur...">
-                                        <option value="">Sélectionner un manager</option>
-                                        @foreach($companyUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <!-- Select simple pour moins de 10 utilisateurs -->
-                                    <select class="form-select" name="manager_id" id="editBranchManager" required>
-                                        <option value="">Sélectionner un manager</option>
-                                        @foreach($companyUsers as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                        @endforeach
-                                    </select>
-                                @endif
+                                {{-- Même liste unique que dans la modale de création : seules
+                                     LIMITE_MANAGERS entrées sont proposées à la fois, les autres
+                                     s'atteignent par la barre de recherche (voir initSelect2). --}}
+                                <select class="form-select select2" name="manager_id" id="editBranchManager" required
+                                    data-placeholder="Sélectionner un manager">
+                                    <option value="">Sélectionner un manager</option>
+                                    @foreach($companyUsers as $user)
+                                        {{-- Parenthèses seulement si l'email existe, sinon le libellé se terminait par « () ». --}}
+                                        <option value="{{ $user->id }}">{{ $user->name }}@if($user->email) ({{ $user->email }})@endif</option>
+                                    @endforeach
+                                </select>
                             @else
                                 <div class="alert alert-warning">
                                     <i class="fas fa-exclamation-triangle me-1"></i>
@@ -415,33 +476,44 @@
             width: 100% !important;
         }
 
-        .select2-container--bootstrap-5 .select2-selection {
+        /* Thème « default » : c'est le seul dont la feuille est chargée par le layout.
+           Ces règles ciblaient « bootstrap-5 », dont la CSS est absente du projet :
+           la sélection n'était alors stylée par rien et le libellé sortait du cadre. */
+        .select2-container--default .select2-selection--single {
             border-radius: 8px;
             border: 1px solid #d4d4d8;
-            min-height: 38px;
+            height: 38px;
         }
 
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-            padding: 6px 12px;
-            line-height: 1.5;
+        /* Le layout pose déjà padding: 5px 10px sur la sélection : on ne rajoute pas
+           le retrait horizontal par défaut de Select2, qui décalerait le texte. */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 26px;
+            padding-left: 0;
+            padding-right: 20px;
         }
 
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
-            top: 50%;
-            transform: translateY(-50%);
-            right: 12px;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow b {
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
             border-color: #6c757d transparent transparent transparent;
             border-width: 5px 4px 0 4px;
             margin-top: -2px;
         }
 
-        .select2-container--bootstrap-5 .select2-dropdown {
+        .select2-container--default .select2-dropdown {
             border-radius: 8px;
             border: 1px solid #d4d4d8;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Filet de sécurité : le nombre d'entrées est déjà borné côté JS (LIMITE_MANAGERS),
+           cette hauteur empêche tout déroulé inattendu de la liste. */
+        .select2-container--default .select2-results > .select2-results__options {
+            max-height: 190px;
+        }
+
+        /* Au-dessus du fond de la modale, sinon la liste s'ouvre derrière. */
+        .select2-container--open {
+            z-index: 1060;
         }
 
         .select2-results__option {
@@ -538,15 +610,61 @@
             }
         }
 
-        // Initialiser Select2 si plus de 100 utilisateurs
+        // Nombre d'entrées proposées à la fois dans la liste des managers.
+        // Les autres ne sont pas déroulées : on les atteint par la barre de recherche.
+        const LIMITE_MANAGERS = 4;
+
+        // Select2 sur la liste des managers.
+        //
+        // Corrections par rapport à la version d'origine :
+        // - pas de theme 'bootstrap-5' : sa feuille de style n'est pas chargée par le projet,
+        //   les classes émises n'étaient donc stylées par rien et le libellé sortait du cadre ;
+        // - dropdownParent sur la modale : sans lui la liste s'ouvre derrière le fond ;
+        // - destroy préalable : le layout initialise déjà .select2 au chargement de la page
+        //   (resources/views/layouts/app.blade.php), sans dropdownParent. On repart de zéro ;
+        // - source locale bornée : une simple hauteur de liste ne suffisait pas, tous les
+        //   managers restaient présents et la liste défilait.
         function initSelect2() {
-            if (typeof $ !== 'undefined' && $('.select2').length > 0) {
-                $('.select2').select2({
-                    theme: 'bootstrap-5',
+            if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+                return;
+            }
+
+            $('.select2').each(function () {
+                const $select = $(this);
+                const $modale = $select.closest('.modal');
+
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                }
+
+                $select.select2({
                     width: '100%',
-                    placeholder: 'Rechercher un utilisateur...',
+                    placeholder: $select.data('placeholder') || 'Sélectionner un manager',
                     allowClear: true,
-                    minimumInputLength: 2,
+                    dropdownParent: $modale.length ? $modale : $(document.body),
+                    // Source locale : les <option> du select, filtrées sur la saisie puis
+                    // tronquées. Elles sont relues à chaque appel et non mises en cache,
+                    // pour qu'un manager créé depuis cette modale soit aussitôt proposé.
+                    ajax: {
+                        delay: 0,
+                        transport: function (parametres, reussite) {
+                            const saisie = (parametres.data && parametres.data.term ? parametres.data.term : '')
+                                .trim()
+                                .toLowerCase();
+
+                            const resultats = $select.find('option')
+                                .toArray()
+                                .filter(option => option.value !== '')
+                                .map(option => ({ id: option.value, text: option.textContent.trim() }))
+                                .filter(option => saisie === '' || option.text.toLowerCase().includes(saisie))
+                                .slice(0, LIMITE_MANAGERS);
+
+                            reussite({ results: resultats });
+
+                            // Select2 attend un objet annulable en retour du transport.
+                            return { abort: function () { } };
+                        }
+                    },
                     language: {
                         noResults: function () {
                             return "Aucun utilisateur trouvé";
@@ -556,8 +674,107 @@
                         }
                     }
                 });
-            }
+            });
         }
+
+        // Création d'un manager sans quitter la modale du site.
+        // Seul l'essentiel est demandé : l'identifiant de connexion est généré côté serveur,
+        // comme pour les comptes créés depuis Paramètres › Utilisateurs.
+        function creerManager() {
+            const bouton = document.getElementById('enregistrerManager');
+            const zoneErreur = document.getElementById('managerErreur');
+            const nom = document.getElementById('managerNom').value.trim();
+            const email = document.getElementById('managerEmail').value.trim();
+            const telephone = document.getElementById('managerTelephone').value.trim();
+
+            function afficherErreur(message) {
+                zoneErreur.textContent = message;
+                zoneErreur.classList.remove('d-none');
+            }
+
+            zoneErreur.classList.add('d-none');
+
+            if (!nom || !email) {
+                afficherErreur('Le nom et l\'email sont obligatoires.');
+                return;
+            }
+
+            const libelleInitial = bouton.innerHTML;
+            bouton.disabled = true;
+            bouton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enregistrement...</span>';
+
+            fetch('{{ route('company.settings.branches.managers.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ name: nom, email: email, phone: telephone })
+            })
+                .then(reponse => reponse.json().then(donnees => ({ ok: reponse.ok, donnees })))
+                .then(({ ok, donnees }) => {
+                    if (!ok || !donnees.success) {
+                        // Laravel renvoie les erreurs de validation dans « errors » (422).
+                        const premiere = donnees.errors
+                            ? Object.values(donnees.errors)[0][0]
+                            : (donnees.message || 'Création impossible.');
+                        afficherErreur(premiere);
+                        return;
+                    }
+
+                    const listes = document.querySelectorAll('select[name="manager_id"]');
+
+                    // Aucune liste sur la page : elle n'est rendue que s'il existe déjà un
+                    // utilisateur. On recharge pour que le formulaire s'affiche correctement.
+                    if (listes.length === 0) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    listes.forEach(liste => {
+                        const option = new Option(donnees.user.libelle, donnees.user.id, false, false);
+                        liste.add(option);
+                    });
+
+                    // Sélectionner le nouveau manager dans la modale de création.
+                    const listeCreation = document.querySelector('#createBranchModal select[name="manager_id"]');
+                    if (listeCreation) {
+                        listeCreation.value = donnees.user.id;
+                    }
+
+                    if (typeof $ !== 'undefined') {
+                        $('select[name="manager_id"]').trigger('change');
+                    }
+
+                    document.getElementById('managerNom').value = '';
+                    document.getElementById('managerEmail').value = '';
+                    document.getElementById('managerTelephone').value = '';
+
+                    // Le mot de passe n'est jamais réaffichable ensuite : il n'est stocké
+                    // qu'en haché. On le laisse visible et le panneau ouvert pour qu'il
+                    // puisse être relevé et transmis au manager.
+                    const zoneMotDePasse = document.getElementById('managerMotDePasseGenere');
+                    zoneMotDePasse.innerHTML = 'Manager créé. Identifiant : <strong>'
+                        + donnees.user.identifiant + '</strong> — mot de passe provisoire : <strong>'
+                        + donnees.motDePasse + '</strong><br>'
+                        + '<small>Notez-le maintenant : il ne pourra plus être affiché.</small>';
+                    zoneMotDePasse.classList.remove('d-none');
+                })
+                .catch(() => afficherErreur('Création impossible, réessayez.'))
+                .finally(() => {
+                    bouton.disabled = false;
+                    bouton.innerHTML = libelleInitial;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const bouton = document.getElementById('enregistrerManager');
+            if (bouton) {
+                bouton.addEventListener('click', creerManager);
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function () {
             // Générer le code automatiquement
@@ -574,14 +791,33 @@
                     // Réinitialiser les champs
                     document.getElementById('branchName').value = '';
                     document.getElementById('branchCode').value = '';
-                    document.querySelector('textarea[name="description"]').value = '';
+                    // Aucune des deux modales n'a de champ « description » : la ligne qui le
+                    // remettait à zéro levait une TypeError et interrompait toute la suite de
+                    // la réinitialisation (adresse, téléphone, email, manager, case à cocher).
+                    document.getElementById('branchType').value = 'succursale';
                     document.querySelector('textarea[name="address"]').value = '';
                     document.querySelector('input[name="phone"]').value = '';
                     document.querySelector('input[name="email"]').value = '';
-                    document.querySelector('select[name="manager_id"]').value = '';
+                    // Select2 ne suit pas une écriture directe de .value : sans « change »,
+                    // l'ancien manager resterait affiché à la réouverture de la modale.
+                    const listeManager = document.querySelector('#createBranchModal select[name="manager_id"]');
+                    if (listeManager) {
+                        listeManager.value = '';
+                        if (typeof $ !== 'undefined') {
+                            $(listeManager).trigger('change');
+                        }
+                    }
 
                     // Réinitialiser la checkbox
                     document.getElementById('isActive').checked = true;
+
+                    // Masquer le mot de passe du manager créé : il ne doit pas réapparaître
+                    // à la prochaine ouverture de la modale.
+                    const zoneMotDePasse = document.getElementById('managerMotDePasseGenere');
+                    if (zoneMotDePasse) {
+                        zoneMotDePasse.classList.add('d-none');
+                        zoneMotDePasse.innerHTML = '';
+                    }
                 });
             }
 
@@ -592,11 +828,18 @@
                     // Réinitialiser les champs
                     document.getElementById('editBranchName').value = '';
                     document.getElementById('editBranchCode').value = '';
-                    document.getElementById('editBranchDescription').value = '';
+                    // Même remarque que pour la modale de création : pas de champ « description ».
+                    document.getElementById('editBranchType').value = 'succursale';
                     document.getElementById('editBranchAddress').value = '';
                     document.getElementById('editBranchPhone').value = '';
                     document.getElementById('editBranchEmail').value = '';
-                    document.getElementById('editBranchManager').value = '';
+                    const listeManagerEdition = document.getElementById('editBranchManager');
+                    if (listeManagerEdition) {
+                        listeManagerEdition.value = '';
+                        if (typeof $ !== 'undefined') {
+                            $(listeManagerEdition).trigger('change');
+                        }
+                    }
                     document.getElementById('editBranchIsActive').checked = true;
 
                     // Remettre l'action par défaut
@@ -626,6 +869,12 @@
                         document.getElementById('editBranchAddress').value = branch.address || '';
                         document.getElementById('editBranchPhone').value = branch.phone || '';
                         document.getElementById('editBranchEmail').value = branch.email || '';
+
+                        // Type de site (siège ou succursale)
+                        const typeSelect = document.getElementById('editBranchType');
+                        if (typeSelect) {
+                            typeSelect.value = branch.type || 'succursale';
+                        }
 
                         // Manager
                         const managerSelect = document.getElementById('editBranchManager');

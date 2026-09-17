@@ -1305,6 +1305,7 @@ class SettingsController extends Controller
                 'id' => $branch->id,
                 'name' => $branch->name,
                 'code' => $branch->code,
+                'type' => $branch->type,
                 'address' => $branch->address,
                 'phone' => $branch->phone,
                 'email' => $branch->email,
@@ -1346,9 +1347,12 @@ class SettingsController extends Controller
                 'address' => 'nullable|string',
                 'phone' => 'nullable|string|max:20',
                 'email' => 'nullable|email|max:255',
+                'type' => 'required|in:siege,succursale',
                 'manager_id' => 'required|exists:users,id',
                 'is_active' => 'nullable|boolean'
             ], [
+                'type.required' => 'Le type de site est obligatoire.',
+                'type.in' => 'Le type de site doit être « siège » ou « succursale ».',
                 'manager_id.required' => 'Le manager du site est obligatoire.',
                 'manager_id.exists' => "Le manager sélectionné n'existe pas.",
             ]);
@@ -1377,6 +1381,7 @@ class SettingsController extends Controller
             $branch = Branch::create([
                 'name' => $request->name,
                 'code' => $request->code,
+                'type' => $request->type,
                 'address' => $request->address,
                 'phone' => $request->phone,
                 'email' => $request->email,
@@ -1397,6 +1402,89 @@ class SettingsController extends Controller
             ]);
 
             return redirect()->back()->with('error', 'Erreur lors de la création: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Créer un manager depuis la modale d'un site, et le renvoyer en JSON.
+     *
+     * La modale ne demande que le strict nécessaire : l'identifiant de connexion est
+     * généré comme ailleurs dans l'application, et le type vaut « hr » par défaut.
+     * Comme storeUser(), on crée aussi la fiche employé et son matricule, sans quoi
+     * le compte n'apparaîtrait pas dans le module Employés.
+     */
+    public function storeBranchManager(Request $request)
+    {
+        if (!Auth::check() || Auth::user()->type !== 'company') {
+            return response()->json(['success' => false, 'message' => 'Accès non autorisé'], 403);
+        }
+
+        // Les erreurs partent en JSON : la requête est envoyée avec Accept: application/json.
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email|max:255',
+            'phone' => 'nullable|string|max:20',
+        ], [
+            'email.unique' => 'Cette adresse email est déjà utilisée.',
+        ]);
+
+        $user = Auth::user();
+        $company = $user->company;
+
+        // Le mot de passe n'est plus saisi dans la modale : il est généré ici et renvoyé
+        // en clair une seule fois, pour être transmis au manager. Sans cela, le compte
+        // serait créé mais inutilisable tant qu'il ne passe pas par « mot de passe oublié ».
+        $motDePasse = \Illuminate\Support\Str::password(12);
+
+        try {
+            // company_id est indispensable : toute l'application filtre ses données dessus.
+            $manager = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'username' => User::genererUsername($request->name),
+                'password' => Hash::make($motDePasse),
+                'type' => 'hr',
+                'phone' => $request->phone,
+                'is_active' => true,
+                'created_by' => $user->id,
+                'company_id' => $company->id,
+            ]);
+
+            $employee = Employee::create([
+                'user_id' => $manager->id,
+                'company_id' => $company->id,
+                'name' => $manager->name,
+                'email' => $manager->email,
+                'phone' => $manager->phone,
+                'is_active' => true,
+                'company_doj' => now()->toDateString(),
+                'start_date' => now()->toDateString(),
+            ]);
+
+            $employee->update([
+                'employee_id' => $this->genererMatricule($company, $employee->id),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $manager->id,
+                    'name' => $manager->name,
+                    'email' => $manager->email,
+                    // Libellé prêt à poser dans la liste, au même format que les options rendues.
+                    'libelle' => $manager->email ? $manager->name . ' (' . $manager->email . ')' : $manager->name,
+                    'identifiant' => $manager->username,
+                ],
+                // Affiché une seule fois côté navigateur : il n'est stocké qu'en haché.
+                'motDePasse' => $motDePasse,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Création du manager impossible', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Création impossible : ' . $e->getMessage(),
+            ], 500);
         }
     }
 
@@ -1423,9 +1511,12 @@ class SettingsController extends Controller
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
+            'type' => 'required|in:siege,succursale',
             'manager_id' => 'required|exists:users,id',
             'is_active' => 'nullable|boolean'
         ], [
+            'type.required' => 'Le type de site est obligatoire.',
+            'type.in' => 'Le type de site doit être « siège » ou « succursale ».',
             'manager_id.required' => 'Le manager du site est obligatoire.',
             'manager_id.exists' => "Le manager sélectionné n'existe pas.",
         ]);
@@ -1433,6 +1524,7 @@ class SettingsController extends Controller
         $branch->update([
             'name' => $request->name,
             'code' => $request->code,
+            'type' => $request->type,
             'address' => $request->address,
             'phone' => $request->phone,
             'email' => $request->email,
@@ -1592,13 +1684,22 @@ class SettingsController extends Controller
         $company = $user->company;
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            // Le nom doit être unique dans l'entreprise : le code ne suffit pas à l'empêcher,
+            // puisqu'il est généré avec une part d'aléa et diffère donc à chaque saisie.
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('departments', 'name')
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
             'code' => 'required|string|max:50|unique:departments,code',
             'description' => 'nullable|string',
             'manager_id' => 'required|exists:users,id',
             'branch_id' => 'required|exists:branches,id',
             'is_active' => 'nullable|boolean'
         ], [
+            'name.unique' => 'Un service portant ce nom existe déjà dans votre entreprise.',
             'manager_id.unique' => 'Ce gestionnaire est déjà assigné à un autre service.',
             'manager_id.required' => 'Le manager du service est obligatoire.',
             'manager_id.exists' => "Le manager sélectionné n'existe pas.",
@@ -1637,13 +1738,22 @@ class SettingsController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            // Unicité du nom dans l'entreprise, en ignorant le service en cours de modification.
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('departments', 'name')
+                    ->ignore($department->id)
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
             'code' => 'required|string|max:50|unique:departments,code,' . $department->id,
             'description' => 'nullable|string',
             'manager_id' => 'required|exists:users,id',
             'branch_id' => 'required|exists:branches,id',
             'is_active' => 'nullable|boolean'
         ], [
+            'name.unique' => 'Un service portant ce nom existe déjà dans votre entreprise.',
             'manager_id.unique' => 'Ce gestionnaire est déjà assigné à un autre service.',
             'manager_id.required' => 'Le manager du service est obligatoire.',
             'manager_id.exists' => "Le manager sélectionné n'existe pas.",
@@ -1780,16 +1890,28 @@ class SettingsController extends Controller
         $user = Auth::user();
         $company = $user->company;
 
-        // Validation des données
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'code' => 'required|string|max:50|unique:designations,code',
-                'description' => 'nullable|string',
-                'department_id' => 'nullable|exists:departments,id',
-                'is_active' => 'nullable|boolean'
-            ]);
+        // La validation est volontairement hors du try : une ValidationException étend
+        // \Exception et serait capturée plus bas, ce qui remplacerait les erreurs de champ
+        // par un message générique.
+        $request->validate([
+            // Le nom doit être unique dans l'entreprise : le code ne l'empêche pas,
+            // puisqu'il est généré avec une part d'aléa et diffère à chaque saisie.
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('designations', 'name')
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
+            'code' => 'required|string|max:50|unique:designations,code',
+            'description' => 'nullable|string',
+            'department_id' => 'nullable|exists:departments,id',
+            'is_active' => 'nullable|boolean'
+        ], [
+            'name.unique' => 'Un poste portant ce nom existe déjà dans votre entreprise.',
+        ]);
 
+        try {
             $designation = Designation::create([
                 'name' => $request->name,
                 'code' => $request->code,
@@ -1823,11 +1945,21 @@ class SettingsController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            // Unicité du nom dans l'entreprise, en ignorant le poste en cours de modification.
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('designations', 'name')
+                    ->ignore($designation->id)
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
             'code' => 'required|string|max:50|unique:designations,code,' . $designation->id,
             'description' => 'nullable|string',
             'department_id' => 'nullable|exists:departments,id',
             'is_active' => 'nullable|boolean'
+        ], [
+            'name.unique' => 'Un poste portant ce nom existe déjà dans votre entreprise.',
         ]);
 
         // Validation des données

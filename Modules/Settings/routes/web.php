@@ -64,6 +64,8 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
         Route::put('/branches/{branch}', [SettingsController::class, 'updateBranch'])->name('branches.update');
         Route::put('/branches/{branch}/toggle', [SettingsController::class, 'toggleBranch'])->name('branches.toggle');
         Route::delete('/branches/{branch}', [SettingsController::class, 'destroyBranch'])->name('branches.destroy');
+        // Création d'un manager depuis la modale d'un site (réponse JSON)
+        Route::post('/branches/managers', [SettingsController::class, 'storeBranchManager'])->name('branches.managers.store');
 
         // Routes pour la gestion des Services (Departments)
         Route::get('/departments', [SettingsController::class, 'departments'])->name('departments.index');

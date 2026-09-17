@@ -203,24 +203,18 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Manager du Service <span class="text-danger">*</span></label>
                                 @if($companyUsers->count() > 0)
-                                    @if($companyUsers->count() > 10)
-                                        <!-- Select avec recherche pour plus de 100 utilisateurs -->
-                                        <select class="form-select select2" name="manager_id" required
-                                            data-placeholder="Rechercher un utilisateur...">
-                                            <option value="">Sélectionner un manager</option>
-                                            @foreach($companyUsers as $user)
-                                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                            @endforeach
-                                        </select>
-                                    @else
-                                        <!-- Select simple pour moins de 100 utilisateurs -->
-                                        <select class="form-select" name="manager_id" required>
-                                            <option value="">Sélectionner un manager</option>
-                                            @foreach($companyUsers as $user)
-                                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
-                                            @endforeach
-                                        </select>
-                                    @endif
+                                    {{-- Une seule liste, quel que soit le nombre d'utilisateurs. Le markup était
+                                         dupliqué selon un seuil (« > 10 »), avec deux rendus différents pour le
+                                         même champ. Seules LIMITE_MANAGERS entrées sont proposées à la fois,
+                                         les autres s'atteignent par la barre de recherche (voir initSelect2). --}}
+                                    <select class="form-select select2" name="manager_id" required
+                                        data-placeholder="Sélectionner un manager">
+                                        <option value="">Sélectionner un manager</option>
+                                        @foreach($companyUsers as $user)
+                                            {{-- Parenthèses seulement si l'email existe, sinon le libellé se termine par « () ». --}}
+                                            <option value="{{ $user->id }}">{{ $user->name }}@if($user->email) ({{ $user->email }})@endif</option>
+                                        @endforeach
+                                    </select>
                                 @else
                                     <div class="alert alert-warning">
                                         <i class="fas fa-exclamation-triangle me-1"></i>
@@ -294,22 +288,15 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Manager du Service <span class="text-danger">*</span></label>
                                 @if($companyUsers->count() > 0)
-                                    @if($companyUsers->count() > 10)
-                                        <!-- Select avec recherche pour plus de 10 utilisateurs -->
-                                        <select class="form-select select2" name="manager_id" id="editManagerId" required
-                                            data-placeholder="Rechercher un utilisateur...">
-                                            @foreach($companyUsers as $user)
-                                                <option value="{{ $user->id }}" {{ $user->id == old('manager_id', $department->manager_id ?? '') ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
-                                            @endforeach
-                                        </select>
-                                    @else
-                                        <!-- Select simple pour moins de 10 utilisateurs -->
-                                        <select class="form-select" name="manager_id" id="editManagerId" required>
-                                            @foreach($companyUsers as $user)
-                                                <option value="{{ $user->id }}" {{ $user->id == old('manager_id', $department->manager_id ?? '') ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
-                                            @endforeach
-                                        </select>
-                                    @endif
+                                    {{-- Même liste unique que dans la modale de création. L'option vide en tête
+                                         est nécessaire : sans elle, Select2 n'affiche pas son placeholder. --}}
+                                    <select class="form-select select2" name="manager_id" id="editManagerId" required
+                                        data-placeholder="Sélectionner un manager">
+                                        <option value="">Sélectionner un manager</option>
+                                        @foreach($companyUsers as $user)
+                                            <option value="{{ $user->id }}" {{ $user->id == old('manager_id', $department->manager_id ?? '') ? 'selected' : '' }}>{{ $user->name }}@if($user->email) ({{ $user->email }})@endif</option>
+                                        @endforeach
+                                    </select>
                                 @else
                                     <div class="alert alert-warning">
                                         <i class="fas fa-exclamation-triangle me-1"></i>
@@ -403,33 +390,43 @@
             width: 100% !important;
         }
 
-        .select2-container--bootstrap-5 .select2-selection {
+        /* Thème « default » : c'est le seul dont la feuille est chargée par le layout.
+           Ces règles ciblaient « bootstrap-5 », dont la CSS est absente du projet :
+           la sélection n'était alors stylée par rien et le libellé sortait du cadre. */
+        .select2-container--default .select2-selection--single {
             border-radius: 8px;
             border: 1px solid #d4d4d8;
-            min-height: 38px;
+            height: 38px;
         }
 
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-            padding: 6px 12px;
-            line-height: 1.5;
+        /* Le layout pose déjà padding: 5px 10px sur la sélection : on ne rajoute pas
+           le retrait horizontal par défaut de Select2, qui décalerait le texte. */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 26px;
+            padding-left: 0;
+            padding-right: 20px;
         }
 
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
-            top: 50%;
-            transform: translateY(-50%);
-            right: 12px;
-        }
-
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow b {
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
             border-color: #6c757d transparent transparent transparent;
             border-width: 5px 4px 0 4px;
             margin-top: -2px;
         }
 
-        .select2-container--bootstrap-5 .select2-dropdown {
+        .select2-container--default .select2-dropdown {
             border-radius: 8px;
             border: 1px solid #d4d4d8;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Filet de sécurité : le nombre d'entrées est déjà borné côté JS (LIMITE_MANAGERS). */
+        .select2-container--default .select2-results > .select2-results__options {
+            max-height: 190px;
+        }
+
+        /* Au-dessus du fond de la modale, sinon la liste s'ouvre derrière. */
+        .select2-container--open {
+            z-index: 1060;
         }
 
         .select2-results__option {
@@ -657,15 +654,60 @@
             }
         }
 
-        // Initialiser Select2 si plus de 10 utilisateurs
+        // Nombre d'entrées proposées à la fois dans la liste des managers.
+        // Les autres ne sont pas déroulées : on les atteint par la barre de recherche.
+        const LIMITE_MANAGERS = 4;
+
+        // Select2 sur la liste des managers.
+        //
+        // Corrections par rapport à la version d'origine :
+        // - plus de theme 'bootstrap-5' : sa feuille de style n'est pas chargée par le projet,
+        //   les classes émises n'étaient stylées par rien et le libellé sortait du cadre ;
+        // - plus de minimumInputLength : il fallait taper 2 caractères pour voir la moindre
+        //   entrée, ce qui donnait une liste vide à l'ouverture ;
+        // - dropdownParent sur la modale : sans lui la liste s'ouvre derrière le fond ;
+        // - destroy préalable : le layout initialise déjà .select2 au chargement de la page
+        //   (resources/views/layouts/app.blade.php), sans dropdownParent. On repart de zéro.
         function initSelect2() {
-            if (typeof $ !== 'undefined' && $.fn && $.fn.select2 && $('.select2').length > 0) {
-                $('.select2').select2({
-                    theme: 'bootstrap-5',
+            if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
+                return;
+            }
+
+            $('.select2').each(function () {
+                const $select = $(this);
+                const $modale = $select.closest('.modal');
+
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                }
+
+                $select.select2({
                     width: '100%',
-                    placeholder: 'Rechercher un utilisateur...',
+                    placeholder: $select.data('placeholder') || 'Sélectionner un manager',
                     allowClear: true,
-                    minimumInputLength: 2,
+                    dropdownParent: $modale.length ? $modale : $(document.body),
+                    // Source locale : les <option> du select, filtrées sur la saisie puis
+                    // tronquées, et relues à chaque appel plutôt que mises en cache.
+                    ajax: {
+                        delay: 0,
+                        transport: function (parametres, reussite) {
+                            const saisie = (parametres.data && parametres.data.term ? parametres.data.term : '')
+                                .trim()
+                                .toLowerCase();
+
+                            const resultats = $select.find('option')
+                                .toArray()
+                                .filter(option => option.value !== '')
+                                .map(option => ({ id: option.value, text: option.textContent.trim() }))
+                                .filter(option => saisie === '' || option.text.toLowerCase().includes(saisie))
+                                .slice(0, LIMITE_MANAGERS);
+
+                            reussite({ results: resultats });
+
+                            // Select2 attend un objet annulable en retour du transport.
+                            return { abort: function () { } };
+                        }
+                    },
                     language: {
                         noResults: function () {
                             return "Aucun utilisateur trouvé";
@@ -675,7 +717,7 @@
                         }
                     }
                 });
-            }
+            });
         }
 
         // Fonction d'initialisation robuste

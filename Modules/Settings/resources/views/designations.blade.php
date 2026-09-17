@@ -4,6 +4,20 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y ds">
+        {{-- Affichage des erreurs dans la page : la modale se referme au rechargement et le
+             message ne dépend ainsi d'aucun JavaScript pour être vu. --}}
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <h6 class="alert-heading mb-1">Le poste n'a pas été enregistré</h6>
+                <ul class="mb-0">
+                    @foreach($errors->all() as $erreur)
+                        <li>{{ $erreur }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+            </div>
+        @endif
+
         <!-- En-tête -->
         <div class="row mb-4">
             <div class="col-12">
@@ -173,12 +187,16 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nom du Poste <span class="text-danger">*</span></label>
+                                {{-- old() : en cas de refus (nom déjà utilisé), la saisie est conservée
+                                     au lieu d'être à retaper entièrement. --}}
                                 <input type="text" class="form-control" name="name" id="name" required
+                                    value="{{ old('name') }}"
                                     placeholder="Ex: Développeur, Manager, Comptable...">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Code <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control designationCode" name="code" required
+                                    value="{{ old('code') }}"
                                     placeholder="POST-XXXX" id="designationCode" readonly>
                                 <small class="text-muted">Généré automatiquement</small>
                             </div>
@@ -187,7 +205,7 @@
                         <div class="mb-3">
                             <label class="form-label">Description</label>
                             <textarea class="form-control" name="description" rows="2"
-                                placeholder="Description du poste..."></textarea>
+                                placeholder="Description du poste...">{{ old('description') }}</textarea>
                         </div>
 
                         <div class="row">
@@ -196,8 +214,13 @@
                                 <select class="form-select" name="department_id">
                                     <option value="">Sélectionner un service</option>
                                     @foreach($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->name }}
-                                            ({{ $department->branch->name }})</option>
+                                        {{-- La succursale est affichée avec « ?-> » : un service sans succursale
+                                             valide provoquerait sinon une erreur fatale sur toute la page. --}}
+                                        <option value="{{ $department->id }}"
+                                            {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                                            {{ $department->name }}
+                                            @if($department->branch?->name) ({{ $department->branch->name }}) @endif
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -375,6 +398,19 @@
 
 @push('scripts')
     <script>
+        // Après un refus, Laravel recharge la page : la modale se referme et la saisie
+        // restaurée par old() resterait invisible. On la rouvre donc sur l'erreur.
+        // Création et modification ne sont pas distinguées ici : le bandeau affiché en
+        // haut de page couvre le second cas.
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function () {
+                const modaleCreation = document.getElementById('createDesignationModal');
+                if (modaleCreation) {
+                    bootstrap.Modal.getOrCreateInstance(modaleCreation).show();
+                }
+            });
+        @endif
+
         // Tableau en DataTable (colonne Actions non triable / non filtrable)
         $(function () {
             'use strict';
