@@ -153,9 +153,12 @@ class LoginController extends Controller
         try {
             Password::broker()->sendResetLink($request->only('email'));
         } catch (\Throwable $e) {
-            Log::error('Envoi du lien de réinitialisation impossible : ' . $e->getMessage());
+            Log::error('Envoi du lien de réinitialisation impossible : ' . $e->getMessage(), ['exception' => $e]);
 
-            return back()->withInput()->with('error', "L'email n'a pas pu être envoyé pour le moment. Réessayez dans quelques minutes.");
+            // En mode debug (serveur de développement), la cause technique est affichée pour faciliter le diagnostic
+            $cause = config('app.debug') ? ' (' . class_basename($e) . ' : ' . Str::limit($e->getMessage(), 250) . ')' : '';
+
+            return back()->withInput()->with('error', "L'email n'a pas pu être envoyé pour le moment. Réessayez dans quelques minutes." . $cause);
         }
 
         return back()->with('success', 'Si un compte correspond à cette adresse, un lien de réinitialisation vient de vous être envoyé. Il est valable ' . config('auth.passwords.users.expire') . ' minutes.');
