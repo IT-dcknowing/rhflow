@@ -1394,6 +1394,35 @@
     <script src="{{ asset('libs/apex-charts/apexcharts.js') }}"></script>
     <script src="{{ asset('libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script src="{{ asset('libs/sweetalert2/sweetalert2.js') }}"></script>
+    <script>
+        // Deux boutons et deux seulement dans toutes les fenêtres du système :
+        // « OK » pour valider, « Retour » pour annuler.
+        //
+        // Les libellés sont imposés ici plutôt que dans la centaine d'appels répartis
+        // dans l'application : la règle s'applique ainsi aux écrans existants comme à
+        // ceux ajoutés plus tard, sans avoir à y penser.
+        (function () {
+            if (!window.Swal || typeof Swal.fire !== 'function') {
+                return;
+            }
+
+            const ouvrir = Swal.fire.bind(Swal);
+
+            Swal.fire = function (options) {
+                // Forme courte Swal.fire('titre', 'texte', 'icone') : aucun bouton à renommer.
+                if (typeof options !== 'object' || options === null) {
+                    return ouvrir.apply(null, arguments);
+                }
+
+                return ouvrir(Object.assign({}, options, {
+                    confirmButtonText: 'OK',
+                    cancelButtonText: 'Retour',
+                    // Un troisième bouton romprait la règle des deux libellés.
+                    showDenyButton: false,
+                }));
+            };
+        })();
+    </script>
 
     {{-- Rappel d'échéance d'abonnement --}}
     @php $rappelAbonnement = app(\App\Services\SubscriptionService::class)->resume(); @endphp
@@ -1457,7 +1486,6 @@
                     showDenyButton: false,
                     confirmButtonText: proprietaire ? 'Renouveler maintenant' : 'J\'ai compris',
                     cancelButtonText: 'Plus tard',
-                    denyButtonText: 'Non',
                     confirmButtonColor: '#253e87',
                     cancelButtonColor: '#8592a3',
                     // Abonnement échu : le rappel ne se ferme qu'avec l'un des deux boutons.
@@ -1484,6 +1512,17 @@
     @endif
 
     <script src="{{asset('libs/select2/select2.js')}}"></script>
+    {{-- Select2 en français pour toute l'application. Le fichier de langue déclare le module
+         « select2/i18n/fr » (il exige donc que Select2 soit déjà chargé), et defaults.set
+         l'active partout : sans cela chaque écran devait répéter « language: ... », et les
+         quelque vingt vues qui l'omettaient affichaient « No results found », « Searching… ».
+         À poser avant toute initialisation de .select2 (plus bas dans ce layout). --}}
+    <script src="{{ asset('libs/select2/dist/js/i18n/fr.js') }}"></script>
+    <script>
+        if (window.jQuery && jQuery.fn.select2) {
+            jQuery.fn.select2.defaults.set('language', 'fr');
+        }
+    </script>
     <script src="{{asset('libs/flatpickr/flatpickr.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- Moteur SmartGuard — Assistant Intelligent & Intercepteur d'Erreurs -->
@@ -1681,14 +1720,26 @@
         @endif
 
         @if($errors->any())
+            // Les erreurs transitent par json, comme les messages de session juste au-dessus.
+            // Auparavant, les directives de boucle Blade étaient écrites à l'intérieur de
+            // chaînes JS : Blade les compilait en laissant les apostrophes littérales dans la
+            // sortie, ce qui produisait une concaténation acrobatique et empêchait l'affichage.
+            // Ne jamais écrire une directive Blade dans un commentaire JS : Blade ne les
+            // distingue pas du code et tente de la compiler.
+            const erreursValidation = @json($errors->all());
+
             Swal.fire({
                 icon: 'warning',
                 title: 'Attention',
-                html: '<ul style="text-align: left; list-style: none; padding: 0;">' +
-                    '@foreach($errors->all() as $error)' +
-                        '<li><i class="fas fa-exclamation-circle text-warning me-2"></i> {{ $error }}</li>' +
-                    '@endforeach' +
-                    '</ul>',
+                html: '<ul style="text-align: left; list-style: none; padding: 0;">'
+                    + erreursValidation.map(function (erreur) {
+                        // Échappement : le message est inséré en HTML.
+                        const cellule = document.createElement('div');
+                        cellule.textContent = erreur;
+                        return '<li><i class="fas fa-exclamation-circle text-warning me-2"></i> '
+                            + cellule.innerHTML + '</li>';
+                    }).join('')
+                    + '</ul>',
                 confirmButtonColor: '#253e87',
                 background: '#ffffff'
             });

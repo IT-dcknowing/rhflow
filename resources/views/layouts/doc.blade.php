@@ -397,6 +397,14 @@
     <script src="{{ asset('libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
     <script src="{{ asset('libs/sweetalert2/sweetalert2.js') }}"></script>
     <script src="{{asset('libs/select2/select2.js')}}"></script>
+    {{-- Même traduction que dans layouts/app.blade.php : le module « select2/i18n/fr » est
+         déclaré par ce fichier, puis activé pour tous les selects de ce layout. --}}
+    <script src="{{ asset('libs/select2/dist/js/i18n/fr.js') }}"></script>
+    <script>
+        if (window.jQuery && jQuery.fn.select2) {
+            jQuery.fn.select2.defaults.set('language', 'fr');
+        }
+    </script>
     <script src="{{asset('libs/flatpickr/flatpickr.js')}}"></script>
     <script src="{{asset('libs/formvalidation/dist/js/plugins/Bootstrap5.min.js')}}"></script>
     <script src="{{asset('libs/formvalidation/dist/js/plugins/AutoFocus.min.js')}}"></script>
