@@ -31,74 +31,146 @@
     </div>
 
     <!-- Statistiques des Utilisateurs -->
-    {{-- Écran de référence : les tuiles KPI de toute l'application reprennent ce rendu (composants x-kpi-grid / x-kpi). --}}
-    <x-kpi-grid title="Statistiques des Utilisateurs">
-        <x-kpi icon="fas fa-users" color="primary" label="Total" sublabel="Utilisateurs"
+    <x-kpi-grid title="Statistiques Globales des Utilisateurs" badge="Vue d'ensemble">
+        <x-kpi icon="fas fa-users" color="primary" label="Total" sublabel="Tous les utilisateurs"
             :value="$stats['total']" />
 
-        <x-kpi icon="fas fa-user-check" color="success" label="Actifs" sublabel="Connectés"
+        <x-kpi icon="fas fa-user-check" color="success" label="Actifs" sublabel="Comptes connectés"
             :value="$stats['active']" />
 
-        <x-kpi icon="fas fa-user-times" color="warning" label="Inactifs" sublabel="Désactivés"
+        <x-kpi icon="fas fa-user-times" color="warning" label="Inactifs" sublabel="Comptes désactivés"
             :value="$stats['inactive']" />
 
-        <x-kpi icon="fas fa-user-tag" color="info" label="RH/Paie" sublabel="Gestionnaires"
+        <x-kpi icon="fas fa-user-shield" color="info" label="Gestionnaires" sublabel="Comptes RH & Paie"
             :value="$stats['hr'] + $stats['payroll']" />
+    </x-kpi-grid>
 
-        <x-slot:footer>
-            <!-- Répartition par Type -->
-            <div class="d-flex justify-content-center gap-4 flex-wrap">
-                <div class="text-center">
-                    <div class="badge bg-label-primary mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                        Entreprise: {{ $stats['company'] }}
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="badge bg-label-success mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                        RH: {{ $stats['hr'] }}
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="badge bg-label-info mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                        Paie: {{ $stats['payroll'] }}
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="badge bg-label-secondary mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                        Employés: {{ $stats['employee'] }}
-                    </div>
-                </div>
-            </div>
-        </x-slot:footer>
+    <!-- Utilisateurs par Profil -->
+    <x-kpi-grid title="Utilisateurs par Profil" badge="Profils d'accès">
+        <x-kpi icon="fas fa-building" color="primary" label="Entreprise" sublabel="Administrateurs système"
+            :value="$stats['company']" />
+
+        <x-kpi icon="fas fa-user-tie" color="success" label="Ressources Humaines" sublabel="Gestionnaires RH"
+            :value="$stats['hr']" />
+
+        <x-kpi icon="fas fa-file-invoice-dollar" color="info" label="Gestion Paie" sublabel="Gestionnaires Paie"
+            :value="$stats['payroll']" />
+
+        <x-kpi icon="fas fa-id-badge" color="secondary" label="Employés" sublabel="Comptes Collaborateurs"
+            :value="$stats['employee']" />
     </x-kpi-grid>
 
     <!-- Liste des Utilisateurs -->
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Liste des Utilisateurs</h5>
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-label-primary">{{ $stats['total'] }} utilisateurs</span>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshUsers()">
+                <!-- En-tête avec Titre et Boutons d'Action (Import, Export, Ajout, Actualisation) -->
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h5 class="mb-0">Liste des Utilisateurs</h5>
+                        <small class="text-muted">
+                            Total : <strong>{{ $stats['total'] }}</strong> utilisateur{{ $stats['total'] > 1 ? 's' : '' }}
+                            @if(request()->hasAny(['search', 'type', 'status', 'branch_id', 'department_id']))
+                                (filtré : <strong>{{ $users->total() }}</strong> résultat{{ $users->total() > 1 ? 's' : '' }})
+                            @endif
+                        </small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportUsers()" title="Exporter en Excel">
+                            <i class="fas fa-download me-1"></i>Exporter
+                        </button>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="importUsers()" title="Importer depuis un fichier Excel">
+                            <i class="fas fa-upload me-1"></i>Importer
+                        </button>
+                        <a href="{{ route('company.settings.users.create') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Nouvel Utilisateur
+                        </a>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshUsers()" title="Actualiser">
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
                 </div>
+
+                <!-- Barre de Filtres au-dessus du tableau -->
+                <div class="card-body border-bottom bg-light bg-opacity-25 py-3">
+                    <form method="GET" action="{{ route('company.settings.users.index') }}" id="filterUsersForm">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-xl-3 col-md-4 col-sm-6">
+                                <label class="form-label small mb-1 fw-semibold text-muted">Recherche</label>
+                                <div class="input-group input-group-merge input-group-sm">
+                                    <span class="input-group-text"><i class="fas fa-search text-muted"></i></span>
+                                    <input type="text" class="form-control" name="search" value="{{ request('search') }}"
+                                           placeholder="Nom, email, identifiant...">
+                                </div>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <label class="form-label small mb-1 fw-semibold text-muted">Profil / Rôle</label>
+                                <select class="form-select form-select-sm" name="type">
+                                    <option value="">Tous les profils</option>
+                                    <option value="company" {{ request('type') === 'company' ? 'selected' : '' }}>🏢 Entreprise</option>
+                                    <option value="hr" {{ request('type') === 'hr' ? 'selected' : '' }}>👥 RH</option>
+                                    <option value="payroll" {{ request('type') === 'payroll' ? 'selected' : '' }}>💰 Paie</option>
+                                    <option value="employee" {{ request('type') === 'employee' ? 'selected' : '' }}>👨‍💼 Employé</option>
+                                </select>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <label class="form-label small mb-1 fw-semibold text-muted">Statut</label>
+                                <select class="form-select form-select-sm" name="status">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>✅ Actif</option>
+                                    <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>❌ Inactif</option>
+                                </select>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <label class="form-label small mb-1 fw-semibold text-muted">Succursale</label>
+                                <select class="form-select form-select-sm" name="branch_id">
+                                    <option value="">Toutes succursales</option>
+                                    @foreach($branches as $branch)
+                                        <option value="{{ $branch->id }}" {{ request('branch_id') == $branch->id ? 'selected' : '' }}>
+                                            {{ $branch->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-xl-2 col-md-4 col-sm-6">
+                                <label class="form-label small mb-1 fw-semibold text-muted">Département</label>
+                                <select class="form-select form-select-sm" name="department_id">
+                                    <option value="">Tous départements</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
+                                            {{ $dept->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-xl-1 col-md-4 col-sm-12 d-flex gap-1">
+                                <button type="submit" class="btn btn-sm btn-primary w-100" title="Filtrer">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                                @if(request()->hasAny(['search', 'type', 'status', 'branch_id', 'department_id']))
+                                    <a href="{{ route('company.settings.users.index') }}" class="btn btn-sm btn-outline-secondary" title="Réinitialiser les filtres">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="card-body">
                     @if($users->count() > 0)
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th> Utilisateur</th>
+                                        <th>Utilisateur</th>
                                         <th>Email</th>
-                                        <th> Type</th>
-                                        <th> Téléphone</th>
-                                        <th> Affectation</th>
-                                        <th> Statut</th>
-                                        <th> Créé le</th>
-                                        <th> Actions</th>
+                                        <th>Type</th>
+                                        <th>Téléphone</th>
+                                        <th>Affectation</th>
+                                        <th>Statut</th>
+                                        <th>Créé le</th>
+                                        <th class="text-center" style="width: 130px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -143,7 +215,7 @@
                                             @if($userItem->type === 'company')
                                                 {{ $company->phone ?? '-' }}
                                             @else
-                                                {{ $userItem->userEmployee->phone ?? '-' }}
+                                                {{ $userItem->userEmployee->phone ?? ($userItem->phone ?? '-') }}
                                             @endif
                                         </td>
                                         <td>
@@ -164,9 +236,9 @@
                                                             <i class="fas fa-building me-1"></i>{{ $company->name }}
                                                         </small>
                                                     @endif
-                                                    <small class="text-muted d-block">{{ $userItem->userEmployee->branch->name ?? '_'}}</small>
-                                                    <small class="text-muted d-block">{{ $userItem->userEmployee->department->name ?? '_'}}</small>
-                                                    <small class="text-muted d-block">{{ $userItem->userEmployee->designation->name ?? '_' }}</small>
+                                                    <small class="text-muted d-block">{{ $userItem->userEmployee->branch->name ?? '-' }}</small>
+                                                    <small class="text-muted d-block">{{ $userItem->userEmployee->department->name ?? '-' }}</small>
+                                                    <small class="text-muted d-block">{{ $userItem->userEmployee->designation->name ?? '-' }}</small>
                                                 @endif
                                             </div>
                                         </td>
@@ -187,31 +259,33 @@
                                                 {{ $userItem->created_at->format('H:i') }}
                                             </small>
                                         </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-h"></i>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center align-items-center gap-1">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-icon btn-label-info"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Voir détails"
+                                                        onclick="viewUserDetails({{ $userItem->id }})">
+                                                    <i class="fas fa-eye"></i>
                                                 </button>
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a class="dropdown-item" href="{{ route('company.settings.users.edit', $userItem) }}">
-                                                            <i class="fas fa-edit me-1"></i>Modifier
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" onclick="viewUserDetails({{ $userItem->id }})">
-                                                            <i class="fas fa-eye me-1"></i>Voir Détails
-                                                        </a>
-                                                    </li>
-                                                    @if($userItem->id !== $user->id)
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="#" onclick="deleteUser({{ $userItem->id }}, '{{ $userItem->name }}')">
-                                                            <i class="fas fa-trash me-1"></i>Supprimer
-                                                        </a>
-                                                    </li>
-                                                    @endif
-                                                </ul>
+                                                <a href="{{ route('company.settings.users.edit', $userItem) }}"
+                                                   class="btn btn-sm btn-icon btn-label-warning"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                @if($userItem->id !== $user->id)
+                                                <button type="button"
+                                                        class="btn btn-sm btn-icon btn-label-danger"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Supprimer"
+                                                        onclick="deleteUser({{ $userItem->id }}, '{{ addslashes($userItem->name) }}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -220,20 +294,16 @@
                             </table>
                         </div>
 
-                        <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center mt-3">
+                        <!-- Pagination du tableau -->
+                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
                             <div>
                                 <small class="text-muted">
-                                    Affichage de {{ $users->count() }} utilisateur{{ $users->count() > 1 ? 's' : '' }}
+                                    Affichage de <strong>{{ $users->firstItem() ?? 0 }}</strong> à <strong>{{ $users->lastItem() ?? 0 }}</strong>
+                                    sur <strong>{{ $users->total() }}</strong> utilisateur{{ $users->total() > 1 ? 's' : '' }}
                                 </small>
                             </div>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-outline-primary btn-sm" onclick="exportUsers()">
-                                    <i class="fas fa-download me-1"></i>Exporter
-                                </button>
-                                <button class="btn btn-outline-info btn-sm" onclick="importUsers()">
-                                    <i class="fas fa-upload me-1"></i>Importer
-                                </button>
+                            <div>
+                                {{ $users->links() }}
                             </div>
                         </div>
                     @else
@@ -244,11 +314,19 @@
                                     <i class="fas fa-users fa-40px"></i>
                                 </div>
                             </div>
-                            <h5 class="mb-1">Aucun utilisateur</h5>
-                            <p class="text-muted mb-4">Commencez par créer votre premier utilisateur</p>
-                            <a href="{{ route('company.settings.users.create') }}" class="btn btn-primary">
-                                <i class="fas fa-plus me-1"></i>Créer un Utilisateur
-                            </a>
+                            @if(request()->hasAny(['search', 'type', 'status', 'branch_id', 'department_id']))
+                                <h5 class="mb-1">Aucun utilisateur trouvé</h5>
+                                <p class="text-muted mb-4">Aucun utilisateur ne correspond à vos critères de recherche.</p>
+                                <a href="{{ route('company.settings.users.index') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-undo me-1"></i>Réinitialiser les filtres
+                                </a>
+                            @else
+                                <h5 class="mb-1">Aucun utilisateur</h5>
+                                <p class="text-muted mb-4">Commencez par créer votre premier utilisateur</p>
+                                <a href="{{ route('company.settings.users.create') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i>Créer un Utilisateur
+                                </a>
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -369,6 +447,45 @@
 
     .form-check-input:disabled {
         opacity: 0.5;
+    }
+
+    /* Icon button improvements */
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+    .btn-label-info {
+        color: #03c3ec;
+        background-color: rgba(3, 195, 236, 0.12);
+        border: none;
+    }
+    .btn-label-info:hover {
+        color: #fff;
+        background-color: #03c3ec;
+    }
+    .btn-label-warning {
+        color: #ffab00;
+        background-color: rgba(255, 171, 0, 0.12);
+        border: none;
+    }
+    .btn-label-warning:hover {
+        color: #fff;
+        background-color: #ffab00;
+    }
+    .btn-label-danger {
+        color: #ff3e1d;
+        background-color: rgba(255, 62, 29, 0.12);
+        border: none;
+    }
+    .btn-label-danger:hover {
+        color: #fff;
+        background-color: #ff3e1d;
     }
 
     /* Responsive improvements */
@@ -512,10 +629,10 @@
     }
 
     function exportUsers() {
-        // Créer un lien de téléchargement
+        // Créer un lien de téléchargement en transmettant les filtres en cours
+        const currentQuery = window.location.search;
         const link = document.createElement('a');
-        link.href = `{{url('company/settings/users/export')}}`;
-        link.download = `utilisateurs_${new Date().toISOString().split('T')[0]}.xlsx`;
+        link.href = `{{ route('company.settings.users.export') }}` + (currentQuery ? currentQuery : '');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

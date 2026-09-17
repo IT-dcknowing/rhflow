@@ -9,48 +9,33 @@
                     <div class="fw-semibold">{{ $user->name }}</div>
                 </div>
                 <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Identifiant / Username:</small>
+                    <div class="fw-semibold text-primary">{{ $user->username ?? '-' }}</div>
+                </div>
+                <div class="col-sm-6 mb-2">
                     <small class="text-muted">Email:</small>
                     <div class="fw-semibold">{{ $user->email }}</div>
                 </div>
                 <div class="col-sm-6 mb-2">
                     <small class="text-muted">Téléphone:</small>
-                    <div>{{ $user->phone ?? '-' }}</div>
+                    <div>{{ $user->phone ?? ($employee->phone ?? '-') }}</div>
                 </div>
                 <div class="col-sm-6 mb-2">
-                    <small class="text-muted">Type:</small>
+                    <small class="text-muted">Type / Profil:</small>
                     <div>
                         @php
                             $typeLabels = [
                                 'company' => ['label' => 'Entreprise', 'color' => 'primary'],
-                                'hr' => ['label' => ' RH', 'color' => 'success'],
-                                'payroll' => ['label' => ' Paie', 'color' => 'info'],
+                                'hr' => ['label' => 'RH', 'color' => 'success'],
+                                'payroll' => ['label' => 'Paie', 'color' => 'info'],
                                 'employee' => ['label' => 'Employé', 'color' => 'secondary']
                             ];
-                            $typeInfo = $typeLabels[$user->type] ?? ['label' => ' Inconnu', 'color' => 'secondary'];
+                            $typeInfo = $typeLabels[$user->type] ?? ['label' => 'Inconnu', 'color' => 'secondary'];
                         @endphp
                         <span class="badge bg-label-{{ $typeInfo['color'] }}">
                             {{ $typeInfo['label'] }}
                         </span>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Informations d'Affectation -->
-        <div class="mb-4">
-            <h6 class="mb-3">Affectation Organisationnelle</h6>
-            <div class="row">
-                <div class="col-sm-6 mb-2">
-                    <small class="text-muted">Branche:</small>
-                    <div>{{ $user->branch->name ?? '-' }}</div>
-                </div>
-                <div class="col-sm-6 mb-2">
-                    <small class="text-muted">Département:</small>
-                    <div>{{ $user->department->name ?? '-' }}</div>
-                </div>
-                <div class="col-sm-6 mb-2">
-                    <small class="text-muted">Poste:</small>
-                    <div id="previewDesignation">{{ $user->designation->name ?? '-' }}</div>
                 </div>
                 <div class="col-sm-6 mb-2">
                     <small class="text-muted">Statut:</small>
@@ -59,6 +44,37 @@
                             {{ $user->is_active ? '✅ Actif' : '❌ Inactif' }}
                         </span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations d'Affectation -->
+        <div class="mb-4">
+            <h6 class="mb-3">🏢 Affectation Organisationnelle</h6>
+            <div class="row">
+                <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Matricule:</small>
+                    <div class="fw-semibold text-dark">{{ $employee->employee_id ?? '-' }}</div>
+                </div>
+                <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Entreprise:</small>
+                    <div class="fw-semibold">{{ $company->name ?? '-' }}</div>
+                </div>
+                <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Succursale / Branche:</small>
+                    <div>{{ $employee->branch->name ?? $user->branch->name ?? '-' }}</div>
+                </div>
+                <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Département:</small>
+                    <div>{{ $employee->department->name ?? $user->department->name ?? '-' }}</div>
+                </div>
+                <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Poste:</small>
+                    <div id="previewDesignation">{{ $employee->designation->name ?? $user->designation->name ?? '-' }}</div>
+                </div>
+                <div class="col-sm-6 mb-2">
+                    <small class="text-muted">Date d'embauche:</small>
+                    <div>{{ !empty($employee->company_doj) ? \Carbon\Carbon::parse($employee->company_doj)->format('d/m/Y') : (!empty($employee->start_date) ? \Carbon\Carbon::parse($employee->start_date)->format('d/m/Y') : '-') }}</div>
                 </div>
             </div>
         </div>

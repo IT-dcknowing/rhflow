@@ -859,7 +859,7 @@ class SettingsController extends Controller
     /**
      * Afficher la liste des utilisateurs
      */
-    public function users()
+    public function users(Request $request)
     {
         if (!Auth::check() || Auth::user()->type !== 'company') {
             abort(403, 'Accès non autorisé');
@@ -868,25 +868,77 @@ class SettingsController extends Controller
         $user = Auth::user();
         $company = $user->company;
         $employees = $company->employees;
+        $branches = $company->branches;
+        $departments = $company->departments;
 
-        // Récupérer tous les utilisateurs de l'entreprise
-        $users = User::where('id', $company->user_id)
-            ->orWhere('created_by', $company->user_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Base query pour tous les utilisateurs de l'entreprise
+        $baseUsersQuery = User::where(function ($q) use ($company) {
+            $q->where('company_id', $company->id)
+                ->orWhere('id', $company->user_id)
+                ->orWhere('created_by', $company->user_id);
+        });
 
-        // Statistiques des utilisateurs
+        // Statistiques globales des utilisateurs (non altérées par les filtres)
         $stats = [
-            'total' => $users->count(),
-            'active' => $users->where('is_active', true)->count(),
-            'inactive' => $users->where('is_active', false)->count(),
-            'hr' => $users->where('type', 'hr')->count(),
-            'payroll' => $users->where('type', 'payroll')->count(),
-            'company' => $users->where('type', 'company')->count(),
-            'employee' => $users->where('type', 'employee')->count(),
+            'total' => (clone $baseUsersQuery)->count(),
+            'active' => (clone $baseUsersQuery)->where('is_active', true)->count(),
+            'inactive' => (clone $baseUsersQuery)->where('is_active', false)->count(),
+            'hr' => (clone $baseUsersQuery)->where('type', 'hr')->count(),
+            'payroll' => (clone $baseUsersQuery)->where('type', 'payroll')->count(),
+            'company' => (clone $baseUsersQuery)->where('type', 'company')->count(),
+            'employee' => (clone $baseUsersQuery)->where('type', 'employee')->count(),
         ];
 
-        return view('settings::users', compact('user', 'company', 'users', 'stats', 'employees'));
+        // Query pour la liste avec relations
+        $query = (clone $baseUsersQuery)->with([
+            'userEmployee.branch',
+            'userEmployee.department',
+            'userEmployee.designation',
+        ]);
+
+        // Filtre de recherche par mot-clé
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhereHas('userEmployee', function ($empQ) use ($search) {
+                        $empQ->where('employee_id', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Filtre par profil / type
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Filtre par statut (actif / inactif)
+        if ($request->filled('status')) {
+            $query->where('is_active', (int)$request->status === 1);
+        }
+
+        // Filtre par succursale / branche
+        if ($request->filled('branch_id')) {
+            $query->whereHas('userEmployee', function ($q) use ($request) {
+                $q->where('branch_id', $request->branch_id);
+            });
+        }
+
+        // Filtre par département
+        if ($request->filled('department_id')) {
+            $query->whereHas('userEmployee', function ($q) use ($request) {
+                $q->where('department_id', $request->department_id);
+            });
+        }
+
+        // Pagination paramétrable (10 par défaut)
+        $perPage = (int) $request->get('per_page', 10);
+        $users = $query->orderBy('created_at', 'desc')->paginate($perPage)->withQueryString();
+
+        return view('settings::users', compact('user', 'company', 'users', 'stats', 'employees', 'branches', 'departments'));
     }
 
     /**
@@ -986,12 +1038,12 @@ class SettingsController extends Controller
         $company = $currentUser->company;
 
         // Ne pas exposer un utilisateur d'une autre entreprise
-        if ($user->company_id !== $company->id) {
+        if ($user->company_id !== $company->id && $user->id !== $company->user_id && $user->created_by !== $company->user_id) {
             return response()->json(['success' => false, 'message' => 'Utilisateur introuvable.'], 404);
         }
 
-        $user->loadMissing(['branch', 'department', 'designation', 'creator']);
-        $employee = Employee::where('user_id', $user->id)->first();
+        $user->loadMissing(['creator']);
+        $employee = Employee::with(['branch', 'department', 'designation'])->where('user_id', $user->id)->first();
 
         // Le JS attend { success, html } : on rend le partiel cote serveur.
         return response()->json([
@@ -1181,7 +1233,7 @@ class SettingsController extends Controller
     /**
      * Exporter les utilisateurs au format Excel
      */
-    public function exportUsers()
+    public function exportUsers(Request $request)
     {
         if (!Auth::check() || Auth::user()->type !== 'company') {
             abort(403, 'Accès non autorisé');
@@ -1191,13 +1243,50 @@ class SettingsController extends Controller
         $company = $user->company;
 
         // Récupérer tous les utilisateurs de l'entreprise
-        $users = User::where('company_id', $company->id)
-            ->with(['branch', 'department', 'designation', 'creator'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = User::where(function ($q) use ($company) {
+            $q->where('company_id', $company->id)
+                ->orWhere('id', $company->user_id)
+                ->orWhere('created_by', $company->user_id);
+        })->with([
+            'userEmployee.branch',
+            'userEmployee.department',
+            'userEmployee.designation',
+            'creator'
+        ]);
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhereHas('userEmployee', function ($empQ) use ($search) {
+                        $empQ->where('employee_id', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
+            });
+        }
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+        if ($request->filled('status')) {
+            $query->where('is_active', (int)$request->status === 1);
+        }
+        if ($request->filled('branch_id')) {
+            $query->whereHas('userEmployee', function ($q) use ($request) {
+                $q->where('branch_id', $request->branch_id);
+            });
+        }
+        if ($request->filled('department_id')) {
+            $query->whereHas('userEmployee', function ($q) use ($request) {
+                $q->where('department_id', $request->department_id);
+            });
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->get();
 
         // Créer le fichier Excel
-        return Excel::download(new UsersExport($users), 'utilisateurs_' . $company->name . '_' . now()->format('Y-m-d') . '.xlsx');
+        return Excel::download(new UsersExport($users), 'utilisateurs_' . \Illuminate\Support\Str::slug($company->name) . '_' . now()->format('Y-m-d') . '.xlsx');
     }
 
     /**
