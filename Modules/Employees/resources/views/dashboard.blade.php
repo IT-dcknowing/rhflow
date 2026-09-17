@@ -18,19 +18,6 @@
                         {{ now()->format('H:i') }}
                     </small>
                 </div>
-                <div class="d-flex gap-2">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-calendar me-1"></i>Période
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="setPeriod('today')">Aujourd'hui</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="setPeriod('week')">Cette semaine</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="setPeriod('month')">Ce mois</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="setPeriod('year')">Cette année</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -59,7 +46,7 @@
                     <h5 class="mb-0"> Répartition par Services</h5>
                 </div>
                 <div class="card-body">
-                    <div class="chart-container" style="position: relative; height: 250px;">
+                    <div class="chart-container" style="position: relative; height: 280px;">
                         <canvas id="sectorChart"></canvas>
                     </div>
                 </div>
@@ -73,7 +60,7 @@
                     <h5 class="mb-0">Statut Matrimonial</h5>
                 </div>
                 <div class="card-body">
-                    <div class="chart-container" style="position: relative; height: 250px;">
+                    <div class="chart-container" style="position: relative; height: 280px;">
                         <canvas id="maritalStatusChart"></canvas>
                     </div>
                 </div>
@@ -90,10 +77,14 @@
                 <div class="card-body">
                     @php
                         $totalEmployees = $topDepartments->sum('employee_count');
+                        $baseTotal = ($stats['total_employees'] ?? 0) > 0 ? $stats['total_employees'] : $totalEmployees;
                         $colors = ['primary', 'info', 'warning', 'success', 'secondary'];
                     @endphp
                     
                     @foreach($topDepartments as $index => $department)
+                        @php
+                            $percentage = $baseTotal > 0 ? round(($department->employee_count / $baseTotal) * 100, 1) : 0;
+                        @endphp
                         <div class="d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #e0e0e0; padding-bottom: 0.5rem;">
                             <div class="d-flex align-items-center">
                                 <div class="avatar avatar-sm me-2" style="width: 35px; height: 35px;">
@@ -101,13 +92,13 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-0">{{ $department->department }}</h6>
-                                    <small class="text-muted">{{ $department->employee_count }} employés</small>
+                                    <small class="text-muted">{{ $department->employee_count }} employé{{ $department->employee_count > 1 ? 's' : '' }}</small>
                                 </div>
                             </div>
                             <div class="text-end">
-                                <h6 class="mb-0 text-{{ $colors[$index] ?? 'secondary' }}">{{ $department->employee_count }}</h6>
-                                <div class="progress" style="width: 60px;">
-                                    <div class="progress-bar bg-{{ $colors[$index] ?? 'secondary' }}" style="width: {{ $totalEmployees > 0 ? ($department->employee_count / $totalEmployees * 100) : 0 }}%"></div>
+                                <h6 class="mb-0 text-{{ $colors[$index] ?? 'secondary' }} fw-bold">{{ $percentage }}%</h6>
+                                <div class="progress" style="width: 70px; height: 6px;">
+                                    <div class="progress-bar bg-{{ $colors[$index] ?? 'secondary' }}" style="width: {{ $percentage }}%"></div>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +181,7 @@
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: sectorData.map(item => item.sector),
+                    labels: sectorData.map(item => `${item.count} - ${item.sector}`),
                     datasets: [{
                         data: sectorData.map(item => item.count),
                         backgroundColor: [
@@ -200,23 +191,46 @@
                             '#c7d2fe',
                             '#1f7a4d'
                         ],
-                        borderWidth: 0
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 5,
+                            bottom: 10,
+                            left: 5,
+                            right: 5
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'bottom',
+                            align: 'center',
                             labels: {
-                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                boxWidth: 8,
+                                boxHeight: 8,
+                                padding: 12,
                                 font: {
                                     size: 11
                                 }
                             }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed || 0;
+                                    return ` ${value} employé${value > 1 ? 's' : ''}`;
+                                }
+                            }
                         }
-                    }
+                    },
+                    cutout: '65%'
                 }
             });
         }
@@ -237,7 +251,7 @@
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: maritalData.map(item => item.status),
+                    labels: maritalData.map(item => `${item.count} - ${item.status}`),
                     datasets: [{
                         data: maritalData.map(item => item.count),
                         backgroundColor: [
@@ -246,19 +260,41 @@
                             '#96650a',
                             '#a0a8c0'
                         ],
-                        borderWidth: 0
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 5,
+                            bottom: 10,
+                            left: 5,
+                            right: 5
+                        }
+                    },
                     plugins: {
                         legend: {
                             position: 'bottom',
+                            align: 'center',
                             labels: {
-                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                boxWidth: 8,
+                                boxHeight: 8,
+                                padding: 12,
                                 font: {
                                     size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed || 0;
+                                    return ` ${value} employé${value > 1 ? 's' : ''}`;
                                 }
                             }
                         }

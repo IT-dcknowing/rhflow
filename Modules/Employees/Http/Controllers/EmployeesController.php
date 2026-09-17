@@ -225,8 +225,6 @@ class EmployeesController extends Controller
         $companyId = auth()->user()->company_id;
         $type = in_array($request->query('type'), ['mensuel', 'journalier']) ? $request->query('type') : 'tous';
 
-        $base = fn() => Employee::where('company_id', $companyId)->where('is_active', 1);
-
         // salary_type n'existe que depuis l'ajout du choix Mensuel/Journalier a la
         // creation : les fiches anterieures sont a NULL et venaient toutes du
         // formulaire mensuel, on les rattache donc aux mensuels.
@@ -239,25 +237,72 @@ class EmployeesController extends Controller
             return $q->where('salary_type', 2);
         };
 
-        $query = $base();
+        // Requête de base pour les employés de l'entreprise
+        $filterBase = Employee::where('company_id', $companyId);
+
+        // Filtre Statut (Actif par défaut si non spécifié)
+        $status = $request->get('status', 'active');
+        if ($status === 'active' || $status === '1') {
+            $filterBase->where('is_active', 1);
+        } elseif ($status === 'inactive' || $status === '0') {
+            $filterBase->where('is_active', 0);
+        }
+
+        // Filtre Recherche par mot-clé
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $filterBase->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('employee_id', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtre Succursale / Branche
+        if ($request->filled('branch_id')) {
+            $filterBase->where('branch_id', $request->branch_id);
+        }
+
+        // Filtre Département / Service
+        if ($request->filled('department_id')) {
+            $filterBase->where('department_id', $request->department_id);
+        }
+
+        // Filtre Type de contrat
+        if ($request->filled('contract_type_id')) {
+            $filterBase->whereHas('contracts', function ($q) use ($request) {
+                $q->where('contract_type_id', $request->contract_type_id);
+            });
+        }
+
+        // Revoir le nombre d'employés par type selon les filtres actifs
+        $countTypes = [
+            'tous' => (clone $filterBase)->count(),
+            'mensuel' => $mensuels(clone $filterBase)->count(),
+            'journalier' => $journaliers(clone $filterBase)->count(),
+        ];
+
+        // Application de l'onglet actif (Tous / Mensuels / Journaliers)
+        $query = (clone $filterBase)->with(['branch', 'department', 'designation']);
         if ($type === 'mensuel') {
             $mensuels($query);
         } elseif ($type === 'journalier') {
             $journaliers($query);
         }
 
-        $employees = $query->paginate(15)->appends(['type' => $type]);
+        $employees = $query->orderBy('name')->paginate(15)->withQueryString();
 
-        $countTypes = [
-            'tous' => $base()->count(),
-            'mensuel' => $mensuels($base())->count(),
-            'journalier' => $journaliers($base())->count(),
-        ];
+        $departments = Department::where('company_id', $companyId)->where('is_active', 1)->orderBy('name')->get();
+        $designations = Designation::where('company_id', $companyId)->where('is_active', 1)->orderBy('name')->get();
+        $branches = Branch::where('company_id', $companyId)->where('is_active', 1)->orderBy('name')->get();
+        $contractTypes = \Modules\Contracts\Models\ContractType::where('company_id', $companyId)
+            ->orWhere('type', 'default')
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
 
-        $departments = Department::where('company_id', $companyId)->where('is_active', 1)->get();
-        $designations = Designation::where('company_id', $companyId)->where('is_active', 1)->get();
-
-        return view('employees::index', compact('employees', 'departments', 'designations', 'type', 'countTypes'));
+        return view('employees::index', compact('employees', 'departments', 'designations', 'branches', 'contractTypes', 'type', 'countTypes', 'status'));
     }
 
     /**

@@ -48,47 +48,70 @@
             @endif
             <div class="col-xl-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Filtre</h5>
+                    <div class="card-header d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2 text-primary"></i>Filtres de recherche</h5>
+                        @if(request()->hasAny(['search', 'status', 'branch_id', 'department_id', 'contract_type_id']))
+                            <a href="{{ route('company.employees.index', $type !== 'tous' ? ['type' => $type] : []) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-undo me-1"></i>Réinitialiser
+                            </a>
+                        @endif
                     </div>
                     <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    <input type="text" class="form-control" placeholder="Rechercher un employé..."
-                                        id="searchInput">
+                        <form method="GET" action="{{ route('company.employees.index') }}" id="filterForm">
+                            @if($type !== 'tous')
+                                <input type="hidden" name="type" value="{{ $type }}">
+                            @endif
+                            <div class="row g-2 align-items-end">
+                                <div class="col-lg-3 col-md-6">
+                                    <label class="form-label small fw-semibold">Recherche</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search text-muted"></i></span>
+                                        <input type="text" name="search" class="form-control"
+                                            placeholder="Nom, matricule, tél, email..."
+                                            value="{{ request('search') }}" id="searchInput">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-6">
+                                    <label class="form-label small fw-semibold">Statut</label>
+                                    <select class="form-select" name="status" id="statusFilter">
+                                        <option value="" {{ request('status') === '' ? 'selected' : '' }}>Tous les statuts</option>
+                                        <option value="active" {{ $status === 'active' ? 'selected' : '' }}>Actif</option>
+                                        <option value="inactive" {{ $status === 'inactive' ? 'selected' : '' }}>Inactif</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-4">
+                                    <label class="form-label small fw-semibold">Succursale</label>
+                                    <select class="form-select" name="branch_id" id="branchFilter">
+                                        <option value="">Toutes les succursales</option>
+                                        @foreach($branches as $branch)
+                                            <option value="{{ $branch->id }}" {{ request('branch_id') == $branch->id ? 'selected' : '' }}>
+                                                {{ $branch->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-2 col-md-4">
+                                    <label class="form-label small fw-semibold">Service</label>
+                                    <select class="form-select" name="department_id" id="departmentFilter">
+                                        <option value="">Tous les services</option>
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                                {{ $department->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-lg-3 col-md-4 d-flex gap-2">
+                                    <button class="btn btn-primary flex-grow-1" type="submit">
+                                        <i class="fas fa-search me-1"></i>Rechercher
+                                    </button>
+                                    <a href="{{ route('company.employees.index', $type !== 'tous' ? ['type' => $type] : []) }}"
+                                        class="btn btn-outline-secondary" title="Réinitialiser les filtres">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <select class="form-select" id="statusFilter">
-                                    <option value="">Tous les statuts</option>
-                                    <option value="active">Actif</option>
-                                    <option value="inactive">Inactif</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select class="form-select" id="departmentFilter">
-                                    <option value="">Tous les départements</option>
-                                    @foreach($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select class="form-select" id="contractFilter">
-                                    <option value="">Tous les contrats</option>
-                                    <option value="1">CDI</option>
-                                    <option value="2">CDD</option>
-                                    <option value="3">Stage</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-outline-warning w-100" type="button" onclick="resetFilters()">
-                                    <i class="fas fa-refresh me-1"></i>Réinitialiser
-                                </button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -98,70 +121,62 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des Employés</h5>
+                        <h5 class="mb-0"><i class="fas fa-list me-2 text-primary"></i>Liste des Employés</h5>
                     </div>
-                    {{-- Filtrage serveur sur salary_type : le lien recharge la page --}}
-                    {{-- mx-0 : une règle du thème donne aux onglets des marges négatives, ils dépassaient de la carte --}}
-                    <ul class="nav nav-tabs px-3 pt-2 mx-0">
-                        @foreach(['tous' => 'Tous', 'mensuel' => 'Mensuels', 'journalier' => 'Journaliers'] as $cle => $libelle)
-                            <li class="nav-item">
-                                <a class="nav-link {{ $type === $cle ? 'active' : '' }}"
-                                    href="{{ route('company.employees.index', $cle === 'tous' ? [] : ['type' => $cle]) }}">
-                                    {{ $libelle }}
-                                    <span class="badge bg-label-primary ms-1">{{ $countTypes[$cle] }}</span>
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
+                    {{-- Onglets avec défilement horizontal fluide sans débordement --}}
+                    <div class="border-bottom px-3 pt-2 overflow-auto" style="-webkit-overflow-scrolling: touch;">
+                        <ul class="nav nav-tabs flex-nowrap border-bottom-0" role="tablist">
+                            @foreach(['tous' => 'Tous', 'mensuel' => 'Mensuels', 'journalier' => 'Journaliers'] as $cle => $libelle)
+                                <li class="nav-item">
+                                    <a class="nav-link text-nowrap {{ $type === $cle ? 'active' : '' }}"
+                                        href="{{ route('company.employees.index', array_merge(request()->except('page', 'type'), $cle === 'tous' ? [] : ['type' => $cle])) }}">
+                                        {{ $libelle }}
+                                        <span class="badge bg-label-primary ms-1">{{ $countTypes[$cle] }}</span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                     <div class="card-body">
                         <!-- Table des employés -->
                         <div class="table-responsive">
                             <table class="table table-hover" id="employeesTable">
                                 <thead class="table-info">
                                     <tr>
-                                        <th>
-                                            <input type="checkbox" class="form-check-input" id="selectAll">
-                                        </th>
                                         <th>Matricule</th>
                                         <th>Nom</th>
-                                        <th>Succursale </th>
+                                        <th>Succursale</th>
+                                        <th>Service</th>
+                                        <th>Poste</th>
                                         <th>Type</th>
-                                        <th>Salaire de base</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
+                                        <th>Salaire</th>
+                                        <th class="text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($employees as $employee)
                                         <tr data-employee-id="{{ $employee->id }}">
                                             <td>
-                                                <input type="checkbox" class="form-check-input employee-checkbox"
-                                                    value="{{ $employee->id }}">
+                                                <span class="badge bg-label-primary" style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.3px;">
+                                                    {{ \Auth::user()->employeeIdFormat($employee->employee_id) }}
+                                                </span>
                                             </td>
                                             <td>
-                                                <span
-                                                    class="badge bg-label-primary fs-6">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-sm me-2">
-                                                        <div class="avatar-initial bg-label-info rounded-circle">
-                                                            {{ substr($employee->name, 0, 1) }}
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <h6 class="mb-0">{{ $employee->name }}</h6>
-                                                        <small class="text-muted text-break">{{ $employee->email ?? '-' }}</small><br>
-                                                        <small class="text-muted">{{ $employee->phone ?? '-' }}</small>
-                                                    </div>
+                                                <div>
+                                                    <div class="fw-semibold text-dark">{{ $employee->name }}</div>
+                                                    @if($employee->phone)
+                                                        <small class="text-muted"><i class="fas fa-phone fa-xs me-1"></i>{{ $employee->phone }}</small>
+                                                    @endif
                                                 </div>
                                             </td>
                                             <td>
-                                                <strong class="text-info">{{ $employee->branch->name ?? '-' }}</strong><br>
-                                                - <small
-                                                    class="text-muted me-2">{{ $employee->department->name ?? '-' }}</small><br>
-                                                - <small
-                                                    class="text-muted me-2">{{ $employee->designation->name ?? '-' }}</small>
+                                                <span class="text-body">{{ $employee->branch->name ?? '-' }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-body">{{ $employee->department->name ?? '-' }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-body">{{ $employee->designation->name ?? '-' }}</span>
                                             </td>
                                             <td>
                                                 @if($employee->salary_type == 2)
@@ -175,57 +190,33 @@
                                                     {{ number_format($employee->salary, 0, ',', ' ') }} FCFA
                                                 </span>
                                             </td>
-                                            <td>
-                                                @if($employee->is_active)
-                                                    <span class="badge bg-label-success">Actif</span>
-                                                @else
-                                                    <span class="badge bg-label-secondary">Inactif</span>
-                                                @endif
-                                            </td>
-                                            <td align="center">
-                                                <div class="dropdown">
-                                                    <button class="btn p-0" type="button" data-bs-toggle="dropdown">
-                                                        <i class="fas fa-bars fa-sm"></i>
+                                            <td class="text-end">
+                                                <div class="d-inline-flex gap-1">
+                                                    <a href="{{ route('company.employees.show', $employee->id) }}"
+                                                        class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Voir détails">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('company.employees.edit', $employee->id) }}"
+                                                        class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Modifier">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    @if($employee->is_active)
+                                                        <button type="button" class="btn btn-sm btn-outline-warning"
+                                                            onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', true)"
+                                                            data-bs-toggle="tooltip" title="Désactiver">
+                                                            <i class="fas fa-user-slash"></i>
+                                                        </button>
+                                                    @else
+                                                        <button type="button" class="btn btn-sm btn-outline-success"
+                                                            onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', false)"
+                                                            data-bs-toggle="tooltip" title="Activer">
+                                                            <i class="fas fa-user-check"></i>
+                                                        </button>
+                                                    @endif
+                                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        onclick="confirmDelete({{ $employee->id }})" data-bs-toggle="tooltip" title="Supprimer">
+                                                        <i class="fas fa-trash"></i>
                                                     </button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('company.employees.show', $employee->id) }}">
-                                                            <i class="fas fa-eye me-1"></i>Voir détails
-                                                        </a>
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('company.employees.edit', $employee->id) }}">
-                                                            <i class="fas fa-edit me-1"></i>Modifier
-                                                        </a>
-                                                        @if($employee->is_active)
-                                                            <a class="dropdown-item text-warning" href="#"
-                                                                onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', true)">
-                                                                <i class="fas fa-times me-1"></i>Désactiver
-                                                            </a>
-                                                        @else
-                                                            <a class="dropdown-item text-success" href="#"
-                                                                onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', false)">
-                                                                <i class="fas fa-check me-1"></i>Activer
-                                                            </a>
-                                                        @endif
-                                                        <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item text-info"
-                                                            href="{{ route('company.contracts.index', ['employee_id' => $employee->id]) }}">
-                                                            <i class="fas fa-file-text me-1"></i>Contrats
-                                                        </a>
-                                                        <a class="dropdown-item text-warning"
-                                                            href="{{ route('company.leaves.index', ['employee_id' => $employee->id]) }}">
-                                                            <i class="fas fa-calendar me-1"></i>Congés
-                                                        </a>
-                                                        <a class="dropdown-item text-success"
-                                                            href="{{ route('company.leaves.create', ['employee_id' => $employee->id]) }}">
-                                                            <i class="fas fa-umbrella-beach me-1"></i>Créer un congé
-                                                        </a>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item text-danger" href="#"
-                                                            onclick="confirmDelete({{ $employee->id }})">
-                                                            <i class="fas fa-trash me-1"></i>Supprimer
-                                                        </a>
-                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -234,9 +225,8 @@
                                             <td colspan="8" class="text-center py-5">
                                                 <div class="empty-state">
                                                     <i class="fas fa-users fa-4x text-muted mb-3"></i>
-                                                    <h5 class="text-muted">Aucun employé mensuel</h5>
-                                                    <p class="text-muted mb-4">Commencez par ajouter votre premier employé
-                                                        mensuel</p>
+                                                    <h5 class="text-muted">Aucun employé trouvé</h5>
+                                                    <p class="text-muted mb-4">Aucun employé ne correspond aux critères sélectionnés.</p>
                                                     <a href="{{ route('company.employees.create') }}"
                                                         class="btn btn-primary">
                                                         <i class="fas fa-plus me-1"></i>Ajouter un employé
@@ -437,107 +427,64 @@
         @if($employees->count() > 0)
             var table = $('#employeesTable').DataTable({
                 responsive: true,
-                order: [[1, 'desc']],
-                // Pas de tri (ni de flèches) sur la case à cocher et les actions
-                columnDefs: [{ orderable: false, targets: [0, 7] }],
+                order: [[1, 'asc']],
+                // Pas de tri sur la colonne actions (index 7)
+                columnDefs: [{ orderable: false, targets: [7] }],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
                 },
-                // La pagination est faite par Laravel (15 par page, liens sous le tableau) :
-                // sans ces options, DataTables repaginait la page et affichait une seconde numérotation.
                 paging: false,
                 info: false,
                 lengthChange: false,
+                searching: false,
                 dom: "<'row'<'col-sm-12'tr>>",
             });
         @endif
 
-        // Recherche personnalisée liée à DataTable
-        $('#searchInput').on('keyup', function () {
-            @if($employees->count() > 0)
-                table.search(this.value).draw();
-            @else
-                                            // Filtrage simple quand DataTable n'est pas initialisé
-                                            var val = this.value.toLowerCase();
-                $('#employeesTable tbody tr').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
-                });
-            @endif
-                        });
-        // Sélection multiple
-        document.getElementById('selectAll').addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('.employee-checkbox');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-            updateBulkActions();
+        // Initialisation des tooltips Bootstrap
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
 
-        document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', updateBulkActions);
-        });
-
-        function updateBulkActions() {
-            const selected = document.querySelectorAll('.employee-checkbox:checked');
-            const bulkActions = document.getElementById('bulkActions');
-
-            if (selected.length > 0) {
-                bulkActions.classList.remove('d-none');
-                document.getElementById('selectedCount').textContent = `${selected.length} employé(s) sélectionné(s)`;
-            } else {
-                bulkActions.classList.add('d-none');
-            }
-        }
-
-        // Confirmation de suppression
+        // Confirmation de suppression avec SweetAlert2
         function confirmDelete(employeeId) {
-            if (confirm('Êtes-vous sûr de vouloir désactiver cet employé ?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `{{ url('company/employees') }}/${employeeId}`;
+            Swal.fire({
+                title: 'Supprimer cet employé ?',
+                text: 'Cette action supprimera la fiche de cet employé.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler',
+                customClass: {
+                    confirmButton: 'btn btn-danger me-3',
+                    cancelButton: 'btn btn-label-secondary'
+                },
+                buttonsStyling: false
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `{{ url('company/employees') }}/${employeeId}`;
 
-                const csrfToken = document.createElement('input');
-                csrfToken.type = 'hidden';
-                csrfToken.name = '_token';
-                csrfToken.value = '{{ csrf_token() }}';
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
 
-                const methodField = document.createElement('input');
-                methodField.type = 'hidden';
-                methodField.name = '_method';
-                methodField.value = 'DELETE';
+                    const methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'DELETE';
 
-                form.appendChild(csrfToken);
-                form.appendChild(methodField);
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-
-        // Actions pour les autres fonctionnalités
-        function viewContracts(employeeId) {
-            alert('Fonctionnalité contrats à implémenter pour l\'employé ' + employeeId);
-        }
-
-        function viewLeaves(employeeId) {
-            alert('Fonctionnalité congés à implémenter pour l\'employé ' + employeeId);
-        }
-
-        function exportSelected() {
-            alert('Export des employés sélectionnés à implémenter');
-        }
-
-        function changeStatus(status) {
-            alert('Changement de statut à implémenter');
-        }
-
-        function deleteSelected() {
-            alert('Suppression groupée à implémenter');
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('statusFilter').value = '';
-            document.getElementById('departmentFilter').value = '';
-            document.getElementById('contractFilter').value = '';
-            // Recharger la page ou filtrer les résultats
+                    form.appendChild(csrfToken);
+                    form.appendChild(methodField);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
         }
     </script>
 @endpush

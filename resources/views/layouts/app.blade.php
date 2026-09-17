@@ -908,7 +908,7 @@
                         </div>
                         <a href="{{ route('company.employees.dashboard') }}"
                             class="submenu-item {{ Request::route()->getName() == 'company.employees.dashboard' ? 'active' : '' }}">
-                            <i class="fas fa-home"></i> Accueil Employés
+                            <i class="fas fa-chart-pie"></i> Tableau de bord RH
                         </a>
                         <div class="submenu-group-title"><i class="fas fa-minus"></i> Gérer le personnel</div>
                         <a href="{{ route('company.employees.index') }}"
