@@ -39,69 +39,21 @@
     @else
 
         <!-- Statistiques -->
-        <div class="row g-3 mb-4">
-            <div class="col-xl-3 col-md-6">
-                <div class="card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="avatar flex-shrink-0">
-                            <span class="avatar-initial rounded bg-label-primary"><i class="fas fa-users"></i></span>
-                        </div>
-                        <div>
-                            <h4 class="mb-0">{{ number_format($stats['active_employees'], 0, ',', ' ') }}</h4>
-                            <small class="text-muted">Employés actifs</small>
-                            <div class="text-muted" style="font-size:.75rem;">
-                                {{ number_format($stats['total_employees'], 0, ',', ' ') }} au total
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <x-kpi-grid>
+            <x-kpi icon="fas fa-users" color="primary" label="Employés actifs"
+                sublabel="{{ number_format($stats['total_employees'], 0, ',', ' ') }} au total"
+                :value="number_format($stats['active_employees'], 0, ',', ' ')" />
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="avatar flex-shrink-0">
-                            <span class="avatar-initial rounded bg-label-info"><i class="fas fa-file-invoice"></i></span>
-                        </div>
-                        <div>
-                            <h4 class="mb-0">{{ number_format($stats['payslips_month'], 0, ',', ' ') }}</h4>
-                            <small class="text-muted">Bulletins du mois</small>
-                            <div class="text-muted" style="font-size:.75rem;">
-                                {{ ucfirst(Carbon\Carbon::now()->locale('fr_FR')->isoFormat('MMMM YYYY')) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-file-invoice" color="info" label="Bulletins du mois"
+                sublabel="{{ ucfirst(Carbon\Carbon::now()->locale('fr_FR')->isoFormat('MMMM YYYY')) }}"
+                :value="number_format($stats['payslips_month'], 0, ',', ' ')" />
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="avatar flex-shrink-0">
-                            <span class="avatar-initial rounded bg-label-warning"><i class="fas fa-inbox"></i></span>
-                        </div>
-                        <div>
-                            <h4 class="mb-0">{{ number_format($stats['pending_requests'], 0, ',', ' ') }}</h4>
-                            <small class="text-muted">Demandes en attente</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-inbox" color="warning" label="Demandes" sublabel="En attente"
+                :value="number_format($stats['pending_requests'], 0, ',', ' ')" />
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card h-100">
-                    <div class="card-body d-flex align-items-center gap-3">
-                        <div class="avatar flex-shrink-0">
-                            <span class="avatar-initial rounded bg-label-success"><i class="fas fa-calendar-alt"></i></span>
-                        </div>
-                        <div>
-                            <h4 class="mb-0">{{ number_format($stats['upcoming_events'], 0, ',', ' ') }}</h4>
-                            <small class="text-muted">Événements à venir</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi icon="fas fa-calendar-alt" color="success" label="Événements" sublabel="À venir"
+                :value="number_format($stats['upcoming_events'], 0, ',', ' ')" />
+        </x-kpi-grid>
 
         <!-- Accès rapides, selon le rôle -->
         <div class="card">

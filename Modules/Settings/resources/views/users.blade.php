@@ -31,127 +31,46 @@
     </div>
 
     <!-- Statistiques des Utilisateurs -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Statistiques des Utilisateurs</h5>
-                    <span class="badge bg-label-primary">Vue d'ensemble</span>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Total Utilisateurs -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="d-flex align-items-center justify-content-between p-3 border rounded">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                        <div class="avatar-initial bg-label-primary rounded">
-                                            <i class="fas fa-users fa-24px"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Total</h6>
-                                        <small class="text-muted">Utilisateurs</small>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <h3 class="mb-0 text-primary">{{ $stats['total'] }}</h3>
-                                </div>
-                            </div>
-                        </div>
+    {{-- Écran de référence : les tuiles KPI de toute l'application reprennent ce rendu (composants x-kpi-grid / x-kpi). --}}
+    <x-kpi-grid title="Statistiques des Utilisateurs">
+        <x-kpi icon="fas fa-users" color="primary" label="Total" sublabel="Utilisateurs"
+            :value="$stats['total']" />
 
-                        <!-- Utilisateurs Actifs -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="d-flex align-items-center justify-content-between p-3 border rounded">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                        <div class="avatar-initial bg-label-success rounded">
-                                            <i class="fas fa-user-check fa-24px"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Actifs</h6>
-                                        <small class="text-muted">Connectés</small>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <h3 class="mb-0 text-success">{{ $stats['active'] }}</h3>
-                                </div>
-                            </div>
-                        </div>
+        <x-kpi icon="fas fa-user-check" color="success" label="Actifs" sublabel="Connectés"
+            :value="$stats['active']" />
 
-                        <!-- Utilisateurs Inactifs -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="d-flex align-items-center justify-content-between p-3 border rounded">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                        <div class="avatar-initial bg-label-warning rounded">
-                                            <i class="fas fa-user-times fa-24px"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Inactifs</h6>
-                                        <small class="text-muted">Désactivés</small>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <h3 class="mb-0 text-warning">{{ $stats['inactive'] }}</h3>
-                                </div>
-                            </div>
-                        </div>
+        <x-kpi icon="fas fa-user-times" color="warning" label="Inactifs" sublabel="Désactivés"
+            :value="$stats['inactive']" />
 
-                        <!-- Par Type -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="d-flex align-items-center justify-content-between p-3 border rounded">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                        <div class="avatar-initial bg-label-info rounded">
-                                            <i class="fas fa-user-tag fa-24px"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">RH/Paie</h6>
-                                        <small class="text-muted">Gestionnaires</small>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <h3 class="mb-0 text-info">{{ $stats['hr'] + $stats['payroll'] }}</h3>
-                                </div>
-                            </div>
-                        </div>
+        <x-kpi icon="fas fa-user-tag" color="info" label="RH/Paie" sublabel="Gestionnaires"
+            :value="$stats['hr'] + $stats['payroll']" />
+
+        <x-slot:footer>
+            <!-- Répartition par Type -->
+            <div class="d-flex justify-content-center gap-4 flex-wrap">
+                <div class="text-center">
+                    <div class="badge bg-label-primary mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        Entreprise: {{ $stats['company'] }}
                     </div>
-
-                    <!-- Répartition par Type -->
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-center gap-4 flex-wrap">
-                                <div class="text-center">
-                                    <div class="badge bg-label-primary mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                        Entreprise: {{ $stats['company'] }}
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="badge bg-label-success mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                        RH: {{ $stats['hr'] }}
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="badge bg-label-info mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                        Paie: {{ $stats['payroll'] }}
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="badge bg-label-secondary mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                        Employés: {{ $stats['employee'] }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                <div class="text-center">
+                    <div class="badge bg-label-success mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        RH: {{ $stats['hr'] }}
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="badge bg-label-info mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        Paie: {{ $stats['payroll'] }}
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="badge bg-label-secondary mb-1" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                        Employés: {{ $stats['employee'] }}
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </x-slot:footer>
+    </x-kpi-grid>
 
     <!-- Liste des Utilisateurs -->
     <div class="row">

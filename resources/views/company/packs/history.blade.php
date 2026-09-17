@@ -26,40 +26,19 @@
     </div>  
    
     <!-- Statistiques -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card border-primary">
-                <div class="card-body text-center">
-                    <h3 class="text-primary">{{ $stats['total'] }}</h3>
-                    <p class="mb-0">Total commandes</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-success">
-                <div class="card-body text-center">
-                    <h3 class="text-success">{{ $stats['paid'] }}</h3>
-                    <p class="mb-0">Payées</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-warning">
-                <div class="card-body text-center">
-                    <h3 class="text-warning">{{ $stats['pending'] }}</h3>
-                    <p class="mb-0">En attente</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-info">
-                <div class="card-body text-center">
-                    <h3 class="text-info">{{ number_format($stats['amount'], 0, ',', ' ') }} FCFA</h3>
-                    <p class="mb-0">Montant total</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-kpi-grid title="Statistiques des commandes">
+        <x-kpi icon="fas fa-shopping-cart" color="primary" label="Total" sublabel="Commandes"
+            :value="$stats['total']" />
+
+        <x-kpi icon="fas fa-check-circle" color="success" label="Payées" sublabel="Commandes"
+            :value="$stats['paid']" />
+
+        <x-kpi icon="fas fa-clock" color="warning" label="En attente" sublabel="Commandes"
+            :value="$stats['pending']" />
+
+        <x-kpi icon="fas fa-coins" color="info" label="Montant total" sublabel="FCFA"
+            :value="number_format($stats['amount'], 0, ',', ' ')" />
+    </x-kpi-grid>
 
     <!-- Filtres -->
     <div class="row mb-4">

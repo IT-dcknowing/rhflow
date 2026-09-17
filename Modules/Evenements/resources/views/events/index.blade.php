@@ -31,60 +31,19 @@
     </div>
 
     <!-- Statistiques -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-primary rounded">
-                            <i class="fas fa-calendar-check fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-primary">{{ $events->total() }}</h3>
-                    <p class="text-muted mb-2">Événements au total</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-success rounded">
-                            <i class="fas fa-check-circle fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-success">{{ $events->where('status', 'published')->count() }}</h3>
-                    <p class="text-muted mb-2">Événements publiés</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-warning rounded">
-                            <i class="fas fa-clock fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-warning">{{ $events->where('start_date', '>', now())->count() }}</h3>
-                    <p class="text-muted mb-2">Événements à venir</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-info rounded">
-                            <i class="fas fa-users fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-info">{{ $events->sum('max_participants') }}</h3>
-                    <p class="text-muted mb-2">Places disponibles</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-kpi-grid>
+        <x-kpi icon="fas fa-calendar-check" color="primary" label="Total" sublabel="Événements"
+            :value="$events->total()" />
+
+        <x-kpi icon="fas fa-check-circle" color="success" label="Publiés" sublabel="Événements"
+            :value="$events->where('status', 'published')->count()" />
+
+        <x-kpi icon="fas fa-clock" color="warning" label="À venir" sublabel="Événements"
+            :value="$events->where('start_date', '>', now())->count()" />
+
+        <x-kpi icon="fas fa-users" color="info" label="Places" sublabel="Disponibles"
+            :value="$events->sum('max_participants')" />
+    </x-kpi-grid>
 
     <!-- Filtres et Recherche -->
     <div class="card mb-4">

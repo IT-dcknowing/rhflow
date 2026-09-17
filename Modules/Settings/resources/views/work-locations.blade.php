@@ -31,63 +31,19 @@
         </div>
 
         <!-- Statistiques -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-info rounded">
-                                <i class="fas fa-map-marker-alt fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-info">{{ $workLocations->count() }}</h3>
-                        <p class="text-muted mb-2">Total Emplacements</p>
-                    </div>
-                </div>
-            </div>
+        <x-kpi-grid>
+            <x-kpi icon="fas fa-map-marker-alt" color="info" label="Total" sublabel="Emplacements"
+                :value="$workLocations->count()" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-success rounded">
-                                <i class="fas fa-clock fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-success">{{ $workLocations->where('has_time_clock', true)->count() }}</h3>
-                        <p class="text-muted mb-2">Avec Pointeuse</p>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-clock" color="success" label="Avec Pointeuse" sublabel="Emplacements"
+                :value="$workLocations->where('has_time_clock', true)->count()" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-warning rounded">
-                                <i class="fas fa-building fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-warning">{{ $workLocations->where('type', 'office')->count() }}</h3>
-                        <p class="text-muted mb-2">Bureaux</p>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-building" color="warning" label="Bureaux" sublabel="Emplacements"
+                :value="$workLocations->where('type', 'office')->count()" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-secondary rounded">
-                                <i class="fas fa-users fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-secondary">{{ $workLocations->where('type', 'remote')->count() }}</h3>
-                        <p class="text-muted mb-2">Télétravail</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi icon="fas fa-users" color="secondary" label="Télétravail" sublabel="Emplacements"
+                :value="$workLocations->where('type', 'remote')->count()" />
+        </x-kpi-grid>
 
         <!-- Liste des Emplacements -->
         <div class="row">

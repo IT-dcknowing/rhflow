@@ -73,24 +73,6 @@
             cursor: pointer;
         }
 
-        .stat-card {
-            border-left: 4px solid;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .stat-card .card-body {
-            padding: 1.25rem;
-        }
-
-        .stat-icon {
-            font-size: 1.75rem;
-            opacity: 0.8;
-        }
     </style>
 @endpush
 
@@ -232,104 +214,30 @@
                     <div class="card-body">
                         <div class="row">
                             <!-- Total Promotions -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="card h-100 stat-card border-left-primary">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar me-3" style="width: 48px; height: 48px;">
-                                                <div
-                                                    class="avatar-initial bg-primary bg-opacity-10 text-primary rounded w-100 h-100 d-flex align-items-center justify-content-center">
-                                                    <i class="fas fa-trophy fa-2x"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Total des Promotions</h6>
-                                                <h3 class="mb-0">{{ $stats['total'] ?? 0 }}</h3>
-                                                <p class="mb-0 text-muted small">
-                                                    <span class="text-success">
-                                                        <i class="fas fa-arrow-up"></i>
-                                                        {{ $stats['monthly_increase'] ?? 0 }}% ce mois-ci
-                                                    </span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-kpi icon="fas fa-trophy" color="primary" label="Total des Promotions"
+                                :value="$stats['total'] ?? 0">
+                                <x-slot:hint>
+                                    <span class="text-success">
+                                        <i class="fas fa-arrow-up"></i> {{ $stats['monthly_increase'] ?? 0 }}% ce mois-ci
+                                    </span>
+                                </x-slot:hint>
+                            </x-kpi>
 
                             <!-- Promotions cette année -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="d-flex align-items-center justify-content-between p-3 border rounded h-100">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                            <div class="avatar-initial bg-label-info rounded">
-                                                <i class="fas fa-calendar-check fa-2x"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0">Cette Année</h6>
-                                            <p class="mb-0 fw-bold fs-4">{{ $stats['this_year'] ?? 0 }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-kpi icon="fas fa-calendar-check" color="info" label="Cette Année" sublabel="Promotions"
+                                :value="$stats['this_year'] ?? 0" />
 
                             <!-- Promotions approuvées -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="card h-100 stat-card border-left-success">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar me-3" style="width: 48px; height: 48px;">
-                                                <div
-                                                    class="avatar-initial bg-success bg-opacity-10 text-success rounded w-100 h-100 d-flex align-items-center justify-content-center">
-                                                    <i class="fas fa-check-circle fa-2x"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Approuvées</h6>
-                                                <h3 class="mb-0 mt-2">{{ $approvedPromotions }}</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-kpi icon="fas fa-check-circle" color="success" label="Approuvées" sublabel="Promotions"
+                                :value="$approvedPromotions" />
 
                             <!-- Promotions rejetées -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="card h-100 stat-card border-left-danger">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar me-3" style="width: 48px; height: 48px;">
-                                                <div
-                                                    class="avatar-initial bg-danger bg-opacity-10 text-danger rounded w-100 h-100 d-flex align-items-center justify-content-center">
-                                                    <i class="fas fa-times-circle fa-2x"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Rejetées</h6>
-                                                <h3 class="mb-0 mt-2">{{ $rejectedPromotions }}</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-kpi icon="fas fa-times-circle" color="danger" label="Rejetées" sublabel="Promotions"
+                                :value="$rejectedPromotions" />
 
                             <!-- Augmentation moyenne -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="d-flex align-items-center justify-content-between p-3 border rounded h-100">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                            <div class="avatar-initial bg-label-danger rounded">
-                                                <i class="fas fa-percentage fa-2x"></i>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h6 class="mb-0">Augmentation Moy.</h6>
-                                            <p class="mb-0 fw-bold fs-4">{{ $stats['avg_increase'] ?? '0' }}%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <x-kpi icon="fas fa-percentage" color="danger" label="Augmentation Moy."
+                                sublabel="Sur les promotions" :value="($stats['avg_increase'] ?? '0') . '%'" />
                         </div>
                     </div>
                 </div>

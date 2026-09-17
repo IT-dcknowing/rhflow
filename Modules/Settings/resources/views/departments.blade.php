@@ -31,63 +31,19 @@
         </div>
 
         <!-- Statistiques -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-info rounded">
-                                <i class="fas fa-sitemap fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-info">{{ $stats['total_departments'] }}</h3>
-                        <p class="text-muted mb-2">Total Services</p>
-                    </div>
-                </div>
-            </div>
+        <x-kpi-grid>
+            <x-kpi icon="fas fa-sitemap" color="info" label="Total" sublabel="Services"
+                :value="$stats['total_departments']" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-success rounded">
-                                <i class="fas fa-check-circle fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-success">{{ $stats['active_departments'] }}</h3>
-                        <p class="text-muted mb-2">Services Actifs</p>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-check-circle" color="success" label="Actifs" sublabel="Services"
+                :value="$stats['active_departments']" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-warning rounded">
-                                <i class="fas fa-pause-circle fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-warning">{{ $stats['inactive_departments'] }}</h3>
-                        <p class="text-muted mb-2">Services Inactifs</p>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-pause-circle" color="warning" label="Inactifs" sublabel="Services"
+                :value="$stats['inactive_departments']" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-primary rounded">
-                                <i class="fas fa-user-tie fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-primary">{{ $company->designations()->count() }}</h3>
-                        <p class="text-muted mb-2">Postes Totaux</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi icon="fas fa-user-tie" color="primary" label="Postes" sublabel="Au total"
+                :value="$company->designations()->count()" />
+        </x-kpi-grid>
 
         <!-- Liste des Services -->
         <div class="row">

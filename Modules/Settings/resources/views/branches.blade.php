@@ -31,63 +31,19 @@
         </div>
 
         <!-- Statistiques -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-primary rounded">
-                                <i class="fas fa-building fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-primary">{{ $stats['total_branches'] }}</h3>
-                        <p class="text-muted mb-2">Total Sites</p>
-                    </div>
-                </div>
-            </div>
+        <x-kpi-grid>
+            <x-kpi icon="fas fa-building" color="primary" label="Total" sublabel="Sites"
+                :value="$stats['total_branches']" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-success rounded">
-                                <i class="fas fa-check-circle fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-success">{{ $stats['active_branches'] }}</h3>
-                        <p class="text-muted mb-2">Sites Actifs</p>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-check-circle" color="success" label="Actifs" sublabel="Sites"
+                :value="$stats['active_branches']" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-warning rounded">
-                                <i class="fas fa-pause-circle fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-warning">{{ $stats['inactive_branches'] }}</h3>
-                        <p class="text-muted mb-2">Sites Inactifs</p>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-pause-circle" color="warning" label="Inactifs" sublabel="Sites"
+                :value="$stats['inactive_branches']" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-info rounded">
-                                <i class="fas fa-users fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-info">{{ $company->departments()->count() }}</h3>
-                        <p class="text-muted mb-2">Services Totaux</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi icon="fas fa-users" color="info" label="Services" sublabel="Au total"
+                :value="$company->departments()->count()" />
+        </x-kpi-grid>
 
         <!-- Liste des Succursales -->
         <div class="row">

@@ -36,63 +36,19 @@
     </div>
 
     <!-- Métriques principales -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-primary rounded">
-                            <i class="fas fa-users fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-primary">{{ $stats['total_employees'] ?? 0 }}</h3>
-                    <p class="text-muted mb-2">Total Employés</p>
-                </div>
-            </div>
-        </div>
+    <x-kpi-grid title="Métriques principales">
+        <x-kpi icon="fas fa-users" color="primary" label="Total" sublabel="Employés"
+            :value="$stats['total_employees'] ?? 0" />
 
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-info rounded">
-                            <i class="fas fa-calendar fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-info">{{ $stats['total_monthly'] ?? 0 }}</h3>  
-                    <p class="text-muted mb-2">Employés Mensuels</p>
-                </div>
-            </div>
-        </div>
+        <x-kpi icon="fas fa-calendar" color="info" label="Mensuels" sublabel="Employés"
+            :value="$stats['total_monthly'] ?? 0" />
 
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-warning rounded">
-                            <i class="fas fa-clock fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-warning">{{ $stats['total_daily'] ?? 0 }}</h3>
-                    <p class="text-muted mb-2">Employés Journaliers</p>
-                </div>
-            </div>
-        </div>
+        <x-kpi icon="fas fa-clock" color="warning" label="Journaliers" sublabel="Employés"
+            :value="$stats['total_daily'] ?? 0" />
 
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-success rounded">
-                            <i class="fas fa-dollar fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-success">{{ number_format($totalSalary ?? 0, 0, ',', ' ') }}</h3>
-                    <p class="text-muted mb-2">Masse Salariale (FCFA)</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <x-kpi icon="fas fa-dollar" color="success" label="Masse Salariale" sublabel="FCFA"
+            :value="number_format($totalSalary ?? 0, 0, ',', ' ')" />
+    </x-kpi-grid>
 
     <!-- Graphiques supplémentaires -->
     <div class="row mb-4">

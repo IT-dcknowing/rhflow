@@ -26,87 +26,26 @@
         </div>
 
         <!-- Cartes de statistiques -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-primary h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Bulletins · <span class="kpi-periode">{{ $stats['periode'] ?? 'aucune période' }}</span></span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['total'], 0, ',', ' ') }}</h3>
-                                <div class="d-flex align-items-center mt-2">
-                                    <small id="evolTotal" class="text-muted"></small>
-                                </div>
-                            </div>
-                            <div class="text-primary">
-                                <i class="fas fa-file-invoice stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        {{-- Les id kpi-* sont les ancres de updateStatistics() : le rafraîchissement AJAX écrit dedans. --}}
+        <x-kpi-grid>
+            <x-kpi id="kpi-total" icon="fas fa-file-invoice" color="primary" label="Bulletins"
+                sublabel="{{ $stats['periode'] ?? 'aucune période' }}"
+                :value="number_format($stats['total'], 0, ',', ' ')">
+                <x-slot:hint><span id="evolTotal" class="text-muted"></span></x-slot:hint>
+            </x-kpi>
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-success h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Bulletins validés</span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['valides'], 0, ',', ' ') }}</h3>
-                                <div class="progress mx-auto" style="width: 80%; height: 6px;">
-                                    <div class="progress-bar bg-success"
-                                        style="width: {{ $stats['total'] > 0 ? round(($stats['valides'] / $stats['total'] * 100), 1) : 0 }}%">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-success">
-                                <i class="fas fa-check-circle stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi id="kpi-valides" icon="fas fa-check-circle" color="success" label="Validés" sublabel="Bulletins"
+                :value="number_format($stats['valides'], 0, ',', ' ')" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-warning h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Générés, à valider</span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['encours'], 0, ',', ' ') }}</h3>
-                                <div class="progress mx-auto" style="width: 80%; height: 6px;">
-                                    <div class="progress-bar bg-warning"
-                                        style="width: {{ $stats['total'] > 0 ? round(($stats['encours'] / $stats['total'] * 100), 1) : 0 }}%">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-warning">
-                                <i class="fas fa-clock stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi id="kpi-encours" icon="fas fa-clock" color="warning" label="À valider" sublabel="Générés"
+                :value="number_format($stats['encours'], 0, ',', ' ')" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-info h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Net à payer · <span class="kpi-periode">{{ $stats['periode'] ?? 'aucune période' }}</span></span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['masse_salariale'], 0, ',', ' ') }} FCFA</h3>
-                                <div class="d-flex align-items-center mt-2">
-                                    <small id="evolMasse" class="text-muted"></small>
-                                </div>
-                            </div>
-                            <div class="text-info">
-                                <i class="fas fa-coins stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi id="kpi-masse" icon="fas fa-coins" color="info" label="Net à payer"
+                sublabel="{{ $stats['periode'] ?? 'aucune période' }}"
+                :value="number_format($stats['masse_salariale'], 0, ',', ' ') . ' FCFA'">
+                <x-slot:hint><span id="evolMasse" class="text-muted"></span></x-slot:hint>
+            </x-kpi>
+        </x-kpi-grid>
 
         <!-- Tableau des bulletins -->
         <div class="card">
@@ -638,18 +577,14 @@
         // Mettre à jour les statistiques
         function updateStatistics(stats) {
             if (stats) {
-                $('.stat-card h3').eq(0).text(formatNumber(stats.total || 0));
-                $('.stat-card h3').eq(1).text(formatNumber(stats.valides || 0));
-                $('.stat-card h3').eq(2).text(formatNumber(stats.encours || 0));
-                $('.stat-card h3').eq(3).text(formatNumber(stats.masse_salariale || 0) + ' FCFA');
-                $('.kpi-periode').text(stats.periode || 'aucune période');
+                // Les tuiles viennent du composant x-kpi : le chiffre est le h3, la période le <small> qui suit le libellé.
+                $('#kpi-total h3').text(formatNumber(stats.total || 0));
+                $('#kpi-valides h3').text(formatNumber(stats.valides || 0));
+                $('#kpi-encours h3').text(formatNumber(stats.encours || 0));
+                $('#kpi-masse h3').text(formatNumber(stats.masse_salariale || 0) + ' FCFA');
+                $('#kpi-total h6 + small, #kpi-masse h6 + small').text(stats.periode || 'aucune période');
                 afficherEvolution('#evolTotal', stats.evolution_total, stats.periode_precedente);
                 afficherEvolution('#evolMasse', stats.evolution_masse, stats.periode_precedente);
-
-                // Mettre à jour les barres de progression
-                var total = stats.total || 0;
-                $('.stat-card .progress-bar').eq(0).css('width', (total > 0 ? Math.round(stats.valides / total * 1000) / 10 : 0) + '%');
-                $('.stat-card .progress-bar').eq(1).css('width', (total > 0 ? Math.round(stats.encours / total * 1000) / 10 : 0) + '%');
             }
         }
 
@@ -1207,38 +1142,3 @@
     </script>
 @endpush
 
-@push('styles')
-    <style>
-        .stat-card {
-            border-left: 4px solid;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .border-left-primary {
-            border-left-color: #696cff !important;
-        }
-
-        .border-left-success {
-            border-left-color: #71dd37 !important;
-        }
-
-        .border-left-warning {
-            border-left-color: #ffab00 !important;
-        }
-
-        .border-left-info {
-            border-left-color: #03c3ec !important;
-        }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            opacity: 0.8;
-        }
-    </style>
-@endpush

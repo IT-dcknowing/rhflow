@@ -38,38 +38,12 @@
                 <div class="card-body">
                     <div class="row">
                         <!-- Total Récompenses -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="d-flex align-items-center justify-content-between p-3 border rounded">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                        <div class="avatar-initial bg-label-success rounded">
-                                            <i class="fas fa-award fa-2x"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Total</h6>
-                                        <p class="mb-0 fw-bold fs-4">{{ $stats['total'] ?? 0 }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <x-kpi icon="fas fa-award" color="success" label="Total" sublabel="Récompenses"
+                            :value="$stats['total'] ?? 0" />
 
                         <!-- Récompenses ce mois-ci -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="d-flex align-items-center justify-content-between p-3 border rounded">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
-                                        <div class="avatar-initial bg-label-info rounded">
-                                            <i class="fas fa-calendar-alt fa-2x"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="mb-0">Ce Mois</h6>
-                                        <p class="mb-0 fw-bold fs-4">{{ $stats['this_month'] ?? 0 }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <x-kpi icon="fas fa-calendar-alt" color="info" label="Ce Mois" sublabel="Récompenses"
+                            :value="$stats['this_month'] ?? 0" />
 
                         <!-- Types de récompenses -->
                         <div class="col-xl-6">

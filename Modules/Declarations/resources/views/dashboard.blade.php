@@ -5,42 +5,6 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('libs/apex-charts/apex-charts.css') }}">
     <style>
-        .stat-card {
-            border-left: 4px solid;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .border-left-primary {
-            border-left-color: #696cff !important;
-        }
-
-        .border-left-success {
-            border-left-color: #71dd37 !important;
-        }
-
-        .border-left-warning {
-            border-left-color: #ffab00 !important;
-        }
-
-        .border-left-info {
-            border-left-color: #03c3ec !important;
-        }
-
-        .border-left-danger {
-            border-left-color: #ff3e1d !important;
-        }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            opacity: 0.8;
-        }
-
         .priority-elevee {
             color: #ff3e1d;
         }
@@ -113,102 +77,21 @@
         </div>
 
         <!-- Cartes de statistiques principales -->
-        <div class="row mb-4">
-            <!-- Bulletins annuels -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-primary h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Bulletins annuels</span>
-                                <h3 class="card-title mb-0">
-                                    {{ number_format($stats['total_bulletins_annuel'], 0, ',', ' ') }}
-                                </h3>
-                                <div class="d-flex align-items-center mt-2">
-                                    <small class="text-success me-1">
-                                        <i class="fas fa-arrow-up"></i> 8.5%
-                                    </small>
-                                    <small class="text-muted">vs année dernière</small>
-                                </div>
-                            </div>
-                            <div class="text-primary">
-                                <i class="fas fa-file-invoice stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <x-kpi-grid>
+            <x-kpi icon="fas fa-file-invoice" color="primary" label="Bulletins annuels" sublabel="Exercice en cours"
+                :value="number_format($stats['total_bulletins_annuel'], 0, ',', ' ')" />
 
-            <!-- Bulletins mensuels -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-success h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Bulletins mensuels</span>
-                                <h3 class="card-title mb-0">
-                                    {{ number_format($stats['total_bulletins_mensuel'], 0, ',', ' ') }}
-                                </h3>
-                                <div class="d-flex align-items-center mt-2">
-                                    <span class="badge bg-success me-1">{{ $stats['periode_en_cours'] }}</span>
-                                    <small class="text-muted">En cours</small>
-                                </div>
-                            </div>
-                            <div class="text-success">
-                                <i class="fas fa-calendar-alt stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-calendar-alt" color="success" label="Bulletins mensuels"
+                sublabel="{{ $stats['periode_en_cours'] }} en cours"
+                :value="number_format($stats['total_bulletins_mensuel'], 0, ',', ' ')" />
 
-            <!-- Déclarations CNPS -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-warning h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">Déclarations CNPS</span>
-                                <h3 class="card-title mb-0">
-                                    {{ number_format($stats['total_declarations_cnps'], 0, ',', ' ') }}
-                                </h3>
-                                <div class="d-flex align-items-center mt-2">
-                                    <small class="text-warning me-1">
-                                        <i class="fas fa-exclamation-triangle"></i> 2 en retard
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="text-warning">
-                                <i class="fas fa-building stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-building" color="warning" label="Déclarations CNPS" sublabel="Déposées"
+                :value="number_format($stats['total_declarations_cnps'], 0, ',', ' ')" />
 
-            <!-- Total déclarations fiscales -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card stat-card border-left-info h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1 text-muted">ITS + CMU</span>
-                                <h3 class="card-title mb-0">
-                                    {{ number_format($stats['total_declarations_its'] + $stats['total_declarations_cmu'], 0, ',', ' ') }}
-                                </h3>
-                                <div class="d-flex align-items-center mt-2">
-                                    <span class="badge bg-info me-1">ITS: {{ $stats['total_declarations_its'] }}</span>
-                                    <span class="badge bg-info">CMU: {{ $stats['total_declarations_cmu'] }}</span>
-                                </div>
-                            </div>
-                            <div class="text-info">
-                                <i class="fas fa-receipt stat-icon"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi icon="fas fa-receipt" color="info" label="ITS + CMU"
+                sublabel="ITS : {{ $stats['total_declarations_its'] }} · CMU : {{ $stats['total_declarations_cmu'] }}"
+                :value="number_format($stats['total_declarations_its'] + $stats['total_declarations_cmu'], 0, ',', ' ')" />
+        </x-kpi-grid>
 
         <!-- Graphique d'évolution et dernières activités -->
         <div class="row mb-4">

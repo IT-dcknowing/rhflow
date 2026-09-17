@@ -28,49 +28,16 @@
     </div>
 
     <!-- Statistiques -->
-    <div class="row mb-4">
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-info rounded">
-                            <i class="fas fa-users fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-info">{{ $attendanceStats['total_employees'] }}</h3>
-                    <p class="text-muted mb-2">Total Employés</p>
-                </div>
-            </div>
-        </div>
+    <x-kpi-grid>
+        <x-kpi col="col-xl-4 col-md-6" icon="fas fa-users" color="info" label="Total" sublabel="Employés"
+            :value="$attendanceStats['total_employees']" />
 
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-success rounded">
-                            <i class="fas fa-edit fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-success">{{ $attendanceStats['manual_attendance'] }}</h3>
-                    <p class="text-muted mb-2">Saisie Manuelle</p>
-                </div>
-            </div>
-        </div>
+        <x-kpi col="col-xl-4 col-md-6" icon="fas fa-edit" color="success" label="Saisie Manuelle"
+            sublabel="Employés" :value="$attendanceStats['manual_attendance']" />
 
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-warning rounded">
-                            <i class="fas fa-qrcode fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-warning">{{ $attendanceStats['qr_code_attendance'] }}</h3>
-                    <p class="text-muted mb-2">QR Code</p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <x-kpi col="col-xl-4 col-md-6" icon="fas fa-qrcode" color="warning" label="QR Code" sublabel="Employés"
+            :value="$attendanceStats['qr_code_attendance']" />
+    </x-kpi-grid>
 
     @if(($company->default_attendance_type ?? '') == 'qr_code' || ($user->attendance_type ?? '') == 'qr_code' || ($company->allow_multiple_attendance_types ?? false))
     <!-- Générer un QR Code de pointage -->

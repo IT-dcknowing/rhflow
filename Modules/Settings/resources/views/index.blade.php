@@ -28,79 +28,20 @@
         </div>
 
         <!-- Statistiques des Paramètres -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-primary rounded">
-                                <i class="fas fa-building fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-primary">{{ $stats['total_branches'] ?? 0 }}</h3>
-                        <p class="text-muted mb-2">Siège & Succursales</p>
-                        <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-primary"
-                                style="width: {{ min(100, ($stats['total_branches'] ?? 0) * 20) }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        {{-- Les barres de progression ont été retirées : leur largeur était un simple multiple du compteur, sans échelle réelle. --}}
+        <x-kpi-grid title="Statistiques des Paramètres">
+            <x-kpi icon="fas fa-building" color="primary" label="Siège & Succursales" sublabel="Sites"
+                :value="$stats['total_branches'] ?? 0" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-info rounded">
-                                <i class="fas fa-sitemap fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-info">{{ $stats['total_departments'] ?? 0 }}</h3>
-                        <p class="text-muted mb-2">Services</p>
-                        <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-info"
-                                style="width: {{ min(100, ($stats['total_departments'] ?? 0) * 15) }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-sitemap" color="info" label="Services" sublabel="Configurés"
+                :value="$stats['total_departments'] ?? 0" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-warning rounded">
-                                <i class="fas fa-user-tie fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-warning">{{ $stats['total_designations'] ?? 0 }}</h3>
-                        <p class="text-muted mb-2">Postes</p>
-                        <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-warning"
-                                style="width: {{ min(100, ($stats['total_designations'] ?? 0) * 10) }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-kpi icon="fas fa-user-tie" color="warning" label="Postes" sublabel="Configurés"
+                :value="$stats['total_designations'] ?? 0" />
 
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                            <div class="avatar-initial bg-label-success rounded">
-                                <i class="fas fa-calendar-alt fa-28px"></i>
-                            </div>
-                        </div>
-                        <h3 class="mb-1 text-success">{{ $stats['total_leave_types'] ?? 0 }}</h3>
-                        <p class="text-muted mb-2">Types de Congés</p>
-                        <div class="progress mt-2" style="height: 4px;">
-                            <div class="progress-bar bg-success"
-                                style="width: {{ min(100, ($stats['total_leave_types'] ?? 0) * 25) }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-kpi icon="fas fa-calendar-alt" color="success" label="Types de Congés" sublabel="Configurés"
+                :value="$stats['total_leave_types'] ?? 0" />
+        </x-kpi-grid>
 
         <!-- Sections de Configuration -->
         <div class="row mb-4">

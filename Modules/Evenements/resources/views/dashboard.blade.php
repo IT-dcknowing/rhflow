@@ -11,18 +11,6 @@
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
-    .stat-card {
-        border-left: 4px solid;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
-    }
-    .stat-card .card-body {
-        padding: 1.25rem 1.5rem;
-    }
-    .stat-icon {
-        font-size: 2.5rem;
-        opacity: 0.8;
-    }
     .trend-up {
         color: #10b981;
     }
@@ -65,22 +53,6 @@
         border-radius: 2px;
         margin-right: 0.5rem;
     }
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: 600;
-        line-height: 1.2;
-    }
-    .stat-label {
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin-bottom: 0.25rem;
-    }
-    .trend-indicator {
-        display: inline-flex;
-        align-items: center;
-        font-size: 0.875rem;
-        margin-left: 0.25rem;
-    }
 </style>
 @endpush
 
@@ -112,151 +84,62 @@
     </div>
 
     <!-- Cartes de statistiques -->
-    <div class="row mb-4">
-        <!-- Annonces actives -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card border-left-primary h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="stat-label">Annonces actives</div>
-                            <div class="stat-value">
-                                {{ $stats['total_announcements']['value'] ?? 0 }}
-                                @if(isset($stats['total_announcements']['trend']))
-                                    <span class="trend-indicator text-{{ $stats['total_announcements']['trend_type'] === 'up' ? 'success' : ($stats['total_announcements']['trend_type'] === 'down' ? 'danger' : 'muted') }}">
-                                        @if($stats['total_announcements']['trend_type'] === 'up')
-                                            <i class="fas fa-arrow-up"></i>
-                                        @elseif($stats['total_announcements']['trend_type'] === 'down')
-                                            <i class="fas fa-arrow-down"></i>
-                                        @else
-                                            <i class="fas fa-minus"></i>
-                                        @endif
-                                        {{ $stats['total_announcements']['trend'] }}%
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="text-primary">
-                            <i class="fas fa-bullhorn stat-icon"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('company.evenements.annonces.index') }}" class="btn btn-sm btn-outline-primary">
-                            Voir tout <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Événements à venir -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card border-left-success h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="stat-label">Événements à venir</div>
-                            <div class="stat-value">
-                                {{ $stats['upcoming_events']['value'] ?? 0 }}
-                                @if(isset($stats['upcoming_events']['trend']))
-                                    <span class="trend-indicator text-{{ $stats['upcoming_events']['trend_type'] === 'up' ? 'success' : ($stats['upcoming_events']['trend_type'] === 'down' ? 'danger' : 'muted') }}">
-                                        @if($stats['upcoming_events']['trend_type'] === 'up')
-                                            <i class="fas fa-arrow-up"></i>
-                                        @elseif($stats['upcoming_events']['trend_type'] === 'down')
-                                            <i class="fas fa-arrow-down"></i>
-                                        @else
-                                            <i class="fas fa-minus"></i>
-                                        @endif
-                                        {{ $stats['upcoming_events']['trend'] }}%
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="text-success">
-                            <i class="fas fa-calendar-alt stat-icon"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('company.evenements.events.index') }}" class="btn btn-sm btn-outline-success">
-                            Voir le calendrier <i class="fas fa-calendar-day ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Réunions récentes -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card border-left-info h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="stat-label">Réunions (30j)</div>
-                            <div class="stat-value">
-                                {{ $stats['total_meetings']['value'] ?? 0 }}
-                                @if(isset($stats['total_meetings']['trend']))
-                                    <span class="trend-indicator text-{{ $stats['total_meetings']['trend_type'] === 'up' ? 'success' : ($stats['total_meetings']['trend_type'] === 'down' ? 'danger' : 'muted') }}">
-                                        @if($stats['total_meetings']['trend_type'] === 'up')
-                                            <i class="fas fa-arrow-up"></i>
-                                        @elseif($stats['total_meetings']['trend_type'] === 'down')
-                                            <i class="fas fa-arrow-down"></i>
-                                        @else
-                                            <i class="fas fa-minus"></i>
-                                        @endif
-                                        {{ $stats['total_meetings']['trend'] }}%
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="text-info">
-                            <i class="fas fa-users stat-icon"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('company.evenements.meetings.index') }}" class="btn btn-sm btn-outline-info">
-                            Voir les réunions <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Récompenses -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card stat-card border-left-warning h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="stat-label">Récompenses (12 mois)</div>
-                            <div class="stat-value">
-                                {{ $stats['recent_awards']['value'] ?? 0 }}
-                                @if(isset($stats['recent_awards']['trend']))
-                                    <span class="trend-indicator text-{{ $stats['recent_awards']['trend_type'] === 'up' ? 'success' : ($stats['recent_awards']['trend_type'] === 'down' ? 'danger' : 'muted') }}">
-                                        @if($stats['recent_awards']['trend_type'] === 'up')
-                                            <i class="fas fa-arrow-up"></i>
-                                        @elseif($stats['recent_awards']['trend_type'] === 'down')
-                                            <i class="fas fa-arrow-down"></i>
-                                        @else
-                                            <i class="fas fa-minus"></i>
-                                        @endif
-                                        {{ $stats['recent_awards']['trend'] }}%
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="text-warning">
-                            <i class="fas fa-trophy stat-icon"></i>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a href="{{ route('company.evenements.awards.index') }}" class="btn btn-sm btn-outline-warning">
-                            Voir les récompenses <i class="fas fa-award ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @php
+        // Une entrée par tuile : clé dans $stats, icône, couleur, libellé et lien de renvoi.
+        $tuilesKpi = [
+            [
+                'cle' => 'total_announcements',
+                'icone' => 'fas fa-bullhorn',
+                'couleur' => 'primary',
+                'libelle' => 'Annonces actives',
+                'lien' => route('company.evenements.annonces.index'),
+                'libelleLien' => 'Voir tout',
+            ],
+            [
+                'cle' => 'upcoming_events',
+                'icone' => 'fas fa-calendar-alt',
+                'couleur' => 'success',
+                'libelle' => 'Événements à venir',
+                'lien' => route('company.evenements.events.index'),
+                'libelleLien' => 'Voir le calendrier',
+            ],
+            [
+                'cle' => 'total_meetings',
+                'icone' => 'fas fa-users',
+                'couleur' => 'info',
+                'libelle' => 'Réunions (30j)',
+                'lien' => route('company.evenements.meetings.index'),
+                'libelleLien' => 'Voir les réunions',
+            ],
+            [
+                'cle' => 'recent_awards',
+                'icone' => 'fas fa-trophy',
+                'couleur' => 'warning',
+                'libelle' => 'Récompenses (12 mois)',
+                'lien' => route('company.evenements.awards.index'),
+                'libelleLien' => 'Voir les récompenses',
+            ],
+        ];
+    @endphp
+    <x-kpi-grid>
+        @foreach ($tuilesKpi as $tuile)
+            @php $stat = $stats[$tuile['cle']] ?? []; @endphp
+            <x-kpi :icon="$tuile['icone']" :color="$tuile['couleur']" :label="$tuile['libelle']"
+                :value="$stat['value'] ?? 0">
+                <x-slot:hint>
+                    @isset($stat['trend'])
+                        <span
+                            class="text-{{ $stat['trend_type'] === 'up' ? 'success' : ($stat['trend_type'] === 'down' ? 'danger' : 'muted') }} me-2">
+                            <i
+                                class="fas {{ $stat['trend_type'] === 'up' ? 'fa-arrow-up' : ($stat['trend_type'] === 'down' ? 'fa-arrow-down' : 'fa-minus') }}"></i>
+                            {{ $stat['trend'] }}%
+                        </span>
+                    @endisset
+                    <a href="{{ $tuile['lien'] }}" class="text-{{ $tuile['couleur'] }}">{{ $tuile['libelleLien'] }}</a>
+                </x-slot:hint>
+            </x-kpi>
+        @endforeach
+    </x-kpi-grid>
     
     <!-- Graphique d'activité et calendrier -->
     <div class="row mb-4">

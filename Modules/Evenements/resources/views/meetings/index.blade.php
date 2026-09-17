@@ -31,60 +31,19 @@
     </div>
 
     <!-- Statistiques -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-primary rounded">
-                            <i class="fas fa-calendar-check fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-primary">{{ $meetings->total() }}</h3>
-                    <p class="text-muted mb-2">Réunions au total</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-success rounded">
-                            <i class="fas fa-check-circle fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-success">{{ $meetings->where('status', 'completed')->count() }}</h3>
-                    <p class="text-muted mb-2">Réunions terminées</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-warning rounded">
-                            <i class="fas fa-clock fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-warning">{{ $meetings->where('start_time', '>', now())->count() }}</h3>
-                    <p class="text-muted mb-2">Réunions à venir</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <div class="avatar mx-auto mb-3" style="width: 60px; height: 60px;">
-                        <div class="avatar-initial bg-label-info rounded">
-                            <i class="fas fa-users fa-28px"></i>
-                        </div>
-                    </div>
-                    <h3 class="mb-1 text-info">{{ $totalParticipants ?? 0 }}</h3>
-                    <p class="text-muted mb-2">Participants au total</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-kpi-grid>
+        <x-kpi icon="fas fa-calendar-check" color="primary" label="Total" sublabel="Réunions"
+            :value="$meetings->total()" />
+
+        <x-kpi icon="fas fa-check-circle" color="success" label="Terminées" sublabel="Réunions"
+            :value="$meetings->where('status', 'completed')->count()" />
+
+        <x-kpi icon="fas fa-clock" color="warning" label="À venir" sublabel="Réunions"
+            :value="$meetings->where('start_time', '>', now())->count()" />
+
+        <x-kpi icon="fas fa-users" color="info" label="Participants" sublabel="Au total"
+            :value="$totalParticipants ?? 0" />
+    </x-kpi-grid>
 
     <!-- Filtres et Recherche -->
     <div class="card mb-4">

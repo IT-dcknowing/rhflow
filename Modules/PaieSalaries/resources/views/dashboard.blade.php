@@ -40,79 +40,22 @@
         </div>
 
         <!-- Cartes de statistiques -->
-        <div class="row mb-4">
-            <div id="guide-stats-employees" class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1">Employés</span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['total_employes'], 0, ',', ' ') }}</h3>
-                            </div>
-                            <div class="avatar">
-                                <span class="avatar-initial rounded bg-label-primary">
-                                    <i class="fas fa-users"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="guide-stats-payroll" class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1">Masse salariale</span>
-                                <h3 class="card-title mb-0">
-                                    {{ number_format($stats['masse_salariale_mensuelle'], 0, ',', ' ') }} FCFA</h3>
-                            </div>
-                            <div class="avatar">
-                                <span class="avatar-initial rounded bg-label-success">
-                                    <i class="fas fa-coins"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="guide-stats-loans" class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1">Prêts en cours</span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['total_pret_en_cours'], 0, ',', ' ') }}
-                                    FCFA</h3>
-                            </div>
-                            <div class="avatar">
-                                <span class="avatar-initial rounded bg-label-warning">
-                                    <i class="fas fa-hand-holding-usd"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block mb-1">Salaire moyen</span>
-                                <h3 class="card-title mb-0">{{ number_format($stats['salaire_moyen'], 0, ',', ' ') }} FCFA
-                                </h3>
-                            </div>
-                            <div class="avatar">
-                                <span class="avatar-initial rounded bg-label-info">
-                                    <i class="fas fa-chart-line"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{-- Les id guide-stats-* servent d'ancres au guide interactif : ils restent sur les colonnes. --}}
+        <x-kpi-grid>
+            <x-kpi id="guide-stats-employees" col="col-md-6 col-lg-3" icon="fas fa-users" color="primary"
+                label="Employés" :value="number_format($stats['total_employes'], 0, ',', ' ')" />
+
+            <x-kpi id="guide-stats-payroll" col="col-md-6 col-lg-3" icon="fas fa-coins" color="success"
+                label="Masse salariale" sublabel="FCFA"
+                :value="number_format($stats['masse_salariale_mensuelle'], 0, ',', ' ')" />
+
+            <x-kpi id="guide-stats-loans" col="col-md-6 col-lg-3" icon="fas fa-hand-holding-usd" color="warning"
+                label="Prêts en cours" sublabel="FCFA"
+                :value="number_format($stats['total_pret_en_cours'], 0, ',', ' ')" />
+
+            <x-kpi col="col-md-6 col-lg-3" icon="fas fa-chart-line" color="info" label="Salaire moyen" sublabel="FCFA"
+                :value="number_format($stats['salaire_moyen'], 0, ',', ' ')" />
+        </x-kpi-grid>
 
         <!-- Graphique et dernières fiches de paie -->
         <div class="row mb-4">
