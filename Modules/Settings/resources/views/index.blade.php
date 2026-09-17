@@ -383,8 +383,13 @@
                             <div class="col-xl-3 col-md-6 mb-3">
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.settings') }}" class="btn btn-outline-primary">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-cog me-2"></i>
+                                        {{-- L'icône occupe son propre pavé coloré, détaché du libellé. --}}
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-primary rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-cog"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Paramètres</div>
                                                 <small class="text-muted">Entreprise</small>
@@ -398,8 +403,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.leave-types.index') }}"
                                         class="btn btn-outline-success">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-calendar-alt me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-success rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Types de Congés</div>
                                                 <small class="text-muted">Configurer</small>
@@ -413,8 +422,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.loan-types.index') }}"
                                         class="btn btn-outline-danger">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-dollar-sign me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-danger rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Types de Prêts</div>
                                                 <small class="text-muted">Configurer</small>
@@ -428,8 +441,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.work-locations.index') }}"
                                         class="btn btn-outline-info">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-info rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Pointeuses</div>
                                                 <small class="text-muted">Emplacements</small>
@@ -443,8 +460,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.branches.index') }}"
                                         class="btn btn-outline-primary">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-building me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-primary rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-building"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Sites</div>
                                                 <small class="text-muted">Succursales</small>
@@ -458,8 +479,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.departments.index') }}"
                                         class="btn btn-outline-info">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-sitemap me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-info rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-sitemap"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Services</div>
                                                 <small class="text-muted">Départements</small>
@@ -473,8 +498,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.designations.index') }}"
                                         class="btn btn-outline-warning">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-user-tie me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-warning rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-user-tie"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Postes</div>
                                                 <small class="text-muted">Designations</small>
@@ -488,8 +517,12 @@
                                 <div class="d-grid">
                                     <a href="{{ route('company.settings.attendance-system.index') }}"
                                         class="btn btn-outline-secondary">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-clock me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-secondary rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-clock"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">Présence</div>
                                                 <small class="text-muted">Configuration</small>

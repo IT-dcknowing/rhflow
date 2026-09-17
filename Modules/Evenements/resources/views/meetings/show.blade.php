@@ -269,33 +269,39 @@
                                 <div class="card-body">
                                     @if($meeting->status === 'scheduled')
                                         @if($meeting->start_date > now())
-                                            <button class="btn btn-outline-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#sendReminderModal">
-                                                <i class="far fa-bell me-2"></i> Envoyer un rappel
+                                            <button class="btn btn-outline-primary w-100 mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#sendReminderModal">
+                                                <i class="far fa-bell"></i>
+                                                <span>Envoyer un rappel</span>
                                             </button>
-                                            
+
                                             @if(auth()->user()->can('update', $meeting))
-                                                <a href="{{ route('company.meetings.edit', $meeting->id) }}" class="btn btn-outline-secondary w-100 mb-2">
-                                                    <i class="fas fa-edit me-2"></i> Modifier la réunion
+                                                <a href="{{ route('company.meetings.edit', $meeting->id) }}" class="btn btn-outline-secondary w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
+                                                    <i class="fas fa-edit"></i>
+                                                    <span>Modifier la réunion</span>
                                                 </a>
-                                                
-                                                <button class="btn btn-outline-danger w-100 mb-2" data-bs-toggle="modal" data-bs-target="#cancelMeetingModal">
-                                                    <i class="fas fa-times-circle me-2"></i> Annuler la réunion
+
+                                                <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#cancelMeetingModal">
+                                                    <i class="fas fa-times-circle"></i>
+                                                    <span>Annuler la réunion</span>
                                                 </button>
                                             @endif
                                         @elseif($meeting->end_date < now() && $meeting->status !== 'completed')
-                                            <a href="{{ route('company.meetings.complete', $meeting->id) }}" class="btn btn-success w-100 mb-2">
-                                                <i class="fas fa-check-circle me-2"></i> Marquer comme terminée
+                                            <a href="{{ route('company.meetings.complete', $meeting->id) }}" class="btn btn-success w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>Marquer comme terminée</span>
                                             </a>
                                         @endif
-                                        
-                                        <a href="{{ route('company.meetings.duplicate', $meeting->id) }}" class="btn btn-outline-info w-100 mb-2">
-                                            <i class="fas fa-copy me-2"></i> Dupliquer la réunion
+
+                                        <a href="{{ route('company.meetings.duplicate', $meeting->id) }}" class="btn btn-outline-info w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
+                                            <i class="fas fa-copy"></i>
+                                            <span>Dupliquer la réunion</span>
                                         </a>
                                     @endif
                                     
                                     <div class="dropdown">
-                                        <button class="btn btn-outline-secondary w-100 dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-download me-2"></i> Exporter
+                                        <button class="btn btn-outline-secondary w-100 dropdown-toggle d-flex align-items-center justify-content-center gap-2" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-download"></i>
+                                            <span>Exporter</span>
                                         </button>
                                         <ul class="dropdown-menu w-100" aria-labelledby="exportDropdown">
                                             <li>

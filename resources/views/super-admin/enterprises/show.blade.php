@@ -170,33 +170,33 @@
                                     <div class="card-body">
                                         <div class="d-grid gap-2">
                                             @if($company->is_active == true)
-                                                <a href="{{ route('super-admin.enterprises.suspend', $enterprise) }}" class="btn btn-outline-warning" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')">
-                                                    <i class="ti ti-control-pause me-2"></i>
-                                                    Suspendre
+                                                <a href="{{ route('super-admin.enterprises.suspend', $enterprise) }}" class="btn btn-outline-warning d-flex align-items-center justify-content-center gap-2" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')">
+                                                    <i class="ti ti-control-pause"></i>
+                                                    <span>Suspendre</span>
                                                 </a>
                                             @else
-                                                <a href="{{ route('super-admin.enterprises.activate', $enterprise) }}" class="btn btn-outline-success" onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')">
-                                                    <i class="ti ti-control-play me-2"></i>
-                                                    Activer
+                                                <a href="{{ route('super-admin.enterprises.activate', $enterprise) }}" class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2" onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')">
+                                                    <i class="ti ti-control-play"></i>
+                                                    <span>Activer</span>
                                                 </a>
                                             @endif
 
-                                            <a href="{{ route('super-admin.enterprises.users', $enterprise) }}" class="btn btn-outline-info">
-                                                <i class="ti ti-user me-2"></i>
-                                                Voir les utilisateurs
+                                            <a href="{{ route('super-admin.enterprises.users', $enterprise) }}" class="btn btn-outline-info d-flex align-items-center justify-content-center gap-2">
+                                                <i class="ti ti-user"></i>
+                                                <span>Voir les utilisateurs</span>
                                             </a>
 
-                                            <a href="{{ route('super-admin.enterprises.subscription', $enterprise) }}" class="btn btn-outline-secondary">
-                                                <i class="ti ti-credit-card me-2"></i>
-                                                Gérer l'abonnement
+                                            <a href="{{ route('super-admin.enterprises.subscription', $enterprise) }}" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2">
+                                                <i class="ti ti-credit-card"></i>
+                                                <span>Gérer l'abonnement</span>
                                             </a>
 
                                             <form action="{{ route('super-admin.enterprises.delete', $enterprise) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger col-md-12" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action est irréversible.')">
-                                                    <i class="ti ti-trash me-2"></i>
-                                                    Supprimer
+                                                <button type="submit" class="btn btn-danger col-md-12 d-flex align-items-center justify-content-center gap-2" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action est irréversible.')">
+                                                    <i class="ti ti-trash"></i>
+                                                    <span>Supprimer</span>
                                                 </button>
                                             </form>
                                         </div>

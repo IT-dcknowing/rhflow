@@ -315,8 +315,9 @@
                         <div class="col-xl-3 col-md-6 mb-3">
                             <div class="d-grid">
                                 <a href="{{ route('company.evenements.meetings.create') }}" class="btn btn-primary">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-plus-circle me-2"></i>
+                                    {{-- gap-2 plutôt qu'une marge sur l'icône : icône et libellé restent deux blocs distincts. --}}
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="fas fa-plus-circle"></i>
                                         <span>Nouvelle Réunion</span>
                                     </div>
                                 </a>
@@ -325,8 +326,8 @@
                         <div class="col-xl-3 col-md-6 mb-3">
                             <div class="d-grid">
                                 <a href="{{ route('company.evenements.meetings.calendar') }}" class="btn btn-outline-info">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-calendar-alt me-2"></i>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="fas fa-calendar-alt"></i>
                                         <span>Voir le Calendrier</span>
                                     </div>
                                 </a>
@@ -335,8 +336,8 @@
                         <div class="col-xl-3 col-md-6 mb-3">
                             <div class="d-grid">
                                 <a href="#" class="btn btn-outline-success">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-file-export me-2"></i>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="fas fa-file-export"></i>
                                         <span>Exporter en Excel</span>
                                     </div>
                                 </a>
@@ -345,8 +346,8 @@
                         <div class="col-xl-3 col-md-6 mb-3">
                             <div class="d-grid">
                                 <a href="#" class="btn btn-outline-warning">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-cog me-2"></i>
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <i class="fas fa-cog"></i>
                                         <span>Paramètres</span>
                                     </div>
                                 </a>

@@ -205,17 +205,20 @@
                                 <div class="mt-4 pt-3 border-top">
                                     <h6>Votre participation</h6>
                                     <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-outline-success {{ $userParticipation->status === 'accepted' ? 'active' : '' }}" 
+                                        <button type="button" class="btn btn-outline-success d-flex align-items-center gap-2 {{ $userParticipation->status === 'accepted' ? 'active' : '' }}"
                                                 data-status="accepted">
-                                            <i class="fas fa-check me-1"></i> Je participe
+                                            <i class="fas fa-check"></i>
+                                            <span>Je participe</span>
                                         </button>
-                                        <button type="button" class="btn btn-outline-warning {{ $userParticipation->status === 'tentative' ? 'active' : '' }}" 
+                                        <button type="button" class="btn btn-outline-warning d-flex align-items-center gap-2 {{ $userParticipation->status === 'tentative' ? 'active' : '' }}"
                                                 data-status="tentative">
-                                            <i class="fas fa-question me-1"></i> Peut-être
+                                            <i class="fas fa-question"></i>
+                                            <span>Peut-être</span>
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger {{ $userParticipation->status === 'declined' ? 'active' : '' }}" 
+                                        <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-2 {{ $userParticipation->status === 'declined' ? 'active' : '' }}"
                                                 data-status="declined">
-                                            <i class="fas fa-times me-1"></i> Je ne participe pas
+                                            <i class="fas fa-times"></i>
+                                            <span>Je ne participe pas</span>
                                         </button>
                                     </div>
                                     <div class="mt-2" id="participationNotes" style="display: none;">
@@ -571,20 +574,24 @@
                         </div>
                         <div class="card-body">
                             <div class="d-grid gap-2">
-                                <button class="btn btn-outline-primary text-start" id="exportToCalendar">
-                                    <i class="far fa-calendar-plus me-2"></i> Exporter vers le calendrier
+                                <button class="btn btn-outline-primary text-start d-flex align-items-center gap-2" id="exportToCalendar">
+                                    <i class="far fa-calendar-plus"></i>
+                                    <span>Exporter vers le calendrier</span>
                                 </button>
-                                <button class="btn btn-outline-secondary text-start" id="sendReminder">
-                                    <i class="fas fa-bell me-2"></i> Envoyer un rappel
+                                <button class="btn btn-outline-secondary text-start d-flex align-items-center gap-2" id="sendReminder">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Envoyer un rappel</span>
                                 </button>
                                 @if($event->recurrence_rule)
-                                    <button class="btn btn-outline-warning text-start" id="editSeries">
-                                        <i class="fas fa-sync-alt me-2"></i> Modifier la série
+                                    <button class="btn btn-outline-warning text-start d-flex align-items-center gap-2" id="editSeries">
+                                        <i class="fas fa-sync-alt"></i>
+                                        <span>Modifier la série</span>
                                     </button>
                                 @endif
                             @if(auth()->check())
-                                    <button class="btn btn-danger text-start" data-bs-toggle="modal" data-bs-target="#deleteEventModal">
-                                        <i class="fas fa-trash-alt me-2"></i> Supprimer l'événement
+                                    <button class="btn btn-danger text-start d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteEventModal">
+                                        <i class="fas fa-trash-alt"></i>
+                                        <span>Supprimer l'événement</span>
                                     </button>
                                 @endif
                             </div>

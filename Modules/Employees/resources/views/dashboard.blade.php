@@ -133,21 +133,28 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
+                        {{-- gap-2 plutôt qu'une marge sur l'icône : l'icône et le libellé restent deux blocs distincts. --}}
                         <div class="col-md-4 mb-3">
                             {{-- Un seul bouton : le type (mensuel ou journalier) se choisit dans le
                                  formulaire, champ "Type d'employé". --}}
-                            <a href="{{ route('company.employees.create') }}" class="btn btn-primary w-100">
-                                <i class="fas fa-plus me-1"></i>Ajouter un employé
+                            <a href="{{ route('company.employees.create') }}"
+                                class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Ajouter un employé</span>
                             </a>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <a href="{{ route('company.employees.index') }}" class="btn btn-outline-warning w-100">
-                                <i class="fas fa-list me-1"></i>Voir Tous les Employés
+                            <a href="{{ route('company.employees.index') }}"
+                                class="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-list"></i>
+                                <span>Voir Tous les Employés</span>
                             </a>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-outline-success w-100" onclick="exportReport()">
-                                <i class="fas fa-download me-1"></i>Exporter Rapport
+                            <a href="#" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2"
+                                onclick="exportReport()">
+                                <i class="fas fa-download"></i>
+                                <span>Exporter Rapport</span>
                             </a>
                         </div>
                     </div>

@@ -280,26 +280,30 @@
                     </h5>
                     
                     <div class="d-grid gap-2">
-                        <a href="{{ route('company.settings.loan-types.edit', $loanType->id) }}" class="btn btn-warning">
-                            <i class="fas fa-edit me-2"></i>Modifier
+                        <a href="{{ route('company.settings.loan-types.edit', $loanType->id) }}"
+                            class="btn btn-warning d-flex align-items-center justify-content-center gap-2">
+                            <i class="fas fa-edit"></i>
+                            <span>Modifier</span>
                         </a>
-                        
+
                         <form action="{{ route('company.settings.loan-types.toggle-status', $loanType->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <button type="submit" class="btn btn-{{ $loanType->is_active ? 'secondary' : 'success' }} w-100">
-                                <i class="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }} me-2"></i>
-                                {{ $loanType->is_active ? 'Désactiver' : 'Activer' }}
+                            <button type="submit"
+                                class="btn btn-{{ $loanType->is_active ? 'secondary' : 'success' }} w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }}"></i>
+                                <span>{{ $loanType->is_active ? 'Désactiver' : 'Activer' }}</span>
                             </button>
                         </form>
-                        
-                        <form action="{{ route('company.settings.loan-types.destroy', $loanType->id) }}" 
-                              method="POST" 
+
+                        <form action="{{ route('company.settings.loan-types.destroy', $loanType->id) }}"
+                              method="POST"
                               onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de prêt ? Cette action est irréversible.');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash me-2"></i>Supprimer
+                            <button type="submit" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-trash"></i>
+                                <span>Supprimer</span>
                             </button>
                         </form>
                     </div>

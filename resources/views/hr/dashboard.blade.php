@@ -66,14 +66,16 @@
                     @if(in_array('employes', $sections) && isModuleActive('employee'))
                         <div class="col-md-4">
                             <a href="{{ route('company.employees.dossiers.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-folder me-2"></i>Dossiers du personnel
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-folder"></i>
+                                <span>Dossiers du personnel</span>
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="{{ route('company.employees.demandes.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-inbox me-2"></i>Demandes employés
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-inbox"></i>
+                                <span>Demandes employés</span>
                             </a>
                         </div>
                     @endif
@@ -81,8 +83,9 @@
                     @if(in_array('paie', $sections) && isModuleActive('salary'))
                         <div class="col-md-4">
                             <a href="{{ route('company.paiesalaries.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-money-bill me-2"></i>Paie et retenues
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-money-bill"></i>
+                                <span>Paie et retenues</span>
                             </a>
                         </div>
                     @endif
@@ -90,14 +93,16 @@
                     @if(in_array('declarations', $sections) && isModuleActive('declaration'))
                         <div class="col-md-4">
                             <a href="{{ route('company.declarations.resume.index') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-file-alt me-2"></i>Bulletins de paie
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Bulletins de paie</span>
                             </a>
                         </div>
                         <div class="col-md-4">
                             <a href="{{ route('company.declarations.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-landmark me-2"></i>Déclarations
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-landmark"></i>
+                                <span>Déclarations</span>
                             </a>
                         </div>
                     @endif
@@ -105,8 +110,9 @@
                     @if(in_array('evenements', $sections) && isModuleActive('event'))
                         <div class="col-md-4">
                             <a href="{{ route('company.evenements.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-calendar-alt me-2"></i>Événements
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Événements</span>
                             </a>
                         </div>
                     @endif
@@ -114,8 +120,9 @@
                     @if(in_array('simulateur', $sections))
                         <div class="col-md-4">
                             <a href="{{ route('company.simulator.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start">
-                                <i class="fas fa-calculator me-2"></i>Simulateur
+                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
+                                <i class="fas fa-calculator"></i>
+                                <span>Simulateur</span>
                             </a>
                         </div>
                     @endif

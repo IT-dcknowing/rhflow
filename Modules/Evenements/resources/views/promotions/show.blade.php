@@ -373,40 +373,47 @@
                     <div class="d-grid gap-2">
                         @can('update', $promotion)
                             @if($promotion->status == 'pending' || $promotion->status == 'on_hold')
-                            <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#approveModal">
-                                <i class="fas fa-check-circle me-1"></i> Approuver la promotion
+                            <button type="button" class="btn btn-success mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#approveModal">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Approuver la promotion</span>
                             </button>
                             @elseif($promotion->status == 'approved' && !$promotion->effective_date)
-                            <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#applyPromotionModal">
-                                <i class="fas fa-check-double me-1"></i> Appliquer les changements
+                            <button type="button" class="btn btn-success mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#applyPromotionModal">
+                                <i class="fas fa-check-double"></i>
+                                <span>Appliquer les changements</span>
                             </button>
                             @endif
-                            
+
                             @if($promotion->status == 'pending' || $promotion->status == 'on_hold')
-                            <button type="button" class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#onHoldModal">
-                                <i class="fas fa-pause-circle me-1"></i> Mettre en attente
+                            <button type="button" class="btn btn-warning mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#onHoldModal">
+                                <i class="fas fa-pause-circle"></i>
+                                <span>Mettre en attente</span>
                             </button>
                             @endif
-                            
+
                             @if($promotion->status != 'rejected')
-                            <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                                <i class="fas fa-times-circle me-1"></i> Rejeter la promotion
+                            <button type="button" class="btn btn-danger mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Rejeter la promotion</span>
                             </button>
                             @endif
-                            
-                            <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-outline-primary mb-2">
-                                <i class="fas fa-edit me-1"></i> Modifier
+
+                            <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-outline-primary mb-2 d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-edit"></i>
+                                <span>Modifier</span>
                             </a>
                         @endcan
-                        
+
                         @can('delete', $promotion)
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <i class="fas fa-trash-alt me-1"></i> Supprimer
+                        <button type="button" class="btn btn-danger d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Supprimer</span>
                         </button>
                         @endcan
-                        
-                        <a href="#" class="btn btn-outline-secondary" onclick="window.print();">
-                            <i class="fas fa-print me-1"></i> Imprimer
+
+                        <a href="#" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2" onclick="window.print();">
+                            <i class="fas fa-print"></i>
+                            <span>Imprimer</span>
                         </a>
                     </div>
                 </div>
