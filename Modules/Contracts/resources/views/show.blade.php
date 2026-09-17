@@ -21,33 +21,29 @@
                         </nav>
                     </div>
                     <div>
-                        <div class="btn-group">
-                            <a href="{{ route('company.contracts.edit', $contract->id) }}" class="btn btn-primary">
-                                <i class="fas fa-edit me-1"></i>Modifier
-                            </a>
-                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="visually-hidden">Toggle Dropdown</span>
+                        {{-- Actions dépliées : le menu déroulant masquait « Imprimer » derrière
+                             un second clic, alors que c'est l'action la plus courante ici. --}}
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2"
+                                onclick="window.print()">
+                                <i class="fas fa-print"></i>
+                                <span>Imprimer</span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                        data-bs-target="#addAvenantModal">
-                                        <i class="fas fa-file-signature me-1"></i>Ajouter un avenant
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#" onclick="window.print()">
-                                        <i class="fas fa-print me-1"></i>Imprimer
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                        data-bs-target="#deleteContractModal">
-                                        <i class="fas fa-trash me-1 text-danger"></i>Supprimer
-                                    </a>
-                                </li>
-                            </ul>
+                            <button type="button" class="btn btn-outline-info d-flex align-items-center gap-2"
+                                data-bs-toggle="modal" data-bs-target="#addAvenantModal">
+                                <i class="fas fa-file-signature"></i>
+                                <span>Ajouter un avenant</span>
+                            </button>
+                            <a href="{{ route('company.contracts.edit', $contract->id) }}"
+                                class="btn btn-primary d-flex align-items-center gap-2">
+                                <i class="fas fa-edit"></i>
+                                <span>Modifier</span>
+                            </a>
+                            <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-2"
+                                data-bs-toggle="modal" data-bs-target="#deleteContractModal">
+                                <i class="fas fa-trash"></i>
+                                <span>Supprimer</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -131,8 +127,10 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Durée</label>
+                                    {{-- « duration » contient déjà son unité (ex. « 12 mois », « 2 an(s) et
+                                         3 mois », « 45 jour(s) ») : le suffixe ajouté ici donnait « 12 mois
+                                         mois », et « 45 jour(s) mois » pour une durée en jours. --}}
                                     <p>{{ $contract->duration ?? 'Non définie' }}
-                                        {{ $contract->duration > 1 ? 'mois' : 'mois' }}
                                     </p>
                                 </div>
                             </div>

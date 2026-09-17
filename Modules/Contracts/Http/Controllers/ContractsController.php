@@ -37,7 +37,9 @@ class ContractsController extends Controller
         }
         
         if ($request->has('type_id') && $request->type_id != '') {
-            $query->where('contract_type_id', $request->type_id);
+            // La colonne s'appelle « type_id » : « contract_type_id » n'existe pas dans
+            // la table contracts, le filtre par type provoquait donc une erreur SQL.
+            $query->where('type_id', $request->type_id);
         }
         
         if ($request->has('status') && $request->status != '') {
@@ -612,8 +614,21 @@ class ContractsController extends Controller
     public function destroyContractType($id)
     {
         $user = Auth::user();
-        $contractType = ContractType::where('company_id', $user->company_id)->findOrFail($id);
-        
+
+        // Les types « default » sont communs à toutes les entreprises (company_id à NULL).
+        // Le filtre sur company_id ne les trouvait pas : la suppression échouait sur un 404
+        // brut au lieu d'expliquer le refus. On les écarte explicitement.
+        $contractType = ContractType::findOrFail($id);
+
+        if ($contractType->type === 'default') {
+            return redirect()->route('company.contracts.types')
+                ->with('error', 'Les types de contrat par défaut ne peuvent pas être supprimés.');
+        }
+
+        if ($contractType->company_id !== $user->company_id) {
+            abort(403, 'Accès non autorisé');
+        }
+
         // Vérifier si des contrats utilisent ce type
         $contractCount = $contractType->contracts()->count();
         if ($contractCount > 0) {

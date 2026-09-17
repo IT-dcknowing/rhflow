@@ -85,14 +85,19 @@
                                                 data-active="{{ $type->is_active }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger {{ $type->type == 'default' ? 'disabled' : '' }}" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#deleteTypeModal"
-                                                data-id="{{ $type->id }}"
-                                                data-name="{{ $type->name }}"
-                                                data-count="{{ $type->contract_count ?? 0 }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            {{-- Les types « default » sont communs à toutes les entreprises :
+                                                 la suppression n'est pas proposée. Le refus est aussi appliqué
+                                                 côté serveur dans destroyContractType(). --}}
+                                            @if($type->type !== 'default')
+                                                <button type="button" class="btn btn-sm btn-icon btn-outline-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteTypeModal"
+                                                    data-id="{{ $type->id }}"
+                                                    data-name="{{ $type->name }}"
+                                                    data-count="{{ $type->contract_count ?? 0 }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

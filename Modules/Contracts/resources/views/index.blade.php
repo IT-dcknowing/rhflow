@@ -157,26 +157,30 @@
                                 @endswitch
                             </td>
                             <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                        <i class="fas fa-ellipsis-vertical"></i>
+                                {{-- Boutons directs plutôt qu'un menu déroulant : une action visible
+                                     coûte un clic, contre deux auparavant. --}}
+                                <div class="d-flex">
+                                    <a href="{{ route('company.contracts.show', $contract->id) }}"
+                                        class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                        title="Voir">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('company.contracts.edit', $contract->id) }}"
+                                        class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                        title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-icon btn-sm btn-outline-danger"
+                                        data-bs-toggle="tooltip" title="Supprimer"
+                                        onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')) document.getElementById('delete-form-{{ $contract->id }}').submit();">
+                                        <i class="fas fa-trash"></i>
                                     </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="{{ route('company.contracts.show', $contract->id) }}">
-                                            <i class="fas fa-eye me-1"></i> Voir
-                                        </a>
-                                        <a class="dropdown-item" href="{{ route('company.contracts.edit', $contract->id) }}">
-                                            <i class="fas fa-edit me-1"></i> Modifier
-                                        </a>
-                                        <a class="dropdown-item text-danger" href="#" 
-                                        onclick="event.preventDefault(); if(confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')) document.getElementById('delete-form-{{ $contract->id }}').submit();">
-                                            <i class="fas fa-trash me-1"></i> Supprimer
-                                        </a>
-                                        <form id="delete-form-{{ $contract->id }}" action="{{ route('company.contracts.destroy', $contract->id) }}" method="POST" style="display: none;">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
-                                    </div>
+                                    <form id="delete-form-{{ $contract->id }}"
+                                        action="{{ route('company.contracts.destroy', $contract->id) }}" method="POST"
+                                        class="d-none">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
                                 </div>
                             </td>
                         </tr>
