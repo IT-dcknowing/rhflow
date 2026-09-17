@@ -194,8 +194,9 @@
                                         <span class="pm-bx ok"><i class="fas fa-plus"></i></span>
                                         <span class="pm-txt"><b>Primes et indemnités</b><small>{{ $allowances->count() }} ligne(s) · montants par salarié</small></span>
                                         <span class="pm-amt">{{ $fmt($allowances->sum('amount')) }}</span>
-                                        {{-- Les montants se saisissent salarié par salarié à l'étape Vérifier (menu ⋮) --}}
-                                        <button type="button" class="pm-link" data-aller="verifier">Modifier</button>
+                                        {{-- Les montants se saisissent salarié par salarié, dans le tableau
+                                             « Éléments par salarié » plus bas sur cette même étape. --}}
+                                        <a class="pm-link" href="#pm-salaries">Modifier</a>
                                     </li>
                                     <li>
                                         <span class="pm-bx bad"><i class="fas fa-minus"></i></span>
@@ -365,36 +366,15 @@
                             </div>
                         </section>
                     @endif
-                </div>
 
-                <div class="pm-actionbar" data-bar="preparer">
-                    <div class="pm-ctx">
-                        @if(count($alerts) > 0)
-                            <b>{{ count($alerts) }} point(s) d'attention</b> · vous pouvez continuer, ils restent signalés
-                        @else
-                            <b>Éléments prêts</b> · vérifiez les montants avant de générer les bulletins
-                        @endif
-                    </div>
-                    <button type="button" class="btn btn-primary pm-btn-main" data-aller="verifier">
-                        Vérifier les montants <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-
-                {{-- ============================================================
-                     2. VÉRIFIER
-                     ============================================================ --}}
-                <div class="pm" data-panel="verifier" hidden>
-                    <div class="pm-figures">
-                        <div class="pm-fig"><span>Salariés</span><b>{{ count($lignes) }}</b></div>
-                        <div class="pm-fig"><span>Salaire brut</span><b>{{ $fmt($totalBrut) }}<small>FCFA</small></b></div>
-                        <div class="pm-fig net"><span>Net à payer</span><b>{{ $fmt($totalNet) }}<small>FCFA</small></b></div>
-                    </div>
-
-                    <section class="pm-panel">
+                    {{-- Saisie des éléments salarié par salarié : jours travaillés, ajout et
+                         modification des primes, retenues et avantages. Tout se fait ici, à
+                         l'étape « Préparer » ; « Vérifier » ne sert plus qu'au contrôle. --}}
+                    <section class="pm-panel" id="pm-salaries">
                         <div class="pm-panel-head">
                             <div>
-                                <h2>Montants par salarié</h2>
-                                <p>Calculés en direct avec les éléments du mois. Rien n'est enregistré avant la génération des bulletins.</p>
+                                <h2>Éléments par salarié</h2>
+                                <p>Ajoutez ou corrigez les éléments de chaque salarié, et les jours travaillés.</p>
                             </div>
                             <div class="pm-tools">
                                 <label class="visually-hidden" for="pmRecherche">Rechercher un salarié</label>
@@ -492,6 +472,100 @@
                         </div>
                         <div class="pm-table-foot">
                             <span><span id="pmCompte">{{ count($lignes) }}</span> salarié(s) affiché(s) sur {{ count($lignes) }}</span>
+                            <span>Montants en FCFA · base de 30 jours</span>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="pm-actionbar" data-bar="preparer">
+                    <div class="pm-ctx">
+                        @if(count($alerts) > 0)
+                            <b>{{ count($alerts) }} point(s) d'attention</b> · vous pouvez continuer, ils restent signalés
+                        @else
+                            <b>Éléments prêts</b> · vérifiez les montants avant de générer les bulletins
+                        @endif
+                    </div>
+                    <button type="button" class="btn btn-primary pm-btn-main" data-aller="verifier">
+                        Vérifier les montants <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                {{-- ============================================================
+                     2. VÉRIFIER
+                     ============================================================ --}}
+                <div class="pm" data-panel="verifier" hidden>
+                    <div class="pm-figures">
+                        <div class="pm-fig"><span>Salariés</span><b>{{ count($lignes) }}</b></div>
+                        <div class="pm-fig"><span>Salaire brut</span><b>{{ $fmt($totalBrut) }}<small>FCFA</small></b></div>
+                        <div class="pm-fig net"><span>Net à payer</span><b>{{ $fmt($totalNet) }}<small>FCFA</small></b></div>
+                    </div>
+
+                    {{-- Étape de contrôle : lecture seule. Toute modification (jours travaillés,
+                         primes, retenues, éléments de paie) se fait à l'étape « Préparer ». Seul
+                         l'aperçu du bulletin reste accessible ici. --}}
+                    <section class="pm-panel">
+                        <div class="pm-panel-head">
+                            <div>
+                                <h2>Contrôle des montants</h2>
+                                <p>Calculés en direct avec les éléments du mois. Rien n'est enregistré avant la génération
+                                    des bulletins. Pour corriger un montant, revenez à l'étape « Préparer ».</p>
+                            </div>
+                            @if($aVerifier > 0)
+                                <span class="pm-chip warn">{{ $aVerifier }} salarié(s) à jours ≠ 30</span>
+                            @endif
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Salarié</th>
+                                        <th>Jours</th>
+                                        <th class="pm-num">Brut</th>
+                                        <th class="pm-num">Prêts et retenues</th>
+                                        <th class="pm-num">Net à payer</th>
+                                        <th class="text-end">Bulletin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($lignes as $ligne)
+                                        @php $emp = $ligne['emp']; @endphp
+                                        <tr>
+                                            <td>
+                                                <div class="pm-who">
+                                                    <b>
+                                                        {{ $emp->name }}
+                                                        @if($ligne['pret'] > 0)<span class="pm-tag">Prêt</span>@endif
+                                                        @if($ligne['rembourse'] > 0)<span class="pm-tag">Frais</span>@endif
+                                                    </b>
+                                                    <small>ID <span class="pm-mono">{{ $emp->employee_id }}</span></small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="pm-days {{ $ligne['verifier'] ? 'warn' : '' }}">{{ $ligne['jours'] }} j</span>
+                                            </td>
+                                            <td class="pm-num">{{ $fmt($ligne['brut']) }}</td>
+                                            <td class="pm-num">{{ $fmt($ligne['pret'] + $ligne['autre']) }}</td>
+                                            <td class="pm-num pm-net">{{ $fmt($ligne['net']) }}</td>
+                                            <td class="text-end">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-aperçu-bulletin"
+                                                    data-bs-toggle="modal" data-bs-target="#showBulletinModal"
+                                                    data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}"
+                                                    data-exercice-id="{{ $periode->exercice_id }}" data-periode-id="{{ $periode->id }}"
+                                                    title="Aperçu du bulletin de {{ $emp->name }}">
+                                                    <i class="fas fa-file-invoice"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">Aucun salarié actif avec un contrat sur cette période.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pm-table-foot">
+                            <span>{{ count($lignes) }} salarié(s)</span>
                             <span>Montants en FCFA · base de 30 jours</span>
                         </div>
                     </section>

@@ -370,10 +370,24 @@ class PaieSalariesController extends Controller
     public function storeExercice(Request $request)
     {
         $validated = $request->validate([
-            "nom" => "required|string|max:255",
+            // Un même exercice ne peut être créé deux fois dans l'entreprise. Le code ne
+            // l'empêchait pas : il est généré aléatoirement et diffère à chaque saisie.
+            // Les exercices supprimés sont ignorés (SoftDeletes), sinon un exercice effacé
+            // interdirait de recréer la même année.
+            "nom" => [
+                "required",
+                "string",
+                "max:255",
+                \Illuminate\Validation\Rule::unique('paie_exercices', 'nom')
+                    ->where(fn($query) => $query
+                        ->where('company_id', Auth::user()->company_id)
+                        ->whereNull('deleted_at')),
+            ],
             "date_debut" => "required|date",
             "date_fin" => "required|date|after:date_debut",
             "description" => "nullable|string",
+        ], [
+            "nom.unique" => "Un exercice portant ce nom existe déjà dans votre entreprise.",
         ]);
 
         $exercice = new PaieExercice();
@@ -429,11 +443,23 @@ class PaieSalariesController extends Controller
         $exercice = PaieExercice::findOrFail($id);
 
         $validated = $request->validate([
-            "nom" => "required|string|max:255",
+            // Même unicité qu'à la création, en ignorant l'exercice en cours de modification.
+            "nom" => [
+                "required",
+                "string",
+                "max:255",
+                \Illuminate\Validation\Rule::unique('paie_exercices', 'nom')
+                    ->ignore($exercice->id)
+                    ->where(fn($query) => $query
+                        ->where('company_id', $exercice->company_id)
+                        ->whereNull('deleted_at')),
+            ],
             "date_debut" => "required|date",
             "date_fin" => "required|date|after:date_debut",
             "description" => "nullable|string",
             "statut" => "required|in:brouillon,en_cours,cloture",
+        ], [
+            "nom.unique" => "Un exercice portant ce nom existe déjà dans votre entreprise.",
         ]);
 
         $exercice->update($validated);

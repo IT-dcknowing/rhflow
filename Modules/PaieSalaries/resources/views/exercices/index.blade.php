@@ -46,7 +46,6 @@
                     <table class="table table-sm" id="exercicesTable">
                         <thead>
                             <tr>
-                                <th>N°</th>
                                 <th>Code</th>
                                 <th>Nom</th>
                                 <th>Période</th>
@@ -58,7 +57,6 @@
                         <tbody>
                             @forelse($exercices as $exercice)
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
                                     <td>{{ $exercice->code }}</td>
                                     <td>
                                         <a href="{{ route('company.paiesalaries.exercices.show', $exercice->id) }}">
@@ -132,7 +130,8 @@
             // Initialisation de DataTable
             $('#exercicesTable').DataTable({
                 responsive: true,
-                order: [[1, 'desc']],
+                // Tri sur « Code ». L'index est passé de 1 à 0 avec le retrait de la colonne N°.
+                order: [[0, 'desc']],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
                 },

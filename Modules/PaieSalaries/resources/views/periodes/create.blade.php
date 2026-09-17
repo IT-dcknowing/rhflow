@@ -43,6 +43,13 @@
                                     @enderror
                                 </div>
 
+                                {{-- Le mois précède le nom : c'est lui qui détermine le nom, généré
+                                     automatiquement par calculerDates(). Le contenu de ce conteneur est
+                                     injecté par le script, qui le cible par son id et non par sa position. --}}
+                                <div class="col-md-4 mb-3" id="container_selection">
+                                    <!-- Contenu dynamique : mois ou semaines -->
+                                </div>
+
                                 <div class="col-md-4 mb-3">
                                     <label for="nom" class="form-label">Nom de la période <span
                                             class="text-danger">*</span></label>
@@ -52,10 +59,6 @@
                                     @error('nom')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
-
-                                <div class="col-md-4 mb-3" id="container_selection">
-                                    <!-- Contenu dynamique : mois ou semaines -->
                                 </div>
                             </div>
 
