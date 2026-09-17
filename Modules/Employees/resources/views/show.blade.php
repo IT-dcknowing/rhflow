@@ -17,21 +17,21 @@
                         </div> 
                         <div>
                             <h4 class="mb-0">{{ $employee->name }}</h4>
-                            <p class="text-muted mb-0">ID: {{ $employee->employee_id }}</p>
+                            <p class="text-muted mb-0"><span class="fw-semibold">Matricule :</span> {{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</p>
                         </div>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
                         <a href="{{ route('company.employees.attestation-travail', $employee->id) }}" class="btn btn-outline-success">
                             <i class="fas fa-file-text me-1"></i>Attestation de travail
                         </a>
                         <a href="{{ route('company.employees.certificat-travail', $employee->id) }}" class="btn btn-outline-info">
                             <i class="fas fa-certificate me-1"></i>Certificat de travail
                         </a>
-                        <a href="{{ route('company.employees.edit', $employee->id) }}" class="btn btn-primary">
-                            <i class="fas fa-edit me-1"></i>Modifier
-                        </a>
                         <a href="{{ route('company.employees.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Retour
+                        </a>
+                        <a href="{{ route('company.employees.edit', $employee->id) }}" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i>Modifier
                         </a>
                     </div>
                 </div>
@@ -83,44 +83,48 @@
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#personal" role="tab">
-                                <i class="fas fa-user me-1"></i>Détails personnel
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#contract" role="tab">
-                                <i class="fas fa-file-text me-1"></i>Détails contractuels
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#family" role="tab">
-                                <i class="fas fa-users me-1"></i>Famille
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#events" role="tab">
-                                <i class="fas fa-calendar me-1"></i>Évènements
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#documents" role="tab">
-                                <i class="fas fa-file me-1"></i>Documents
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#payslips" role="tab">
-                                <i class="fas fa-file-text me-1"></i>Bulletins de paie
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#bank" role="tab">
-                                <i class="fas fa-building me-1"></i>Détail bancaire
-                            </a>
-                        </li>
-                    </ul>
+                <div class="card-header border-bottom-0 pb-0">
+                    {{-- onglets-defilants : défilement horizontal sans barre visible (cf. rhflow-design.css).
+                         Le « pb-1 » d'origine ne réservait que 4 px, la barre native recouvrait les onglets. --}}
+                    <div class="onglets-defilants" style="-webkit-overflow-scrolling: touch;">
+                        <ul class="nav nav-tabs card-header-tabs flex-nowrap" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap active" data-bs-toggle="tab" href="#personal" role="tab">
+                                    <i class="fas fa-user me-1"></i>Détails personnel
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap" data-bs-toggle="tab" href="#contract" role="tab">
+                                    <i class="fas fa-file-text me-1"></i>Détails contractuels
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap" data-bs-toggle="tab" href="#family" role="tab">
+                                    <i class="fas fa-users me-1"></i>Famille
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap" data-bs-toggle="tab" href="#events" role="tab">
+                                    <i class="fas fa-calendar me-1"></i>Évènements
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap" data-bs-toggle="tab" href="#documents" role="tab">
+                                    <i class="fas fa-file me-1"></i>Documents
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap" data-bs-toggle="tab" href="#payslips" role="tab">
+                                    <i class="fas fa-file-text me-1"></i>Bulletins de paie
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-nowrap" data-bs-toggle="tab" href="#bank" role="tab">
+                                    <i class="fas fa-building me-1"></i>Détail bancaire
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="tab-content">

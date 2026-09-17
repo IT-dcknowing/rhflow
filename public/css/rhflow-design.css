@@ -1038,6 +1038,32 @@
     border-bottom: 1px solid var(--line);
 }
 
+/* Barre d'onglets trop large pour son conteneur : elle défile horizontalement.
+   La barre de défilement native (≈17 px sous Windows) se superposait aux onglets,
+   le conteneur ne réservant que 4 px de hauteur. On la masque plutôt que de lui
+   réserver de la place : le défilement reste possible à la molette, au doigt,
+   au clavier et par le clic sur un onglet partiellement visible. */
+.ds .onglets-defilants {
+    overflow-x: auto;
+    /* Pas d'overflow-y ici : il rognait le bas des onglets (voir la règle suivante). */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* anciens Edge */
+}
+
+/* card-header-tabs pose une marge basse négative pour aligner les onglets sur le bord
+   de l'en-tête. Dans un conteneur défilant, cette marge les faisait rogner : on la
+   neutralise, le bord inférieur étant déjà assuré par .nav-tabs. */
+.ds .onglets-defilants .card-header-tabs {
+    margin-bottom: 0;
+}
+
+.ds .onglets-defilants::-webkit-scrollbar {
+    /* Chrome, Edge, Safari */
+    display: none;
+}
+
 .ds .nav-tabs .nav-link {
     border: 0;
     border-bottom: 2px solid transparent;
