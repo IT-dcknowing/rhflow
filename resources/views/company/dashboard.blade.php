@@ -323,8 +323,10 @@
                         <small class="text-muted">Mensuel : salaire mensuel · Journalier : taux horaire</small>
                     </div>
                     <div class="card-body">
+                        {{-- Les colonnes ne se partagent la largeur qu'à partir de sm : en dessous elles s'empilent,
+                             sinon le séparateur « VS » écrase les deux chiffres sur un écran de téléphone. --}}
                         <div class="row">
-                            <div class="col-5">
+                            <div class="col-12 col-sm-5">
                                 <div class="d-flex gap-2 align-items-center mb-2">
                                     <span class="badge bg-label-info p-1 rounded"><i class="fas fa-user"></i></span>
                                     <p class="mb-0">Mensuels</p>
@@ -338,17 +340,24 @@
                                 </h5>
                                 <small class="text-muted">{{ $empMensuel }} employés</small>
                             </div>
-                            <div class="col-2">
-                                <div class="divider divider-vertical">
+                            <div class="col-12 col-sm-2 my-3 my-sm-0">
+                                {{-- Vertical entre deux colonnes, horizontal quand elles sont empilées. --}}
+                                <div class="divider divider-vertical d-none d-sm-block">
+                                    <div class="divider-text">
+                                        <span class="badge-divider-bg bg-label-secondary">VS</span>
+                                    </div>
+                                </div>
+                                <div class="divider d-sm-none my-0">
                                     <div class="divider-text">
                                         <span class="badge-divider-bg bg-label-secondary">VS</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-5 text-end">
-                                <div class="d-flex gap-2 justify-content-end align-items-center mb-2">
+                            <div class="col-12 col-sm-5 text-sm-end">
+                                <div class="d-flex gap-2 justify-content-start justify-content-sm-end align-items-center mb-2">
+                                    <span class="badge bg-label-primary p-1 rounded d-sm-none"><i class="fas fa-user"></i></span>
                                     <p class="mb-0">Journaliers</p>
-                                    <span class="badge bg-label-primary p-1 rounded"><i class="fas fa-user"></i></span>
+                                    <span class="badge bg-label-primary p-1 rounded d-none d-sm-inline-block"><i class="fas fa-user"></i></span>
                                 </div>
                                 <h5 class="mb-0 pt-1 text-nowrap ms-lg-n3 ms-xl-0">
                                     @if($getEmployeeDay != 0)
@@ -718,7 +727,18 @@
                                 <div class="progress-bar bg-warning" style="width: 0%"></div>
                             @endif
                         </div>
-                        <small class="text-muted">Employés actifs : mensuels (vert) et journaliers (orange). Congés en cours : congés approuvés qui couvrent aujourd'hui.</small>
+                        {{-- Légende : la pastille reprend la couleur de la barre, le nom de la couleur n'est plus écrit. --}}
+                        <div class="d-flex flex-wrap gap-3 mb-2">
+                            <span class="d-inline-flex align-items-center">
+                                <span class="bg-success rounded-circle me-2" style="width: 10px; height: 10px;"></span>
+                                <small class="text-muted">Mensuels</small>
+                            </span>
+                            <span class="d-inline-flex align-items-center">
+                                <span class="bg-warning rounded-circle me-2" style="width: 10px; height: 10px;"></span>
+                                <small class="text-muted">Journaliers</small>
+                            </span>
+                        </div>
+                        <small class="text-muted">Congés en cours : congés approuvés qui couvrent aujourd'hui.</small>
                     </div>
                 </div>
             </div>
@@ -883,13 +903,16 @@
                                 <div class="d-grid">
                                     <a href="{{ $quickActions['monthly_employee']['route'] }}"
                                         class="btn btn-outline-primary">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['monthly_employee']['icon'] }} me-2"></i>
+                                        {{-- L'icône occupe son propre pavé coloré, détaché du libellé. --}}
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ $quickActions['monthly_employee']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['monthly_employee']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['monthly_employee']['title'] }}
-                                                </div>
-                                                <small
-                                                    class="text-muted">{{ $quickActions['monthly_employee']['subtitle'] }}</small>
+                                                <div class="fw-semibold">{{ $quickActions['monthly_employee']['title'] }}</div>
+                                                <small class="text-muted">{{ $quickActions['monthly_employee']['subtitle'] }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -899,13 +922,15 @@
                             <div class="col-xl-3 col-md-6 mb-3">
                                 <div class="d-grid">
                                     <a href="{{ $quickActions['daily_employee']['route'] }}" class="btn btn-outline-info">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['daily_employee']['icon'] }} me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ $quickActions['daily_employee']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['daily_employee']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['daily_employee']['title'] }}
-                                                </div>
-                                                <small
-                                                    class="text-muted">{{ $quickActions['daily_employee']['subtitle'] }}</small>
+                                                <div class="fw-semibold">{{ $quickActions['daily_employee']['title'] }}</div>
+                                                <small class="text-muted">{{ $quickActions['daily_employee']['subtitle'] }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -917,13 +942,15 @@
                                 <div class="d-grid">
                                     <a href="{{ $quickActions['generate_payroll']['route'] }}"
                                         class="btn btn-outline-success">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['generate_payroll']['icon'] }} me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ $quickActions['generate_payroll']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['generate_payroll']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['generate_payroll']['title'] }}
-                                                </div>
-                                                <small
-                                                    class="text-muted">{{ $quickActions['generate_payroll']['subtitle'] }}</small>
+                                                <div class="fw-semibold">{{ $quickActions['generate_payroll']['title'] }}</div>
+                                                <small class="text-muted">{{ $quickActions['generate_payroll']['subtitle'] }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -935,13 +962,15 @@
                                 <div class="d-grid">
                                     <a href="{{ $quickActions['approve_leaves']['route'] }}"
                                         class="btn btn-outline-warning">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['approve_leaves']['icon'] }} me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ $quickActions['approve_leaves']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['approve_leaves']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['approve_leaves']['title'] }}
-                                                </div>
-                                                <small
-                                                    class="text-muted">{{ $quickActions['approve_leaves']['subtitle'] }}</small>
+                                                <div class="fw-semibold">{{ $quickActions['approve_leaves']['title'] }}</div>
+                                                <small class="text-muted">{{ $quickActions['approve_leaves']['subtitle'] }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -953,13 +982,15 @@
                                 <div class="d-grid">
                                     <a href="{{ $quickActions['monthly_report']['route'] }}"
                                         class="btn btn-outline-secondary">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['monthly_report']['icon'] }} me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ $quickActions['monthly_report']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['monthly_report']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['monthly_report']['title'] }}
-                                                </div>
-                                                <small
-                                                    class="text-muted">{{ $quickActions['monthly_report']['subtitle'] }}</small>
+                                                <div class="fw-semibold">{{ $quickActions['monthly_report']['title'] }}</div>
+                                                <small class="text-muted">{{ $quickActions['monthly_report']['subtitle'] }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -970,13 +1001,15 @@
                             <div class="col-xl-3 col-md-6 mb-3">
                                 <div class="d-grid">
                                     <a href="{{ $quickActions['company_settings']['route'] }}" class="btn btn-outline-dark">
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['company_settings']['icon'] }} me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ $quickActions['company_settings']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['company_settings']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['company_settings']['title'] }}
-                                                </div>
-                                                <small
-                                                    class="text-muted">{{ $quickActions['company_settings']['subtitle'] }}</small>
+                                                <div class="fw-semibold">{{ $quickActions['company_settings']['title'] }}</div>
+                                                <small class="text-muted">{{ $quickActions['company_settings']['subtitle'] }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -989,8 +1022,13 @@
                                     <a href="{{ $quickActions['support']['route'] }}" 
                                        class="btn btn-outline-secondary {{ !($quickActions['support']['is_active'] ?? true) ? 'disabled' : '' }}"
                                        @if(!($quickActions['support']['is_active'] ?? true)) style="opacity: 0.6; pointer-events: none; border-color: #d9dee3 !important; color: #a1acb8 !important;" @endif>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['support']['icon'] }} me-2"></i>
+                                        {{-- Action inactive : la pastille reste grise pour ne pas attirer l'œil. --}}
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ ($quickActions['support']['is_active'] ?? true) ? $quickActions['support']['color'] : 'secondary' }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['support']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">{{ $quickActions['support']['title'] }}</div>
                                                 <small class="text-muted">{{ $quickActions['support']['subtitle'] }}</small>
@@ -1006,8 +1044,12 @@
                                     <a href="{{ $quickActions['analytics']['route'] }}" 
                                        class="btn btn-outline-secondary {{ !($quickActions['analytics']['is_active'] ?? true) ? 'disabled' : '' }}"
                                        @if(!($quickActions['analytics']['is_active'] ?? true)) style="opacity: 0.6; pointer-events: none; border-color: #d9dee3 !important; color: #a1acb8 !important;" @endif>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <i class="fas fa-{{ $quickActions['analytics']['icon'] }} me-2"></i>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span
+                                                class="avatar-initial bg-label-{{ ($quickActions['analytics']['is_active'] ?? true) ? $quickActions['analytics']['color'] : 'secondary' }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
+                                                style="width: 38px; height: 38px;">
+                                                <i class="fas fa-{{ $quickActions['analytics']['icon'] }}"></i>
+                                            </span>
                                             <div class="text-start">
                                                 <div class="fw-semibold">{{ $quickActions['analytics']['title'] }}</div>
                                                 <small class="text-muted">{{ $quickActions['analytics']['subtitle'] }}</small>
