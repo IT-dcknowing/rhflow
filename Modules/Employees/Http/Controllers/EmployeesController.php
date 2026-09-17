@@ -969,31 +969,17 @@ class EmployeesController extends Controller
             return $query->orderBy('name');
         };
 
-        // Sans recherche ni filtre on ne montre qu'un apercu de 3 dossiers par
-        // onglet : le reste se retrouve via la recherche. Des qu'un critere est
-        // saisi, on repasse sur une pagination classique de 10.
-        $filtreActif = $search !== ''
-            || !empty($request->branch)
-            || !empty($request->department)
-            || !empty($request->designation);
-
-        $parPage = $filtreActif ? 10 : 3;
-
-        // Un paginateur distinct par onglet, pour que les deux listes se
-        // paginent indépendamment l'une de l'autre.
-        $employeesActifs = $baseQuery()->where('is_active', 1)
-            ->paginate($parPage, ['*'], 'page_actif')
-            ->withQueryString()
-            ->fragment('actif');
-
-        $employeesInactifs = $baseQuery()->where('is_active', 0)
-            ->paginate($parPage, ['*'], 'page_inactif')
-            ->withQueryString()
-            ->fragment('inactif');
+        // Les deux onglets sont rendus dans des tableaux DataTables, qui assurent
+        // recherche, tri et pagination côté navigateur. On charge donc l'effectif
+        // complet : le plus gros compte 147 employés, très en deçà des capacités de
+        // DataTables. La pagination serveur et l'aperçu limité à trois dossiers sont
+        // retirés : ils auraient rendu la recherche du tableau trompeuse, celle-ci ne
+        // portant que sur les lignes présentes dans la page.
+        $employeesActifs = $baseQuery()->where('is_active', 1)->get();
+        $employeesInactifs = $baseQuery()->where('is_active', 0)->get();
 
         // Ne charger que les documents des employés réellement affichés
-        $employeeIds = collect($employeesActifs->items())
-            ->merge($employeesInactifs->items())
+        $employeeIds = $employeesActifs->merge($employeesInactifs)
             ->pluck('id')
             ->unique();
 
@@ -1011,7 +997,7 @@ class EmployeesController extends Controller
         $designations->prepend('Tous', '');
 
         return view('employees::dossiers.index', compact(
-            'employeesActifs', 'employeesInactifs', 'avatar', 'departments', 'designations', 'brances', 'search', 'filtreActif'
+            'employeesActifs', 'employeesInactifs', 'avatar', 'departments', 'designations', 'brances', 'search'
         ));
     }
 

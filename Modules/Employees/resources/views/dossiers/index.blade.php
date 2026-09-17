@@ -83,14 +83,14 @@
             <a class="nav-link active" href="#actif" data-bs-toggle="tab">
                 <i class="fas fa-user-check ti-xs me-1"></i>
                 <span class="fw-bold">{{ __('Personnel Actif') }}</span>
-                <span class="badge bg-label-primary ms-1">{{ $employeesActifs->total() }}</span>
+                <span class="badge bg-label-primary ms-1">{{ $employeesActifs->count() }}</span>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#inactif" data-bs-toggle="tab">
                 <i class="fas fa-user-x ti-xs me-1"></i>
                 <span class="fw-bold">{{ __('Personnel Inactif') }}</span>
-                <span class="badge bg-label-secondary ms-1">{{ $employeesInactifs->total() }}</span>
+                <span class="badge bg-label-secondary ms-1">{{ $employeesInactifs->count() }}</span>
             </a>
         </li>
     </ul>
@@ -100,183 +100,165 @@
         <div class="col-12">
             <div class="tab-content p-3" style="border: 1px solid #ccc; border-radius: 5px;">
                 <div id="actif" class="tab-pane active" role="tabpanel" aria-labelledby="actif-tab">
-                    <div class="row">
-                        @forelse($employeesActifs as $employee)
-                                <div class="col-xl-3 col-lg-4 col-sm-6">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-end mb-3">
-                                                <div class="btn-group card-option">
-                                                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        <i class="feather icon-more-vertical"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <a href="{{ route('company.employees.edit', $employee->id) }}"
-                                                            class="dropdown-item" data-url="" data-size="md" data-ajax-popup="true"
-                                                            data-title="{{ __('Modifier le dossier') }}"><i class="fas fa-edit "></i><span
-                                                                class="ms-2">Modifier</span></a>
-
-                                                        <a href="#" class="dropdown-item toggle-employee"
-                                                            data-id="{{ $employee->id }}"
-                                                            data-status="{{ $employee->is_active }}"
-                                                            data-name="{{ $employee->name }}">
-                                                            <i class="fas fa-power-off {{ $employee->is_active == 1 ? 'text-success' : 'text-danger' }}"></i>
-                                                            <span class="ms-2">{{ $employee->is_active == 1 ? 'Désactiver' : 'Activer' }}</span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="text-center">
-                                                @php
-                                                    $hasPhoto = false;
-                                                @endphp
-                                                @foreach ($avatar as $photo)
-                                                    @if($photo->employee_id == $employee['employee_id'] && $photo->document_id == 3)
-                                                        @php
-                                                            $hasPhoto = true;
-                                                        @endphp
-                                                        <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('documents')) . '/' .$photo->document_value }}" height="110" width="110" alt="Avatar utilisateur">
-                                                        @break
-                                                    @endif
-                                                @endforeach
-                                                @if(!$hasPhoto)
-                                                    <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('avatars')) }}/avatar.png" height="110" width="110" alt="Avatar utilisateur">
+                    {{-- Tableau plutôt que cartes : recherche, tri et pagination sont assurés par
+                         DataTables, sur l'effectif complet chargé par le contrôleur. --}}
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="dossiers-actifs-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Matricule</th>
+                                    <th>Nom</th>
+                                    <th>Poste</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($employeesActifs as $employee)
+                                    <tr>
+                                        <td style="width: 52px;">
+                                            @php $hasPhoto = false; @endphp
+                                            @foreach ($avatar as $photo)
+                                                @if($photo->employee_id == $employee['employee_id'] && $photo->document_id == 3)
+                                                    @php $hasPhoto = true; @endphp
+                                                    <img class="rounded-circle"
+                                                        src="{{ asset(Storage::url('documents')) . '/' . $photo->document_value }}"
+                                                        height="40" width="40" alt="Photo de {{ $employee->name }}">
+                                                    @break
                                                 @endif
-                                                <h4>{{$employee->name}}</h4>
-                                                <span class="badge bg-label-secondary mt-1">{{ !empty($employee->designation) ? $employee->designation->name : '' }}</span>
-                                                <hr>
-                                                @can('Show Employee Profile')
-                                                    <a class="btn btn-outline-primary"
-                                                        href="{{ route('company.employees.show', $employee->id) }}">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</a>
-                                                @else
-                                                    <a class="btn btn-outline-primary"
-                                                        href="{{ route('company.employees.show', $employee->id) }}">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</a>
-                                                @endcan
-                                                @if($employee->statut_emp == 'Sanctionné')
-                                                    <span class="status_badge badge bg-warning p-2 px-3 rounded d-block mt-2">Sanctionné</span>
-                                                @elseif($employee->statut_emp == 'En congé')
-                                                    <span class="status_badge badge bg-warning p-2 px-3 rounded d-block mt-2">En congé</span>
-                                                @endif
+                                            @endforeach
+                                            @if(!$hasPhoto)
+                                                <img class="rounded-circle" src="{{ asset(Storage::url('avatars')) }}/avatar.png"
+                                                    height="40" width="40" alt="Photo de {{ $employee->name }}">
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('company.employees.show', $employee->id) }}"
+                                                class="badge bg-label-primary">
+                                                {{ \Auth::user()->employeeIdFormat($employee->employee_id) }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-0">{{ $employee->name }}</h6>
+                                            @if($employee->email)
+                                                <small class="text-muted">{{ $employee->email }}</small>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ $employee->designation->name ?? '-' }}</small>
+                                        </td>
+                                        <td>
+                                            @if($employee->statut_emp == 'Sanctionné')
+                                                <span class="badge bg-label-warning">Sanctionné</span>
+                                            @elseif($employee->statut_emp == 'En congé')
+                                                <span class="badge bg-label-warning">En congé</span>
+                                            @else
+                                                <span class="badge bg-label-success">Actif</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex justify-content-end">
+                                                <a href="{{ route('company.employees.show', $employee->id) }}"
+                                                    class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                                    title="Voir le dossier">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ route('company.employees.edit', $employee->id) }}"
+                                                    class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                                    title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-icon btn-sm btn-outline-warning toggle-employee"
+                                                    data-id="{{ $employee->id }}" data-status="{{ $employee->is_active }}"
+                                                    data-name="{{ $employee->name }}" data-bs-toggle="tooltip"
+                                                    title="Désactiver">
+                                                    <i class="fas fa-power-off"></i>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="alert alert-info text-center mb-0">
-                                    <h6 class="mb-0">Aucun employé actif trouvé</h6>
-                                </div>
-                            </div>
-                        @endforelse
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                    @if($filtreActif)
-                        @if($employeesActifs->hasPages())
-                            <div class="d-flex justify-content-center mt-3">
-                                {{ $employeesActifs->links() }}
-                            </div>
-                        @endif
-                    @elseif($employeesActifs->total() > $employeesActifs->count())
-                        {{-- Apercu limite : le reste se retrouve via la recherche --}}
-                        <div class="alert alert-light border text-center mt-3 mb-0">
-                            <i class="fas fa-search me-1"></i>
-                            {{ $employeesActifs->count() }} dossier(s) affiché(s) sur {{ $employeesActifs->total() }} actifs.
-                            <a href="#search" onclick="document.getElementById('search').focus(); return false;">
-                                Utilisez la recherche
-                            </a>
-                            pour retrouver les autres.
-                        </div>
-                    @endif
                 </div>
                 <div id="inactif" class="tab-pane" role="tabpanel" aria-labelledby="inactif-tab">
-                    <div class="row">
-                        @forelse($employeesInactifs as $employee)
-                                <div class="col-xl-3 col-lg-4 col-sm-6">
-                                    <div class="card h-100 mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                                <i class="fas fa-lock text-danger"></i>
-                                                <div class="btn-group card-option">
-                                                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        <i class="feather icon-more-vertical"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <a href="{{ route('company.employees.edit', $employee->id) }}"
-                                                            class="dropdown-item" data-url="" data-size="md" data-ajax-popup="true"
-                                                            data-title="{{ __('Modifier le dossier') }}"><i class="fas fa-edit "></i><span
-                                                                class="ms-2">Modifier</span></a>
-
-                                                        <a href="#" class="dropdown-item toggle-employee"
-                                                            data-id="{{ $employee->id }}"
-                                                            data-status="{{ $employee->is_active }}"
-                                                            data-name="{{ $employee->name }}">
-                                                            <i class="fas fa-power-off {{ $employee->is_active == 1 ? 'text-success' : 'text-danger' }}"></i>
-                                                            <span class="ms-2">{{ $employee->is_active == 1 ? 'Désactiver' : 'Activer' }}</span>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="text-center">
-                                                @php
-                                                    $hasPhoto = false;
-                                                @endphp
-                                                @foreach ($avatar as $photo)
-                                                    @if($photo->employee_id == $employee['employee_id'] && $photo->document_id == 3)
-                                                        @php
-                                                            $hasPhoto = true;
-                                                        @endphp
-                                                        <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('documents')) . '/' .$photo->document_value }}" height="110" width="110" alt="Avatar utilisateur">
-                                                        @break
-                                                    @endif
-                                                @endforeach
-                                                @if(!$hasPhoto)
-                                                    <img class="img-fluid rounded-circle mb-3" src="{{ asset(Storage::url('avatars')) }}/avatar.png" height="110" width="110" alt="Avatar utilisateur">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="dossiers-inactifs-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Matricule</th>
+                                    <th>Nom</th>
+                                    <th>Poste</th>
+                                    <th>Statut</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($employeesInactifs as $employee)
+                                    <tr>
+                                        <td style="width: 52px;">
+                                            @php $hasPhoto = false; @endphp
+                                            @foreach ($avatar as $photo)
+                                                @if($photo->employee_id == $employee['employee_id'] && $photo->document_id == 3)
+                                                    @php $hasPhoto = true; @endphp
+                                                    <img class="rounded-circle"
+                                                        src="{{ asset(Storage::url('documents')) . '/' . $photo->document_value }}"
+                                                        height="40" width="40" alt="Photo de {{ $employee->name }}">
+                                                    @break
                                                 @endif
-                                                <h4>{{$employee->name}}</h4>
-                                                <span class="badge bg-label-secondary mt-1">{{ !empty($employee->designation) ? $employee->designation->name : '' }}</span>
-                                                <hr>
-                                                @can('Show Employee Profile')
-                                                    <a class="btn btn-outline-primary"
-                                                        href="{{ route('company.employees.show', $employee->id) }}">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</a>
-                                                @else
-                                                    <a class="btn btn-outline-primary"
-                                                        href="{{ route('company.employees.show', $employee->id) }}">{{ \Auth::user()->employeeIdFormat($employee->employee_id) }}</a>
-                                                @endcan
-                                                @if($employee['is_active'] == 3)
-                                                    <span class="status_badge badge bg-warning p-2 px-3 rounded d-block mt-2">Sanctionné</span>
-                                                @elseif($employee['is_active'] == 4)
-                                                    <span class="status_badge badge bg-warning p-2 px-3 rounded d-block mt-2">En congé</span>
-                                                @endif
+                                            @endforeach
+                                            @if(!$hasPhoto)
+                                                <img class="rounded-circle" src="{{ asset(Storage::url('avatars')) }}/avatar.png"
+                                                    height="40" width="40" alt="Photo de {{ $employee->name }}">
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('company.employees.show', $employee->id) }}"
+                                                class="badge bg-label-secondary">
+                                                {{ \Auth::user()->employeeIdFormat($employee->employee_id) }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-0">{{ $employee->name }}</h6>
+                                            @if($employee->email)
+                                                <small class="text-muted">{{ $employee->email }}</small>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ $employee->designation->name ?? '-' }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-label-danger">
+                                                <i class="fas fa-lock me-1"></i>Inactif
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex justify-content-end">
+                                                <a href="{{ route('company.employees.show', $employee->id) }}"
+                                                    class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                                    title="Voir le dossier">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ route('company.employees.edit', $employee->id) }}"
+                                                    class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                                    title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-icon btn-sm btn-outline-success toggle-employee"
+                                                    data-id="{{ $employee->id }}" data-status="{{ $employee->is_active }}"
+                                                    data-name="{{ $employee->name }}" data-bs-toggle="tooltip" title="Activer">
+                                                    <i class="fas fa-power-off"></i>
+                                                </button>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="alert alert-info text-center mb-0">
-                                    <h6 class="mb-0">Aucun employé inactif trouvé</h6>
-                                </div>
-                            </div>
-                        @endforelse
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                    @if($filtreActif)
-                        @if($employeesInactifs->hasPages())
-                            <div class="d-flex justify-content-center mt-3">
-                                {{ $employeesInactifs->links() }}
-                            </div>
-                        @endif
-                    @elseif($employeesInactifs->total() > $employeesInactifs->count())
-                        {{-- Apercu limite : le reste se retrouve via la recherche --}}
-                        <div class="alert alert-light border text-center mt-3 mb-0">
-                            <i class="fas fa-search me-1"></i>
-                            {{ $employeesInactifs->count() }} dossier(s) affiché(s) sur {{ $employeesInactifs->total() }} inactifs.
-                            <a href="#search" onclick="document.getElementById('search').focus(); return false;">
-                                Utilisez la recherche
-                            </a>
-                            pour retrouver les autres.
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -296,8 +278,28 @@ $(document).ready(function() {
         }
     }
 
-    // Toggle employé avec SweetAlert
-    $('.toggle-employee').on('click', function(e) {
+    // Les deux listes en DataTables : recherche, tri et pagination côté navigateur.
+    // La colonne photo et la colonne Actions ne sont ni triables ni cherchables.
+    ['#dossiers-actifs-table', '#dossiers-inactifs-table'].forEach(function (selecteur) {
+        if ($(selecteur).length === 0 || $(selecteur).find('tbody tr').length === 0) {
+            return;
+        }
+
+        $(selecteur).DataTable({
+            order: [[2, 'asc']],
+            columnDefs: [
+                { targets: [0, -1], orderable: false, searchable: false }
+            ],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/French.json'
+            },
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>'
+        });
+    });
+
+    // Délégation d'événement : DataTables retire du DOM les lignes des autres pages,
+    // un écouteur posé directement sur les boutons cesserait d'agir dès la page 2.
+    $(document).on('click', '.toggle-employee', function(e) {
         e.preventDefault();
         
         var employeeId = $(this).data('id');
