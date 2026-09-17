@@ -46,13 +46,26 @@
                     </div>
                     <div class="card-body">
                         @if($companyDocuments->count() > 0)
-                            <div class="row">
-                                @foreach($companyDocuments as $document)
-                                    <div class="col-xl-6 col-lg-6 mb-4">
-                                        <div class="card border h-100 {{ $document->is_verified ? 'border-success' : 'border-warning' }}"
-                                            data-document-id="{{ $document->id }}" data-document='@json($document->toArray())'>
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-start mb-3">
+                            {{-- Les attributs data-document-id et data-document sont repris tels quels sur
+                                 la ligne : editDocument() les lit pour remplir le formulaire de modification. --}}
+                            <div class="table-responsive">
+                                <table class="table table-hover border-top dataTable no-footer" id="documents-legaux-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Document</th>
+                                            <th>Type</th>
+                                            <th>Expiration</th>
+                                            <th>Fichier</th>
+                                            <th>Statut</th>
+                                            <th>Ajouté le</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($companyDocuments as $document)
+                                            <tr data-document-id="{{ $document->id }}"
+                                                data-document='@json($document->toArray())'>
+                                                <td>
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar avatar-sm me-3" style="width: 40px; height: 40px;">
                                                             <div
@@ -62,94 +75,86 @@
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <h6 class="mb-1">{{ $document->document_name }}</h6>
-                                                            <small class="text-muted">{{ $document->document_type_name }}</small>
-                                                            @if($document->is_required)
-                                                                <span class="badge bg-label-danger ms-1">Requis</span>
+                                                            <h6 class="mb-0">
+                                                                {{ $document->document_name }}
+                                                                @if($document->is_required)
+                                                                    <span class="badge bg-label-danger ms-1">Requis</span>
+                                                                @endif
+                                                            </h6>
+                                                            @if($document->description)
+                                                                <small
+                                                                    class="text-muted">{{ Str::limit($document->description, 80) }}</small>
                                                             @endif
                                                         </div>
                                                     </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn p-0" type="button" data-bs-toggle="dropdown">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li><a class="dropdown-item"
-                                                                    href="{{url('/company/settings/company-documents/legal/' . $document->id . '/download')}}">
-                                                                    <i class="fas fa-download me-1"></i>Télécharger
-                                                                </a></li>
-                                                            <li><a class="dropdown-item" href="#"
-                                                                    onclick="editDocument({{ $document->id }})">
-                                                                    <i class="fas fa-edit me-1"></i>Modifier
-                                                                </a></li>
-                                                            <li><a class="dropdown-item {{ $document->is_verified ? 'text-warning' : 'text-success' }}"
-                                                                    href="#"
-                                                                    onclick="toggleDocumentVerification({{ $document->id }})">
-                                                                    <i
-                                                                        class="fas fa-{{ $document->is_verified ? 'times-circle' : 'check-circle' }} me-1"></i>{{ $document->is_verified ? 'Déverifier' : 'Vérifier' }}
-                                                                </a></li>
-                                                            <li>
-                                                                <hr class="dropdown-divider">
-                                                            </li>
-                                                            <li><a class="dropdown-item text-danger" href="#"
-                                                                    onclick="deleteDocument({{ $document->id }}, '{{ $document->document_name }}')">
-                                                                    <i class="fas fa-trash me-1"></i>Supprimer
-                                                                </a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    @if($document->description)
-                                                        <div class="d-flex align-items-center mb-2">
-                                                            <i class="fas fa-info-circle me-2 text-muted"></i>
-                                                            <small
-                                                                class="text-muted">{{ Str::limit($document->description, 100) }}</small>
-                                                        </div>
-                                                    @endif
-
+                                                </td>
+                                                <td><small class="text-muted">{{ $document->document_type_name }}</small></td>
+                                                {{-- data-order : DataTables trie sur la date réelle, pas sur le libellé --}}
+                                                <td data-order="{{ $document->expiry_date?->timestamp ?? 0 }}">
                                                     @if($document->expiry_date)
-                                                        <div class="d-flex align-items-center mb-2">
-                                                            <i
-                                                                class="fas fa-calendar-alt me-2 {{ $document->isExpired() ? 'text-danger' : ($document->isExpiringSoon() ? 'text-warning' : 'text-success') }}"></i>
-                                                            <small
-                                                                class="{{ $document->isExpired() ? 'text-danger' : ($document->isExpiringSoon() ? 'text-warning' : 'text-success') }}">
-                                                                Expire: {{ $document->expiry_date->format('d/m/Y') }}
-                                                                @if($document->isExpired())
-                                                                    <span class="badge bg-label-danger ms-1">Expiré</span>
-                                                                @elseif($document->isExpiringSoon())
-                                                                    <span class="badge bg-label-warning ms-1">Bientôt</span>
-                                                                @endif
-                                                            </small>
-                                                        </div>
-                                                    @endif
-
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <i class="fas fa-file me-2 text-muted"></i>
-                                                        <small class="text-muted">{{ $document->formatted_file_size }} •
-                                                            {{ $document->file_name }}</small>
-                                                    </div>
-                                                </div>
-
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <span
-                                                            class="badge {{ $document->is_verified ? 'bg-label-success' : 'bg-label-warning' }}">
-                                                            {{ $document->status_badge }}
-                                                        </span>
-                                                        @if($document->verified_by)
-                                                            <small class="text-muted d-block">Par: {{ $document->verified_by }}</small>
-                                                        @endif
-                                                    </div>
-                                                    <div class="text-end">
                                                         <small
-                                                            class="text-muted">{{ $document->created_at->diffForHumans() }}</small>
+                                                            class="{{ $document->isExpired() ? 'text-danger' : ($document->isExpiringSoon() ? 'text-warning' : 'text-success') }}">
+                                                            {{ $document->expiry_date->format('d/m/Y') }}
+                                                        </small>
+                                                        @if($document->isExpired())
+                                                            <span class="badge bg-label-danger ms-1">Expiré</span>
+                                                        @elseif($document->isExpiringSoon())
+                                                            <span class="badge bg-label-warning ms-1">Bientôt</span>
+                                                        @endif
+                                                    @else
+                                                        <small class="text-muted">-</small>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <small class="text-muted">{{ $document->file_name }}</small><br>
+                                                    <small class="text-muted">{{ $document->formatted_file_size }}</small>
+                                                </td>
+                                                <td data-order="{{ $document->is_verified ? 1 : 0 }}">
+                                                    <span
+                                                        class="badge {{ $document->is_verified ? 'bg-label-success' : 'bg-label-warning' }}">
+                                                        {{ $document->status_badge }}
+                                                    </span>
+                                                    @if($document->verified_by)
+                                                        <small class="text-muted d-block">Par : {{ $document->verified_by }}</small>
+                                                    @endif
+                                                </td>
+                                                <td data-order="{{ $document->created_at->timestamp }}">
+                                                    <small class="text-muted">{{ $document->created_at->diffForHumans() }}</small>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="d-inline-flex gap-1">
+                                                        <a href="{{ url('/company/settings/company-documents/legal/' . $document->id . '/download') }}"
+                                                            class="btn btn-sm btn-outline-info" title="Télécharger">
+                                                            <i class="fas fa-download"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                            onclick="editDocument({{ $document->id }})" title="Modifier">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        @if(!$document->is_verified)
+                                                            <button type="button" class="btn btn-sm btn-outline-success"
+                                                                onclick="toggleDocumentVerification({{ $document->id }})"
+                                                                title="Vérifier">
+                                                                <i class="fas fa-check-circle"></i>
+                                                            </button>
+                                                        @else
+                                                            <button type="button" class="btn btn-sm btn-outline-warning"
+                                                                onclick="toggleDocumentVerification({{ $document->id }})"
+                                                                title="Dé-vérifier">
+                                                                <i class="fas fa-times-circle"></i>
+                                                            </button>
+                                                        @endif
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                            onclick="deleteDocument({{ $document->id }}, '{{ addslashes($document->document_name) }}')"
+                                                            title="Supprimer">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         @else
                             <div class="text-center py-5">
@@ -842,6 +847,26 @@
 
 @push('scripts')
     <script>
+        // Tableau des documents légaux, même configuration que les autres listes du projet
+        // (cf. Paramètres › Sites) : colonne Actions non triable, libellés en français.
+        $(function () {
+            'use strict';
+
+            @if($companyDocuments->count() > 0)
+                $('#documents-legaux-table').DataTable({
+                    processing: true,
+                    order: [[0, 'asc']],
+                    columnDefs: [
+                        { targets: -1, orderable: false, searchable: false }
+                    ],
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/French.json'
+                    },
+                    dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>'
+                });
+            @endif
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             // Validation des formulaires
             const forms = document.querySelectorAll('form[enctype="multipart/form-data"]');
