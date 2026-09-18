@@ -1,7 +1,8 @@
 {{--
-    Tuile KPI unique. Reprend le design de la liste des utilisateurs
-    (Modules/Settings/resources/views/users.blade.php) : avatar coloré et libellé
-    à gauche, grand chiffre de la même couleur à droite.
+    Tuile KPI unique : avatar coloré et libellé en haut, grand chiffre de la même
+    couleur en dessous. Le chiffre est poussé en bas de la tuile (mt-auto), si
+    bien qu'une rangée de tuiles aligne ses montants même quand les libellés
+    tiennent sur un nombre de lignes différent.
 
     À placer dans un <x-kpi-grid>, qui fournit la carte et la rangée.
 
@@ -25,34 +26,36 @@
 
 {{-- Les attributs restants (id, data-*) vont sur la colonne : certains écrans y accrochent le guide ou du JS. --}}
 <div {{ $attributes->merge(['class' => $col . ' mb-4']) }}>
-    <div class="d-flex align-items-center justify-content-between p-3 border rounded h-100 gap-2">
-        <div class="d-flex align-items-center" style="min-width: 0;">
+    <div class="d-flex flex-column p-3 border rounded h-100">
+        {{-- En-tête : l'icône et le libellé, sur une seule ligne. --}}
+        <div class="d-flex align-items-center">
             <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
                 <div class="avatar-initial bg-label-{{ $color }} rounded">
                     <i class="{{ $icon }} fa-24px"></i>
                 </div>
             </div>
-            <div>
+            <div style="min-width: 0;">
                 <h6 class="mb-0">{{ $label }}</h6>
                 @if ($sublabel)
                     <small class="text-muted">{{ $sublabel }}</small>
                 @endif
-                {{-- « hint » : ligne libre sous le libellé (évolution, lien de renvoi...). --}}
-                @isset($hint)
-                    <div class="mt-1" style="font-size: .75rem;">{{ $hint }}</div>
-                @endisset
             </div>
         </div>
-        {{-- flex-shrink-0 + text-nowrap : un montant comme « 4 084 158 » reste sur une seule ligne. --}}
-        <div class="text-end flex-shrink-0">
+
+        {{-- Le montant, sous le libellé et calé en bas de la tuile. --}}
+        <div class="mt-auto pt-3">
             {{-- trim() et non $slot->isEmpty() : les retours à la ligne autour d'un slot nommé rendent le slot par défaut non vide. --}}
-            <h3 class="mb-0 text-nowrap text-{{ $color }}">
+            <h3 class="mb-0 text-{{ $color }}">
                 @if (trim($slot) !== '')
                     {{ $slot }}
                 @else
                     {{ $value }}
                 @endif
             </h3>
+            {{-- « hint » : ligne libre sous le montant (évolution, lien de renvoi...). --}}
+            @isset($hint)
+                <div class="mt-1" style="font-size: .75rem;">{{ $hint }}</div>
+            @endisset
         </div>
     </div>
 </div>
