@@ -55,9 +55,7 @@
                                             <th>Document</th>
                                             <th>Type</th>
                                             <th>Expiration</th>
-                                            <th>Fichier</th>
                                             <th>Statut</th>
-                                            <th>Ajouté le</th>
                                             <th class="text-end">Actions</th>
                                         </tr>
                                     </thead>
@@ -66,27 +64,10 @@
                                             <tr data-document-id="{{ $document->id }}"
                                                 data-document='@json($document->toArray())'>
                                                 <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar avatar-sm me-3" style="width: 40px; height: 40px;">
-                                                            <div
-                                                                class="avatar-initial {{ $document->status_class === 'success' ? 'bg-label-success' : ($document->status_class === 'warning' ? 'bg-label-warning' : 'bg-label-secondary') }} rounded">
-                                                                <i
-                                                                    class="fas fa-{{ $document->document_type === 'statuts' ? 'file-contract' : ($document->document_type === 'rccm' ? 'building' : ($document->document_type === 'dfe' ? 'file-invoice' : ($document->document_type === 'cnps' ? 'users' : ($document->document_type === 'inspection' ? 'clipboard-check' : 'file-alt')))) }} fa-20px"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <h6 class="mb-0">
-                                                                {{ $document->document_name }}
-                                                                @if($document->is_required)
-                                                                    <span class="badge bg-label-danger ms-1">Requis</span>
-                                                                @endif
-                                                            </h6>
-                                                            @if($document->description)
-                                                                <small
-                                                                    class="text-muted">{{ Str::limit($document->description, 80) }}</small>
-                                                            @endif
-                                                        </div>
-                                                    </div>
+                                                    <h6 class="mb-0">{{ $document->document_name }}</h6>
+                                                    @if($document->description)
+                                                        <small class="text-muted">{{ Str::limit($document->description, 80) }}</small>
+                                                    @endif
                                                 </td>
                                                 <td><small class="text-muted">{{ $document->document_type_name }}</small></td>
                                                 {{-- data-order : DataTables trie sur la date réelle, pas sur le libellé --}}
@@ -105,10 +86,6 @@
                                                         <small class="text-muted">-</small>
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <small class="text-muted">{{ $document->file_name }}</small><br>
-                                                    <small class="text-muted">{{ $document->formatted_file_size }}</small>
-                                                </td>
                                                 <td data-order="{{ $document->is_verified ? 1 : 0 }}">
                                                     <span
                                                         class="badge {{ $document->is_verified ? 'bg-label-success' : 'bg-label-warning' }}">
@@ -117,9 +94,6 @@
                                                     @if($document->verified_by)
                                                         <small class="text-muted d-block">Par : {{ $document->verified_by }}</small>
                                                     @endif
-                                                </td>
-                                                <td data-order="{{ $document->created_at->timestamp }}">
-                                                    <small class="text-muted">{{ $document->created_at->diffForHumans() }}</small>
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
@@ -415,7 +389,7 @@
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <div class="text-center">
-                                    <div class="avatar avatar-lg mb-2" style="width: 60px; height: 60px;">
+                                    <div class="avatar avatar-lg mb-2 mx-auto" style="width: 60px; height: 60px;">
                                         <div class="avatar-initial bg-label-primary rounded">
                                             <span class="fa-24px">{{ $documentStats['total_documents'] }}</span>
                                         </div>
@@ -426,7 +400,7 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="text-center">
-                                    <div class="avatar avatar-lg mb-2" style="width: 60px; height: 60px;">
+                                    <div class="avatar avatar-lg mb-2 mx-auto" style="width: 60px; height: 60px;">
                                         <div class="avatar-initial bg-label-success rounded">
                                             <span class="fa-24px">{{ $documentStats['verified_documents'] }}</span>
                                         </div>
@@ -437,7 +411,7 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="text-center">
-                                    <div class="avatar avatar-lg mb-2" style="width: 60px; height: 60px;">
+                                    <div class="avatar avatar-lg mb-2 mx-auto" style="width: 60px; height: 60px;">
                                         <div class="avatar-initial bg-label-warning rounded">
                                             <span class="fa-24px">{{ $documentStats['expiring_soon_documents'] }}</span>
                                         </div>
@@ -448,7 +422,7 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="text-center">
-                                    <div class="avatar avatar-lg mb-2" style="width: 60px; height: 60px;">
+                                    <div class="avatar avatar-lg mb-2 mx-auto" style="width: 60px; height: 60px;">
                                         <div class="avatar-initial bg-label-danger rounded">
                                             <span class="fa-24px">{{ $documentStats['expired_documents'] }}</span>
                                         </div>
@@ -555,7 +529,7 @@
 
                             @if(!$company->logo && !$company->electronic_signature && !$company->electronic_stamp)
                                 <div class="text-center py-4">
-                                    <div class="avatar avatar-xl mb-3" style="width: 80px; height: 80px;">
+                                    <div class="avatar avatar-xl mb-3 mx-auto" style="width: 80px; height: 80px;">
                                         <div class="avatar-initial bg-label-secondary rounded">
                                             <i class="fas fa-file-alt fa-32px"></i>
                                         </div>

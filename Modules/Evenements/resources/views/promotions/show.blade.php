@@ -672,7 +672,7 @@
                     </div>
                 @else
                     <div class="text-center py-4">
-                        <div class="avatar avatar-lg mb-3">
+                        <div class="avatar avatar-lg mb-3 mx-auto">
                             <span class="avatar-initial rounded-circle bg-label-secondary">
                                 <i class="fas fa-history"></i>
                             </span>

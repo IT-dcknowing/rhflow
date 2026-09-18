@@ -250,7 +250,7 @@
                         </div>
                     @else
                         <div class="text-center p-4">
-                            <div class="avatar avatar-lg mb-3">
+                            <div class="avatar avatar-lg mb-3 mx-auto">
                                 <div class="avatar-initial bg-label-secondary rounded">
                                     <i class="fas fa-calendar-day"></i>
                                 </div>
@@ -328,7 +328,7 @@
                         </div>
                     @else
                         <div class="text-center p-4">
-                            <div class="avatar avatar-lg mb-3">
+                            <div class="avatar avatar-lg mb-3 mx-auto">
                                 <div class="avatar-initial bg-label-secondary rounded">
                                     <i class="fas fa-bullhorn"></i>
                                 </div>
@@ -385,7 +385,7 @@
                         </div>
                     @else
                         <div class="text-center p-4">
-                            <div class="avatar avatar-lg mb-3">
+                            <div class="avatar avatar-lg mb-3 mx-auto">
                                 <div class="avatar-initial bg-label-secondary rounded">
                                     <i class="fas fa-users"></i>
                                 </div>
@@ -438,7 +438,7 @@
                         </div>
                     @else
                         <div class="text-center p-4">
-                            <div class="avatar avatar-lg mb-3">
+                            <div class="avatar avatar-lg mb-3 mx-auto">
                                 <div class="avatar-initial bg-label-secondary rounded">
                                     <i class="fas fa-trophy"></i>
                                 </div>

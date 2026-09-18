@@ -56,7 +56,7 @@
                                     <div class="d-flex justify-content-around text-center">
                                         @foreach($awardTypes as $type)
                                         <div>
-                                            <div class="avatar avatar-md mb-2">
+                                            <div class="avatar avatar-md mb-2 mx-auto">
                                                 <div class="avatar-initial bg-label-{{ $type['color'] }} rounded">
                                                     <i class="{{ $type['icon'] }} fa-lg"></i>
                                                 </div>
@@ -201,7 +201,7 @@
                     @else
                         <!-- État Vide -->
                         <div class="text-center py-5">
-                            <div class="avatar avatar-xl mb-3" style="width: 100px; height: 100px;">
+                            <div class="avatar avatar-xl mb-3 mx-auto" style="width: 100px; height: 100px;">
                                 <div class="avatar-initial bg-label-secondary rounded">
                                     <i class="fas fa-award fa-3x"></i>
                                 </div>

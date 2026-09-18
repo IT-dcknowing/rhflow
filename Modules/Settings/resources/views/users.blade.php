@@ -299,7 +299,7 @@
                     @else
                         <!-- État Vide -->
                         <div class="text-center py-5">
-                            <div class="avatar avatar-xl mb-3" style="width: 100px; height: 100px;">
+                            <div class="avatar avatar-xl mb-3 mx-auto" style="width: 100px; height: 100px;">
                                 <div class="avatar-initial bg-label-secondary rounded">
                                     <i class="fas fa-users fa-40px"></i>
                                 </div>
