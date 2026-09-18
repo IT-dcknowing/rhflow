@@ -106,7 +106,7 @@
                                                 <strong class="text-danger">{{ $listemp->tax_payer_id ?? '-' }}</strong>
                                                 <hr>
                                                 Mise à jour ici 👉
-                                                <a class="btn btn-primary btn-sm btn-update-days" href="#" data-bs-toggle="modal"
+                                                <a class="btn btn-icon btn-sm btn-label-warning btn-update-days" href="#" data-bs-toggle="modal"
                                                     data-bs-size="xl" data-bs-target="#showDaysWorkModal"
                                                     data-employee-id="{{ $listemp->id }}" data-employee-name="{{ $listemp->name }}"
                                                     data-periode-id="{{ $periode->id }}">
@@ -153,7 +153,7 @@
                                                 </strong>
                                             </td>
                                             <td class="text-center">
-                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle hide-arrow"
                                                     data-bs-toggle="dropdown">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>

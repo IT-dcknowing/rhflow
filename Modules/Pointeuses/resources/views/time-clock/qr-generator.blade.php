@@ -112,19 +112,19 @@
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
                                                     <a href="{{ route('qr-code.show-for-location', $location->id) }}"
-                                                        class="btn btn-info me-2" title="{{ __('Voir QR Code') }}">
+                                                        class="btn btn-icon btn-sm btn-label-info me-2" title="{{ __('Voir QR Code') }}">
                                                         <i class="fas fa-qrcode"></i>
                                                     </a>
                                                     <form action="{{route('qr-code.generate-for-location')}}" method="POST" class="d-inline">
                                                         @csrf
                                                         <input type="hidden" name="location_id" value="{{ $location->id }}">
                                                         <input type="hidden" name="qr_size" value="500">
-                                                        <button type="submit" class="btn btn-primary me-2" title="{{ __('Régénérer') }}">
+                                                        <button type="submit" class="btn btn-icon btn-sm btn-label-primary me-2" title="{{ __('Régénérer') }}">
                                                             <i class="fas fa-sync"></i>
                                                         </button>
                                                     </form>
                                                     <a href="{{route('locations.edit', $location->id) }}"
-                                                        class="btn btn-warning" title="{{ __('Modifier le lieu') }}">
+                                                        class="btn btn-icon btn-sm btn-label-warning" title="{{ __('Modifier le lieu') }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 </div>

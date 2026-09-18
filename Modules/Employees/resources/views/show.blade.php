@@ -86,7 +86,7 @@
                 <div class="card-header border-bottom-0 pb-0">
                     {{-- onglets-defilants : défilement horizontal sans barre visible (cf. rhflow-design.css).
                          Le « pb-1 » d'origine ne réservait que 4 px, la barre native recouvrait les onglets. --}}
-                    <div class="onglets-defilants" style="-webkit-overflow-scrolling: touch;">
+                    <div class="onglets-defilants" style="-webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; overflow-x: auto; overflow-y: hidden;">
                         <ul class="nav nav-tabs card-header-tabs flex-nowrap" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link text-nowrap active" data-bs-toggle="tab" href="#personal" role="tab">
@@ -317,10 +317,10 @@
                                             <td>{{ $member->type_membre }}</td>
                                             <td>{{ $member->cmu }}</td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary" data-family-id="{{ $member->id }}" onclick="editFamilyMember({{ $member->id }})">
+                                                <button class="btn btn-icon btn-sm btn-label-warning" data-family-id="{{ $member->id }}" onclick="editFamilyMember({{ $member->id }})">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-family-id="{{ $member->id }}" onclick="deleteFamilyMember({{ $member->id }})">
+                                                <button class="btn btn-icon btn-sm btn-label-danger" data-family-id="{{ $member->id }}" onclick="deleteFamilyMember({{ $member->id }})">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -363,7 +363,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('employees.events.show', ['employee' => $employee->id, 'event' => $event->id]) }}" class="btn btn-sm btn-outline-primary">
+                                                <a href="{{ route('employees.events.show', ['employee' => $employee->id, 'event' => $event->id]) }}" class="btn btn-icon btn-sm btn-label-info">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
@@ -381,7 +381,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('company.ruptures.show', $rupture->id) }}" class="btn btn-sm btn-outline-primary">
+                                                <a href="{{ route('company.ruptures.show', $rupture->id) }}" class="btn btn-icon btn-sm btn-label-info">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>
@@ -428,11 +428,11 @@
                                             <td>{{ $document->created_at->format('d/m/Y') }}</td>
                                             <td>
                                                 @if(!empty($docData['path']))
-                                                <a href="{{ asset('storage/' . $docData['path']) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <a href="{{ asset('storage/' . $docData['path']) }}" target="_blank" class="btn btn-icon btn-sm btn-label-primary">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                                 @endif
-                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteDocument({{ $document->id }})">
+                                                <button class="btn btn-icon btn-sm btn-label-danger" onclick="deleteDocument({{ $document->id }})">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -473,7 +473,7 @@
                                             </td>
                                             <td class="text-success fw-bold">{{ number_format($paySlip->net_payble ?? 0, 0, ',', ' ') }} FCFA</td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-outline-primary" id="showBulletin" data-payslip-id="{{ $paySlip->id }}">
+                                                <a href="#" class="btn btn-icon btn-sm btn-label-info" id="showBulletin" data-payslip-id="{{ $paySlip->id }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </td>

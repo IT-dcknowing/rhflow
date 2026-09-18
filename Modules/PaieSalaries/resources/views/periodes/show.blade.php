@@ -432,7 +432,7 @@
                                             <td class="pm-num pm-net">{{ $fmt($ligne['net']) }}</td>
                                             <td class="text-end">
                                                 <div class="dropdown">
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown"
+                                                    <button type="button" class="btn btn-icon btn-sm btn-label-secondary" data-bs-toggle="dropdown"
                                                         aria-expanded="false" aria-label="Actions pour {{ $emp->name }}">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
@@ -547,7 +547,7 @@
                                             <td class="pm-num">{{ $fmt($ligne['pret'] + $ligne['autre']) }}</td>
                                             <td class="pm-num pm-net">{{ $fmt($ligne['net']) }}</td>
                                             <td class="text-end">
-                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-aperçu-bulletin"
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-info btn-aperçu-bulletin"
                                                     data-bs-toggle="modal" data-bs-target="#showBulletinModal"
                                                     data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}"
                                                     data-exercice-id="{{ $periode->exercice_id }}" data-periode-id="{{ $periode->id }}"

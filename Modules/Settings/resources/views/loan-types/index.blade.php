@@ -190,12 +190,12 @@
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 <a href="{{ route('company.settings.loan-types.show', $loanType->id) }}"
-                                                    class="btn btn-icon btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+                                                    class="btn btn-icon btn-sm btn-label-info" data-bs-toggle="tooltip"
                                                     title="Voir les détails">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('company.settings.loan-types.edit', $loanType->id) }}"
-                                                    class="btn btn-icon btn-outline-warning btn-sm" data-bs-toggle="tooltip"
+                                                    class="btn btn-icon btn-sm btn-label-warning" data-bs-toggle="tooltip"
                                                     title="Modifier">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
@@ -205,7 +205,7 @@
                                                     @csrf
                                                     @method('PUT')
                                                     <button type="submit"
-                                                        class="btn btn-icon btn-outline-{{ $loanType->is_active ? 'secondary' : 'success' }} btn-sm"
+                                                        class="btn btn-icon btn-sm btn-label-{{ $loanType->is_active ? 'secondary' : 'success' }}"
                                                         data-bs-toggle="tooltip"
                                                         title="{{ $loanType->is_active ? 'Désactiver' : 'Activer' }}">
                                                         <i class="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }}"></i>
@@ -216,7 +216,7 @@
                                                     onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de prêt ?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-icon btn-outline-danger btn-sm"
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-label-danger"
                                                         data-bs-toggle="tooltip" title="Supprimer">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

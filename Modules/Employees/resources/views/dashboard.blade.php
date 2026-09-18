@@ -116,44 +116,54 @@
     </div>
 
     <!-- Actions rapides -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Actions Rapides</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {{-- gap-2 plutôt qu'une marge sur l'icône : l'icône et le libellé restent deux blocs distincts. --}}
-                        <div class="col-md-4 mb-3">
-                            {{-- Un seul bouton : le type (mensuel ou journalier) se choisit dans le
-                                 formulaire, champ "Type d'employé". --}}
-                            <a href="{{ route('company.employees.create') }}"
-                                class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-                                <i class="fas fa-plus"></i>
-                                <span>Ajouter un employé</span>
-                            </a>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="{{ route('company.employees.index') }}"
-                                class="btn btn-outline-warning w-100 d-flex align-items-center justify-content-center gap-2">
-                                <i class="fas fa-list"></i>
-                                <span>Voir Tous les Employés</span>
-                            </a>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <a href="#" class="btn btn-outline-success w-100 d-flex align-items-center justify-content-center gap-2"
-                                onclick="exportReport()">
-                                <i class="fas fa-download"></i>
-                                <span>Exporter Rapport</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-quick-actions>
+        <x-quick-action icon="fas fa-user-plus"
+            label="Nouvel Employé (Mensuel)"
+            :href="isModuleActive('employee') ? route('company.employees.create') : '#'" />
+
+        <x-quick-action icon="fas fa-user-plus"
+            label="Nouvel Employé (Journalier)"
+            :href="isModuleActive('employee') ? route('company.employees.create') : '#'" />
+
+        <x-quick-action icon="fas fa-dollar"
+            label="Générer la paie (Mois en cours)"
+            :href="isModuleActive('salary') ? route('company.paiesalaries.exercices.index') : '#'" />
+
+        {{-- Deuxième ligne : actions secondaires à gauche. --}}
+        <x-slot:secondary>
+            <x-quick-action icon="fas fa-calendar"
+                label="Approuver les congés"
+                :href="isModuleActive('leaves') ? route('company.leaves.index') : '#'"
+                variant="outline" color="warning" />
+
+            <x-quick-action icon="fas fa-file-text"
+                label="Rapport Mensuel"
+                :href="isModuleActive('Declarations') ? route('company.declarations.livrepaie.mensuel') : '#'"
+                variant="outline" />
+        </x-slot:secondary>
+
+        {{-- ... et actions de service sans cadre, repoussées à droite. --}}
+        <x-slot:end>
+            <x-quick-action icon="fas fa-cog"
+                label="Paramètres"
+                :href="route('company.settings.settings')"
+                variant="ghost" />
+
+            <x-quick-action icon="fas fa-headset"
+                label="Support"
+                href="#"
+                variant="ghost"
+                :disabled="true" />
+
+            <x-quick-action icon="fas fa-chart-bar"
+                label="Analytics"
+                :href="isModuleActive('PaieSalaries') ? route('company.paiesalaries.dashboard') : '#'"
+                variant="ghost"
+                :disabled="!isModuleActive('PaieSalaries')" />
+        </x-slot:end>
+    </x-quick-actions>
 </div>
+
 @endsection
 
 @push('scripts')

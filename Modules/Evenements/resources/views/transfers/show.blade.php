@@ -206,11 +206,11 @@
                                                             <td>{{ number_format($document->size / 1024, 2) }} Ko</td>
                                                             <td>{{ $document->created_at->format('d/m/Y H:i') }}</td>
                                                             <td>
-                                                                <a href="{{ route('company.evenements.transfers.document.download', $document->id) }}" class="btn btn-sm btn-primary" title="Télécharger">
+                                                                <a href="{{ route('company.evenements.transfers.document.download', $document->id) }}" class="btn btn-icon btn-sm btn-label-primary" title="Télécharger">
                                                                     <i class="fas fa-download"></i>
                                                                 </a>
                                                                 @if(auth()->user()->can('delete documents'))
-                                                                    <button type="button" class="btn btn-sm btn-danger delete-document" data-id="{{ $document->id }}" title="Supprimer">
+                                                                    <button type="button" class="btn btn-icon btn-sm btn-label-danger delete-document" data-id="{{ $document->id }}" title="Supprimer">
                                                                         <i class="fas fa-trash"></i>
                                                                     </button>
                                                                 @endif

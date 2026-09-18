@@ -101,18 +101,18 @@
                                                 <td>
                                                     <div class="d-flex gap-1">
                                                         <a href="{{ route('super-admin.commandes.show', $commande) }}"
-                                                            class="btn btn-sm bg-primary text-white">
+                                                            class="btn btn-icon btn-sm btn-label-info">
                                                             <i class="ti ti-eye"></i>
                                                         </a>
                                                         <form method="POST" action="{{ route('super-admin.commandes.update', $commande) }}" class="d-inline">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-sm btn-success">
+                                                            <button type="submit" class="btn btn-icon btn-sm btn-label-success">
                                                                 <i class="ti ti-check"></i> 
                                                             </button>
                                                         </form>
                                                         <form method="POST" action="{{ route('super-admin.commandes.cancel', $commande) }}" class="d-inline">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                            <button type="submit" class="btn btn-icon btn-sm btn-label-danger"
                                                                     onclick="return confirm('Êtes-vous sûr de vouloir refuser cette commande ?')">
                                                                 <i class="ti ti-close"></i> 
                                                             </button>

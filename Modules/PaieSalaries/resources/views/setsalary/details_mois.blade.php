@@ -514,19 +514,19 @@
                                             <td align="center"><strong>{{ $timesheet->motif_justify }}</strong></td>
                                             <td align="center">
                                                 @if($timesheet->statut == 1)
-                                                    <a class="btn btn-danger disabled" href="{{ URL::to('timesheet/destroyState') }}/{{ $monthpaie }}/{{ $timesheet->id }}">
+                                                    <a class="btn btn-icon btn-sm btn-label-danger disabled" href="{{ URL::to('timesheet/destroyState') }}/{{ $monthpaie }}/{{ $timesheet->id }}">
                                                         <i class="fa fa-times-circle"></i>
                                                     </a>
                                                     <hr/>
                                                     <label class="form-check-label" for="toggleButton" id="status"><strong>Montant : {{ $timesheet->retenue }} FCFA</strong></label>
                                                 @elseif($timesheet->deduc_abs == 1)
-                                                    <a class="btn btn-danger" href="{{ URL::to('timesheet/destroyState') }}/{{ $monthpaie }}/{{ $timesheet->id }}">
+                                                    <a class="btn btn-icon btn-sm btn-label-danger" href="{{ URL::to('timesheet/destroyState') }}/{{ $monthpaie }}/{{ $timesheet->id }}">
                                                         <i class="fa fa-times-circle"></i>
                                                     </a>
                                                     <hr/>
                                                     <label class="form-check-label" for="toggleButton" id="status"><strong>Montant : {{ $timesheet->retenue }} FCFA</strong></label>
                                                 @else
-                                                    <a class="btn btn-success" href="{{ URL::to('timesheet/updateState') }}/{{ $monthpaie }}/{{ $timesheet->id }}">
+                                                    <a class="btn btn-icon btn-sm btn-label-success" href="{{ URL::to('timesheet/updateState') }}/{{ $monthpaie }}/{{ $timesheet->id }}">
                                                         <i class="fa fa-check-circle"></i>
                                                     </a>
                                                 @endif
@@ -546,12 +546,12 @@
                                                     <div class="d-flex">
                                                         @can('Edit TimeSheet')
                                                             <div class="action-btn me-2">
-                                                                <a href="#" class="btn btn-sm bg-info align-items-center"
+                                                                <a href="#" class="btn btn-icon btn-sm btn-label-warning"
                                                                     data-url="{{ $url }}"
                                                                     data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip"
                                                                     title="" data-title="{{ __('Edit Timesheet') }}"
                                                                     data-bs-original-title="{{ __('Edit') }}">
-                                                                    <i class="ti ti-pencil text-white"></i>
+                                                                    <i class="ti ti-pencil"></i>
                                                                 </a>
                                                             </div>
                                                         @endcan
@@ -560,10 +560,10 @@
                                                             <form method="POST" action="{{ $url2 }}" id="delete-form-{{ $timesheet->id }}">
                                                                 @method('DELETE')
                                                                 @csrf
-                                                                <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para"
+                                                                <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
                                                                     data-bs-toggle="tooltip" title="{{ __('Delete') }}"
                                                                     data-bs-original-title="{{ __('Delete') }}" aria-label="{{ __('Delete') }}">
-                                                                    <i class="ti ti-trash text-white"></i>
+                                                                    <i class="ti ti-trash"></i>
                                                                 </a>
                                                             </form>
                                                         </div>
@@ -655,12 +655,12 @@
                                                 <span>
                                                     @can('Edit Overtime')
                                                         <div class="action-btn me-2">
-                                                            <a href="#" class="btn btn-sm bg-info align-items-center"
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-warning"
                                                                 data-url="{{ route('heuresup.edit', ['monthpaie' => $monthpaie, 'id' => $heuresup->id]) }}"
                                                                 data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip"
                                                                 title="" data-title="{{ __('Edit Overtime') }}"
                                                                 data-bs-original-title="{{ __('Edit') }}">
-                                                                <i class="ti ti-pencil text-white"></i>
+                                                                <i class="ti ti-pencil"></i>
                                                             </a>
                                                         </div>
                                                     @endcan
@@ -669,10 +669,10 @@
                                                             <form method="POST" action="{{ route('heuresup.destroy', ['monthpaie' => $monthpaie, 'id' => $heuresup->id]) }}" id="delete-form-{{ $heuresup->id }}">
                                                                 @method('DELETE')
                                                                 @csrf
-                                                                <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para"
+                                                                <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
                                                                     data-bs-toggle="tooltip" title="{{ __('Delete') }}"
                                                                     data-bs-original-title="{{ __('Delete') }}" aria-label="{{ __('Delete') }}">
-                                                                    <i class="ti ti-trash text-white"></i>
+                                                                    <i class="ti ti-trash"></i>
                                                                 </a>
                                                             </form>
                                                         </div>
@@ -804,11 +804,11 @@
                                                         @foreach ($employeeLoans as $loan)
                                                             @if ($loan->month_paie == $monthpaie)
                                                                 <div class="d-flex">
-                                                                    <a class="btn btn-sm btn-info disabled me-2" href="#" data-title="{{ __('Déduit') }}">
-                                                                        <i class="ti ti-check text-white"></i>
+                                                                    <a class="btn btn-icon btn-sm btn-label-success disabled me-2" href="#" data-title="{{ __('Déduit') }}">
+                                                                        <i class="ti ti-check"></i>
                                                                     </a>
-                                                                    <a class="btn btn-sm btn-danger" href="{{URL::to('loan/deductNotMonth/' . $loan->id_loan )}}" data-title="{{ __('Annuler') }}">
-                                                                        <i class="fa fa-times text-white"></i>
+                                                                    <a class="btn btn-icon btn-sm btn-label-danger" href="{{URL::to('loan/deductNotMonth/' . $loan->id_loan )}}" data-title="{{ __('Annuler') }}">
+                                                                        <i class="fa fa-times"></i>
                                                                     </a>
                                                                 </div>
                                                             @else
@@ -827,13 +827,13 @@
                                                     </td>
                                                     <td  align="center" style="vertical-align:middle;">
                                                         @foreach ($employeeLoans as $loan)
-                                                            <a class="btn btn-sm btn-info"
+                                                            <a class="btn btn-icon btn-sm btn-label-info"
                                                                 data-url="{{ URL::to('loan/' . $loan->id_loan . '/voir') }}"
                                                                 data-ajax-popup="true" data-size="xl"
                                                                 data-bs-toggle="tooltip" title=""
                                                                 data-title="{{ __('Détails prêt') }}"
                                                                 data-bs-original-title="{{ __('Voir') }}" style="color:#fff;">
-                                                                <i class="ti ti-eye text-white"></i>
+                                                                <i class="ti ti-eye"></i>
                                                             </a>
                                                             <hr>
                                                         @endforeach
@@ -844,13 +844,13 @@
                                                                 @if ($loan->statut !== '2')
                                                                     @can('Edit Loan')
                                                                     <div class="action-btn me-2">
-                                                                        <a class="btn btn-sm bg-info align-items-center"
+                                                                        <a class="btn btn-icon btn-sm btn-label-warning"
                                                                             data-url="{{ URL::to('loan/' . $loan->id_loan . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl"
                                                                             data-bs-toggle="tooltip" title=""
                                                                             data-title="{{ __('Modifier prêt') }}"
                                                                             data-bs-original-title="{{ __('Modifier') }}">
-                                                                            <i class="ti ti-pencil text-white"></i>
+                                                                            <i class="ti ti-pencil"></i>
                                                                         </a>
                                                                     </div>
                                                                     @endcan
@@ -862,9 +862,9 @@
                                                                                 'route' => ['loan.destroy', $loan->id_loan],
                                                                                 'id' => 'delete-form-' . $loan->id_loan,
                                                                             ]) }}
-                                                                            <a chref="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip"
+                                                                            <a chref="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para" data-bs-toggle="tooltip"
                                                                             title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
-                                                                                <i class="ti ti-trash text-white"></i>
+                                                                                <i class="ti ti-trash"></i>
                                                                             </a>
                                                                         </form>
                                                                     </div>
@@ -1010,16 +1010,16 @@
                                                                 </a>
                                                             @else
                                                                 @if($loan->statut == 1)
-                                                                    <a class="btn btn-sm btn-primary disabled" href="#" data-bs-toggle="modal" data-bs-target="#deductModal-{{$loan->id_loan}}">
-                                                                        <i class="ti ti-check text-white"></i>
+                                                                    <a class="btn btn-icon btn-sm btn-label-success disabled" href="#" data-bs-toggle="modal" data-bs-target="#deductModal-{{$loan->id_loan}}">
+                                                                        <i class="ti ti-check"></i>
                                                                     </a>
                                                                 @elseif($loan->statut == 4)
-                                                                    <a class="btn btn-sm btn-warning disabled" href="{{URL::to('loan/deductNotMonth/' . $loan->id_loan )}}">
-                                                                        <i class="ti ti-close text-white"></i>
+                                                                    <a class="btn btn-icon btn-sm btn-label-danger disabled" href="{{URL::to('loan/deductNotMonth/' . $loan->id_loan )}}">
+                                                                        <i class="ti ti-close"></i>
                                                                     </a>
                                                                 @else
-                                                                    <a class="btn btn-sm btn-primary disabled" href="#">
-                                                                        <i class="ti ti-check text-white"></i>
+                                                                    <a class="btn btn-icon btn-sm btn-label-success disabled" href="#">
+                                                                        <i class="ti ti-check"></i>
                                                                     </a>
                                                                 @endif
                                                             @endif
@@ -1028,13 +1028,13 @@
                                                     </td>
                                                     <td  align="center" style="vertical-align:middle;">
                                                         @foreach ($employeeLoans as $loan)
-                                                            <a class="btn btn-sm btn-info"
+                                                            <a class="btn btn-icon btn-sm btn-label-info"
                                                                 data-url="{{ URL::to('loan/' . $loan->id_loan . '/voir') }}"
                                                                 data-ajax-popup="true" data-size="xl"
                                                                 data-bs-toggle="tooltip" title=""
                                                                 data-title="{{ __('Détails prêt') }}"
                                                                 data-bs-original-title="{{ __('Voir') }}" style="color:#fff;">
-                                                                <i class="ti ti-eye text-white"></i>
+                                                                <i class="ti ti-eye"></i>
                                                             </a>
                                                             <hr>
                                                         @endforeach
@@ -1045,13 +1045,13 @@
                                                                 @if ($loan->statut == '2')
                                                                     @can('Edit Loan')
                                                                     <div class="action-btn me-2">
-                                                                        <a class="btn btn-sm bg-info align-items-center disabled"
+                                                                        <a class="btn btn-icon btn-sm btn-label-warning disabled"
                                                                             data-url="{{ URL::to('loan/' . $loan->id_loan . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl"
                                                                             data-bs-toggle="tooltip" title=""
                                                                             data-title="{{ __('Modifier prêt') }}"
                                                                             data-bs-original-title="{{ __('Modifier') }}">
-                                                                            <i class="ti ti-pencil text-white"></i>
+                                                                            <i class="ti ti-pencil"></i>
                                                                         </a>
                                                                     </div>
                                                                     @endcan
@@ -1063,9 +1063,9 @@
                                                                                     'route' => ['loan.destroy', $loan->id_loan],
                                                                                     'id' => 'delete-form-' . $loan->id_loan,
                                                                                 ]) }}
-                                                                                <a chref="#" class="btn btn-sm bg-danger align-items-center bs-pass-para disabled" data-bs-toggle="tooltip"
+                                                                                <a chref="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para disabled" data-bs-toggle="tooltip"
                                                                                 title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
-                                                                                    <i class="ti ti-trash text-white"></i>
+                                                                                    <i class="ti ti-trash"></i>
                                                                                 </a>
                                                                             </form>
                                                                         </div>
@@ -1073,13 +1073,13 @@
                                                                 @else
                                                                     @can('Edit Loan')
                                                                     <div class="action-btn me-2">
-                                                                        <a class="btn btn-sm bg-info align-items-center"
+                                                                        <a class="btn btn-icon btn-sm btn-label-warning"
                                                                             data-url="{{ URL::to('loan/' . $loan->id_loan . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl"
                                                                             data-bs-toggle="tooltip" title=""
                                                                             data-title="{{ __('Modifier prêt') }}"
                                                                             data-bs-original-title="{{ __('Modifier') }}">
-                                                                            <i class="ti ti-pencil text-white"></i>
+                                                                            <i class="ti ti-pencil"></i>
                                                                         </a>
                                                                     </div>
                                                                     @endcan
@@ -1091,9 +1091,9 @@
                                                                                     'route' => ['loan.destroy', $loan->id_loan],
                                                                                     'id' => 'delete-form-' . $loan->id_loan,
                                                                                 ]) }}
-                                                                                <a chref="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip"
+                                                                                <a chref="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para" data-bs-toggle="tooltip"
                                                                                 title="" data-bs-original-title="Supprimer" aria-label="Supprimer">
-                                                                                    <i class="ti ti-trash text-white"></i>
+                                                                                    <i class="ti ti-trash"></i>
                                                                                 </a>
                                                                             </form>
                                                                         </div>
@@ -1142,13 +1142,13 @@
                                                         <div class="row">
                                                             <div class="col-md-6" align="right">
                                                                 @can('Edit Loan')
-                                                                    <a class="btn btn-sm btn-info"
+                                                                    <a class="btn btn-icon btn-sm btn-label-warning"
                                                                         data-url="{{ URL::to('setsalary/edit_autres_retenue/' . $retenue->id . '/edit') }}"
                                                                         data-ajax-popup="true" data-size="xl"
                                                                         data-bs-toggle="tooltip" title=""
                                                                         data-title="{{ __('Modifier la retenue') }}"
                                                                         data-bs-original-title="{{ __('Modifier') }}">
-                                                                        <i class="ti ti-pencil text-white"></i>
+                                                                        <i class="ti ti-pencil"></i>
                                                                     </a>
                                                                 @endcan
                                                             </div>
@@ -1158,10 +1158,10 @@
                                                                         'route' => ['setsalary.destroyAutreRetenue', $retenue->id],
                                                                         'id' => 'delete-form-' . $retenue->id,
                                                                     ]) }}
-                                                                    <a class="btn btn-sm bg-danger align-items-center bs-pass-para"
+                                                                    <a class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
                                                                         data-bs-toggle="tooltip" title=""
                                                                         data-bs-original-title="Supprimer" aria-label="Supprimer">
-                                                                        <i class="ti ti-trash text-white"></i>
+                                                                        <i class="ti ti-trash"></i>
                                                                     </a>
                                                                 </form>
                                                             </div>
@@ -1241,13 +1241,13 @@
                                                     <hr>
                                                     <div class="d-flex" style="justify-content: center;">
                                                         <div class="action-btn me-2">
-                                                            <a href="#" class="btn btn-sm bg-info align-items-center"
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-warning"
                                                                 data-size="xl"
                                                                 data-url="{{ URL::to('avantages/' . $avantage->id . '/edit') }}"
                                                                 data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip"
                                                                 title="" data-title="{{ __('Edit') }}"
                                                                 data-bs-original-title="{{ __('Edit') }}">
-                                                                <i class="ti ti-pencil text-white"></i>
+                                                                <i class="ti ti-pencil"></i>
                                                             </a>
                                                         </div>
                                                         {!! Form::open([
@@ -1256,10 +1256,10 @@
                                                             'id' => 'delete-form-' . $avantage->id,
                                                         ]) !!}
                                                             <div class="action-btn">
-                                                                <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para"
+                                                                <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
                                                                     data-bs-toggle="tooltip" title=""
                                                                     data-bs-original-title="Supprimer" aria-label="Supprimer"><i
-                                                                        class="ti ti-trash text-white text-white"></i></a>
+                                                                        class="ti ti-trash"></i></a>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -1373,8 +1373,8 @@
                                                 @if (\Auth::user()->type != 'employee')
                                                     @if($leave->status == 'Approuvé' || $leave->status == 'Démarré')
                                                         {{-- @can('Edit Leave')
-                                                            <a href="#" class="btn btn-sm bg-info align-items-center me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-title="{{ __('Edit Leave') }}" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
-                                                                <i class="ti ti-pencil text-white"></i>
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-warning me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-title="{{ __('Edit Leave') }}" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
+                                                                <i class="ti ti-pencil"></i>
                                                             </a>
                                                         @endcan --}}
                                                         @if($leave->status == 'Démarré')
@@ -1383,45 +1383,45 @@
                                                             <a href="#" class="btn btn-sm bg-info me-2" data-url="{{ URL::to('leave/startLeave', $leave->id) }}" onclick="return confirm('Êtes-vous sûr de vouloir terminer cette action ?');">{{ __('Démarrer le congé') }}</a>
                                                             @can('Delete Leave')
                                                                 {!! Form::open(['method' => 'DELETE', 'route' => ['leave.destroy', $leave->id], 'id' => 'delete-form-' . $leave->id]) !!}
-                                                                    <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
-                                                                        <i class="ti ti-trash text-white"></i>
+                                                                    <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
+                                                                        <i class="ti ti-trash"></i>
                                                                     </a>
                                                                 {!! Form::close() !!}
                                                             @endcan
                                                         @endif
                                                     @elseif($leave->status == 'Terminé' || $leave->status == 'Rejeté')
                                                         @can('Edit Leave')
-                                                            <a href="#" class="btn btn-sm bg-info me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
-                                                                <i class="ti ti-pencil text-white"></i>
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-warning me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
+                                                                <i class="ti ti-pencil"></i>
                                                             </a>
                                                         @endcan
                                                         @can('Delete Leave')
                                                             {!! Form::open(['method' => 'DELETE', 'route' => ['leave.destroy', $leave->id], 'id' => 'delete-form-' . $leave->id]) !!}
-                                                                <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
-                                                                    <i class="ti ti-trash text-white"></i>
+                                                                <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
+                                                                    <i class="ti ti-trash"></i>
                                                                 </a>
                                                             {!! Form::close() !!}
                                                         @endcan
                                                     @elseif($leave->status == 'Pending')
-                                                        <a href="#" class="btn btn-sm bg-warning me-2" data-url="{{ URL::to('leave/' . $leave->id . '/action') }}" data-ajax-popup="true" data-bs-toggle="tooltip" title="{{ __('Manage Leave') }}">
-                                                            <i class="ti ti-caret-right text-white"></i>
+                                                        <a href="#" class="btn btn-icon btn-sm btn-label-info me-2" data-url="{{ URL::to('leave/' . $leave->id . '/action') }}" data-ajax-popup="true" data-bs-toggle="tooltip" title="{{ __('Manage Leave') }}">
+                                                            <i class="ti ti-caret-right"></i>
                                                         </a>
                                                         @can('Edit Leave')
-                                                            <a href="#" class="btn btn-sm bg-info me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
-                                                                <i class="ti ti-pencil text-white"></i>
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-warning me-2" data-url="{{ URL::to('leave/' . $leave->id . '/edit') }}" data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip" title="{{ __('Edit') }}">
+                                                                <i class="ti ti-pencil"></i>
                                                             </a>
                                                         @endcan
                                                         @can('Delete Leave')
                                                             {!! Form::open(['method' => 'DELETE', 'route' => ['leave.destroy', $leave->id], 'id' => 'delete-form-' . $leave->id]) !!}
-                                                                <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
-                                                                    <i class="ti ti-trash text-white"></i>
+                                                                <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para" data-bs-toggle="tooltip" title="{{ __('Delete') }}">
+                                                                    <i class="ti ti-trash"></i>
                                                                 </a>
                                                             {!! Form::close() !!}
                                                         @endcan
                                                     @endif
                                                 @else
-                                                    <a href="#" class="btn btn-sm bg-warning align-items-center me-2" data-url="{{ URL::to('leave/' . $leave->id . '/action') }}" data-ajax-popup="true" data-title="{{ __('Leave Action') }}" data-bs-toggle="tooltip" title="{{ __('Manage Leave') }}">
-                                                        <i class="ti ti-caret-right text-white"></i>
+                                                    <a href="#" class="btn btn-icon btn-sm btn-label-info me-2" data-url="{{ URL::to('leave/' . $leave->id . '/action') }}" data-ajax-popup="true" data-title="{{ __('Leave Action') }}" data-bs-toggle="tooltip" title="{{ __('Manage Leave') }}">
+                                                        <i class="ti ti-caret-right"></i>
                                                     </a>
                                                 @endif
                                             </div>
@@ -1539,22 +1539,22 @@
                                                             @if($termination->statut == 0)
                                                                 @can('Edit Termination')
                                                                     <div class="action-btn me-2">
-                                                                        <a href="#" class="btn btn-sm bg-info align-items-center" data-size="xl"
+                                                                        <a href="#" class="btn btn-icon btn-sm btn-label-warning" data-size="xl"
                                                                             data-url="{{ URL::to('termination/' . $monthpaie . '/' . $termination->id . '/edit') }}"
                                                                             data-ajax-popup="true" data-size="xl" data-bs-toggle="tooltip"
                                                                             title="" data-title="{{ __('Edit Termination') }}"
                                                                             data-bs-original-title="{{ __('Edit') }}">
-                                                                            <i class="ti ti-pencil text-white"></i>
+                                                                            <i class="ti ti-pencil"></i>
                                                                         </a>
                                                                     </div>
                                                                 @endcan
                                                                 @can('Delete Termination')
                                                                     {!! Form::open(['method' => 'DELETE', 'route' => ['termination.destroy', $termination->id], 'id' => 'delete-form-' . $termination->id]) !!}
                                                                         <div class="action-btn">
-                                                                            <a href="#" class="btn btn-sm bg-danger align-items-center bs-pass-para"
+                                                                            <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
                                                                                 data-bs-toggle="tooltip" title="" data-bs-original-title="Supprimer"
                                                                                 aria-label="Supprimer"><i
-                                                                                    class="ti ti-trash text-white text-white"></i></a>
+                                                                                    class="ti ti-trash"></i></a>
                                                                         </div>
                                                                     </form>
                                                                 @endcan

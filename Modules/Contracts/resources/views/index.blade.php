@@ -161,16 +161,16 @@
                                      coûte un clic, contre deux auparavant. --}}
                                 <div class="d-flex">
                                     <a href="{{ route('company.contracts.show', $contract->id) }}"
-                                        class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                        class="btn btn-icon btn-sm btn-label-info me-1" data-bs-toggle="tooltip"
                                         title="Voir">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <a href="{{ route('company.contracts.edit', $contract->id) }}"
-                                        class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                        class="btn btn-icon btn-sm btn-label-warning me-1" data-bs-toggle="tooltip"
                                         title="Modifier">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="button" class="btn btn-icon btn-sm btn-outline-danger"
+                                    <button type="button" class="btn btn-icon btn-sm btn-label-danger"
                                         data-bs-toggle="tooltip" title="Supprimer"
                                         onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?')) document.getElementById('delete-form-{{ $contract->id }}').submit();">
                                         <i class="fas fa-trash"></i>

@@ -121,24 +121,24 @@
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
-                                                        <button class="btn btn-sm btn-outline-primary"
+                                                        <button class="btn btn-icon btn-sm btn-label-warning"
                                                             onclick="editBranch({{ $branch->id }})" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         @if(!$branch->is_active)
-                                                            <button class="btn btn-sm btn-outline-success"
+                                                            <button class="btn btn-icon btn-sm btn-label-success"
                                                                 onclick="activateBranch({{ $branch->id }}, '{{ addslashes($branch->name) }}', false)"
                                                                 title="Activer">
                                                                 <i class="fas fa-check"></i>
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline-warning"
+                                                            <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="activateBranch({{ $branch->id }}, '{{ addslashes($branch->name) }}', true)"
                                                                 title="Désactiver">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                         @endif
-                                                        <button class="btn btn-sm btn-outline-danger"
+                                                        <button class="btn btn-icon btn-sm btn-label-danger"
                                                             onclick="deleteBranch({{ $branch->id }}, '{{ addslashes($branch->name) }}')"
                                                             title="Supprimer">
                                                             <i class="fas fa-trash"></i>

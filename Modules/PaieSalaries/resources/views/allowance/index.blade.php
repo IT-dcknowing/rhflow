@@ -141,7 +141,7 @@
                                             <td><span class="badge bg-label-danger">{{ $element->param_fiscal }}</span></td>
                                             <td>
                                                 <div class="dropdown">
-                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                    <button type="button" class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle hide-arrow"
                                                         data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>

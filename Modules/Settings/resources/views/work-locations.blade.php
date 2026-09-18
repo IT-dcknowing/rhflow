@@ -120,28 +120,28 @@
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
-                                                        <button class="btn btn-sm btn-outline-primary"
+                                                        <button class="btn btn-icon btn-sm btn-label-warning"
                                                             onclick="editWorkLocation({{ $location->id }})" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         @if($location->is_active)
-                                                            <button class="btn btn-sm btn-outline-warning"
+                                                            <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleWorkLocationStatus({{ $location->id }}, true)"
                                                                 title="Désactiver">
                                                                 <i class="fas fa-toggle-off"></i>
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline-success"
+                                                            <button class="btn btn-icon btn-sm btn-label-success"
                                                                 onclick="toggleWorkLocationStatus({{ $location->id }}, false)"
                                                                 title="Activer">
                                                                 <i class="fas fa-toggle-on"></i>
                                                             </button>
                                                         @endif
-                                                        <button class="btn btn-sm btn-outline-info"
+                                                        <button class="btn btn-icon btn-sm btn-label-primary"
                                                             onclick="generateQRCode({{ $location->id }})" title="Générer QR Code">
                                                             <i class="fas fa-qrcode"></i>
                                                         </button>
-                                                        <button class="btn btn-sm btn-outline-danger"
+                                                        <button class="btn btn-icon btn-sm btn-label-danger"
                                                             onclick="deleteWorkLocation({{ $location->id }}, '{{ addslashes($location->name) }}')"
                                                             title="Supprimer">
                                                             <i class="fas fa-trash"></i>

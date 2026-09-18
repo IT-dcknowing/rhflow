@@ -1043,25 +1043,29 @@
    le conteneur ne réservant que 4 px de hauteur. On la masque plutôt que de lui
    réserver de la place : le défilement reste possible à la molette, au doigt,
    au clavier et par le clic sur un onglet partiellement visible. */
-.ds .onglets-defilants {
-    overflow-x: auto;
-    /* Pas d'overflow-y ici : il rognait le bas des onglets (voir la règle suivante). */
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* anciens Edge */
+.ds .onglets-defilants,
+.onglets-defilants {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    padding-bottom: 2px;
 }
 
 /* card-header-tabs pose une marge basse négative pour aligner les onglets sur le bord
    de l'en-tête. Dans un conteneur défilant, cette marge les faisait rogner : on la
    neutralise, le bord inférieur étant déjà assuré par .nav-tabs. */
-.ds .onglets-defilants .card-header-tabs {
-    margin-bottom: 0;
+.ds .onglets-defilants .card-header-tabs,
+.onglets-defilants .card-header-tabs {
+    margin-bottom: 0 !important;
 }
 
-.ds .onglets-defilants::-webkit-scrollbar {
-    /* Chrome, Edge, Safari */
-    display: none;
+.ds .onglets-defilants::-webkit-scrollbar,
+.onglets-defilants::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    display: none !important;
+    background: transparent !important;
 }
 
 .ds .nav-tabs .nav-link {
@@ -1142,4 +1146,378 @@ body:has(.ds) .modal-footer {
     border-top: 1px solid var(--line-soft);
     background: var(--surface-2);
     border-radius: 0 0 14px 14px;
+}
+
+
+/* =====================================================================
+   BOUTONS D'ACTION — icônes dans les tableaux (DataTables & autres)
+   ---------------------------------------------------------------------
+   Cyan = voir, Ambre = modifier, Rouge = supprimer.
+   Utilisé partout dans le projet sans restriction de classe parente.
+   ===================================================================== */
+
+/* Conteneur d'icône carré */
+.btn-icon {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    transition: background-color .15s ease, color .15s ease !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* — Voir (cyan) */
+.btn-label-info {
+    color: #0891b2 !important;
+    background-color: rgba(8, 145, 178, 0.10) !important;
+    border: none !important;
+}
+.btn-label-info:hover,
+.btn-label-info:focus {
+    color: #fff !important;
+    background-color: #0891b2 !important;
+}
+
+/* — Modifier (ambre) */
+.btn-label-warning {
+    color: #b45309 !important;
+    background-color: rgba(180, 83, 9, 0.10) !important;
+    border: none !important;
+}
+.btn-label-warning:hover,
+.btn-label-warning:focus {
+    color: #fff !important;
+    background-color: #b45309 !important;
+}
+
+/* — Supprimer (rouge) */
+.btn-label-danger {
+    color: #dc2626 !important;
+    background-color: rgba(220, 38, 38, 0.10) !important;
+    border: none !important;
+}
+.btn-label-danger:hover,
+.btn-label-danger:focus {
+    color: #fff !important;
+    background-color: #dc2626 !important;
+}
+
+/* — Succès (vert) */
+.btn-label-success {
+    color: #059669 !important;
+    background-color: rgba(5, 150, 105, 0.10) !important;
+    border: none !important;
+}
+.btn-label-success:hover,
+.btn-label-success:focus {
+    color: #fff !important;
+    background-color: #059669 !important;
+}
+
+/* — Secondaire (gris) */
+.btn-label-secondary {
+    color: #6b7280 !important;
+    background-color: rgba(107, 114, 128, 0.10) !important;
+    border: none !important;
+}
+.btn-label-secondary:hover,
+.btn-label-secondary:focus {
+    color: #fff !important;
+    background-color: #6b7280 !important;
+}
+
+/* - Principal (navy) : telecharger, imprimer, envoyer */
+.btn-label-primary {
+    color: var(--navy-text) !important;
+    background-color: var(--navy-tint) !important;
+    border: none !important;
+}
+.btn-label-primary:hover,
+.btn-label-primary:focus {
+    color: #fff !important;
+    background-color: var(--navy) !important;
+}
+
+/* Etat desactive : le bouton reste lisible mais inerte */
+.btn-icon.disabled,
+.btn-icon:disabled {
+    opacity: .5 !important;
+    pointer-events: none !important;
+}
+
+/* Icone toujours a la bonne taille, quelle que soit la police d'icones */
+table td .btn-icon > i {
+    font-size: 14px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* ---------------------------------------------------------------------
+   Filet de securite : dans un tableau, toute icone d'action recoit la
+   meme grammaire, meme si la vue porte encore d'anciennes classes
+   Bootstrap (btn-outline-*, btn-*, bg-*). Les vues sont normalisees,
+   ceci couvre le HTML genere en JS et les ecrans pas encore repris.
+   --------------------------------------------------------------------- */
+table td .btn.btn-icon,
+table td .btn-icon.btn {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+table td .btn-icon.btn-outline-info,
+table td .btn-icon.btn-info,
+table td .btn-icon.bg-info,
+table td .btn-icon.bg-label-info {
+    color: #0891b2 !important;
+    background-color: rgba(8, 145, 178, 0.10) !important;
+}
+
+table td .btn-icon.btn-outline-warning,
+table td .btn-icon.btn-warning,
+table td .btn-icon.bg-warning,
+table td .btn-icon.bg-label-warning {
+    color: #b45309 !important;
+    background-color: rgba(180, 83, 9, 0.10) !important;
+}
+
+table td .btn-icon.btn-outline-danger,
+table td .btn-icon.btn-danger,
+table td .btn-icon.bg-danger,
+table td .btn-icon.bg-label-danger {
+    color: #dc2626 !important;
+    background-color: rgba(220, 38, 38, 0.10) !important;
+}
+
+table td .btn-icon.btn-outline-success,
+table td .btn-icon.btn-success,
+table td .btn-icon.bg-success,
+table td .btn-icon.bg-label-success {
+    color: #059669 !important;
+    background-color: rgba(5, 150, 105, 0.10) !important;
+}
+
+table td .btn-icon.btn-outline-primary,
+table td .btn-icon.btn-primary,
+table td .btn-icon.bg-primary,
+table td .btn-icon.bg-label-primary {
+    color: var(--navy-text) !important;
+    background-color: var(--navy-tint) !important;
+}
+
+table td .btn-icon.btn-outline-secondary,
+table td .btn-icon.btn-secondary,
+table td .btn-icon.btn-light,
+table td .btn-icon.bg-secondary,
+table td .btn-icon.bg-label-secondary {
+    color: #6b7280 !important;
+    background-color: rgba(107, 114, 128, 0.10) !important;
+}
+
+/* Le texte blanc herite des anciennes classes rendrait l'icone invisible */
+table td .btn-icon > i.text-white {
+    color: inherit !important;
+}
+
+/* Espacement constant entre les icones d'une cellule d'actions */
+table td .d-flex > .btn-icon,
+table td .d-inline-flex > .btn-icon,
+table td .btn-group > .btn-icon,
+table td .d-flex > form > .btn-icon,
+table td .d-inline-flex > form > .btn-icon {
+    margin-right: 4px;
+}
+
+table td .d-flex > .btn-icon:last-child,
+table td .d-inline-flex > .btn-icon:last-child,
+table td .btn-group > .btn-icon:last-child {
+    margin-right: 0;
+}
+
+/* Un groupe de boutons ne doit plus coller ses angles */
+table td .btn-group > .btn-icon {
+    border-radius: 6px !important;
+}
+
+/* Badge statut cliquable (toggle) */
+[data-user-status-badge]:hover {
+    filter: brightness(0.9);
+}
+
+
+/* =====================================================================
+   ACTIONS RAPIDES — composant <x-quick-actions> / <x-quick-action>
+   ---------------------------------------------------------------------
+   Classes propres au composant, volontairement NON limitées à .ds : les
+   écrans pas encore refaits (super-admin) doivent avoir le même rendu.
+   Les sélecteurs sont écrits « .btn.qa-btn » pour passer devant « .ds .btn ».
+   ===================================================================== */
+.qa-card {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.qa-title {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.qa-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Une ligne de la barre : actions principales, puis secondaires + service. */
+.qa-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Actions de service, repoussées à droite de leur ligne avec espacement aéré. */
+.qa-end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin-left: auto;
+}
+
+/* Colonne d'actions des pages de détail : boutons pleine largeur. */
+.qa-bar-stacked .qa-row {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.qa-bar-stacked .qa-row > *,
+.qa-bar-stacked .qa-row > form > .qa-btn,
+.qa-bar-stacked .qa-end > * {
+    width: 100%;
+}
+
+.qa-bar-stacked .qa-end {
+    margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+/* Un formulaire n'est qu'un porteur de bouton : il ne doit rien occuper. */
+.qa-row > form {
+    display: contents;
+}
+
+.btn.qa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: none;
+    transition: all .15s ease-in-out;
+}
+
+.btn.qa-btn i {
+    margin: 0 !important;
+    font-size: 13px;
+}
+
+.btn.qa-btn.disabled,
+.btn.qa-btn:disabled {
+    opacity: .55;
+    pointer-events: none;
+}
+
+/* Bouton plein : bleu royal vif identique à la maquette. */
+.btn.qa-btn-primary.btn-primary {
+    background: #195ebd;
+    border-color: #195ebd;
+    color: #fff;
+}
+
+.btn.qa-btn-primary.btn-primary:hover,
+.btn.qa-btn-primary.btn-primary:focus {
+    background: #134da0;
+    border-color: #134da0;
+    color: #fff;
+}
+
+/* Bouton contour : cadre neutre ou accentué (or/avertissement, etc.). */
+.btn.qa-btn-outline {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+}
+
+.btn.qa-btn-outline:hover,
+.btn.qa-btn-outline:focus {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.btn.qa-btn-outline.btn-outline-primary { color: #195ebd; border-color: #93c5fd; }
+.btn.qa-btn-outline.btn-outline-success { color: var(--ok); border-color: var(--ok-line); }
+.btn.qa-btn-outline.btn-outline-warning { color: #b8860b; border-color: #b8860b; }
+.btn.qa-btn-outline.btn-outline-danger  { color: var(--bad); border-color: var(--bad-line); }
+.btn.qa-btn-outline.btn-outline-info    { color: #195ebd; border-color: #93c5fd; }
+.btn.qa-btn-outline.btn-outline-secondary { color: #6b7280; border-color: #d1d5db; }
+
+.btn.qa-btn-outline.btn-outline-warning:hover { background: rgba(184, 134, 11, 0.08); border-color: #b8860b; color: #9a6f08; }
+.btn.qa-btn-outline.btn-outline-success:hover { background: var(--ok-bg); border-color: var(--ok-line); color: var(--ok); }
+.btn.qa-btn-outline.btn-outline-danger:hover  { background: var(--bad-bg); border-color: var(--bad-line); color: var(--bad); }
+.btn.qa-btn-outline:is(.btn-outline-primary, .btn-outline-info):hover { background: #eff6ff; color: #195ebd; border-color: #60a5fa; }
+
+/* Bouton sans cadre : actions de service. */
+.btn.qa-btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 0 6px;
+}
+
+.btn.qa-btn-ghost:hover,
+.btn.qa-btn-ghost:focus {
+    background: rgba(25, 94, 189, 0.06);
+    border-color: transparent;
+    color: #195ebd;
+}
+
+.btn.qa-btn-ghost.qa-accent-danger:hover { background: var(--bad-bg); color: var(--bad); }
+
+@media (max-width: 575.98px) {
+    .qa-bar:not(.qa-bar-stacked) .qa-row > *,
+    .qa-bar:not(.qa-bar-stacked) .qa-row > form > .qa-btn,
+    .qa-bar:not(.qa-bar-stacked) .qa-end,
+    .qa-bar:not(.qa-bar-stacked) .qa-end > * {
+        width: 100%;
+    }
+
+    .qa-end {
+        margin-left: 0;
+        flex-direction: column;
+        align-items: stretch;
+    }
 }

@@ -128,7 +128,7 @@
                                                                         data-url="{{ URL::to('allowance/' . $allowance->id . '/edit') }}"
                                                                         data-size="lg" data-ajax-popup="true"
                                                                         data-title="{{ __('Edit Allowance') }}"
-                                                                        class="action-btn btn-primary me-1 btn btn-sm d-inline-flex align-items-center"
+                                                                        class="btn btn-icon btn-sm btn-label-warning me-1"
                                                                         data-toggle="tooltip"
                                                                         data-original-title="{{ __('Edit') }}"><i
                                                                             class="ti ti-pencil"></i></a>
@@ -140,7 +140,7 @@
                                                                         'id' => 'delete-form-' . $allowance->id,
                                                                     ]) !!}
                                                                     <a href="#!"
-                                                                        class="action-btn btn-danger me-1 btn btn-sm d-inline-flex align-items-center show_confirm"
+                                                                        class="btn btn-icon btn-sm btn-label-danger me-1 show_confirm"
                                                                         data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                                         title="{{ __('Delete') }}">
                                                                         <i class="ti ti-trash"></i></a>
@@ -209,7 +209,7 @@
                                                                     data-url="{{ URL::to('commission/' . $commission->id . '/edit') }}"
                                                                     data-size="lg" data-ajax-popup="true"
                                                                     data-title="{{ __('Edit Commission') }}"
-                                                                    class="action-btn btn-primary me-1 btn btn-sm d-inline-flex align-items-center"
+                                                                    class="btn btn-icon btn-sm btn-label-warning me-1"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="{{ __('Edit') }}"><i
                                                                         class="ti ti-pencil"></i></a>
@@ -221,7 +221,7 @@
                                                                     'id' => 'delete-form-' . $commission->id,
                                                                 ]) !!}
                                                                 <a href="#!"
-                                                                    class="action-btn btn-danger me-1 btn btn-sm d-inline-flex align-items-center show_confirm"
+                                                                    class="btn btn-icon btn-sm btn-label-danger me-1 show_confirm"
                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                                     title="{{ __('Delete') }}">
                                                                     <i class="ti ti-trash"></i></a>
@@ -325,7 +325,7 @@
                                                                     data-url="{{ URL::to('loan/' . $loan->id . '/edit') }}"
                                                                     data-size="lg" data-ajax-popup="true"
                                                                     data-title="{{ __('Edit Loan') }}"
-                                                                    class="action-btn btn-primary me-1 btn btn-sm d-inline-flex align-items-center"
+                                                                    class="btn btn-icon btn-sm btn-label-warning me-1"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="{{ __('Edit') }}"><i
                                                                         class="ti ti-pencil"></i></a>
@@ -337,7 +337,7 @@
                                                                     'id' => 'delete-form-' . $loan->id,
                                                                 ]) !!}
                                                                 <a href="#!"
-                                                                    class="action-btn btn-danger me-1 btn btn-sm d-inline-flex align-items-center show_confirm"
+                                                                    class="btn btn-icon btn-sm btn-label-danger me-1 show_confirm"
                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                                     title="{{ __('Delete') }}">
                                                                     <i class="ti ti-trash"></i></a>
@@ -417,7 +417,7 @@
                                                                     data-url="{{ URL::to('saturationdeduction/' . $saturationdeduction->id . '/edit') }}"
                                                                     data-size="lg" data-ajax-popup="true"
                                                                     data-title="{{ __('Edit Saturation Deduction') }}"
-                                                                    class="action-btn btn-primary me-1 btn btn-sm d-inline-flex align-items-center"
+                                                                    class="btn btn-icon btn-sm btn-label-warning me-1"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="{{ __('Edit') }}"><i
                                                                         class="ti ti-pencil"></i></a>
@@ -429,7 +429,7 @@
                                                                     'id' => 'delete-form-' . $saturationdeduction->id,
                                                                 ]) !!}
                                                                 <a href="#!"
-                                                                    class="action-btn btn-danger me-1 btn btn-sm d-inline-flex align-items-center show_confirm"
+                                                                    class="btn btn-icon btn-sm btn-label-danger me-1 show_confirm"
                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                                     title="{{ __('Delete') }}">
                                                                     <i class="ti ti-trash"></i></a>
@@ -501,7 +501,7 @@
                                                                     data-url="{{ URL::to('otherpayment/' . $otherpayment->id . '/edit') }}"
                                                                     data-size="lg" data-ajax-popup="true"
                                                                     data-title="{{ __('Edit Other Payment') }}"
-                                                                    class="action-btn btn-primary me-1 btn btn-sm d-inline-flex align-items-center"
+                                                                    class="btn btn-icon btn-sm btn-label-warning me-1"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="{{ __('Edit') }}"><i
                                                                         class="ti ti-pencil"></i></a>
@@ -513,7 +513,7 @@
                                                                     'id' => 'delete-form-' . $otherpayment->id,
                                                                 ]) !!}
                                                                 <a href="#!"
-                                                                    class="action-btn btn-danger me-1 btn btn-sm d-inline-flex align-items-center show_confirm"
+                                                                    class="btn btn-icon btn-sm btn-label-danger me-1 show_confirm"
                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                                     title="{{ __('Delete') }}">
                                                                     <i class="ti ti-trash"></i></a>
@@ -602,7 +602,7 @@
                                                                     data-url="{{ URL::to('overtime/' . $overtime->id . '/edit') }}"
                                                                     data-size="lg" data-ajax-popup="true"
                                                                     data-title="{{ __('Edit OverTime') }}"
-                                                                    class="action-btn btn-primary me-1 btn btn-sm d-inline-flex align-items-center"
+                                                                    class="btn btn-icon btn-sm btn-label-warning me-1"
                                                                     data-toggle="tooltip"
                                                                     data-original-title="{{ __('Edit') }}"><i
                                                                         class="ti ti-pencil"></i></a>
@@ -614,7 +614,7 @@
                                                                     'id' => 'delete-form-' . $overtime->id,
                                                                 ]) !!}
                                                                 <a href="#!"
-                                                                    class="action-btn btn-danger me-1 btn btn-sm d-inline-flex align-items-center show_confirm"
+                                                                    class="btn btn-icon btn-sm btn-label-danger me-1 show_confirm"
                                                                     data-bs-toggle="tooltip" data-bs-placement="bottom"
                                                                     title="{{ __('Delete') }}">
                                                                     <i class="ti ti-trash"></i></a>

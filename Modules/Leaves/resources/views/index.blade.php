@@ -210,7 +210,7 @@
                                         {{-- Sans approbation, aucun bouton d'activation n'apparaît :
                                              on rend l'étape accessible directement depuis la liste. --}}
                                         <a href="{{ route('company.leaves.show', $leave->id) }}"
-                                           class="btn btn-icon btn-outline-info btn-sm me-1"
+                                           class="btn btn-icon btn-sm btn-label-info"
                                            data-bs-toggle="tooltip"
                                            data-bs-placement="top"
                                            title="Traiter la demande (approuver / rejeter)">
@@ -225,7 +225,7 @@
                                                   onsubmit="return confirm('Désactiver ce congé ? L\'allocation sortira de la paie de la période. Les bulletins déjà générés ne sont pas modifiés.');">
                                                 @csrf
                                                 <button type="submit"
-                                                        class="btn btn-icon btn-outline-secondary btn-sm me-1"
+                                                        class="btn btn-icon btn-sm btn-label-secondary"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
                                                         title="Désactiver pour la paie">
@@ -234,7 +234,7 @@
                                             </form>
                                         @else
                                             <button type="button"
-                                                    class="btn btn-icon btn-outline-success btn-sm me-1 js-activate-leave"
+                                                    class="btn btn-icon btn-sm btn-label-success js-activate-leave"
                                                     data-url="{{ route('company.leaves.activateForm', $leave->id) }}"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="top"
@@ -244,14 +244,14 @@
                                         @endif
                                     @endif
                                     <a href="{{ route('company.leaves.show', $leave->id) }}" 
-                                       class="btn btn-icon btn-outline-primary btn-sm me-1"
+                                       class="btn btn-icon btn-sm btn-label-info"
                                        data-bs-toggle="tooltip" 
                                        data-bs-placement="top" 
                                        title="Voir les détails">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <a href="{{ route('company.leaves.edit', $leave->id) }}" 
-                                       class="btn btn-icon btn-outline-warning btn-sm me-1"
+                                       class="btn btn-icon btn-sm btn-label-warning"
                                        data-bs-toggle="tooltip" 
                                        data-bs-placement="top" 
                                        title="Modifier">
@@ -264,7 +264,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="btn btn-icon btn-outline-danger btn-sm"
+                                                class="btn btn-icon btn-sm btn-label-danger"
                                                 data-bs-toggle="tooltip" 
                                                 data-bs-placement="top" 
                                                 title="Supprimer"

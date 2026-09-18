@@ -371,171 +371,38 @@
                         -->
 
         <!-- Actions Rapides -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"> Actions Rapides</h5>
+        <x-quick-actions>
+            <x-quick-action icon="fas fa-cog" label="Paramètres de l'entreprise"
+                :href="route('company.settings.settings')" />
 
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.settings') }}" class="btn btn-outline-primary">
-                                        {{-- L'icône occupe son propre pavé coloré, détaché du libellé. --}}
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-primary rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-cog"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Paramètres</div>
-                                                <small class="text-muted">Entreprise</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            <x-quick-action icon="fas fa-file-alt" label="Documents d'entreprise"
+                :href="route('company.settings.documents')" />
 
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.leave-types.index') }}"
-                                        class="btn btn-outline-success">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-success rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Types de Congés</div>
-                                                <small class="text-muted">Configurer</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            <x-quick-action icon="fas fa-users-cog" label="Gestion des utilisateurs"
+                :href="route('company.settings.users.index')" />
 
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.loan-types.index') }}"
-                                        class="btn btn-outline-danger">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-danger rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-dollar-sign"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Types de Prêts</div>
-                                                <small class="text-muted">Configurer</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            <x-slot:secondary>
+                <x-quick-action icon="fas fa-calendar-alt" label="Types de congés"
+                    :href="route('company.settings.leave-types.index')" variant="outline" color="warning" />
 
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.work-locations.index') }}"
-                                        class="btn btn-outline-info">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-info rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Pointeuses</div>
-                                                <small class="text-muted">Emplacements</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                <x-quick-action icon="fas fa-dollar-sign" label="Types de prêts"
+                    :href="route('company.settings.loan-types.index')" variant="outline" />
 
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.branches.index') }}"
-                                        class="btn btn-outline-primary">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-primary rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-building"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Sites</div>
-                                                <small class="text-muted">Succursales</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                <x-quick-action icon="fas fa-map-marker-alt" label="Pointeuses"
+                    :href="route('company.settings.work-locations.index')" variant="outline" />
+            </x-slot:secondary>
 
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.departments.index') }}"
-                                        class="btn btn-outline-info">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-info rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-sitemap"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Services</div>
-                                                <small class="text-muted">Départements</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.designations.index') }}"
-                                        class="btn btn-outline-warning">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-warning rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-user-tie"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Postes</div>
-                                                <small class="text-muted">Designations</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ route('company.settings.attendance-system.index') }}"
-                                        class="btn btn-outline-secondary">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-secondary rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-clock"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">Présence</div>
-                                                <small class="text-muted">Configuration</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <x-slot:end>
+                <x-quick-action icon="fas fa-building" label="Sites"
+                    :href="route('company.settings.branches.index')" variant="ghost" />
+                <x-quick-action icon="fas fa-sitemap" label="Services"
+                    :href="route('company.settings.departments.index')" variant="ghost" />
+                <x-quick-action icon="fas fa-user-tie" label="Postes"
+                    :href="route('company.settings.designations.index')" variant="ghost" />
+                <x-quick-action icon="fas fa-clock" label="Présence"
+                    :href="route('company.settings.attendance-system.index')" variant="ghost" />
+            </x-slot:end>
+        </x-quick-actions>
     </div>
 
     <!-- Modal pour le Logo -->

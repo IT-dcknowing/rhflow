@@ -205,7 +205,7 @@
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2">
-                                                <!--<a href="{{ route('company.contracts.avenant.edit', $avenant->id) }}" class="btn btn-sm btn-icon btn-warning" data-bs-toggle="tooltip" title="Modifier">
+                                                <!--<a href="{{ route('company.contracts.avenant.edit', $avenant->id) }}" class="btn btn-icon btn-sm btn-label-warning" data-bs-toggle="tooltip" title="Modifier">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>-->
                                                 <form action="{{ route('company.contracts.avenant.destroy', $avenant->id) }}"
@@ -213,7 +213,7 @@
                                                     onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avenant ?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-icon btn-danger"
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-label-danger"
                                                         data-bs-toggle="tooltip" title="Supprimer">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

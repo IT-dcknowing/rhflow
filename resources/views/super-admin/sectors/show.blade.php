@@ -193,7 +193,7 @@
                                 </td>
                                 <td>
                                     <div class="dropdown">
-                                        <button class="btn p-0" type="button" data-bs-toggle="dropdown">
+                                        <button class="btn btn-icon btn-sm btn-label-secondary" type="button" data-bs-toggle="dropdown">
                                             <i class="ti ti-dots-vertical"></i>
                                         </button>
                                         <div class="dropdown-menu">

@@ -79,10 +79,10 @@
                                                     <td align="center">
                                                         <div class="d-flex gap-1">
                                                             <a href="{{ route('super-admin.enterprises.show', $enterprise) }}"
-                                                            class="btn btn-sm btn-outline-info">
+                                                            class="btn btn-icon btn-sm btn-label-info">
                                                                 <i class="ti ti-eye"></i>
                                                             </a>
-                                                            <a href="{{ route('super-admin.enterprises.showactivity', $enterprise) }}" class="btn btn-sm btn-outline-danger" title="Voir l'activité">
+                                                            <a href="{{ route('super-admin.enterprises.showactivity', $enterprise) }}" class="btn btn-icon btn-sm btn-label-info" title="Voir l'activité">
                                                                 <i class="ti ti-cloud-up"></i>
                                                             </a>
                                                         </div>

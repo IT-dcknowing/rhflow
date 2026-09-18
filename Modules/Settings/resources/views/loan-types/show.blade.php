@@ -273,42 +273,29 @@
             </div>
 
             <!-- Actions rapides -->
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">
-                        <i class="fas fa-bolt me-2"></i>Actions Rapides
-                    </h5>
-                    
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('company.settings.loan-types.edit', $loanType->id) }}"
-                            class="btn btn-warning d-flex align-items-center justify-content-center gap-2">
-                            <i class="fas fa-edit"></i>
-                            <span>Modifier</span>
-                        </a>
+            <x-quick-actions class="mt-4" stacked>
+                <x-quick-action icon="fas fa-edit" label="Modifier"
+                    :href="route('company.settings.loan-types.edit', $loanType->id)"
+                    variant="outline" color="warning" />
 
-                        <form action="{{ route('company.settings.loan-types.toggle-status', $loanType->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <button type="submit"
-                                class="btn btn-{{ $loanType->is_active ? 'secondary' : 'success' }} w-100 d-flex align-items-center justify-content-center gap-2">
-                                <i class="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }}"></i>
-                                <span>{{ $loanType->is_active ? 'Désactiver' : 'Activer' }}</span>
-                            </button>
-                        </form>
+                <form action="{{ route('company.settings.loan-types.toggle-status', $loanType->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <x-quick-action type="submit"
+                        icon="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }}"
+                        label="{{ $loanType->is_active ? 'Désactiver' : 'Activer' }}"
+                        variant="outline" color="{{ $loanType->is_active ? 'secondary' : 'success' }}" />
+                </form>
 
-                        <form action="{{ route('company.settings.loan-types.destroy', $loanType->id) }}"
-                              method="POST"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de prêt ? Cette action est irréversible.');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2">
-                                <i class="fas fa-trash"></i>
-                                <span>Supprimer</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                <form action="{{ route('company.settings.loan-types.destroy', $loanType->id) }}"
+                      method="POST"
+                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de prêt ? Cette action est irréversible.');">
+                    @csrf
+                    @method('DELETE')
+                    <x-quick-action type="submit" icon="fas fa-trash" label="Supprimer"
+                        variant="outline" color="danger" />
+                </form>
+            </x-quick-actions>
         </div>
     </div>
 </div>

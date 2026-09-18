@@ -219,7 +219,7 @@
                             </td>
                             <td>
                                 <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                    <button type="button" class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                         <i class="fas fa-ellipsis-v"></i>
                                     </button>
                                     <div class="dropdown-menu">
@@ -303,61 +303,20 @@
     </div>
 
     <!-- Actions Rapides -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">⚡ Actions Rapides</h5>
-                    <span class="badge bg-label-primary">Réunions</span>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="d-grid">
-                                <a href="{{ route('company.evenements.meetings.create') }}" class="btn btn-primary">
-                                    {{-- gap-2 plutôt qu'une marge sur l'icône : icône et libellé restent deux blocs distincts. --}}
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-plus-circle"></i>
-                                        <span>Nouvelle Réunion</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="d-grid">
-                                <a href="{{ route('company.evenements.meetings.calendar') }}" class="btn btn-outline-info">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span>Voir le Calendrier</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="d-grid">
-                                <a href="#" class="btn btn-outline-success">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-file-export"></i>
-                                        <span>Exporter en Excel</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6 mb-3">
-                            <div class="d-grid">
-                                <a href="#" class="btn btn-outline-warning">
-                                    <div class="d-flex align-items-center justify-content-center gap-2">
-                                        <i class="fas fa-cog"></i>
-                                        <span>Paramètres</span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-quick-actions>
+        <x-quick-action icon="fas fa-plus-circle" label="Nouvelle réunion"
+            :href="route('company.evenements.meetings.create')" />
+
+        <x-slot:secondary>
+            <x-quick-action icon="fas fa-calendar-alt" label="Voir le calendrier"
+                :href="route('company.evenements.meetings.calendar')" variant="outline" color="primary" />
+        </x-slot:secondary>
+
+        <x-slot:end>
+            <x-quick-action icon="fas fa-file-export" label="Exporter en Excel" href="#" variant="ghost" />
+            <x-quick-action icon="fas fa-cog" label="Paramètres" href="#" variant="ghost" />
+        </x-slot:end>
+    </x-quick-actions>
 </div>
 
 <!-- Modal de confirmation de suppression -->

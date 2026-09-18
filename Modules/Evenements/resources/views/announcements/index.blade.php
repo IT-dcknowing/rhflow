@@ -166,19 +166,19 @@
                                         <td class="text-end">
                                             <div class="btn-group" role="group">
                                                 <a href="{{ route('company.evenements.annonces.show', $announcement->id) }}" 
-                                                   class="btn btn-sm btn-outline-info" 
+                                                   class="btn btn-icon btn-sm btn-label-info" 
                                                    data-bs-toggle="tooltip" 
                                                    title="Voir les détails">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('company.evenements.annonces.edit', $announcement->id) }}" 
-                                                   class="btn btn-sm btn-outline-primary" 
+                                                   class="btn btn-icon btn-sm btn-label-warning" 
                                                    data-bs-toggle="tooltip" 
                                                    title="Modifier">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <button type="button" 
-                                                        class="btn btn-sm btn-outline-danger delete-btn" 
+                                                        class="btn btn-icon btn-sm btn-label-danger delete-btn" 
                                                         data-id="{{ $announcement->id }}"
                                                         data-bs-toggle="tooltip" 
                                                         title="Supprimer">

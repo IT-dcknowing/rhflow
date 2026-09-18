@@ -94,9 +94,9 @@
                                                 @if($employee->is_active != 2)
                                                     <div class="action-btn ms-2">
                                                         <a href="{{ route('setsalary.show', ['eid' => $employee->id, 'monthpaie' => $monthpaie]) }}"
-                                                            class="btn btn-sm bg-info align-items-center" data-bs-toggle="tooltip"
+                                                            class="btn btn-icon btn-sm btn-label-info" data-bs-toggle="tooltip"
                                                             title="" data-bs-original-title="{{ __('View') }}">
-                                                            <i class="ti ti-eye text-white"></i>
+                                                            <i class="ti ti-eye"></i>
                                                         </a>
                                                     </div>
                                                 @else

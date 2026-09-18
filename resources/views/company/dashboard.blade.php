@@ -889,180 +889,47 @@
         </div>
 
         <!-- Actions Rapides et Raccourcis -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"> Actions Rapides</h5>
-                       
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <!-- Module Employés -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['monthly_employee']['route'] }}"
-                                        class="btn btn-outline-primary">
-                                        {{-- L'icône occupe son propre pavé coloré, détaché du libellé. --}}
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ $quickActions['monthly_employee']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['monthly_employee']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['monthly_employee']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['monthly_employee']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+        <x-quick-actions>
+            <x-quick-action icon="fas fa-{{ $quickActions['monthly_employee']['icon'] }}"
+                label="{{ $quickActions['monthly_employee']['title'] }} ({{ $quickActions['monthly_employee']['subtitle'] }})"
+                :href="$quickActions['monthly_employee']['route']" />
 
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['daily_employee']['route'] }}" class="btn btn-outline-info">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ $quickActions['daily_employee']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['daily_employee']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['daily_employee']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['daily_employee']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            <x-quick-action icon="fas fa-{{ $quickActions['daily_employee']['icon'] }}"
+                label="{{ $quickActions['daily_employee']['title'] }} ({{ $quickActions['daily_employee']['subtitle'] }})"
+                :href="$quickActions['daily_employee']['route']" />
 
-                            <!-- Module Paie -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['generate_payroll']['route'] }}"
-                                        class="btn btn-outline-success">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ $quickActions['generate_payroll']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['generate_payroll']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['generate_payroll']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['generate_payroll']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            <x-quick-action icon="fas fa-{{ $quickActions['generate_payroll']['icon'] }}"
+                label="{{ $quickActions['generate_payroll']['title'] }} ({{ $quickActions['generate_payroll']['subtitle'] }})"
+                :href="$quickActions['generate_payroll']['route']" />
 
-                            <!-- Module Congés -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['approve_leaves']['route'] }}"
-                                        class="btn btn-outline-warning">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ $quickActions['approve_leaves']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['approve_leaves']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['approve_leaves']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['approve_leaves']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            {{-- Deuxième ligne : actions secondaires à gauche. --}}
+            <x-slot:secondary>
+                <x-quick-action icon="fas fa-{{ $quickActions['approve_leaves']['icon'] }}"
+                    label="{{ $quickActions['approve_leaves']['title'] }}"
+                    :href="$quickActions['approve_leaves']['route']" variant="outline" color="warning" />
 
-                            <!-- Module Rapports -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['monthly_report']['route'] }}"
-                                        class="btn btn-outline-secondary">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ $quickActions['monthly_report']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['monthly_report']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['monthly_report']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['monthly_report']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                <x-quick-action icon="fas fa-{{ $quickActions['monthly_report']['icon'] }}"
+                    label="{{ $quickActions['monthly_report']['title'] }}"
+                    :href="$quickActions['monthly_report']['route']" variant="outline" />
+            </x-slot:secondary>
 
-                            <!-- Module Paramètres -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['company_settings']['route'] }}" class="btn btn-outline-dark">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ $quickActions['company_settings']['color'] }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['company_settings']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['company_settings']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['company_settings']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+            {{-- ... et actions de service sans cadre, repoussées à droite. --}}
+            <x-slot:end>
+                <x-quick-action icon="fas fa-{{ $quickActions['company_settings']['icon'] }}"
+                    label="{{ $quickActions['company_settings']['title'] }}"
+                    :href="$quickActions['company_settings']['route']" variant="ghost" />
 
-                            <!-- Module Support -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['support']['route'] }}" 
-                                       class="btn btn-outline-secondary {{ !($quickActions['support']['is_active'] ?? true) ? 'disabled' : '' }}"
-                                       @if(!($quickActions['support']['is_active'] ?? true)) style="opacity: 0.6; pointer-events: none; border-color: #d9dee3 !important; color: #a1acb8 !important;" @endif>
-                                        {{-- Action inactive : la pastille reste grise pour ne pas attirer l'œil. --}}
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ ($quickActions['support']['is_active'] ?? true) ? $quickActions['support']['color'] : 'secondary' }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['support']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['support']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['support']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                <x-quick-action icon="fas fa-{{ $quickActions['support']['icon'] }}"
+                    label="{{ $quickActions['support']['title'] }}"
+                    :href="$quickActions['support']['route']" variant="ghost"
+                    :disabled="!($quickActions['support']['is_active'] ?? true)" />
 
-                            <!-- Module Analytics -->
-                            <div class="col-xl-3 col-md-6 mb-3">
-                                <div class="d-grid">
-                                    <a href="{{ $quickActions['analytics']['route'] }}" 
-                                       class="btn btn-outline-secondary {{ !($quickActions['analytics']['is_active'] ?? true) ? 'disabled' : '' }}"
-                                       @if(!($quickActions['analytics']['is_active'] ?? true)) style="opacity: 0.6; pointer-events: none; border-color: #d9dee3 !important; color: #a1acb8 !important;" @endif>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span
-                                                class="avatar-initial bg-label-{{ ($quickActions['analytics']['is_active'] ?? true) ? $quickActions['analytics']['color'] : 'secondary' }} rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fas fa-{{ $quickActions['analytics']['icon'] }}"></i>
-                                            </span>
-                                            <div class="text-start">
-                                                <div class="fw-semibold">{{ $quickActions['analytics']['title'] }}</div>
-                                                <small class="text-muted">{{ $quickActions['analytics']['subtitle'] }}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <x-quick-action icon="fas fa-{{ $quickActions['analytics']['icon'] }}"
+                    label="{{ $quickActions['analytics']['title'] }}"
+                    :href="$quickActions['analytics']['route']" variant="ghost"
+                    :disabled="!($quickActions['analytics']['is_active'] ?? true)" />
+            </x-slot:end>
+        </x-quick-actions>
     </div>
 @endsection
 

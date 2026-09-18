@@ -186,7 +186,7 @@
                                         </td>
                                         <td align="center">
                                             <div class="dropdown">
-                                                <button class="btn p-0" type="button" data-bs-toggle="dropdown">
+                                                <button class="btn btn-icon btn-sm btn-label-secondary" type="button" data-bs-toggle="dropdown">
                                                     <i class="ti ti-menu"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-end" style="position: fixed; z-index: 1050;">
@@ -423,7 +423,7 @@ function createUserRow(user) {
         <td><small>${formatDate(user.created_at)}</small></td>
         <td align="center">
             <div class="dropdown">
-                <button class="btn p-0" type="button" data-bs-toggle="dropdown">
+                <button class="btn btn-icon btn-sm btn-label-secondary" type="button" data-bs-toggle="dropdown">
                     <i class="ti ti-menu"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end" style="position: fixed; z-index: 1050;">

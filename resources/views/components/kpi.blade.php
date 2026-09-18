@@ -25,8 +25,8 @@
 
 {{-- Les attributs restants (id, data-*) vont sur la colonne : certains écrans y accrochent le guide ou du JS. --}}
 <div {{ $attributes->merge(['class' => $col . ' mb-4']) }}>
-    <div class="d-flex align-items-center justify-content-between p-3 border rounded h-100">
-        <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between p-3 border rounded h-100 gap-2">
+        <div class="d-flex align-items-center" style="min-width: 0;">
             <div class="avatar avatar-md me-3" style="width: 50px; height: 50px;">
                 <div class="avatar-initial bg-label-{{ $color }} rounded">
                     <i class="{{ $icon }} fa-24px"></i>
@@ -43,9 +43,10 @@
                 @endisset
             </div>
         </div>
-        <div class="text-end">
+        {{-- flex-shrink-0 + text-nowrap : un montant comme « 4 084 158 » reste sur une seule ligne. --}}
+        <div class="text-end flex-shrink-0">
             {{-- trim() et non $slot->isEmpty() : les retours à la ligne autour d'un slot nommé rendent le slot par défaut non vide. --}}
-            <h3 class="mb-0 text-{{ $color }}">
+            <h3 class="mb-0 text-nowrap text-{{ $color }}">
                 @if (trim($slot) !== '')
                     {{ $slot }}
                 @else

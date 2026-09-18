@@ -151,14 +151,14 @@
                                     <td align="center">
                                         <div class="d-inline-flex gap-1">
                                             <a href="{{ route('company.declarations.resume.show', $paySlip->id) }}"
-                                                class="btn btn-sm btn-icon btn-outline-primary" title="Voir le bulletin" aria-label="Voir le bulletin">
+                                                class="btn btn-icon btn-sm btn-label-info" title="Voir le bulletin" aria-label="Voir le bulletin">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ route('company.declarations.resume.edit', $paySlip->id) }}"
-                                                class="btn btn-sm btn-icon btn-outline-warning" title="Modifier le bulletin" aria-label="Modifier le bulletin">
+                                                class="btn btn-icon btn-sm btn-label-warning" title="Modifier le bulletin" aria-label="Modifier le bulletin">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <button type="button" class="btn btn-sm btn-icon btn-outline-danger"
+                                            <button type="button" class="btn btn-icon btn-sm btn-label-danger"
                                                 onclick="deleteBulletin({{ $paySlip->id }})" title="Supprimer le bulletin" aria-label="Supprimer le bulletin">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -558,9 +558,9 @@
                     html += '</td>';
                     html += '<td align="center">';
                     html += '<div class="d-inline-flex gap-1">';
-                    html += '<a href="' + @json(route('company.declarations.resume.show', '__ID__')).replace('__ID__', bulletin.id) + '" class="btn btn-sm btn-icon btn-outline-primary" title="Voir le bulletin" aria-label="Voir le bulletin"><i class="fas fa-eye"></i></a>';
-                    html += '<a href="' + @json(route('company.declarations.resume.edit', '__ID__')).replace('__ID__', bulletin.id) + '" class="btn btn-sm btn-icon btn-outline-warning" title="Modifier le bulletin" aria-label="Modifier le bulletin"><i class="fas fa-edit"></i></a>';
-                    html += '<button type="button" class="btn btn-sm btn-icon btn-outline-danger" onclick="deleteBulletin(' + bulletin.id + ')" title="Supprimer le bulletin" aria-label="Supprimer le bulletin"><i class="fas fa-trash"></i></button>';
+                    html += '<a href="' + @json(route('company.declarations.resume.show', '__ID__')).replace('__ID__', bulletin.id) + '" class="btn btn-icon btn-sm btn-label-info" title="Voir le bulletin" aria-label="Voir le bulletin"><i class="fas fa-eye"></i></a>';
+                    html += '<a href="' + @json(route('company.declarations.resume.edit', '__ID__')).replace('__ID__', bulletin.id) + '" class="btn btn-icon btn-sm btn-label-warning" title="Modifier le bulletin" aria-label="Modifier le bulletin"><i class="fas fa-edit"></i></a>';
+                    html += '<button type="button" class="btn btn-icon btn-sm btn-label-danger" onclick="deleteBulletin(' + bulletin.id + ')" title="Supprimer le bulletin" aria-label="Supprimer le bulletin"><i class="fas fa-trash"></i></button>';
                     html += '</div>';
                     html += '</td>';
                     html += '</tr>';

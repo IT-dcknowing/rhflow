@@ -69,25 +69,25 @@
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
-                                                        <button class="btn btn-sm btn-outline-primary"
+                                                        <button class="btn btn-icon btn-sm btn-label-warning"
                                                             onclick="editLeaveType({{ $leaveType->id }}, '{{ addslashes($leaveType->title) }}', {{ $leaveType->days }}, {{ $leaveType->is_active ? 'true' : 'false' }})"
                                                             title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         @if(!$leaveType->is_active)
-                                                            <button class="btn btn-sm btn-outline-success"
+                                                            <button class="btn btn-icon btn-sm btn-label-success"
                                                                 onclick="toggleLeaveType({{ $leaveType->id }}, '{{ addslashes($leaveType->title) }}', false)"
                                                                 title="Activer">
                                                                 <i class="fas fa-check"></i>
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline-warning"
+                                                            <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleLeaveType({{ $leaveType->id }}, '{{ addslashes($leaveType->title) }}', true)"
                                                                 title="Désactiver">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                         @endif
-                                                        <button class="btn btn-sm btn-outline-danger"
+                                                        <button class="btn btn-icon btn-sm btn-label-danger"
                                                             onclick="deleteLeaveType({{ $leaveType->id }}, '{{ addslashes($leaveType->title) }}')"
                                                             title="Supprimer">
                                                             <i class="fas fa-trash"></i>

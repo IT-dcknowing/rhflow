@@ -205,7 +205,7 @@
                                                 @endswitch
                                             </td>
                                             <td>
-                                                <a href="{{ route('super-admin.commandes.show', $order) }}" class="btn btn-sm btn-outline-primary">
+                                                <a href="{{ route('super-admin.commandes.show', $order) }}" class="btn btn-icon btn-sm btn-label-info">
                                                     <i class="ti ti-eye"></i>
                                                 </a>
                                             </td>

@@ -365,59 +365,40 @@
 
             <!-- Actions rapides -->
             @canany(['update', 'delete'], $promotion)
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        @can('update', $promotion)
-                            @if($promotion->status == 'pending' || $promotion->status == 'on_hold')
-                            <button type="button" class="btn btn-success mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#approveModal">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Approuver la promotion</span>
-                            </button>
-                            @elseif($promotion->status == 'approved' && !$promotion->effective_date)
-                            <button type="button" class="btn btn-success mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#applyPromotionModal">
-                                <i class="fas fa-check-double"></i>
-                                <span>Appliquer les changements</span>
-                            </button>
-                            @endif
+            <x-quick-actions title="Actions" stacked>
+                @can('update', $promotion)
+                    @if($promotion->status == 'pending' || $promotion->status == 'on_hold')
+                        <x-quick-action icon="fas fa-check-circle" label="Approuver la promotion"
+                            color="success" data-bs-toggle="modal" data-bs-target="#approveModal" />
+                    @elseif($promotion->status == 'approved' && !$promotion->effective_date)
+                        <x-quick-action icon="fas fa-check-double" label="Appliquer les changements"
+                            color="success" data-bs-toggle="modal" data-bs-target="#applyPromotionModal" />
+                    @endif
 
-                            @if($promotion->status == 'pending' || $promotion->status == 'on_hold')
-                            <button type="button" class="btn btn-warning mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#onHoldModal">
-                                <i class="fas fa-pause-circle"></i>
-                                <span>Mettre en attente</span>
-                            </button>
-                            @endif
+                    @if($promotion->status == 'pending' || $promotion->status == 'on_hold')
+                        <x-quick-action icon="fas fa-pause-circle" label="Mettre en attente"
+                            variant="outline" color="warning" data-bs-toggle="modal" data-bs-target="#onHoldModal" />
+                    @endif
 
-                            @if($promotion->status != 'rejected')
-                            <button type="button" class="btn btn-danger mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                                <i class="fas fa-times-circle"></i>
-                                <span>Rejeter la promotion</span>
-                            </button>
-                            @endif
+                    @if($promotion->status != 'rejected')
+                        <x-quick-action icon="fas fa-times-circle" label="Rejeter la promotion"
+                            variant="outline" color="danger" data-bs-toggle="modal" data-bs-target="#rejectModal" />
+                    @endif
 
-                            <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-outline-primary mb-2 d-flex align-items-center justify-content-center gap-2">
-                                <i class="fas fa-edit"></i>
-                                <span>Modifier</span>
-                            </a>
-                        @endcan
+                    <x-quick-action icon="fas fa-edit" label="Modifier"
+                        :href="route('promotions.edit', $promotion->id)" variant="outline" color="primary" />
+                @endcan
 
-                        @can('delete', $promotion)
-                        <button type="button" class="btn btn-danger d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <i class="fas fa-trash-alt"></i>
-                            <span>Supprimer</span>
-                        </button>
-                        @endcan
+                @can('delete', $promotion)
+                    <x-quick-action icon="fas fa-trash-alt" label="Supprimer"
+                        variant="outline" color="danger" data-bs-toggle="modal" data-bs-target="#deleteModal" />
+                @endcan
 
-                        <a href="#" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2" onclick="window.print();">
-                            <i class="fas fa-print"></i>
-                            <span>Imprimer</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+                <x-slot:end>
+                    <x-quick-action icon="fas fa-print" label="Imprimer" variant="ghost"
+                        onclick="window.print();" />
+                </x-slot:end>
+            </x-quick-actions>
             @endcanany
         </div>
     </div>

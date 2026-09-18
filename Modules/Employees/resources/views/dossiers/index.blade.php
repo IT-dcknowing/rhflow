@@ -158,18 +158,18 @@
                                             @endif
                                         </td>
                                         <td class="text-end">
-                                            <div class="d-flex justify-content-end">
+                                            <div class="d-flex justify-content-end gap-1">
                                                 <a href="{{ route('company.employees.show', $employee->id) }}"
-                                                    class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                                    class="btn btn-icon btn-sm btn-label-info" data-bs-toggle="tooltip"
                                                     title="Voir le dossier">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('company.employees.edit', $employee->id) }}"
-                                                    class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                                    class="btn btn-icon btn-sm btn-label-warning" data-bs-toggle="tooltip"
                                                     title="Modifier">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-icon btn-sm btn-outline-warning toggle-employee"
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-secondary toggle-employee"
                                                     data-id="{{ $employee->id }}" data-status="{{ $employee->is_active }}"
                                                     data-name="{{ $employee->name }}" data-bs-toggle="tooltip"
                                                     title="Désactiver">
@@ -236,18 +236,18 @@
                                             </span>
                                         </td>
                                         <td class="text-end">
-                                            <div class="d-flex justify-content-end">
+                                            <div class="d-flex justify-content-end gap-1">
                                                 <a href="{{ route('company.employees.show', $employee->id) }}"
-                                                    class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                                    class="btn btn-icon btn-sm btn-label-info" data-bs-toggle="tooltip"
                                                     title="Voir le dossier">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('company.employees.edit', $employee->id) }}"
-                                                    class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                                    class="btn btn-icon btn-sm btn-label-warning" data-bs-toggle="tooltip"
                                                     title="Modifier">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-icon btn-sm btn-outline-success toggle-employee"
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-success toggle-employee"
                                                     data-id="{{ $employee->id }}" data-status="{{ $employee->is_active }}"
                                                     data-name="{{ $employee->name }}" data-bs-toggle="tooltip" title="Activer">
                                                     <i class="fas fa-power-off"></i>

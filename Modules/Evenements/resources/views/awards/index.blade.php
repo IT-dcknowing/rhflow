@@ -152,14 +152,14 @@
                                         <td>
                                             <div class="d-flex gap-2">
                                                 <a href="{{ route('company.evenements.awards.show', $award->id) }}" 
-                                                   class="btn btn-icon btn-label-info"
+                                                   class="btn btn-icon btn-sm btn-label-info"
                                                    data-bs-toggle="tooltip" 
                                                    data-bs-placement="top" 
                                                    title="Voir les détails">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('company.evenements.awards.edit', $award->id) }}" 
-                                                   class="btn btn-icon btn-label-warning"
+                                                   class="btn btn-icon btn-sm btn-label-warning"
                                                    data-bs-toggle="tooltip" 
                                                    data-bs-placement="top" 
                                                    title="Modifier">
@@ -169,7 +169,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
-                                                            class="btn btn-icon btn-label-danger"
+                                                            class="btn btn-icon btn-sm btn-label-danger"
                                                             data-bs-toggle="tooltip" 
                                                             data-bs-placement="top" 
                                                             title="Supprimer"

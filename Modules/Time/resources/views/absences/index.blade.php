@@ -100,16 +100,16 @@ use Carbon\Carbon;
                             </td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="#" class="btn btn-icon btn-label-info me-2 view-absence" data-absence-id="{{ $absence->id }}" data-bs-toggle="modal" data-bs-target="#showAbsenceModal">
+                                    <a href="#" class="btn btn-icon btn-sm btn-label-info me-2 view-absence" data-absence-id="{{ $absence->id }}" data-bs-toggle="modal" data-bs-target="#showAbsenceModal">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="#" class="btn btn-icon bg-label-primary me-2 edit-absence" data-absence-id="{{ $absence->id }}" data-bs-toggle="modal" data-bs-target="#editAbsenceModal">
+                                    <a href="#" class="btn btn-icon btn-sm btn-label-warning me-2 edit-absence" data-absence-id="{{ $absence->id }}" data-bs-toggle="modal" data-bs-target="#editAbsenceModal">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form action="{{ route('company.times.absences.destroy', $absence->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-icon btn-label-danger delete-confirm">
+                                        <button type="submit" class="btn btn-icon btn-sm btn-label-danger delete-confirm">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form> 

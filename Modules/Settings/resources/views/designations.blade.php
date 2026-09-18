@@ -122,24 +122,24 @@
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
-                                                        <button class="btn btn-sm btn-outline-primary"
+                                                        <button class="btn btn-icon btn-sm btn-label-warning"
                                                             onclick="editDesignation({{ $designation->id }})" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         @if(!$designation->is_active)
-                                                            <button class="btn btn-sm btn-outline-success"
+                                                            <button class="btn btn-icon btn-sm btn-label-success"
                                                                 onclick="toggleDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}', false)"
                                                                 title="Activer">
                                                                 <i class="fas fa-check"></i>
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-sm btn-outline-warning"
+                                                            <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}', true)"
                                                                 title="Désactiver">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                         @endif
-                                                        <button class="btn btn-sm btn-outline-danger"
+                                                        <button class="btn btn-icon btn-sm btn-label-danger"
                                                             onclick="deleteDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}')"
                                                             title="Supprimer">
                                                             <i class="fas fa-trash"></i>

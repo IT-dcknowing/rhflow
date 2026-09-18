@@ -119,10 +119,10 @@
                                 </td>
                                 <td class="border border-dark">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <button type="button" class="btn btn-sm btn-success me-4" onclick="updateSingleAllowance({{ $allowance->id }})" title="Modifier">
+                                        <button type="button" class="btn btn-icon btn-sm btn-label-warning me-4" onclick="updateSingleAllowance({{ $allowance->id }})" title="Modifier">
                                             <i class="ti ti-check"></i>
                                         </button>
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteSingleAllowance({{ $allowance->id }})" title="Supprimer">
+                                        <button type="button" class="btn btn-icon btn-sm btn-label-danger" onclick="deleteSingleAllowance({{ $allowance->id }})" title="Supprimer">
                                             <i class="ti ti-trash"></i>
                                         </button>
                                     </div>

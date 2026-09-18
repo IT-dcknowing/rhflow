@@ -233,7 +233,7 @@
                                             </td>
                                             <td>
                                                 <div class="dropdown">
-                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                    <button class="btn btn-icon btn-sm btn-label-secondary" type="button"
                                                         data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
@@ -311,7 +311,7 @@
                                             </td>
                                             <td>
                                                 <div class="dropdown">
-                                                    <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                    <button class="btn btn-icon btn-sm btn-label-secondary" type="button"
                                                         data-bs-toggle="dropdown">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
@@ -342,69 +342,27 @@
         </div>
 
         <!-- Actions rapides -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"> Actions rapides</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <a href="#"
-                                    class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-                                    style="min-height: 100px;">
-                                    <i class="fas fa-file-invoice fa-2x mb-2"></i>
-                                    <span>Générer bulletins mensuels</span>
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="#"
-                                    class="btn btn-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-                                    style="min-height: 100px;">
-                                    <i class="fas fa-building fa-2x mb-2"></i>
-                                    <span>Nouvelle déclaration CNPS</span>
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="#"
-                                    class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-                                    style="min-height: 100px;">
-                                    <i class="fas fa-receipt fa-2x mb-2"></i>
-                                    <span>Déclaration ITS</span>
-                                </a>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <a href="#"
-                                    class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-                                    style="min-height: 100px;">
-                                    <i class="fas fa-heartbeat fa-2x mb-2"></i>
-                                    <span>Déclaration CMU</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-4 mb-3">
-                                <a href="#" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-book me-2"></i>Livre de paie annuel
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="#" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-users me-2"></i>Bulletins individuels
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="#" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-download me-2"></i>Exporter tout
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-quick-actions>
+            <x-quick-action icon="fas fa-building" label="Nouvelle déclaration CNPS" href="#" />
+
+            <x-slot:secondary>
+                <x-quick-action icon="fas fa-file-invoice" label="Générer bulletins mensuels"
+                    href="#" variant="outline" color="primary" />
+
+                <x-quick-action icon="fas fa-receipt" label="Déclaration ITS" href="#" variant="outline" />
+
+                <x-quick-action icon="fas fa-heartbeat" label="Déclaration CMU"
+                    href="#" variant="outline" color="warning" />
+            </x-slot:secondary>
+
+            <x-slot:end>
+                <x-quick-action icon="fas fa-book" label="Livre de paie annuel" href="#" variant="ghost" />
+                <x-quick-action icon="fas fa-users" label="Bulletins individuels" href="#" variant="ghost" />
+                <x-quick-action icon="fas fa-download" label="Exporter tout" href="#" variant="ghost" />
+            </x-slot:end>
+        </x-quick-actions>
     </div>
+
 @endsection
 
 @push('scripts')

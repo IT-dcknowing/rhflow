@@ -124,27 +124,27 @@
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
                                                         <a href="{{ url('/company/settings/company-documents/legal/' . $document->id . '/download') }}"
-                                                            class="btn btn-sm btn-outline-info" title="Télécharger">
+                                                            class="btn btn-icon btn-sm btn-label-primary" title="Télécharger">
                                                             <i class="fas fa-download"></i>
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        <button type="button" class="btn btn-icon btn-sm btn-label-warning"
                                                             onclick="editDocument({{ $document->id }})" title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         @if(!$document->is_verified)
-                                                            <button type="button" class="btn btn-sm btn-outline-success"
+                                                            <button type="button" class="btn btn-icon btn-sm btn-label-success"
                                                                 onclick="toggleDocumentVerification({{ $document->id }})"
                                                                 title="Vérifier">
                                                                 <i class="fas fa-check-circle"></i>
                                                             </button>
                                                         @else
-                                                            <button type="button" class="btn btn-sm btn-outline-warning"
+                                                            <button type="button" class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleDocumentVerification({{ $document->id }})"
                                                                 title="Dé-vérifier">
                                                                 <i class="fas fa-times-circle"></i>
                                                             </button>
                                                         @endif
-                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        <button type="button" class="btn btn-icon btn-sm btn-label-danger"
                                                             onclick="deleteDocument({{ $document->id }}, '{{ addslashes($document->document_name) }}')"
                                                             title="Supprimer">
                                                             <i class="fas fa-trash"></i>

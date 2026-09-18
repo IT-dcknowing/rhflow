@@ -144,14 +144,14 @@
                                         <td>
                                             <div class="d-flex">
                                                 <a href="{{ route('company.avantages.show', $avantage->id) }}"
-                                                    class="btn btn-sm btn-icon bg-label-info me-2">
+                                                    class="btn btn-icon btn-sm btn-label-info me-2">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="{{ route('company.avantages.edit', $avantage->id) }}"
-                                                    class="btn btn-sm btn-icon bg-label-primary me-2">
+                                                    class="btn btn-icon btn-sm btn-label-warning me-2">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-sm btn-icon bg-label-danger delete-record"
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-danger delete-record"
                                                     data-id="{{ $avantage->id }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>

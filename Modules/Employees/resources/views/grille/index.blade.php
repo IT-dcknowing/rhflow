@@ -101,12 +101,12 @@
                                                             @if ($row->company_id > 0 )
                                                             <div class="d-flex">
                                                                 <div class="action-btn me-2">
-                                                                    <a href="#" class="btn btn-sm bg-info align-items-center edit-btn"
+                                                                    <a href="#" class="btn btn-icon btn-sm btn-label-warning edit-btn"
                                                                         data-id="{{ $row->id }}"
                                                                         data-bs-toggle="tooltip"
                                                                         title="{{ __('Edit Category') }}"
                                                                         data-bs-original-title="{{ __('Edit') }}">
-                                                                        <i class="ti ti-pencil text-white"></i>
+                                                                        <i class="ti ti-pencil"></i>
                                                                     </a>
                                                                 </div>
                                                                 <div class="action-btn">
@@ -114,10 +114,10 @@
                                                                         @csrf
                                                                         @method('DELETE')
                                                                         <a href="#"
-                                                                            class="btn btn-sm  bg-danger align-items-center bs-pass-para delete-btn"
+                                                                            class="btn btn-icon btn-sm btn-label-danger bs-pass-para delete-btn"
                                                                             data-bs-toggle="tooltip" title=""
                                                                             data-bs-original-title="Supprimer" aria-label="Supprimer"><i
-                                                                                class="ti ti-trash text-white"></i></a>
+                                                                                class="ti ti-trash"></i></a>
                                                                     </form>
                                                                 </div>
                                                             </div>

@@ -568,35 +568,24 @@
                     @endif
                     
                     <!-- Actions rapides -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Actions rapides</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-primary text-start d-flex align-items-center gap-2" id="exportToCalendar">
-                                    <i class="far fa-calendar-plus"></i>
-                                    <span>Exporter vers le calendrier</span>
-                                </button>
-                                <button class="btn btn-outline-secondary text-start d-flex align-items-center gap-2" id="sendReminder">
-                                    <i class="fas fa-bell"></i>
-                                    <span>Envoyer un rappel</span>
-                                </button>
-                                @if($event->recurrence_rule)
-                                    <button class="btn btn-outline-warning text-start d-flex align-items-center gap-2" id="editSeries">
-                                        <i class="fas fa-sync-alt"></i>
-                                        <span>Modifier la série</span>
-                                    </button>
-                                @endif
-                            @if(auth()->check())
-                                    <button class="btn btn-danger text-start d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#deleteEventModal">
-                                        <i class="fas fa-trash-alt"></i>
-                                        <span>Supprimer l'événement</span>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+                    <x-quick-actions stacked>
+                        <x-quick-action icon="far fa-calendar-plus" label="Exporter vers le calendrier"
+                            variant="outline" color="primary" id="exportToCalendar" />
+
+                        <x-quick-action icon="fas fa-bell" label="Envoyer un rappel"
+                            variant="outline" id="sendReminder" />
+
+                        @if($event->recurrence_rule)
+                            <x-quick-action icon="fas fa-sync-alt" label="Modifier la série"
+                                variant="outline" color="warning" id="editSeries" />
+                        @endif
+
+                        @if(auth()->check())
+                            <x-quick-action icon="fas fa-trash-alt" label="Supprimer l'événement"
+                                variant="outline" color="danger"
+                                data-bs-toggle="modal" data-bs-target="#deleteEventModal" />
+                        @endif
+                    </x-quick-actions>
                 </div>
             </div>
         </div>

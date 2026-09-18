@@ -274,7 +274,7 @@
                                                         </td>
                                                         <td>
                                                             <div class="dropdown">
-                                                                <button class="btn btn-sm btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                                <button class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                                                     <i class="ti ti-menu"></i>
                                                                 </button>
                                                                 <div class="dropdown-menu">

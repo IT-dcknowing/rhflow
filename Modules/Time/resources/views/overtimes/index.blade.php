@@ -134,17 +134,17 @@
                                         <td>{{ $overtime->periode->nom }}</td>
                                         <td>
                                             <div class="btn-group">
-                                                <button type="button" class="btn btn-outline-info btn-sm view-overtime" data-id="{{ $overtime->id }}" data-periode="{{ $overtime->periode->nom }}" data-bs-toggle="tooltip" title="{{ __('Voir') }}">
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-info view-overtime" data-id="{{ $overtime->id }}" data-periode="{{ $overtime->periode->nom }}" data-bs-toggle="tooltip" title="{{ __('Voir') }}">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
-                                                <a href="{{ route('company.times.overtime.edit', $overtime->id) }}" class="btn btn-outline-primary btn-sm edit-overtime" title="{{ __('Modifier') }}">
+                                                <a href="{{ route('company.times.overtime.edit', $overtime->id) }}" class="btn btn-icon btn-sm btn-label-warning edit-overtime" title="{{ __('Modifier') }}">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-outline-danger btn-sm delete-overtime" data-id="{{ $overtime->id }}" data-bs-toggle="tooltip" title="{{ __('Supprimer') }}">
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-danger delete-overtime" data-id="{{ $overtime->id }}" data-bs-toggle="tooltip" title="{{ __('Supprimer') }}">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                                 @if(!$overtime->paid && $overtime->statut == 'approved')
-                                                    <button type="button" class="btn btn-outline-success btn-sm mark-as-paid" data-id="{{ $overtime->id }}" data-bs-toggle="tooltip" title="{{ __('Marquer comme payé') }}">
+                                                    <button type="button" class="btn btn-icon btn-sm btn-label-success mark-as-paid" data-id="{{ $overtime->id }}" data-bs-toggle="tooltip" title="{{ __('Marquer comme payé') }}">
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 @endif

@@ -183,17 +183,17 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <a href="{{ route('company.ruptures.show', $rupture->id) }}"
-                                                            class="btn btn-icon bg-label-info waves-effect me-2"
+                                                            class="btn btn-icon btn-sm btn-label-info me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Voir">
                                                             <i class="ti ti-eye"></i>
                                                         </a>
                                                         <a href="{{ route('company.ruptures.edit', $rupture->id) }}"
-                                                            class="btn btn-icon bg-label-primary waves-effect me-2"
+                                                            class="btn btn-icon btn-sm btn-label-warning me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
                                                         <button type="button"
-                                                            class="btn btn-icon btn-label-danger waves-effect delete-record"
+                                                            class="btn btn-icon btn-sm btn-label-danger delete-record"
                                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer"
                                                             data-id="{{ $rupture->id }}">
                                                             <i class="ti ti-trash"></i>

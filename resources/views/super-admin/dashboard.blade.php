@@ -199,79 +199,23 @@
 </div>
 
 <!-- Quick Actions -->
-<div class="row g-4 mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Actions rapides</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex align-items-center p-3 border rounded cursor-pointer hover-shadow">                           
-                            <div class="avatar me-3">
-                                <span class="avatar-initial bg-label-primary rounded">
-                                    <i class="ti ti-bag ti-md"></i>
-                                </span>
-                            </div>
-                            <div> 
-                                <a href="{{route('super-admin.enterprises.create')}}">
-                                    <h6 class="mb-0">Créer Entreprise</h6>
-                                    <small class="text-muted">Ajouter nouvelle</small> 
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex align-items-center p-3 border rounded cursor-pointer hover-shadow">
-                            <div class="avatar me-3">
-                                <span class="avatar-initial bg-label-success rounded">
-                                    <i class="ti ti-user ti-md"></i>
-                                </span>
-                            </div>
-                            <div>
-                                <a href="{{route('super-admin.commandes.index')}}">
-                                    <h6 class="mb-0">Gérer les commandes</h6>
-                                    <small class="text-muted">Commandes en attentes</small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex align-items-center p-3 border rounded cursor-pointer hover-shadow">
-                            <div class="avatar me-3">
-                                <span class="avatar-initial bg-label-info rounded">
-                                    <i class="ti ti-package ti-md"></i>
-                                </span>
-                            </div>
-                            <div>
-                                <a href="{{route('super-admin.packs.index')}}">
-                                    <h6 class="mb-0">Gérer Packs</h6>
-                                    <small class="text-muted">Plans & tarifs</small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex align-items-center p-3 border rounded cursor-pointer hover-shadow">
-                            <div class="avatar me-3">
-                                <span class="avatar-initial bg-label-warning rounded">
-                                    <i class="ti ti-notepad ti-md"></i>
-                                </span>
-                            </div>
-                            <div>
-                                <a href="{{route('super-admin.reports.index')}}">
-                                    <h6 class="mb-0">Générer Rapport</h6>
-                                    <small class="text-muted">Statistiques</small>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<x-quick-actions>
+    <x-quick-action icon="ti ti-bag" label="Créer une entreprise"
+        :href="route('super-admin.enterprises.create')" />
+
+    <x-slot:secondary>
+        <x-quick-action icon="ti ti-user" label="Gérer les commandes"
+            :href="route('super-admin.commandes.index')" variant="outline" color="success" />
+
+        <x-quick-action icon="ti ti-package" label="Gérer les packs"
+            :href="route('super-admin.packs.index')" variant="outline" color="primary" />
+    </x-slot:secondary>
+
+    <x-slot:end>
+        <x-quick-action icon="ti ti-notepad" label="Générer un rapport"
+            :href="route('super-admin.reports.index')" variant="ghost" />
+    </x-slot:end>
+</x-quick-actions>
 
 <!-- Entreprises récentes -->
 <div class="row">
@@ -347,7 +291,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="dropdown">
-                                                <button class="btn btn-sm btn-icon dropdown-toggle hide-arrow bg-primary text-white" data-bs-toggle="dropdown">
+                                                <button class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                                     <i class="ti ti-menu"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-end" style="position: fixed; z-index: 1050;">

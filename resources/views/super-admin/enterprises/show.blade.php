@@ -160,47 +160,35 @@
                                 </div>
 
                                 <!-- Actions rapides -->
-                                <div class="card border mt-3">
-                                    <div class="card-header">
-                                        <h6 class="card-title mb-0">
-                                            <i class="ti ti-settings me-2"></i>
-                                            Actions
-                                        </h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="d-grid gap-2">
-                                            @if($company->is_active == true)
-                                                <a href="{{ route('super-admin.enterprises.suspend', $enterprise) }}" class="btn btn-outline-warning d-flex align-items-center justify-content-center gap-2" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')">
-                                                    <i class="ti ti-control-pause"></i>
-                                                    <span>Suspendre</span>
-                                                </a>
-                                            @else
-                                                <a href="{{ route('super-admin.enterprises.activate', $enterprise) }}" class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2" onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')">
-                                                    <i class="ti ti-control-play"></i>
-                                                    <span>Activer</span>
-                                                </a>
-                                            @endif
+                                <x-quick-actions title="Actions" class="border mt-3" stacked>
+                                    @if($company->is_active == true)
+                                        <x-quick-action icon="ti ti-control-pause" label="Suspendre"
+                                            :href="route('super-admin.enterprises.suspend', $enterprise)"
+                                            variant="outline" color="warning"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')" />
+                                    @else
+                                        <x-quick-action icon="ti ti-control-play" label="Activer"
+                                            :href="route('super-admin.enterprises.activate', $enterprise)"
+                                            variant="outline" color="success"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')" />
+                                    @endif
 
-                                            <a href="{{ route('super-admin.enterprises.users', $enterprise) }}" class="btn btn-outline-info d-flex align-items-center justify-content-center gap-2">
-                                                <i class="ti ti-user"></i>
-                                                <span>Voir les utilisateurs</span>
-                                            </a>
+                                    <x-quick-action icon="ti ti-user" label="Voir les utilisateurs"
+                                        :href="route('super-admin.enterprises.users', $enterprise)"
+                                        variant="outline" color="primary" />
 
-                                            <a href="{{ route('super-admin.enterprises.subscription', $enterprise) }}" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2">
-                                                <i class="ti ti-credit-card"></i>
-                                                <span>Gérer l'abonnement</span>
-                                            </a>
+                                    <x-quick-action icon="ti ti-credit-card" label="Gérer l'abonnement"
+                                        :href="route('super-admin.enterprises.subscription', $enterprise)"
+                                        variant="outline" />
 
-                                            <form action="{{ route('super-admin.enterprises.delete', $enterprise) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger col-md-12 d-flex align-items-center justify-content-center gap-2" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action est irréversible.')">
-                                                    <i class="ti ti-trash"></i>
-                                                    <span>Supprimer</span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
+                                    <form action="{{ route('super-admin.enterprises.delete', $enterprise) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <x-quick-action type="submit" icon="ti ti-trash" label="Supprimer"
+                                            variant="outline" color="danger"
+                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ? Cette action est irréversible.')" />
+                                    </form>
+                                </x-quick-actions>
                                 </div>
                             </div>
                         </div>

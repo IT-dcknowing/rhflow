@@ -172,11 +172,11 @@
                                                 <td>{{ $coupon->expires_at ? $coupon->expires_at->format('d/m/Y') : 'Jamais' }}</td>
                                                 <td>
                                                     <div class="d-flex gap-1">
-                                                        <a class="btn btn-sm btn-info" title="Modifier"
+                                                        <a class="btn btn-icon btn-sm btn-label-warning" title="Modifier"
                                                             href="{{ route('super-admin.commandes.coupons.edit', $coupon) }}">
                                                             <i class="ti ti-pencil"></i>
                                                         </a>
-                                                        <a href="{{ route('super-admin.commandes.coupons.show', $coupon) }}" class="btn btn-sm btn-primary bg-primary text-white">
+                                                        <a href="{{ route('super-admin.commandes.coupons.show', $coupon) }}" class="btn btn-icon btn-sm btn-label-info">
                                                             <i class="ti ti-eye"></i>
                                                         </a>
                                                         <form method="POST" action="{{ route('super-admin.commandes.coupons.toggle', $coupon) }}" class="d-inline">
@@ -188,7 +188,7 @@
                                                         <form method="POST" action="{{ route('super-admin.commandes.coupons.delete', $coupon) }}" class="d-inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                            <button type="submit" class="btn btn-icon btn-sm btn-label-danger"
                                                                     onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce coupon ?')">
                                                                 <i class="ti ti-trash"></i>
                                                             </button>

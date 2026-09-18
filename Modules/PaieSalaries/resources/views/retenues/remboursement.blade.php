@@ -98,7 +98,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="dropdown">
-                                                            <button type="button" class="btn btn-light btn-sm dropdown-toggle"
+                                                            <button type="button" class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle"
                                                                 data-bs-toggle="dropdown" aria-expanded="false">
                                                                 <i class="fas fa-ellipsis-v"></i>
                                                             </button>

@@ -82,12 +82,12 @@
                                     <td>
                                         <div class="d-flex">
                                             <a href="{{ route('company.paiesalaries.exercices.show', $exercice->id) }}"
-                                                class="btn btn-icon btn-sm btn-outline-info me-1" data-bs-toggle="tooltip"
+                                                class="btn btn-icon btn-sm btn-label-info me-1" data-bs-toggle="tooltip"
                                                 title="Voir">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ route('company.paiesalaries.exercices.edit', $exercice->id) }}"
-                                                class="btn btn-icon btn-sm btn-outline-primary me-1" data-bs-toggle="tooltip"
+                                                class="btn btn-icon btn-sm btn-label-warning me-1" data-bs-toggle="tooltip"
                                                 title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
@@ -95,7 +95,7 @@
                                                 method="POST" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-icon btn-sm btn-outline-danger"
+                                                <button type="submit" class="btn btn-icon btn-sm btn-label-danger"
                                                     data-bs-toggle="tooltip" title="Supprimer">
                                                     <i class="fas fa-trash"></i>
                                                 </button>

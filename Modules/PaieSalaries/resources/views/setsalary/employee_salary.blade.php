@@ -2012,13 +2012,13 @@
 														<span>
 															@can('Edit Commission')
 																<div class="action-btn bg-info ms-2">
-																	<a class="mx-3 btn btn-sm  align-items-center"
+																	<a class="btn btn-icon btn-sm btn-label-warning"
 																		data-url="{{ URL::to('commission/' . $commission->id . '/edit') }}"
 																		data-ajax-popup="true" data-size="md"
 																		data-bs-toggle="tooltip" title=""
 																		data-title="{{ __('Edit Commission') }}"
 																		data-bs-original-title="{{ __('Edit') }}">
-																		<i class="ti ti-pencil text-white"></i>
+																		<i class="ti ti-pencil"></i>
 																	</a>
 																</div>
 															@endcan
@@ -2029,10 +2029,10 @@
 																		'route' => ['commission.destroy', $commission->id],
 																		'id' => 'delete-form-' . $commission->id,
 																	]) !!}
-																	<a class="mx-3 btn btn-sm  align-items-center bs-pass-para"
+																	<a class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
 																		data-bs-toggle="tooltip" title=""
 																		data-bs-original-title="Supprimer" aria-label="Supprimer"><i
-																			class="ti ti-trash text-white text-white"></i></a>
+																			class="ti ti-trash"></i></a>
 																	</form>
 																</div>
 															@endcan

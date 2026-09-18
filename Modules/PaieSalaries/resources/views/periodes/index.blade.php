@@ -74,7 +74,7 @@
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('company.paiesalaries.exercices.edit', $exercice->id) }}" 
-                                       class="btn btn-icon btn-sm btn-outline-primary me-1" 
+                                       class="btn btn-icon btn-sm btn-label-warning me-1" 
                                        data-bs-toggle="tooltip" 
                                        title="Modifier">
                                         <i class="fas fa-edit"></i>
@@ -85,7 +85,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" 
-                                                class="btn btn-icon btn-sm btn-outline-danger" 
+                                                class="btn btn-icon btn-sm btn-label-danger" 
                                                 data-bs-toggle="tooltip" 
                                                 title="Supprimer">
                                             <i class="fas fa-trash"></i>

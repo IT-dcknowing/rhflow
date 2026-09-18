@@ -117,12 +117,12 @@
                                                             <div class="btn-group btn-group-sm">
                                                                 @if($participant->participant_type === 'App\\Models\\Employee')
                                                                     <a href="{{ route('company.employees.show', $participant->participant_id) }}" 
-                                                                       class="btn btn-sm btn-outline-primary" title="Voir le profil">
+                                                                       class="btn btn-icon btn-sm btn-label-info" title="Voir le profil">
                                                                         <i class="fas fa-eye"></i>
                                                                     </a>
                                                                 @endif
                                                                 @can('update', $meeting)
-                                                                    <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                                    <button type="button" class="btn btn-icon btn-sm btn-label-warning" 
                                                                             data-bs-toggle="modal" data-bs-target="#participantStatusModal" 
                                                                             data-participant-id="{{ $participant->id }}"
                                                                             data-current-status="{{ $participant->status }}"
@@ -262,67 +262,55 @@
 
                         <div class="col-lg-4">
                             <!-- Actions rapides -->
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Actions rapides</h5>
-                                </div>
-                                <div class="card-body">
-                                    @if($meeting->status === 'scheduled')
-                                        @if($meeting->start_date > now())
-                                            <button class="btn btn-outline-primary w-100 mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#sendReminderModal">
-                                                <i class="far fa-bell"></i>
-                                                <span>Envoyer un rappel</span>
-                                            </button>
+                            <x-quick-actions class="mb-4" stacked>
+                                @if($meeting->status === 'scheduled')
+                                    @if($meeting->start_date > now())
+                                        <x-quick-action icon="far fa-bell" label="Envoyer un rappel"
+                                            variant="outline" color="primary"
+                                            data-bs-toggle="modal" data-bs-target="#sendReminderModal" />
 
-                                            @if(auth()->user()->can('update', $meeting))
-                                                <a href="{{ route('company.meetings.edit', $meeting->id) }}" class="btn btn-outline-secondary w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
-                                                    <i class="fas fa-edit"></i>
-                                                    <span>Modifier la réunion</span>
-                                                </a>
+                                        @if(auth()->user()->can('update', $meeting))
+                                            <x-quick-action icon="fas fa-edit" label="Modifier la réunion"
+                                                :href="route('company.meetings.edit', $meeting->id)" variant="outline" />
 
-                                                <button class="btn btn-outline-danger w-100 mb-2 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#cancelMeetingModal">
-                                                    <i class="fas fa-times-circle"></i>
-                                                    <span>Annuler la réunion</span>
-                                                </button>
-                                            @endif
-                                        @elseif($meeting->end_date < now() && $meeting->status !== 'completed')
-                                            <a href="{{ route('company.meetings.complete', $meeting->id) }}" class="btn btn-success w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>Marquer comme terminée</span>
-                                            </a>
+                                            <x-quick-action icon="fas fa-times-circle" label="Annuler la réunion"
+                                                variant="outline" color="danger"
+                                                data-bs-toggle="modal" data-bs-target="#cancelMeetingModal" />
                                         @endif
-
-                                        <a href="{{ route('company.meetings.duplicate', $meeting->id) }}" class="btn btn-outline-info w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
-                                            <i class="fas fa-copy"></i>
-                                            <span>Dupliquer la réunion</span>
-                                        </a>
+                                    @elseif($meeting->end_date < now() && $meeting->status !== 'completed')
+                                        <x-quick-action icon="fas fa-check-circle" label="Marquer comme terminée"
+                                            :href="route('company.meetings.complete', $meeting->id)" color="success" />
                                     @endif
-                                    
-                                    <div class="dropdown">
-                                        <button class="btn btn-outline-secondary w-100 dropdown-toggle d-flex align-items-center justify-content-center gap-2" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-download"></i>
-                                            <span>Exporter</span>
-                                        </button>
-                                        <ul class="dropdown-menu w-100" aria-labelledby="exportDropdown">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('company.meetings.export.pdf', $meeting->id) }}" target="_blank">
-                                                    <i class="far fa-file-pdf text-danger me-2"></i> En PDF
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('company.meetings.export.excel', $meeting->id) }}" target="_blank">
-                                                    <i class="far fa-file-excel text-success me-2"></i> En Excel
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ route('company.meetings.ical', $meeting->id) }}">
-                                                    <i class="far fa-calendar-plus me-2"></i> Fichier iCal
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
+
+                                    <x-quick-action icon="fas fa-copy" label="Dupliquer la réunion"
+                                        :href="route('company.meetings.duplicate', $meeting->id)"
+                                        variant="outline" color="primary" />
+                                @endif
+
+                                {{-- L'export garde son menu : le bouton porte la classe du composant. --}}
+                                <div class="dropdown">
+                                    <x-quick-action icon="fas fa-download" label="Exporter" variant="outline"
+                                        class="w-100 dropdown-toggle" id="exportDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false" />
+                                    <ul class="dropdown-menu w-100" aria-labelledby="exportDropdown">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('company.meetings.export.pdf', $meeting->id) }}" target="_blank">
+                                                <i class="far fa-file-pdf text-danger me-2"></i> En PDF
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('company.meetings.export.excel', $meeting->id) }}" target="_blank">
+                                                <i class="far fa-file-excel text-success me-2"></i> En Excel
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('company.meetings.ical', $meeting->id) }}">
+                                                <i class="far fa-calendar-plus me-2"></i> Fichier iCal
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
-                            </div>
+                            </x-quick-actions>
 
                             <!-- Prochaine occurrence -->
                             @if($meeting->is_recurring && $meeting->next_occurrence)

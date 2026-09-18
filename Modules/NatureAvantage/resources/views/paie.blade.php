@@ -90,13 +90,13 @@
                                                             <hr>
                                                             <div class="d-flex" style="justify-content: center;">
                                                                 <div class="action-btn me-2">
-                                                                    <a href="#" class="btn btn-sm bg-info align-items-center"
+                                                                    <a href="#" class="btn btn-icon btn-sm btn-label-warning"
                                                                         data-size="lg"
                                                                         data-url="{{ URL::to('avantages/' . $avantage->id . '/edit') }}"
                                                                         data-ajax-popup="true" data-size="md" data-bs-toggle="tooltip"
                                                                         title="" data-title="{{ __('Edit') }}"
                                                                         data-bs-original-title="{{ __('Edit') }}">
-                                                                        <i class="ti ti-pencil text-white"></i>
+                                                                        <i class="ti ti-pencil"></i>
                                                                     </a>
                                                                 </div>
                                                                 {!! Form::open([
@@ -105,10 +105,10 @@
                                                                     'id' => 'delete-form-' . $avantage->id,
                                                                 ]) !!}
                                                                     <div class="action-btn">
-                                                                        <a href="#" class="btn btn-sm  bg-danger align-items-center bs-pass-para"
+                                                                        <a href="#" class="btn btn-icon btn-sm btn-label-danger bs-pass-para"
                                                                             data-bs-toggle="tooltip" title=""
                                                                             data-bs-original-title="Supprimer" aria-label="Supprimer"><i
-                                                                                class="ti ti-trash text-white text-white"></i></a>
+                                                                                class="ti ti-trash"></i></a>
                                                                     </div>
                                                                 </form>
                                                             </div>

@@ -97,11 +97,11 @@
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <a href="{{ route('company.loans.show', $loan->id) }}" class="btn btn-sm btn-info me-2">
+                                            <a href="{{ route('company.loans.show', $loan->id) }}" class="btn btn-icon btn-sm btn-label-info me-2">
                                                 <i class="ti ti-eye"></i>
                                             </a>
                                             <a href="{{ route('company.loans.edit', $loan->id) }}"
-                                                class="btn btn-sm btn-primary me-2">
+                                                class="btn btn-icon btn-sm btn-label-warning me-2">
                                                 <i class="ti ti-pencil"></i>
                                             </a>
                                             @if($loan->is_active)
@@ -109,7 +109,7 @@
                                                     class="d-inline me-2"
                                                     onsubmit="return confirm('Désactiver ce prêt ? Sa retenue sera retirée de la paie des périodes encore modifiables. Les bulletins déjà générés ne sont pas touchés.');">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-label-secondary"
                                                         title="Désactiver ce prêt">
                                                         <i class="fas fa-toggle-off"></i>
                                                     </button>
@@ -119,14 +119,14 @@
                                                     class="d-inline me-2"
                                                     onsubmit="return confirm('Réactiver ce prêt ? Sa retenue sera régénérée sur les périodes ouvertes.');">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-success"
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-label-success"
                                                         title="Réactiver ce prêt">
                                                         <i class="fas fa-toggle-on"></i>
                                                     </button>
                                                 </form>
                                             @endif
-                                            <button type="button" class="btn btn-sm btn-danger" id="delete-loan">
-                                                <i class="fas fa-trash me-1"></i>
+                                            <button type="button" class="btn btn-icon btn-sm btn-label-danger" id="delete-loan">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                             <form id="delete-form" action="{{ route('company.loans.destroy', $loan->id) }}"
                                                 method="POST" style="display: none;">

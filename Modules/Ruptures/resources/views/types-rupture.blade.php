@@ -69,14 +69,14 @@
                             <td align="center">{{ $type->ruptures_count }}</td>
                             <td>
                                 <div class="d-flex">
-                                    <button type="button" class="btn btn-icon btn-label-info me-2 edit-type" 
+                                    <button type="button" class="btn btn-icon btn-sm btn-label-warning me-2 edit-type" 
                                             data-id="{{ $type->id }}" 
                                             data-name="{{ $type->name }}" 
                                             data-description="{{ $type->description }}" 
                                             data-is-active="{{ $type->is_active }}">
                                         <i class="ti ti-pencil"></i>
                                     </button>
-                                    <button type="button" class="btn btn-icon btn-label-danger delete-type" 
+                                    <button type="button" class="btn btn-icon btn-sm btn-label-danger delete-type" 
                                             data-id="{{ $type->id }}" 
                                             data-ruptures-count="{{ $type->ruptures_count }}">
                                         <i class="ti ti-trash"></i>

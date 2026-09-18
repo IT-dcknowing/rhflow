@@ -349,12 +349,12 @@
                                                 <td>
                                                     <div class="d-flex gap-2">
                                                         <a href="{{ route('company.evenements.promotions.show', $promotion->id) }}"
-                                                            class="btn btn-icon btn-label-info" data-bs-toggle="tooltip"
+                                                            class="btn btn-icon btn-sm btn-label-info" data-bs-toggle="tooltip"
                                                             title="Voir les détails">
                                                             <i class="fas fa-eye"></i>
                                                         </a>
                                                         <a href="{{ route('company.evenements.promotions.edit', $promotion->id) }}"
-                                                            class="btn btn-icon btn-label-primary" data-bs-toggle="tooltip"
+                                                            class="btn btn-icon btn-sm btn-label-warning" data-bs-toggle="tooltip"
                                                             title="Modifier">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
@@ -364,7 +364,7 @@
                                                             onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette promotion ?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-icon btn-label-danger"
+                                                            <button type="submit" class="btn btn-icon btn-sm btn-label-danger"
                                                                 data-bs-toggle="tooltip" title="Supprimer">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>

@@ -77,7 +77,7 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
-                                            <button type="button" class="btn btn-sm btn-icon btn-outline-primary me-1 {{ $type->type == 'default' ? 'disabled' : '' }}" 
+                                            <button type="button" class="btn btn-icon btn-sm btn-label-warning me-1 {{ $type->type == 'default' ? 'disabled' : '' }}" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#editTypeModal" 
                                                 data-id="{{ $type->id }}"
@@ -89,7 +89,7 @@
                                                  la suppression n'est pas proposée. Le refus est aussi appliqué
                                                  côté serveur dans destroyContractType(). --}}
                                             @if($type->type !== 'default')
-                                                <button type="button" class="btn btn-sm btn-icon btn-outline-danger"
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-danger"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#deleteTypeModal"
                                                     data-id="{{ $type->id }}"

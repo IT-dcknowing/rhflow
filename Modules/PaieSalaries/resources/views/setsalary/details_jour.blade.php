@@ -291,13 +291,13 @@
                                                 <td align="center">
                                                     <div class="d-flex">
                                                         <div class="action-btn ms-2">
-                                                            <a href="#" class="btn btn-sm bg-info align-items-center view-team-members" data-team-id="{{ $team->id }}" data-team-name="{{ $team->name }}">
-                                                                <i class="ti ti-eye text-white"></i>
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-info view-team-members" data-team-id="{{ $team->id }}" data-team-name="{{ $team->name }}">
+                                                                <i class="ti ti-eye"></i>
                                                             </a>
                                                         </div>
                                                         <div class="action-btn ms-2"></div>
-                                                            <a href="#" class="btn btn-sm bg-danger delete-team" data-team-id="{{ $team->id }}">
-                                                                <i class="ti ti-trash text-white"></i>
+                                                            <a href="#" class="btn btn-icon btn-sm btn-label-danger delete-team" data-team-id="{{ $team->id }}">
+                                                                <i class="ti ti-trash"></i>
                                                             </a>
                                                         </div>
                                                     </div>
@@ -445,7 +445,7 @@
                                                     min="0" value="{{ $tauxMensuel }}" data-id="{{ $employee->id }}" hidden>
                                             </td>
                                             <td class="border border-gray-400 text-center">
-                                                <button type="button" class="btn btn-sm btn-info view-brut-elements" data-bs-toggle="modal" data-bs-target="#brutAssignModal" data-employee-id="{{ $employee->id }}">
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-info view-brut-elements" data-bs-toggle="modal" data-bs-target="#brutAssignModal" data-employee-id="{{ $employee->id }}">
                                                     <i class="ti ti-eye"></i>
                                                 </button>
                                             </td>
@@ -489,7 +489,7 @@
                                                 <span class="masse-salariale" id="masse-{{ $employee->id }}">0</span>
                                             </td>
                                             <td class="border border-gray-400 text-center">
-                                                <a href="#" id="view-bulletin-{{ $employee->id }}" class="btn btn-sm btn-primary view-bulletin" data-id="{{ $employee->id }}">
+                                                <a href="#" id="view-bulletin-{{ $employee->id }}" class="btn btn-icon btn-sm btn-label-info view-bulletin" data-id="{{ $employee->id }}">
                                                     <i class="ti ti-eye"></i>
                                                 </a>
                                             </td>
@@ -598,8 +598,8 @@
                                     <td>${member.name}</td>
                                     <td>
                                         <div class="action-btn ms-2">
-                                            <a href="#" class="btn btn-sm bg-danger align-items-center remove-from-team" data-employee-id="${member.id}" data-team-id="${teamId}">
-                                                <i class="ti ti-trash text-white"></i>
+                                            <a href="#" class="btn btn-icon btn-sm btn-label-danger remove-from-team" data-employee-id="${member.id}" data-team-id="${teamId}">
+                                                <i class="ti ti-trash"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -724,9 +724,9 @@
                                     <td>${member.name}</td>
                                     <td>
                                         <div class="action-btn ms-2">
-                                            <a href="#" class="btn btn-sm bg-danger align-items-center remove-from-team"
+                                            <a href="#" class="btn btn-icon btn-sm btn-label-danger remove-from-team"
                                             data-employee-id="${member.id}" data-team-id="${teamId}">
-                                                <i class="ti ti-trash text-white"></i>
+                                                <i class="ti ti-trash"></i>
                                             </a>
                                         </div>
                                     </td>

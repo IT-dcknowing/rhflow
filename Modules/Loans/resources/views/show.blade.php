@@ -187,10 +187,10 @@
                                                             <td>{{ $payment->note ?? '-' }}</td>
                                                             <td>
                                                                 <div class="d-flex justify-content-center">
-                                                                    <a href="{{ route('company.loans.payments.edit',[$loan->id, $payment->id]) }}" class="btn btn-primary btn-icon me-2">
+                                                                    <a href="{{ route('company.loans.payments.edit',[$loan->id, $payment->id]) }}" class="btn btn-icon btn-sm btn-label-warning me-2">
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
-                                                                    <button type="button" class="btn btn-danger btn-icon delete-payment" data-id="{{ $payment->id }}">
+                                                                    <button type="button" class="btn btn-icon btn-sm btn-label-danger delete-payment" data-id="{{ $payment->id }}">
                                                                         <i class="fas fa-trash"></i>
                                                                     </button>
                                                                     <form id="delete-payment-{{ $payment->id }}" action="{{ route('company.loans.payments.destroy', [$loan->id, $payment->id]) }}" method="POST" style="display: none;">

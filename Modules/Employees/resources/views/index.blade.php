@@ -193,27 +193,27 @@
                                             <td class="text-end">
                                                 <div class="d-inline-flex gap-1">
                                                     <a href="{{ route('company.employees.show', $employee->id) }}"
-                                                        class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Voir détails">
+                                                        class="btn btn-icon btn-sm btn-label-info" data-bs-toggle="tooltip" title="Voir détails">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                     <a href="{{ route('company.employees.edit', $employee->id) }}"
-                                                        class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Modifier">
+                                                        class="btn btn-icon btn-sm btn-label-warning" data-bs-toggle="tooltip" title="Modifier">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     @if($employee->is_active)
-                                                        <button type="button" class="btn btn-sm btn-outline-warning"
+                                                        <button type="button" class="btn btn-icon btn-sm btn-label-secondary"
                                                             onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', true)"
                                                             data-bs-toggle="tooltip" title="Désactiver">
                                                             <i class="fas fa-user-slash"></i>
                                                         </button>
                                                     @else
-                                                        <button type="button" class="btn btn-sm btn-outline-success"
+                                                        <button type="button" class="btn btn-icon btn-sm btn-label-success"
                                                             onclick="toggleEmployee({{ $employee->id }}, '{{ addslashes($employee->name) }}', false)"
                                                             data-bs-toggle="tooltip" title="Activer">
                                                             <i class="fas fa-user-check"></i>
                                                         </button>
                                                     @endif
-                                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    <button type="button" class="btn btn-icon btn-sm btn-label-danger"
                                                         onclick="confirmDelete({{ $employee->id }})" data-bs-toggle="tooltip" title="Supprimer">
                                                         <i class="fas fa-trash"></i>
                                                     </button>

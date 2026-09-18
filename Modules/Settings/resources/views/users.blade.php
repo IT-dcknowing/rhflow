@@ -164,13 +164,11 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Utilisateur</th>
-                                        <th>Email</th>
                                         <th>Type</th>
                                         <th>Téléphone</th>
                                         <th>Affectation</th>
                                         <th>Statut</th>
-                                        <th>Créé le</th>
-                                        <th class="text-center" style="width: 130px;">Actions</th>
+                                        <th class="text-center" style="width: 110px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -184,17 +182,18 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <h6 class="mb-0">{{ $userItem->name }}</h6>
-                                                    <small class="text-muted">ID: {{ $userItem->id }}</small>
+                                                    <h6 class="mb-0">
+                                                        {{ $userItem->name }}
+                                                        @if($userItem->id === $user->id)
+                                                            <span class="badge bg-label-success ms-1">Vous</span>
+                                                        @endif
+                                                    </h6>
+                                                    @if($userItem->userEmployee && $userItem->userEmployee->employee_id)
+                                                        <small class="text-muted fw-semibold">{{ \Auth::user()->employeeIdFormat($userItem->userEmployee->employee_id) }}</small>
+                                                    @else
+                                                        <small class="text-muted">{{ $userItem->email }}</small>
+                                                    @endif
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <span class="fw-semibold">{{ $userItem->email }}</span>
-                                                @if($userItem->id === $user->id)
-                                                    <span class="badge bg-label-success ms-1">Vous</span>
-                                                @endif
                                             </div>
                                         </td>
                                         <td>
@@ -243,26 +242,17 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="badge {{ $userItem->is_active ? 'bg-label-success' : 'bg-label-warning' }} me-2"
-                                                    data-user-status-badge="{{ $userItem->id }}">
-                                                    {{ $userItem->is_active ? '✅ Actif' : '❌ Inactif' }}
-                                                </span>
-                                                <div class="form-check form-switch">
-                                                    <input type="checkbox" class="form-check-input" onclick="toggleUserStatus({{ $userItem->id }}, event)" {{ $userItem->is_active ? 'checked' : '' }}>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                {{ $userItem->created_at->format('d/m/Y') }}<br>
-                                                {{ $userItem->created_at->format('H:i') }}
-                                            </small>
+                                            <span class="badge {{ $userItem->is_active ? 'bg-label-success' : 'bg-label-danger' }}"
+                                                data-user-status-badge="{{ $userItem->id }}"
+                                                style="cursor:pointer" title="Cliquer pour changer le statut"
+                                                onclick="toggleUserStatus({{ $userItem->id }}, event)">
+                                                {{ $userItem->is_active ? 'Actif' : 'Inactif' }}
+                                            </span>
                                         </td>
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center align-items-center gap-1">
                                                 <button type="button"
-                                                        class="btn btn-sm btn-icon btn-label-info"
+                                                        class="btn btn-icon btn-sm btn-label-info"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
                                                         title="Voir détails"
@@ -270,7 +260,7 @@
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                                 <a href="{{ route('company.settings.users.edit', $userItem) }}"
-                                                   class="btn btn-sm btn-icon btn-label-warning"
+                                                   class="btn btn-icon btn-sm btn-label-warning"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-placement="top"
                                                    title="Modifier">
@@ -278,7 +268,7 @@
                                                 </a>
                                                 @if($userItem->id !== $user->id)
                                                 <button type="button"
-                                                        class="btn btn-sm btn-icon btn-label-danger"
+                                                        class="btn btn-icon btn-sm btn-label-danger"
                                                         data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
                                                         title="Supprimer"

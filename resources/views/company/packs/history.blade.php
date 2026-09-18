@@ -183,24 +183,24 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-secondary" onclick="viewOrderDetails({{ $order->id }})">
+                                            <button class="btn btn-icon btn-sm btn-label-info" onclick="viewOrderDetails({{ $order->id }})">
                                                 <i class="ti ti-eye"></i>
                                             </button>
                                             
                                             @if($order->isPending())
-                                            <button class="btn btn-primary" onclick="payOrder({{ $order->id }})">
+                                            <button class="btn btn-icon btn-sm btn-label-primary" onclick="payOrder({{ $order->id }})">
                                                 <i class="ti ti-credit-card"></i>
                                             </button>
                                             @endif
                                             
                                             @if($order->isPending() || $order->isExpired())
-                                            <button class="btn btn-outline-danger" onclick="cancelOrder({{ $order->id }})">
+                                            <button class="btn btn-icon btn-sm btn-label-danger" onclick="cancelOrder({{ $order->id }})">
                                                 <i class="ti ti-x"></i>
                                             </button>
                                             @endif
                                             
                                             @if($order->isPaid())
-                                            <button class="btn btn-outline-success" onclick="downloadInvoice({{ $order->id }})">
+                                            <button class="btn btn-icon btn-sm btn-label-primary" onclick="downloadInvoice({{ $order->id }})">
                                                 <i class="ti ti-download"></i>
                                             </button>
                                             @endif

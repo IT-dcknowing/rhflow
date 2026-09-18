@@ -239,11 +239,11 @@
                                                 <td>
                                                     <div class="btn-group btn-group-sm">
                                                         <a href="{{ route('company.meetings.attachments.download', [$meeting->id, $attachment->id]) }}" 
-                                                           class="btn btn-sm btn-outline-primary" title="Télécharger">
+                                                           class="btn btn-icon btn-sm btn-label-primary" title="Télécharger">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                         @can('delete', $attachment)
-                                                        <button type="button" class="btn btn-sm btn-outline-danger delete-attachment" 
+                                                        <button type="button" class="btn btn-icon btn-sm btn-label-danger delete-attachment" 
                                                                 data-id="{{ $attachment->id }}" title="Supprimer">
                                                             <i class="far fa-trash-alt"></i>
                                                         </button>
