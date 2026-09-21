@@ -2391,8 +2391,12 @@ class SettingsController extends Controller
             // Si un nouveau fichier est uploadé
             if ($request->hasFile('file')) {
                 // Supprimer l'ancien fichier
-                if ($companyDocument->file_path && Storage::exists('public/' . $companyDocument->file_path)) {
-                    Storage::delete('public/' . $companyDocument->file_path);
+                if ($companyDocument->file_path) {
+                    if (Storage::disk('public')->exists($companyDocument->file_path)) {
+                        Storage::disk('public')->delete($companyDocument->file_path);
+                    } elseif (Storage::exists('public/' . $companyDocument->file_path)) {
+                        Storage::delete('public/' . $companyDocument->file_path);
+                    }
                 }
 
                 $file = $request->file('file');
@@ -2446,8 +2450,12 @@ class SettingsController extends Controller
 
         try {
             // Supprimer le fichier physique
-            if ($companyDocument->file_path && Storage::exists('public/' . $companyDocument->file_path)) {
-                Storage::delete('public/' . $companyDocument->file_path);
+            if ($companyDocument->file_path) {
+                if (Storage::disk('public')->exists($companyDocument->file_path)) {
+                    Storage::disk('public')->delete($companyDocument->file_path);
+                } elseif (Storage::exists('public/' . $companyDocument->file_path)) {
+                    Storage::delete('public/' . $companyDocument->file_path);
+                }
             }
 
             $companyDocument->delete();
@@ -2518,7 +2526,20 @@ class SettingsController extends Controller
             abort(403, 'Accès non autorisé');
         }
 
-        if (!$companyDocument->file_path || !Storage::exists('public/' . $companyDocument->file_path)) {
+        $filePath = $companyDocument->file_path;
+
+        // Vérifier l'existence sur le disque public ou local
+        $disk = null;
+        if ($filePath && Storage::disk('public')->exists($filePath)) {
+            $disk = Storage::disk('public');
+        } elseif ($filePath && Storage::exists($filePath)) {
+            $disk = Storage::disk('local');
+        } elseif ($filePath && Storage::exists('public/' . $filePath)) {
+            $filePath = 'public/' . $filePath;
+            $disk = Storage::disk('local');
+        }
+
+        if (!$disk) {
             abort(404, 'Fichier non trouvé');
         }
 
@@ -2527,7 +2548,7 @@ class SettingsController extends Controller
             'document_id' => $companyDocument->id,
         ]);
 
-        return Storage::download('public/' . $companyDocument->file_path, $companyDocument->file_name);
+        return $disk->download($filePath, $companyDocument->file_name);
     }
 
     /**

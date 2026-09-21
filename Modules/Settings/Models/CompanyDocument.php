@@ -140,7 +140,7 @@ class CompanyDocument extends Model
             return null;
         }
 
-        return Storage::url($this->file_path);
+        return Storage::disk('public')->url($this->file_path);
     }
 
     /**

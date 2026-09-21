@@ -97,7 +97,7 @@
                                                 </td>
                                                 <td class="text-end">
                                                     <div class="d-inline-flex gap-1">
-                                                        <a href="{{ url('/company/settings/company-documents/legal/' . $document->id . '/download') }}"
+                                                        <a href="{{ route('company.settings.company-documents.download', $document->id) }}"
                                                             class="btn btn-icon btn-sm btn-label-primary" title="Télécharger">
                                                             <i class="fas fa-download"></i>
                                                         </a>
@@ -849,18 +849,39 @@
                     const fileInput = form.querySelector('input[type="file"]');
                     if (fileInput && fileInput.files.length > 0) {
                         const file = fileInput.files[0];
-                        if (file.size > 2 * 1024 * 1024) { // 2MB
-                            e.preventDefault();
-                            alert('Le fichier ne doit pas dépasser 2MB');
-                            return;
-                        }
+                        const isDocumentForm = form.id === 'editDocumentForm' || form.action.includes('company-documents/legal');
 
-                        // Vérifier le type de fichier
-                        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
-                        if (!allowedTypes.includes(file.type)) {
-                            e.preventDefault();
-                            alert('Format de fichier non autorisé. Utilisez JPEG, PNG, GIF ou SVG.');
-                            return;
+                        if (isDocumentForm) {
+                            // Documents légaux : PDF, DOC, DOCX, Images jusqu'à 10MB
+                            const maxDocSize = 10 * 1024 * 1024; // 10MB
+                            if (file.size > maxDocSize) {
+                                e.preventDefault();
+                                alert('Le document ne doit pas dépasser 10MB');
+                                return;
+                            }
+
+                            const allowedDocExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+                            const fileExtension = file.name.split('.').pop().toLowerCase();
+                            if (!allowedDocExtensions.includes(fileExtension)) {
+                                e.preventDefault();
+                                alert('Format de fichier non autorisé. Utilisez PDF, JPG, PNG, DOC ou DOCX.');
+                                return;
+                            }
+                        } else {
+                            // Images société (Logo, Signature, Cachet) : Images uniquement jusqu'à 2MB
+                            const maxImgSize = 2 * 1024 * 1024; // 2MB
+                            if (file.size > maxImgSize) {
+                                e.preventDefault();
+                                alert('Le fichier image ne doit pas dépasser 2MB');
+                                return;
+                            }
+
+                            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
+                            if (!allowedTypes.includes(file.type)) {
+                                e.preventDefault();
+                                alert('Format de fichier non autorisé. Utilisez JPEG, PNG, GIF ou SVG.');
+                                return;
+                            }
                         }
                     }
                 });
