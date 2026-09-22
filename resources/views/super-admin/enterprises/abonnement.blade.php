@@ -20,6 +20,25 @@
         </div>
         @endif
 
+        {{-- Les actions d'abonnement renvoient leurs échecs via withErrors() et non
+             session('error') : sans ce bloc, la page revenait muette et l'admin
+             ne savait pas pourquoi l'abonnement n'avait pas été activé. --}}
+        @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="ti ti-alert-triangle me-2"></i>
+            @if($errors->count() === 1)
+                {{ $errors->first() }}
+            @else
+                <ul class="mb-0 ps-3">
+                    @foreach($errors->all() as $erreur)
+                        <li>{{ $erreur }}</li>
+                    @endforeach
+                </ul>
+            @endif
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+
         <!-- En-tête avec navigation -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">

@@ -1098,17 +1098,46 @@ class SuperAdminController extends Controller
             abort(404, 'Entreprise non trouvée');
         }
 
-        $enterprise->update([
-            'is_active' => true,
-            'active_status' => 1,
-        ]);
-
         $company = Company::where('user_id', $enterprise->id)->first();
-        $company->update([
-            'is_active' => true,
-        ]);
 
-        return redirect()->back()->with('success', 'Entreprise activée avec succès');
+        if (!$company) {
+            return redirect()->back()->with('error', 'Informations entreprise non trouvées');
+        }
+
+        // Le bouton s'intitule « Activer l'abonnement » : il doit donc poser les
+        // dates d'échéance, et pas seulement les drapeaux is_active. Sans ça
+        // subscription_status restait à « trial » et plan_expire_date à NULL,
+        // l'entreprise n'était jamais considérée comme abonnée et le bouton
+        // continuait d'afficher « Activer » après le clic.
+        //
+        // Réactiver un abonnement suspendu ne doit pas le raccourcir : une
+        // échéance encore à venir est conservée telle quelle. Sinon on ouvre
+        // une période d'un mois à partir d'aujourd'hui, la durée retenue
+        // partout ailleurs (renouvellement, validation de commande) : la colonne
+        // plans.duration est du texte libre et incohérent (« Mois », « 1 »),
+        // elle ne peut pas servir de base de calcul.
+        $echeanceEnCours = $company->subscription_end_date
+            && now()->lessThan($company->subscription_end_date);
+
+        $dateDebut = $echeanceEnCours ? $company->subscription_start_date : now();
+        $dateFin = $echeanceEnCours ? $company->subscription_end_date : now()->addMonth();
+
+        DB::transaction(function () use ($enterprise, $company, $dateDebut, $dateFin) {
+            $enterprise->update([
+                'is_active' => true,
+                'active_status' => 1,
+                'plan_expire_date' => $dateFin,
+            ]);
+
+            $company->update([
+                'is_active' => true,
+                'subscription_status' => 'active',
+                'subscription_start_date' => $dateDebut,
+                'subscription_end_date' => $dateFin,
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Abonnement activé avec succès (échéance : ' . $dateFin->format('d/m/Y') . ')');
     }
 
     public function suspendEnterprise(User $enterprise)
@@ -1127,9 +1156,14 @@ class SuperAdminController extends Controller
         ]);
 
         $company = Company::where('user_id', $enterprise->id)->first();
-        $company->update([
-            'is_active' => false,
-        ]);
+
+        // Une entreprise sans ligne companies faisait ici une erreur fatale.
+        if ($company) {
+            $company->update([
+                'is_active' => false,
+                'subscription_status' => 'suspended',
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Entreprise suspendue avec succès');
     }
@@ -1269,35 +1303,44 @@ class SuperAdminController extends Controller
         }
 
         try {
-            $activationDate = $validated['activation_date'] ? Carbon::parse($validated['activation_date']) : now();
+            $activationDate = ($validated['activation_date'] ?? null) ? Carbon::parse($validated['activation_date']) : now();
             $duration = $validated['billing_period'] === 'yearly' ? 12 : 1;
             $endDate = $activationDate->copy()->addMonths($duration);
 
-            // Mettre à jour l'utilisateur (table users)
-            $enterprise->update([
-                'plan' => $plan->id,
-                'plan_expire_date' => $endDate,
-            ]);
+            // Transaction : sans elle, l'échec de l'insertion de la commande
+            // laissait users et companies déjà modifiés, donc un abonnement posé
+            // sans trace de commande.
+            DB::transaction(function () use ($enterprise, $company, $plan, $activationDate, $endDate) {
+                // Mettre à jour l'utilisateur (table users)
+                $enterprise->update([
+                    'plan' => $plan->id,
+                    'plan_expire_date' => $endDate,
+                ]);
 
-            // Mettre à jour l'entité Company
-            $company->update([
-                'plan_id' => $plan->id,
-                'subscription_start_date' => $activationDate,
-                'subscription_end_date' => $endDate,
-                'subscription_status' => 'active',
-                'is_active' => true,
-            ]);
+                // Mettre à jour l'entité Company
+                $company->update([
+                    'plan_id' => $plan->id,
+                    'subscription_start_date' => $activationDate,
+                    'subscription_end_date' => $endDate,
+                    'subscription_status' => 'active',
+                    'is_active' => true,
+                ]);
 
-            // Créer une commande pour ce changement de plan
-            Order::create([
-                'user_id' => $enterprise->id,
-                'plan_id' => $plan->id,
-                'amount' => $plan->price,
-                'status' => 'paid',
-                'payment_method' => 'manual',
-                'paid_at' => now(),
-                'notes' => 'Changement de plan effectué par administrateur',
-            ]);
+                // Créer une commande pour ce changement de plan.
+                // order_number est NOT NULL sans valeur par défaut : l'omettre
+                // faisait échouer l'insertion en mode SQL strict.
+                Order::create([
+                    'user_id' => $enterprise->id,
+                    'plan_id' => $plan->id,
+                    'order_number' => Order::generateOrderNumber(),
+                    'amount' => $plan->price,
+                    'total_amount' => $plan->price,
+                    'status' => 'paid',
+                    'payment_method' => 'manual',
+                    'paid_at' => now(),
+                    'notes' => 'Changement de plan effectué par administrateur',
+                ]);
+            });
 
             return redirect()->route('super-admin.enterprises.subscription', $enterprise)
                            ->with('success', 'Abonnement mis à jour avec succès');
@@ -1348,29 +1391,34 @@ class SuperAdminController extends Controller
                 $startDate = $company->subscription_end_date;
             }
 
-            // Mettre à jour l'utilisateur (table users)
-            $enterprise->update([
-                'plan_expire_date' => $endDate,
-            ]);
+            DB::transaction(function () use ($enterprise, $company, $currentPlan, $startDate, $endDate) {
+                // Mettre à jour l'utilisateur (table users)
+                $enterprise->update([
+                    'plan_expire_date' => $endDate,
+                ]);
 
-            // Mettre à jour l'entité Company
-            $company->update([
-                'subscription_start_date' => $startDate,
-                'subscription_end_date' => $endDate,
-                'subscription_status' => 'active',
-                'is_active' => true,
-            ]);
+                // Mettre à jour l'entité Company
+                $company->update([
+                    'subscription_start_date' => $startDate,
+                    'subscription_end_date' => $endDate,
+                    'subscription_status' => 'active',
+                    'is_active' => true,
+                ]);
 
-            // Créer une commande pour ce renouvellement
-            Order::create([
-                'user_id' => $enterprise->id,
-                'plan_id' => $currentPlan->id,
-                'amount' => $currentPlan->price,
-                'status' => 'paid',
-                'payment_method' => 'manual',
-                'paid_at' => now(),
-                'notes' => 'Renouvellement d\'abonnement effectué par administrateur',
-            ]);
+                // Créer une commande pour ce renouvellement.
+                // order_number est NOT NULL sans valeur par défaut.
+                Order::create([
+                    'user_id' => $enterprise->id,
+                    'plan_id' => $currentPlan->id,
+                    'order_number' => Order::generateOrderNumber(),
+                    'amount' => $currentPlan->price,
+                    'total_amount' => $currentPlan->price,
+                    'status' => 'paid',
+                    'payment_method' => 'manual',
+                    'paid_at' => now(),
+                    'notes' => 'Renouvellement d\'abonnement effectué par administrateur',
+                ]);
+            });
 
             return redirect()->route('super-admin.enterprises.subscription', $enterprise)
                            ->with('success', 'Abonnement renouvelé avec succès');
@@ -2189,16 +2237,29 @@ class SuperAdminController extends Controller
             
             // Activer le compte utilisateur
             if ($commande->user) {
-                $commande->user->update([
+                $entrepriseCommande = $commande->user->company;
+
+                $donneesUtilisateur = [
                     'is_active' => true,
+                    'plan' => $commande->plan_id,
                     'plan_expire_date' => now()->addMonth(), // Abonnement d'un mois
-                    'company_id' => $commande->user->company->id
-                ]);
-                
+                ];
+
+                // company_id n'est renseigné que si l'entreprise existe : sur une
+                // commande dont l'utilisateur n'a pas de ligne companies, lire
+                // ->company->id provoquait une erreur fatale et la validation de
+                // la commande échouait entièrement.
+                if ($entrepriseCommande) {
+                    $donneesUtilisateur['company_id'] = $entrepriseCommande->id;
+                }
+
+                $commande->user->update($donneesUtilisateur);
+
                 // Activer l'entreprise
-                if ($commande->user->company) {
-                    $commande->user->company->update([
+                if ($entrepriseCommande) {
+                    $entrepriseCommande->update([
                         'is_active' => true,
+                        'plan_id' => $commande->plan_id,
                         'subscription_start_date' => now(),
                         'subscription_end_date' => now()->addMonth(),
                         'subscription_status' => 'active'

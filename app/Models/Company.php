@@ -158,9 +158,12 @@ class Company extends Model
      */
     public function deactivate(): void
     {
+        // « inactive » n'existe pas dans l'enum de la colonne
+        // (trial, pending, active, suspended, cancelled, expired) : en mode SQL
+        // strict la mise à jour était rejetée.
         $this->update([
             'is_active' => false,
-            'subscription_status' => 'inactive',
+            'subscription_status' => 'suspended',
         ]);
     }
 
