@@ -59,6 +59,7 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
         Route::put('family/{id}', [EmployeesController::class, 'updateFamily'])->name('family.update');
         Route::delete('family/{id}', [EmployeesController::class, 'destroyFamily'])->name('family.destroy');
         Route::post('documents/store', [EmployeesController::class, 'storeDocument'])->name('documents.store');
+        Route::get('documents/{id}/download', [EmployeesController::class, 'downloadDocument'])->name('documents.download');
         Route::delete('documents/{id}', [EmployeesController::class, 'destroyDocument'])->name('documents.destroy');
 
         // Route grille salariale

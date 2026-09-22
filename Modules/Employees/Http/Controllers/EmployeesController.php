@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Modules\Employees\Models\Employee;
 use Modules\Employees\Models\EmployeeDocument;
@@ -2351,6 +2352,45 @@ class EmployeesController extends Controller
                 'message' => 'Erreur lors de l\'ajout du document: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Télécharger un document de l'employé
+     */
+    public function downloadDocument($id)
+    {
+        $document = EmployeeDocument::findOrFail($id);
+
+        // Vérifier que le document appartient à l'entreprise de l'utilisateur
+        if ($document->company_id != auth()->user()->company_id) {
+            abort(403, 'Accès non autorisé');
+        }
+
+        $documentData = json_decode($document->document_value, true) ?? [];
+        $filePath = $documentData['path'] ?? null;
+
+        if (!$filePath) {
+            abort(404, 'Fichier non trouvé');
+        }
+
+        // Vérifier l'existence sur le disque public ou local
+        $disk = null;
+        if (Storage::disk('public')->exists($filePath)) {
+            $disk = Storage::disk('public');
+        } elseif (Storage::disk('local')->exists($filePath)) {
+            $disk = Storage::disk('local');
+        } elseif (Storage::disk('local')->exists('public/' . $filePath)) {
+            $filePath = 'public/' . $filePath;
+            $disk = Storage::disk('local');
+        }
+
+        if (!$disk) {
+            abort(404, 'Fichier non trouvé');
+        }
+
+        $fileName = $documentData['original_name'] ?? ($document->libelle . '.' . pathinfo($filePath, PATHINFO_EXTENSION));
+
+        return $disk->download($filePath, $fileName);
     }
 
     /**

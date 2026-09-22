@@ -411,7 +411,6 @@
                                         <tr>
                                             <th>Libellé</th>
                                             <th>Type</th>
-                                            <th>Taille</th>
                                             <th>Date d'ajout</th>
                                             <th>Actions</th>
                                         </tr>
@@ -424,11 +423,10 @@
                                         <tr>
                                             <td>{{ $document->libelle }}</td>
                                             <td>{{ $docData['type'] ?? 'N/A' }}</td>
-                                            <td>{{ ($docData['size'] ?? null) ? number_format($docData['size'] / 1024, 2) . ' Ko' : 'N/A' }}</td>
                                             <td>{{ $document->created_at->format('d/m/Y') }}</td>
                                             <td>
                                                 @if(!empty($docData['path']))
-                                                <a href="{{ asset('storage/' . $docData['path']) }}" target="_blank" class="btn btn-icon btn-sm btn-label-primary">
+                                                <a href="{{ route('company.employees.documents.download', $document->id) }}" class="btn btn-icon btn-sm btn-label-primary" title="Télécharger">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                                 @endif
@@ -439,7 +437,7 @@
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td colspan="5" class="text-center text-muted">Aucun document enregistré</td>
+                                            <td colspan="4" class="text-center text-muted">Aucun document enregistré</td>
                                         </tr>
                                         @endforelse
                                     </tbody>
