@@ -539,6 +539,11 @@
     function initActionNarrator() {
         document.addEventListener('click', function(e) {
             const target = e.target.closest('a, button, .sidebar-main-item, .submenu-item');
+            // Abonnement échu : ne pas annoncer l'ouverture d'un menu grisé,
+            // qui ne mène nulle part.
+            if (target && target.closest('.sidebar-nav.sidebar-locked')) {
+                return;
+            }
             if (target) {
                 const text = (target.innerText || "").split('\n')[0].trim();
                 const advice = getExpertAdvice(text);
@@ -555,6 +560,9 @@
         const sidebarItems = document.querySelectorAll('.sidebar-main-item, .submenu-item');
         sidebarItems.forEach(item => {
             item.addEventListener('mouseenter', function() {
+                if (this.closest('.sidebar-nav.sidebar-locked')) {
+                    return;
+                }
                 const text = this.innerText;
                 const advice = getExpertAdvice(text);
                 if (advice) {

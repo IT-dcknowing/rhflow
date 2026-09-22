@@ -143,6 +143,74 @@
             overflow-x: hidden;
         }
 
+        /* ----- Abonnement échu : menus grisés -----
+           Le grisage est purement visuel ; la barrière réelle reste le
+           middleware VerifierAbonnement côté serveur. Les items gardent leurs
+           événements de pointeur (pas de pointer-events: none) pour que le clic
+           puisse être intercepté et expliqué à l'utilisateur. */
+        .sidebar-nav.sidebar-locked .sidebar-main-item,
+        .sidebar-nav.sidebar-locked .submenu-item,
+        .sidebar-nav.sidebar-locked .sidebar-section-title,
+        .sidebar-nav.sidebar-locked .submenu-group-title {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .sidebar-nav.sidebar-locked .sidebar-main-item,
+        .sidebar-nav.sidebar-locked .submenu-item {
+            cursor: not-allowed;
+        }
+
+        /* Le survol ne doit plus suggérer une destination accessible. */
+        .sidebar-nav.sidebar-locked .sidebar-main-item:hover,
+        .sidebar-nav.sidebar-locked .submenu-item:hover {
+            background: transparent;
+            transform: none;
+        }
+
+        .sidebar-nav.sidebar-locked .sidebar-main-item.active,
+        .sidebar-nav.sidebar-locked .submenu-item.active {
+            background: transparent;
+        }
+
+        /* Bandeau d'explication. Posé entre le logo et la nav, sur le fond
+           blanc de la sidebar : contrastes pensés pour ce fond clair. */
+        .sidebar-locked-notice {
+            flex: 0 0 auto;
+            margin: 4px 14px 8px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #fdf1f1;
+            border: 1px solid #f0c4c4;
+            color: #8a2020;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .sidebar-locked-notice strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12.5px;
+            color: #a01818;
+        }
+
+        .sidebar-locked-notice .btn-renouveler {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: #253e87;
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar-locked-notice .btn-renouveler:hover {
+            background: #1c2f68;
+            color: #fff;
+        }
+
         .sidebar-section-title {
             font-size: 11px;
             font-weight: 700;
@@ -794,6 +862,12 @@
             $voitDeclarations = in_array('declarations', $sectionsAutorisees);
             $voitEvenements = in_array('evenements', $sectionsAutorisees);
             $voitSimulateur = in_array('simulateur', $sectionsAutorisees);
+
+            // ----- Abonnement échu : menus grisés -----
+            // Calculé ici et non plus bas : le résumé sert à la fois au grisage
+            // de la sidebar et au rappel affiché en fin de page.
+            $rappelAbonnement = app(\App\Services\SubscriptionService::class)->resume();
+            $menusGrises = $rappelAbonnement['menus_grises'];
         @endphp
         <div class="unified-sidebar {{ $isSubmenuOpen ? 'submenu-open' : '' }}" id="unifiedSidebar">
 
@@ -804,8 +878,27 @@
                 </div>
             </div>
 
+            @if($menusGrises)
+                {{-- Hors .sidebar-nav : les panneaux de sous-menu y sont en
+                     position absolue et recouvriraient le bandeau ; posé ici, il
+                     reste visible et lisible quel que soit le menu ouvert. --}}
+                <div class="sidebar-locked-notice">
+                    <strong><i class="fas fa-lock me-1"></i> Abonnement échu</strong>
+                    @if($rappelAbonnement['echeance'])
+                        Votre abonnement a pris fin le
+                        {{ $rappelAbonnement['echeance']->format('d/m/Y') }}.
+                    @else
+                        Votre abonnement a pris fin.
+                    @endif
+                    Les menus sont désactivés jusqu'au renouvellement.
+                    @if($rappelAbonnement['est_proprietaire'])
+                        <a href="{{ route('company.plan.pricing') }}" class="btn-renouveler">Renouveler</a>
+                    @endif
+                </div>
+            @endif
+
             <!-- Navigation -->
-            <div class="sidebar-nav" id="sidebarNav">
+            <div class="sidebar-nav {{ $menusGrises ? 'sidebar-locked' : '' }}" id="sidebarNav">
 
                 <!-- ====== VUE PRINCIPALE DES MENUS ====== -->
                 <div class="sidebar-main-view" id="sidebar-main-view">
@@ -1388,6 +1481,63 @@
             }
         });
     </script>
+
+    @if($menusGrises)
+        {{-- Abonnement échu : les menus grisés ne mènent nulle part.
+             Le clic est intercepté en capture pour devancer tout autre handler. --}}
+        <script>
+            (function () {
+                var nav = document.getElementById('sidebarNav');
+
+                if (!nav) {
+                    return;
+                }
+
+                var estProprietaire = {{ $rappelAbonnement['est_proprietaire'] ? 'true' : 'false' }};
+                var urlRenouvellement = @json(route('company.plan.pricing'));
+                var echeance = @json(optional($rappelAbonnement['echeance'])->format('d/m/Y'));
+
+                nav.addEventListener('click', function (evenement) {
+                    var lien = evenement.target.closest('.sidebar-main-item, .submenu-item');
+
+                    // Le bandeau et son bouton « Renouveler » restent cliquables.
+                    if (!lien || !nav.contains(lien)) {
+                        return;
+                    }
+
+                    evenement.preventDefault();
+                    evenement.stopPropagation();
+
+                    var texte = (echeance
+                        ? 'Votre abonnement a pris fin le <strong>' + echeance + '</strong>.'
+                        : 'Votre abonnement a pris fin.')
+                        + "<br>Les menus restent inaccessibles tant qu'il n'est pas renouvelé.";
+
+                    if (!estProprietaire) {
+                        texte += "<br><br><small>Rapprochez-vous de l'administrateur de votre entreprise.</small>";
+                    }
+
+                    Swal.fire({
+                        title: 'Abonnement échu',
+                        html: texte,
+                        icon: 'warning',
+                        // Deux boutons et deux seulement, toujours en français.
+                        showConfirmButton: true,
+                        showCancelButton: true,
+                        showDenyButton: false,
+                        confirmButtonText: estProprietaire ? "Renouveler maintenant" : "J'ai compris",
+                        cancelButtonText: 'Fermer',
+                        confirmButtonColor: '#253e87',
+                        cancelButtonColor: '#8592a3'
+                    }).then(function (resultat) {
+                        if (resultat.isConfirmed && estProprietaire) {
+                            window.location.href = urlRenouvellement;
+                        }
+                    });
+                }, true);
+            })();
+        </script>
+    @endif
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -1424,8 +1574,7 @@
         })();
     </script>
 
-    {{-- Rappel d'échéance d'abonnement --}}
-    @php $rappelAbonnement = app(\App\Services\SubscriptionService::class)->resume(); @endphp
+    {{-- Rappel d'échéance d'abonnement ($rappelAbonnement vient du bloc de la sidebar) --}}
     @if($rappelAbonnement['alerter'])
         <script>
             (function () {

@@ -100,6 +100,24 @@ class SubscriptionService
     }
 
     /**
+     * Les menus doivent-ils apparaître grisés ?
+     *
+     * Déclenché par la seule échéance, indépendamment de
+     * config('subscription.blocage_actif') : le grisage est un signal visuel,
+     * pas le blocage serveur (VerifierAbonnement), qui reste la seule barrière
+     * de sécurité. Le Super Admin n'est jamais concerné : c'est lui qui
+     * prolonge les abonnements.
+     */
+    public function doitGriserMenus(): bool
+    {
+        if (Auth::check() && Auth::user()->type === 'super_admin') {
+            return false;
+        }
+
+        return $this->estExpire();
+    }
+
+    /**
      * Faut-il afficher le rappel d'échéance ?
      * Vrai à l'approche de l'échéance et tant qu'elle est dépassée sans blocage.
      */
@@ -143,6 +161,7 @@ class SubscriptionService
             'jours_restants' => $jours,
             'expire' => $this->estExpire(),
             'alerter' => $this->doitAlerter(),
+            'menus_grises' => $this->doitGriserMenus(),
             'plan' => optional($this->plan())->name,
             'est_proprietaire' => Auth::check() && Auth::user()->type === 'company',
         ];
