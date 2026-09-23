@@ -218,6 +218,109 @@ class SalaryService
     }
 
     /**
+     * Pose la prime d'ancienneté du salarié sur la période.
+     *
+     * Le montant vient de calculPrimeAnciennete() : c'est la règle légale
+     * (Art. 55 CCI) qui fait foi, pas une saisie. La ligne est donc réécrite à
+     * chaque passage, comme le sont les retenues légales.
+     *
+     * Rien n'est créé tant que le salarié n'y a pas droit (moins de 25 mois) :
+     * inutile d'encombrer la paie d'une ligne à zéro.
+     *
+     * @return bool Vrai si une ligne a été posée ou mise à jour
+     */
+    public function appliquerPrimeAnciennete(Employee $employee, PaiePeriode $periode): bool
+    {
+        $montant = $this->calculPrimeAnciennete($employee, $periode);
+
+        if ($montant <= 0) {
+            return false;
+        }
+
+        // La rubrique 104 est déclinée par entreprise. Sans elle, on ne devine
+        // pas le paramétrage fiscal et social : on s'abstient plutôt que d'inventer.
+        $option = \App\Models\AllowanceOption::where('code', '104')
+            ->where('company_id', $employee->company_id)
+            ->first();
+
+        if (!$option) {
+            \Log::warning("Prime d'ancienneté non appliquée : rubrique 104 absente pour l'entreprise #{$employee->company_id}");
+            return false;
+        }
+
+        Allowance::updateOrCreate(
+            [
+                'employee_id' => $employee->id,
+                'periode_id' => $periode->id,
+                'code' => '104',
+            ],
+            [
+                'code_compta' => $option->code_compta,
+                'allowance_option_id' => $option->id,
+                'title' => $option->name,
+                'trait_fisc' => $option->param_fiscal,
+                'trait_cnps' => $option->param_social,
+                'base_heures' => 0,
+                'amount' => $montant,
+                'amount_imp' => $montant,
+                'montant' => $montant,
+                'jours_work' => 30,
+                'jours_leave' => 0,
+                'type' => 'fixed',
+                'type_amount' => 1,
+                'details' => "Prime d'ancienneté appliquée automatiquement (Art. 55 CCI)",
+                'month_paie' => \Carbon\Carbon::parse($periode->date_debut)->format('Y-m'),
+                'is_active' => 1,
+                'company_id' => $employee->company_id,
+                // created_by est NOT NULL sans valeur par défaut. Le traitement peut
+                // tourner hors session (commande, file d'attente) : on retombe alors
+                // sur le compte propriétaire de l'entreprise.
+                'created_by' => auth()->id() ?? optional($employee->company)->user_id ?? 0,
+                'updated_by' => auth()->id(),
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * Applique la prime d'ancienneté à tous les salariés actifs de la période.
+     *
+     * Mêmes garde-fous que les retenues légales : une fois les bulletins générés
+     * ou la période payée, l'historique ne bouge plus.
+     *
+     * @return int Nombre de salariés ayant reçu la prime
+     */
+    public function appliquerPrimeAncienneteperiode(PaiePeriode $periode): int
+    {
+        if (in_array($periode->statut, ['payee', 'cloture', 'annulee'], true) || $periode->bulletins()->exists()) {
+            return 0;
+        }
+
+        $employees = Employee::active()
+            ->where('company_id', $periode->company_id)
+            ->where('start_date', '<=', $periode->date_fin)
+            ->where(function ($query) use ($periode) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>=', $periode->date_debut);
+            })
+            ->get();
+
+        $posees = 0;
+        foreach ($employees as $employee) {
+            try {
+                if ($this->appliquerPrimeAnciennete($employee, $periode)) {
+                    $posees++;
+                }
+            } catch (\Throwable $e) {
+                \Log::warning("Prime d'ancienneté non appliquée pour l'employé #{$employee->id}, période #{$periode->id} : " . $e->getMessage());
+            }
+        }
+
+        return $posees;
+    }
+
+    /**
      * Calcule tous les détails des retenues par défaut (rubriques 301 à 412)
      */
     public function getDefaultDeductionsDetails(Employee $employee, $periode_id)
@@ -319,8 +422,11 @@ class SalaryService
         $cne = round($sbi * 1.2 / 100);
         $cne_expat = ($employee->charge_expat != 'local') ? round($sbi * 9.2 / 100) : 0;
         $apprentissage = round($sbi * 0.4 / 100);
-        // FPC : taux légal 1,2% MAIS payé à 0,6%/mois + régularisation annuelle (Art. 134 al.4 CGI)
-        $fpc = round($sbi * 0.6 / 100);
+        // FPC : 1,2% du brut imposable, prélevé mensuellement.
+        // Le code retenait 0,6% (acompte mensuel, régularisation annuelle) ; le
+        // bulletin de référence de l'entreprise applique 1,2% dès le mois, comme
+        // l'autre chemin de calcul du contrôleur. Les deux sont désormais alignés.
+        $fpc = round($sbi * 1.2 / 100);
 
         // Accident de travail & Prestation familiale (Plafonné à 75 000 FCFA)
         $base_at_pf = min($sbs, 75000);
@@ -339,7 +445,7 @@ class SalaryService
             ['code' => '409', 'libelle' => 'Contribution Nationale',             'salariale' => 0, 'patronale' => 1, 'base' => $sbi,      'taux' => '1.2%',  'amount' => $cne,             'ordre' => 6,  'type_id' => 1],
             ['code' => '410', 'libelle' => 'Contribution Employeur (Expatrié)',  'salariale' => 0, 'patronale' => 1, 'base' => $sbi,      'taux' => '9.2%',  'amount' => $cne_expat,       'ordre' => 7,  'type_id' => 1],
             ['code' => '411', 'libelle' => "Taxe d'Apprentissage",               'salariale' => 0, 'patronale' => 1, 'base' => $sbi,      'taux' => '0.4%',  'amount' => $apprentissage,   'ordre' => 8,  'type_id' => 1],
-            ['code' => '412', 'libelle' => 'Taxe F.P.C (0,6%/mois)',             'salariale' => 0, 'patronale' => 1, 'base' => $sbi,      'taux' => '0.6%',  'amount' => $fpc,             'ordre' => 9,  'type_id' => 1],
+            ['code' => '412', 'libelle' => 'Taxe F.P.C',                        'salariale' => 0, 'patronale' => 1, 'base' => $sbi,      'taux' => '1.2%',  'amount' => $fpc,             'ordre' => 9,  'type_id' => 1],
             ['code' => '308', 'libelle' => 'Cotisation retraite employeur',      'salariale' => 0, 'patronale' => 1, 'base' => $sbs_plafonne, 'taux' => '7.7%',  'amount' => $cnps_pat,   'ordre' => 11, 'type_id' => 1],
             ['code' => '305', 'libelle' => 'Accident de travail',                'salariale' => 0, 'patronale' => 1, 'base' => $base_at_pf,'taux' => ($act_taux * 100) . '%', 'amount' => $accident, 'ordre' => 12, 'type_id' => 1],
             ['code' => '306', 'libelle' => 'Prestation Familiale',               'salariale' => 0, 'patronale' => 1, 'base' => $base_at_pf,'taux' => '5.75%', 'amount' => $pf,             'ordre' => 13, 'type_id' => 1],

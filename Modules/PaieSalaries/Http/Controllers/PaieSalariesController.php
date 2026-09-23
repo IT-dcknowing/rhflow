@@ -387,7 +387,7 @@ class PaieSalariesController extends Controller
             "date_fin" => "required|date|after:date_debut",
             "description" => "nullable|string",
         ], [
-            "nom.unique" => "Un exercice portant ce nom existe déjà dans votre entreprise.",
+            "nom.unique" => "Un exercice porte déjà ce nom.",
         ]);
 
         $exercice = new PaieExercice();
@@ -459,7 +459,7 @@ class PaieSalariesController extends Controller
             "description" => "nullable|string",
             "statut" => "required|in:brouillon,en_cours,cloture",
         ], [
-            "nom.unique" => "Un exercice portant ce nom existe déjà dans votre entreprise.",
+            "nom.unique" => "Un exercice porte déjà ce nom.",
         ]);
 
         $exercice->update($validated);
@@ -734,6 +734,8 @@ class PaieSalariesController extends Controller
                     ])->findOrFail($id);
 
         // Retenues légales appliquées à tous les salariés tant que les bulletins ne sont pas générés
+        // Prime d'ancienneté (Art. 55 CCI) appliquée d'office, avant les retenues.
+        app(\App\Services\SalaryService::class)->appliquerPrimeAncienneteperiode($periode);
         app(\App\Services\SalaryService::class)->appliquerRetenuesLegalesPeriode($periode);
         $retenues = Retenue::whereHas('periode', function($query) use ($periode) {
                         $query->where('id', $periode->id);
@@ -2074,6 +2076,8 @@ class PaieSalariesController extends Controller
             ->get();
 
         // Retenues légales toujours appliquées : plus d'action manuelle sur cette page
+        // Prime d'ancienneté (Art. 55 CCI) appliquée d'office, avant les retenues.
+        app(\App\Services\SalaryService::class)->appliquerPrimeAncienneteperiode($periode);
         app(\App\Services\SalaryService::class)->appliquerRetenuesLegalesPeriode($periode);
 
         $employees = Employee::active()
@@ -2631,6 +2635,8 @@ class PaieSalariesController extends Controller
 
         // Retenues légales à jour avant l'aperçu des salaires
         if ($periode) {
+            // Prime d'ancienneté (Art. 55 CCI) appliquée d'office, avant les retenues.
+            app(\App\Services\SalaryService::class)->appliquerPrimeAncienneteperiode($periode);
             app(\App\Services\SalaryService::class)->appliquerRetenuesLegalesPeriode($periode);
         }
 
@@ -3388,6 +3394,8 @@ public function storeRemboursement(Request $request)
                     $employee = Employee::where('id', $employee_id)->where('is_active', 1)->first();
 
                     // Aucun bulletin sans ITS, CNPS et CMU : retenues légales appliquées juste avant le calcul
+                    // Prime d'ancienneté posée avant les retenues : elle entre dans le brut.
+                    app(\App\Services\SalaryService::class)->appliquerPrimeAnciennete($employee, $periode);
                     app(\App\Services\SalaryService::class)->appliquerRetenuesLegales($employee, $periode);
 
                     $payslipEmployee = new PaySlip();
