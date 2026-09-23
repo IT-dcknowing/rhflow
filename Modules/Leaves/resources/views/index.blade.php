@@ -27,7 +27,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">🏖️ Gestion des Congés
+                    <h4 class="mb-1"> Gestion des Congés
                         @if($periode && $periode->exercice) | Exercice :
                          {{ $periode->exercice->nom ?? 'N/A' }} - <span class="badge bg-label-{{ $periode->statut === 'en_cours' ? 'success' : ($periode->statut === 'cloture' ? 'secondary' : 'warning') }}
                         {{ $periode->statut ? ucfirst($periode->statut) : 'Statut inconnu' }}
