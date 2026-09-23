@@ -496,8 +496,18 @@
                                                             </tr>
                                                         @elseif($retenue['code'] == 301 || $retenue['code'] == 302)
                                                             @php
+                                                                // Part patronale de la retraite (308) et de la CMU employeur (307) :
+                                                                // ces lignes ne sont pas affichées séparément, leur montant est reporté
+                                                                // sur la ligne 301 / 302 correspondante. La colonne montrait
+                                                                // auparavant l'indicateur salariale/patronale (0 ou 1) au lieu du
+                                                                // montant, et le total patronal ignorait la retraite employeur.
+                                                                $codeEmp = $retenue['code'] == 301 ? '308' : '307';
+                                                                $ligneEmp = collect($retenues)
+                                                                    ->first(fn ($x) => (string) (is_array($x) ? ($x['code'] ?? '') : ($x->code ?? '')) === $codeEmp);
+                                                                $pat_val = (float) (is_array($ligneEmp) ? ($ligneEmp['amount'] ?? 0) : ($ligneEmp->amount ?? 0));
+                                                                $pat_rate = $retenue['code'] == 301 ? '7.70%' : '0.50%';
                                                                 $totalretenuessal += $retenue['amount'];
-                                                                $totalretenuesemp += $retenue['patronale'];
+                                                                $totalretenuesemp += $pat_val;
                                                             @endphp
                                                             <tr>
                                                                 <td class="text-end">{{ $retenue['code'] }}</td>
@@ -509,9 +519,9 @@
                                                                 <td class="text-end"></td>
                                                                 <td class="text-end">{{ number_format($retenue['amount'], 0, ',', ' ')}}
                                                                 </td>
-                                                                <td class="text-end">{{ $retenue['salariale'] }}</td>
+                                                                <td class="text-end">{{ $pat_rate }}</td>
                                                                 <td class="text-end">
-                                                                    {{ number_format($retenue['patronale'], 0, ',', ' ') }}
+                                                                    {{ number_format($pat_val, 0, ',', ' ') }}
                                                                 </td>
                                                             </tr>
                                                         @else
@@ -1430,8 +1440,15 @@
                                                         </tr>
                                                     @elseif($retenue['code'] == 301 || $retenue['code'] == 302)
                                                         @php
+                                                            // Même report que dans la variante écran : la part patronale vient
+                                                            // des lignes 308 et 307, non affichées séparément.
+                                                            $codeEmp2 = $retenue['code'] == 301 ? '308' : '307';
+                                                            $ligneEmp2 = collect($retenues)
+                                                                ->first(fn ($x) => (string) (is_array($x) ? ($x['code'] ?? '') : ($x->code ?? '')) === $codeEmp2);
+                                                            $pat_val2 = (float) (is_array($ligneEmp2) ? ($ligneEmp2['amount'] ?? 0) : ($ligneEmp2->amount ?? 0));
+                                                            $pat_rate2 = $retenue['code'] == 301 ? '7.70%' : '0.50%';
                                                             $totalretenuessal3 += $retenue['amount'];
-                                                            $totalretenuesemp3 += $retenue['patronale'];
+                                                            $totalretenuesemp3 += $pat_val2;
                                                         @endphp
                                                         <tr>
                                                             <td style="border-left: solid 1px black; border-right: solid 1px black;"
@@ -1451,9 +1468,9 @@
                                                                 class="text-end">{{ number_format($retenue['amount'], 0, ',', ' ')}}
                                                             </td>
                                                             <td style="border-left: solid 1px black; border-right: solid 1px black;"
-                                                                class="text-end">{{ $retenue['salariale'] }}</td>
+                                                                class="text-end">{{ $pat_rate2 }}</td>
                                                             <td style="border-left: solid 1px black; border-right: solid 1px black;"
-                                                                class="text-end">{{ number_format($retenue['patronale'], 0, ',', ' ') }}
+                                                                class="text-end">{{ number_format($pat_val2, 0, ',', ' ') }}
                                                             </td>
                                                         </tr>
                                                     @else

@@ -301,8 +301,20 @@
                                             </tr>
                                         @elseif($retenue->code == 301 || $retenue->code == 302)
                                             @php
+                                                // La part patronale de la retraite et de la CMU est stockée sur des
+                                                // lignes séparées (308 et 307) que le bulletin n'affiche pas. Elle est
+                                                // donc reportée ici, sur la ligne du salarié correspondante.
+                                                // Auparavant la colonne montrait $retenue->patronale, qui est un
+                                                // indicateur 0/1 et non un montant : d'où le « 1 » et le « 0 » affichés,
+                                                // et un total patronal amputé de la retraite employeur.
+                                                $pat_val = $retenue->patronale > 0
+                                                    ? $retenue->patronale
+                                                    : ($retenue->code == 301
+                                                        ? ($retenuesEmp->firstWhere('code', 308)->amount ?? 0)
+                                                        : ($retenuesEmp->firstWhere('code', 307)->amount ?? 0));
+                                                $pat_rate = $retenue->code == 301 ? '7.70%' : '0.50%';
                                                 $totalretenuessal += $retenue->amount;
-                                                $totalretenuesemp += $retenue->patronale;
+                                                $totalretenuesemp += $pat_val;
                                             @endphp
                                             <tr>
                                                 <td class="text-end">{{ ($retenue->libelle ?? "") == "TOTAL FDFP" ? "413" : ($retenue->code ?? "") }}</td>
@@ -312,11 +324,11 @@
                                                 <td class="text-end">{{ $retenue->taux }}</td>
                                                 <td class="text-end"></td>
                                                 <td class="text-end">{{ number_format($retenue->amount, 0, ',', ' ')}}</td>
-                                                <td class="text-end">{{ $retenue->salariale }}</td>
-                                                <td class="text-end">{{ number_format($retenue->patronale, 0, ',', ' ') }}</td>
+                                                <td class="text-end">{{ $pat_rate }}</td>
+                                                <td class="text-end">{{ number_format($pat_val, 0, ',', ' ') }}</td>
                                             </tr>
                                         @else
-                                            @if($retenue->type != 'add')
+                                            @if($retenue->type != 'add' || in_array($retenue->code, [305, 306, 409, 410, 411, 412]))
                                                 @php
                                                     $totalretenuesemp += $retenue->amount;
                                                 @endphp
@@ -759,8 +771,15 @@
                                     </tr>
                                 @elseif($retenue->code == 301 || $retenue->code == 302)
                                     @php
+                                        // Même report qu'au-dessus : part patronale prise sur les lignes 308 et 307.
+                                        $pat_val3 = $retenue->patronale > 0
+                                            ? $retenue->patronale
+                                            : ($retenue->code == 301
+                                                ? ($retenuesEmp->firstWhere('code', 308)->amount ?? 0)
+                                                : ($retenuesEmp->firstWhere('code', 307)->amount ?? 0));
+                                        $pat_rate3 = $retenue->code == 301 ? '7.70%' : '0.50%';
                                         $totalretenuessal3 += $retenue->amount;
-                                        $totalretenuesemp3 += $retenue->patronale;
+                                        $totalretenuesemp3 += $pat_val3;
                                     @endphp
                                     <tr >
                                         <td class="text-end">{{ ($retenue->libelle ?? "") == "TOTAL FDFP" ? "413" : ($retenue->code ?? "") }}</td>
@@ -770,11 +789,11 @@
                                         <td class="text-end">{{ $retenue->taux }}</td>
                                         <td class="text-end"></td>
                                         <td class="text-end">{{ number_format($retenue->amount, 0, ',', ' ')}}</td>
-                                        <td class="text-end">{{ $retenue->salariale }}</td>
-                                        <td class="text-end">{{ number_format($retenue->patronale, 0, ',', ' ') }}</td>
+                                        <td class="text-end">{{ $pat_rate3 }}</td>
+                                        <td class="text-end">{{ number_format($pat_val3, 0, ',', ' ') }}</td>
                                     </tr>
                                 @else
-                                    @if($retenue->type != 'add')
+                                    @if($retenue->type != 'add' || in_array($retenue->code, [305, 306, 409, 410, 411, 412]))
                                         @php
                                             $totalretenuesemp3 += $retenue->amount;
                                         @endphp

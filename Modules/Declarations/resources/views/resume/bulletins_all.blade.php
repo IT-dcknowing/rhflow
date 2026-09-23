@@ -348,7 +348,7 @@
                                                                 @elseif($retenue['code'] == 301 || $retenue['code'] == 302)
                                                                     @php
                                                                         $totalretenuessal += $retenue['amount'];
-                                                                        $totalretenuesemp += $retenue['patronale'];
+                                                                        $codeEmpA = $retenue['code'] == 301 ? '308' : '307'; $ligneEmpA = collect($retenues)->first(fn ($x) => (string) (is_array($x) ? ($x['code'] ?? '') : ($x->code ?? '')) === $codeEmpA); $patValA = (float) (is_array($ligneEmpA) ? ($ligneEmpA['amount'] ?? 0) : ($ligneEmpA->amount ?? 0)); $patRateA = $retenue['code'] == 301 ? '7.70%' : '0.50%'; $totalretenuesemp += $patValA;
                                                                     @endphp
                                                                     <tr>
                                                                         <td class="text-end">{{ $retenue['code'] }}</td>
@@ -358,8 +358,8 @@
                                                                         <td class="text-end">{{ $retenue['taux'] }}</td>
                                                                         <td class="text-end"></td>
                                                                         <td class="text-end">{{ number_format($retenue['amount'], 0, ',', ' ')}}</td>
-                                                                        <td class="text-end">{{ $retenue['salariale'] }}</td>
-                                                                        <td class="text-end">{{ number_format($retenue['patronale'], 0, ',', ' ') }}</td>
+                                                                        <td class="text-end">{{ $patRateA }}</td>
+                                                                        <td class="text-end">{{ number_format($patValA, 0, ',', ' ') }}</td>
                                                                     </tr>
                                                                 @else
                                                                     @if($retenue['type'] != 'add')
@@ -770,7 +770,7 @@
                                                                     <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px;"></td>
                                                                 </tr>
                                                             @elseif($retenue['code'] == 301 || $retenue['code'] == 302)
-                                                                @php $totalretenuessal4 += $retenue['amount']; $totalretenuesemp4 += $retenue['patronale']; @endphp
+                                                                @php $codeEmpB = $retenue['code'] == 301 ? '308' : '307'; $ligneEmpB = collect($retenues)->first(fn ($x) => (string) (is_array($x) ? ($x['code'] ?? '') : ($x->code ?? '')) === $codeEmpB); $patValB = (float) (is_array($ligneEmpB) ? ($ligneEmpB['amount'] ?? 0) : ($ligneEmpB->amount ?? 0)); $patRateB = $retenue['code'] == 301 ? '7.70%' : '0.50%'; $totalretenuessal4 += $retenue['amount']; $totalretenuesemp4 += $patValB; @endphp
                                                                 <tr>
                                                                     <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ $retenue['code'] }}</td>
                                                                     <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px;">{{ $retenue['libelle'] }}</td>
@@ -779,8 +779,8 @@
                                                                     <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ $retenue['taux'] }}</td>
                                                                     <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px;"></td>
                                                                     <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$retenue['amount'], 0, ',', ' ')}}</td>
-                                                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ $retenue['salariale'] }}</td>
-                                                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$retenue['patronale'], 0, ',', ' ') }}</td>
+                                                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ $patRateB }}</td>
+                                                                    <td style="border-left: 1px solid #000; border-right: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$patValB, 0, ',', ' ') }}</td>
                                                                 </tr>
                                                             @else
                                                                 @if($retenue['type'] != 'add')
@@ -1199,7 +1199,7 @@
                                                             @elseif($retenue['code'] == 301 || $retenue['code'] == 302)
                                                                 @php
                                                                     $totalretenuessal2 += $retenue['amount'];
-                                                                    $totalretenuesemp2 += $retenue['patronale'];
+                                                                    $codeEmpC = $retenue['code'] == 301 ? '308' : '307'; $ligneEmpC = collect($retenues)->first(fn ($x) => (string) (is_array($x) ? ($x['code'] ?? '') : ($x->code ?? '')) === $codeEmpC); $patValC = (float) (is_array($ligneEmpC) ? ($ligneEmpC['amount'] ?? 0) : ($ligneEmpC->amount ?? 0)); $patRateC = $retenue['code'] == 301 ? '7.70%' : '0.50%'; $totalretenuesemp2 += $patValC;
                                                                 @endphp
                                                                 <tr>
                                                                     <td style="border: 1px solid #000; padding: 3px; text-align: center;">{{ $retenue['code'] }}</td>
@@ -1208,8 +1208,8 @@
                                                                     <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$retenue['base'], 0, ',', ' ') }}</td>
                                                                     <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ $retenue['taux'] }}</td>
                                                                     <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$retenue['amount'], 0, ',', ' ')}}</td>
-                                                                    <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ $retenue['salariale'] }}</td>
-                                                                    <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$retenue['patronale'], 0, ',', ' ') }}</td>
+                                                                    <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ $patRateC }}</td>
+                                                                    <td style="border: 1px solid #000; padding: 3px; text-align: right;">{{ number_format((float)$patValC, 0, ',', ' ') }}</td>
                                                                 </tr>
                                                             @else
                                                                 @if($retenue['type'] != 'add')
@@ -1656,7 +1656,7 @@
                                                             @elseif($retenue['code'] == 301 || $retenue['code'] == 302)
                                                                 @php
                                                                     $totalretenuessal3 += $retenue['amount'];
-                                                                    $totalretenuesemp3 += $retenue['patronale'];
+                                                                    $codeEmpD = $retenue['code'] == 301 ? '308' : '307'; $ligneEmpD = collect($retenues)->first(fn ($x) => (string) (is_array($x) ? ($x['code'] ?? '') : ($x->code ?? '')) === $codeEmpD); $patValD = (float) (is_array($ligneEmpD) ? ($ligneEmpD['amount'] ?? 0) : ($ligneEmpD->amount ?? 0)); $patRateD = $retenue['code'] == 301 ? '7.70%' : '0.50%'; $totalretenuesemp3 += $patValD;
                                                                 @endphp
                                                                 <tr >
                                                                     <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ $retenue['code'] }}</td>
@@ -1666,8 +1666,8 @@
                                                                     <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ $retenue['taux'] }}</td>
                                                                     <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end"></td>
                                                                     <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ number_format((float)$retenue['amount'], 0, ',', ' ')}}</td>
-                                                                    <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ $retenue['salariale'] }}</td>
-                                                                    <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ number_format((float)$retenue['patronale'], 0, ',', ' ') }}</td>
+                                                                    <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ $patRateD }}</td>
+                                                                    <td style="border-left: solid 1px black; border-right: solid 1px black;" class="text-end">{{ number_format((float)$patValD, 0, ',', ' ') }}</td>
                                                                 </tr>
                                                             @else
                                                                 @if($retenue['type'] != 'add')
