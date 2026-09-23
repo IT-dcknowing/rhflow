@@ -827,7 +827,200 @@ class PaieSalariesController extends Controller
         // La période affichée devient la période active (sélecteur du haut, livre de paie)
         session(['active_periode_id' => $periode->id, 'active_exercice_id' => $periode->exercice_id]);
 
-        return view("paiesalaries::periodes.show", compact("periode", "activeLoans", "loans",  "totalPaid", "remainingAmount", "repaymentPercentage", "repaymentSchedule", "retenuesLoan", "loanPayments", "retenues", "allowances", "avantages", "previousPeriode", "employees"));
+        // Catalogue des primes proposées dans le traitement en masse. La 104 en est
+        // exclue : la prime d'ancienneté est posée automatiquement, la saisir à la
+        // main entrerait en conflit avec le calcul légal.
+        $optionsPrimes = AllowanceOption::where("company_id", $companyId)
+            ->where(function ($requete) {
+                $requete->where("code", "!=", "104")->orWhereNull("code");
+            })
+            ->orderBy("name")
+            ->get(["id", "name", "code", "param_fiscal", "param_social"]);
+
+        return view("paiesalaries::periodes.show", compact("periode", "activeLoans", "loans",  "totalPaid", "remainingAmount", "repaymentPercentage", "repaymentSchedule", "retenuesLoan", "loanPayments", "retenues", "allowances", "avantages", "previousPeriode", "employees", "optionsPrimes"));
+    }
+
+    /**
+     * Traitement en masse depuis la grille de la paie du mois.
+     *
+     * Sert aussi à l'édition d'une seule ligne : un salarié est une sélection de un.
+     * Deux actions seulement, celles que la grille affiche : le salaire de base et
+     * les jours travaillés.
+     *
+     * Volontairement écrit à côté de update(), qui recalcule les retenues à la main
+     * avec des bases en dur. Ici on délègue à SalaryService, seul endroit où le
+     * barème est tenu à jour.
+     */
+    public function traitementMasse(Request $request, $periodeId)
+    {
+        $periode = PaiePeriode::where('company_id', Auth::user()->company_id)->find($periodeId);
+
+        if (!$periode) {
+            return response()->json(['success' => false, 'message' => "Période introuvable."], 404);
+        }
+
+        // Même garde-fou que les retenues légales : un bulletin généré ne se recalcule
+        // pas, modifier les éléments ici le désalignerait sans qu'il bouge.
+        if (in_array($periode->statut, ['payee', 'cloture', 'annulee'], true) || $periode->bulletins()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => "Période verrouillée : les bulletins sont déjà générés.",
+            ], 422);
+        }
+
+        // Validation menée à la main plutôt que par $request->validate() : le
+        // gestionnaire d'exceptions de l'application renvoie les ValidationException
+        // en 500 avec la clé de traduction brute sur les requêtes JSON. Ici on garde
+        // la main sur le code et sur le texte.
+        $validateur = \Validator::make($request->all(), [
+            'employee_ids' => 'required|array|min:1',
+            'employee_ids.*' => 'integer',
+            'action' => 'required|in:base,jours,prime',
+            'valeur' => 'required|numeric|min:0',
+            'allowance_option_id' => 'required_if:action,prime|nullable|integer',
+        ], [
+            'employee_ids.required' => 'Aucun salarié sélectionné.',
+            'employee_ids.min' => 'Aucun salarié sélectionné.',
+            'action.required' => 'Action manquante.',
+            'action.in' => 'Action inconnue.',
+            'valeur.required' => 'Saisissez une valeur.',
+            'valeur.numeric' => 'La valeur doit être un nombre.',
+            'valeur.min' => 'La valeur ne peut pas être négative.',
+            'allowance_option_id.required_if' => 'Choisissez la rubrique de prime à appliquer.',
+        ]);
+
+        if ($validateur->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validateur->errors()->first(),
+                'errors' => $validateur->errors(),
+            ], 422);
+        }
+
+        $valide = $validateur->validated();
+
+        if ($valide['action'] === 'jours' && $valide['valeur'] > 30) {
+            return response()->json([
+                'success' => false,
+                'message' => "Les jours travaillés sont comptés sur une base de 30.",
+            ], 422);
+        }
+
+        // Le filtre sur company_id est la barrière : des identifiants d'une autre
+        // entreprise ressortent simplement de la sélection.
+        $employees = Employee::where('company_id', Auth::user()->company_id)
+            ->whereIn('id', $valide['employee_ids'])
+            ->get();
+
+        if ($employees->isEmpty()) {
+            return response()->json(['success' => false, 'message' => "Aucun salarié concerné."], 422);
+        }
+
+        $service = app(\App\Services\SalaryService::class);
+        $valeur = (float) $valide['valeur'];
+        $option = null;
+
+        if ($valide['action'] === 'prime') {
+            $option = AllowanceOption::where('company_id', Auth::user()->company_id)
+                ->find($valide['allowance_option_id']);
+
+            if (!$option) {
+                return response()->json(['success' => false, 'message' => "Rubrique de prime introuvable."], 422);
+            }
+        }
+
+        try {
+            \DB::transaction(function () use ($employees, $periode, $valide, $valeur, $service, $option) {
+                foreach ($employees as $employee) {
+
+                    if ($valide['action'] === 'prime') {
+                        // Prorata identique aux autres primes conventionnelles : montant
+                        // = droit plein, amount = part du mois travaillée.
+                        $jours = (int) $employee->get_jours_work($periode->id);
+                        $jours = (in_array($jours, [28, 29, 31], true) || $jours <= 0) ? 30 : $jours;
+                        $proratise = $jours === 30 ? $valeur : round(($valeur / 30) * $jours);
+
+                        Allowance::updateOrCreate(
+                            [
+                                'employee_id' => $employee->id,
+                                'periode_id' => $periode->id,
+                                'allowance_option_id' => $option->id,
+                            ],
+                            [
+                                'code' => $option->code,
+                                'code_compta' => $option->code_compta,
+                                'title' => $option->name,
+                                'trait_fisc' => $option->param_fiscal,
+                                'trait_cnps' => $option->param_social,
+                                'base_heures' => 0,
+                                'amount' => $proratise,
+                                'amount_imp' => $proratise,
+                                'montant' => $valeur,
+                                'jours_work' => $jours,
+                                'jours_leave' => 0,
+                                'type' => 'fixed',
+                                'type_amount' => 1,
+                                'details' => 'Appliquée en masse depuis la paie du mois',
+                                'month_paie' => Carbon::parse($periode->date_debut)->format('Y-m'),
+                                'is_active' => 1,
+                                'company_id' => $employee->company_id,
+                                'created_by' => auth()->id() ?? 0,
+                                'updated_by' => auth()->id(),
+                            ]
+                        );
+                    } elseif ($valide['action'] === 'base') {
+                        $employee->update(['salary' => $valeur]);
+                    } else {
+                        $jours = (int) $valeur;
+                        $employee->update(['tax_payer_id' => $jours]);
+
+                        // get_jours_work() lit d'abord allowances.jours_work : sans cette
+                        // reprise, la grille afficherait encore l'ancien prorata.
+                        foreach (Allowance::where('employee_id', $employee->id)
+                            ->where('periode_id', $periode->id)->get() as $allowance) {
+
+                            $montantPlein = (float) ($allowance->montant ?: $allowance->amount);
+                            $allowance->amount = ($allowance->type_amount == 1 && $jours != 30)
+                                ? round(($montantPlein / 30) * $jours)
+                                : $montantPlein;
+                            $allowance->jours_work = $jours;
+                            $allowance->save();
+                        }
+                    }
+
+                    // Le brut a changé : prime d'ancienneté puis retenues légales, dans
+                    // cet ordre, la prime entrant dans l'assiette des secondes.
+                    $employee->refresh();
+                    $service->appliquerPrimeAnciennete($employee, $periode);
+                    $service->appliquerRetenuesLegales($employee, $periode);
+                }
+            });
+        } catch (\Throwable $e) {
+            \Log::error('Traitement en masse de la paie', [
+                'periode_id' => $periode->id,
+                'action' => $valide['action'],
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => "Le traitement a échoué : " . $e->getMessage(),
+            ], 500);
+        }
+
+        $nombre = $employees->count();
+        $pluriel = $nombre > 1 ? 's' : '';
+
+        $message = $valide['action'] === 'prime'
+            ? $option->name . ' appliquée à ' . $nombre . ' salarié' . $pluriel . '.'
+            : ($valide['action'] === 'base' ? 'Salaire de base' : 'Jours travaillés')
+                . ' mis à jour pour ' . $nombre . ' salarié' . $pluriel . '.';
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'traites' => $nombre,
+        ]);
     }
 
     /**

@@ -373,6 +373,19 @@
                         <div class="pm1-mass" id="pm1Mass" hidden>
                             <span class="pm1-mass-count"><b id="pm1MassCount">0</b> salarié(s) sélectionné(s)</span>
                             <span class="pm1-mass-sum">Net cumulé <b class="pm-mono" id="pm1MassNet">0</b> FCFA</span>
+                            @unless($verrouille)
+                                @if(($optionsPrimes ?? collect())->isNotEmpty())
+                                    <button type="button" class="pm1-mass-act" data-action="prime">
+                                        <i class="fas fa-gift"></i>Prime…
+                                    </button>
+                                @endif
+                                <button type="button" class="pm1-mass-act" data-action="base">
+                                    <i class="fas fa-money-bill"></i>Salaire de base…
+                                </button>
+                                <button type="button" class="pm1-mass-act" data-action="jours">
+                                    <i class="fas fa-calendar-day"></i>Jours travaillés…
+                                </button>
+                            @endunless
                             <button type="button" class="pm1-mass-clear" id="pm1MassClear">
                                 <i class="fas fa-times"></i>Tout décocher
                             </button>
@@ -480,11 +493,20 @@
                                                 @endif
                                             </td>
                                             <td class="pm-num">
-                                                {{ $fmt($ligne['base']) }}
+                                                @if($verrouille)
+                                                    {{ $fmt($ligne['base']) }}
+                                                @else
+                                                    {{-- Le champ porte le salaire contractuel plein, pas le prorata :
+                                                         c'est lui qu'on modifie, le prorata s'en déduit. --}}
+                                                    <input type="text" class="pm1-base" inputmode="numeric"
+                                                        value="{{ $fmt($ligne['salaire']) }}"
+                                                        data-initial="{{ $fmt($ligne['salaire']) }}"
+                                                        aria-label="Salaire de base de {{ $emp->name }}">
+                                                @endif
                                                 @if($ligne['jours'] != 30)
                                                     {{-- Sur période verrouillée, $emp->salary est le salaire actuel du
                                                          contrat, pas celui du bulletin : on affiche la valeur figée. --}}
-                                                    <br><small class="text-muted">{{ $fmt($ligne['salaire']) }} × {{ $ligne['jours'] }}/30</small>
+                                                    <br><small class="text-muted">base retenue {{ $fmt($ligne['base']) }} · {{ $ligne['jours'] }}/30</small>
                                                 @endif
                                             </td>
                                             <td class="pm-num pm1-primes">{{ $fmt($ligne['primes']) }}</td>
@@ -1157,6 +1179,175 @@
                         var bouton = document.getElementById(id);
                         if (bouton) bouton.addEventListener('click', fermerTiroir);
                     });
+
+
+                // ---------- Écriture : base d'un salarié et actions de masse ----------
+                // Un seul point d'entrée côté serveur ; modifier une ligne, c'est une
+                // sélection de un. Le serveur rejoue prime d'ancienneté et retenues
+                // légales, donc la page est rechargée pour afficher les montants à jour.
+                var urlTraitement = @json(route('company.paiesalaries.periodes.traitement-masse', $periode->id));
+                var jetonCsrf = @json(csrf_token());
+
+                function nombreDepuis(texte) {
+                    var propre = (texte || '').replace(/[^0-9]/g, '');
+                    return propre === '' ? null : parseInt(propre, 10);
+                }
+
+                function envoyer(action, valeur, identifiants, libelle) {
+                    Swal.fire({
+                        title: 'Enregistrement…',
+                        allowOutsideClick: false,
+                        didOpen: function () { Swal.showLoading(); }
+                    });
+
+                    fetch(urlTraitement, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': jetonCsrf,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ action: action, valeur: valeur, employee_ids: identifiants })
+                    })
+                        .then(function (reponse) { return reponse.json().then(function (d) { return { ok: reponse.ok, d: d }; }); })
+                        .then(function (resultat) {
+                            if (!resultat.ok || !resultat.d.success) {
+                                Swal.fire({ icon: 'error', title: 'Non enregistré', text: resultat.d.message || 'Le traitement a échoué.', confirmButtonColor: '#253e87' });
+                                return;
+                            }
+                            Swal.fire({
+                                icon: 'success', title: libelle, text: resultat.d.message,
+                                timer: 1400, showConfirmButton: false
+                            }).then(function () { window.location.reload(); });
+                        })
+                        .catch(function () {
+                            Swal.fire({ icon: 'error', title: 'Non enregistré', text: 'Le serveur n\'a pas répondu.', confirmButtonColor: '#253e87' });
+                        });
+                }
+
+                function envoyerPrime(rubriqueId, montant, identifiants) {
+                    Swal.fire({ title: 'Enregistrement…', allowOutsideClick: false, didOpen: function () { Swal.showLoading(); } });
+
+                    fetch(urlTraitement, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': jetonCsrf, 'Accept': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'prime', valeur: montant,
+                            allowance_option_id: rubriqueId, employee_ids: identifiants
+                        })
+                    })
+                        .then(function (reponse) { return reponse.json().then(function (d) { return { ok: reponse.ok, d: d }; }); })
+                        .then(function (resultat) {
+                            if (!resultat.ok || !resultat.d.success) {
+                                Swal.fire({ icon: 'error', title: 'Non enregistré', text: resultat.d.message || 'Le traitement a échoué.', confirmButtonColor: '#253e87' });
+                                return;
+                            }
+                            Swal.fire({ icon: 'success', title: 'Prime appliquée', text: resultat.d.message, timer: 1400, showConfirmButton: false })
+                                .then(function () { window.location.reload(); });
+                        })
+                        .catch(function () {
+                            Swal.fire({ icon: 'error', title: 'Non enregistré', text: 'Le serveur ne répond pas.', confirmButtonColor: '#253e87' });
+                        });
+                }
+
+                // Édition en place du salaire de base
+                document.querySelectorAll('.pm1-base').forEach(function (champ) {
+                    champ.addEventListener('click', function (evenement) { evenement.stopPropagation(); });
+
+                    champ.addEventListener('keydown', function (evenement) {
+                        if (evenement.key === 'Enter') { evenement.preventDefault(); champ.blur(); }
+                        if (evenement.key === 'Escape') { champ.value = champ.dataset.initial; champ.blur(); }
+                    });
+
+                    champ.addEventListener('blur', function () {
+                        var valeur = nombreDepuis(champ.value);
+                        var initiale = nombreDepuis(champ.dataset.initial);
+
+                        if (valeur === null || valeur === initiale) {
+                            champ.value = champ.dataset.initial;
+                            return;
+                        }
+
+                        var ligne = champ.closest('tr');
+                        envoyer('base', valeur, [parseInt(ligne.dataset.employeeId, 10)], 'Salaire de base modifié');
+                    });
+                });
+
+                // Actions de masse sur la sélection
+                document.querySelectorAll('.pm1-mass-act').forEach(function (bouton) {
+                    bouton.addEventListener('click', function () {
+                        var choisies = lignesVisibles().filter(function (ligne) {
+                            var c = ligne.querySelector('.pm1-pick');
+                            return c && c.checked;
+                        });
+
+                        if (choisies.length === 0) { return; }
+
+                        var action = bouton.dataset.action;
+
+                        // Une prime : on choisit la rubrique puis le montant, appliqués
+                        // à toute la sélection d'un coup.
+                        if (action === 'prime') {
+                            Swal.fire({
+                                title: 'Appliquer une prime',
+                                html: '<select id="pm1PrimeOption" class="swal2-select" style="width:100%">'
+                                    + @json($optionsPrimes->map(function ($o) { return ['id' => $o->id, 'name' => $o->name]; })->values())
+                                        .map(function (o) { return '<option value="' + o.id + '">' + o.name + '</option>'; }).join('')
+                                    + '</select>'
+                                    + '<input id="pm1PrimeMontant" type="number" min="0" step="500" class="swal2-input" placeholder="Montant en FCFA">',
+                                focusConfirm: false,
+                                showCancelButton: true,
+                                confirmButtonText: 'Appliquer aux ' + choisies.length + ' salarié(s)',
+                                cancelButtonText: 'Annuler',
+                                confirmButtonColor: '#253e87',
+                                cancelButtonColor: '#8592a3',
+                                preConfirm: function () {
+                                    var rubrique = document.getElementById('pm1PrimeOption').value;
+                                    var montant = document.getElementById('pm1PrimeMontant').value;
+                                    if (!rubrique) { Swal.showValidationMessage('Choisissez une rubrique.'); return false; }
+                                    if (montant === '' || Number(montant) < 0) { Swal.showValidationMessage('Saisissez un montant.'); return false; }
+                                    return { rubrique: parseInt(rubrique, 10), montant: parseInt(montant, 10) };
+                                }
+                            }).then(function (resultat) {
+                                if (!resultat.isConfirmed) { return; }
+                                envoyerPrime(
+                                    resultat.value.rubrique,
+                                    resultat.value.montant,
+                                    choisies.map(function (ligne) { return parseInt(ligne.dataset.employeeId, 10); })
+                                );
+                            });
+                            return;
+                        }
+
+                        var surBase = action === 'base';
+
+                        Swal.fire({
+                            title: surBase ? 'Salaire de base' : 'Jours travaillés',
+                            input: 'number',
+                            inputLabel: 'Valeur appliquée aux ' + choisies.length + ' salarié(s) sélectionné(s)',
+                            inputAttributes: surBase ? { min: 0, step: 1000 } : { min: 0, max: 30, step: 1 },
+                            showCancelButton: true,
+                            confirmButtonText: 'Appliquer',
+                            cancelButtonText: 'Annuler',
+                            confirmButtonColor: '#253e87',
+                            cancelButtonColor: '#8592a3',
+                            inputValidator: function (valeur) {
+                                if (valeur === '' || valeur === null) { return 'Saisissez une valeur.'; }
+                                if (!surBase && (valeur < 0 || valeur > 30)) { return 'Les jours vont de 0 à 30.'; }
+                                if (surBase && valeur < 0) { return 'Le salaire ne peut pas être négatif.'; }
+                                return null;
+                            }
+                        }).then(function (resultat) {
+                            if (!resultat.isConfirmed) { return; }
+                            envoyer(
+                                action,
+                                parseInt(resultat.value, 10),
+                                choisies.map(function (ligne) { return parseInt(ligne.dataset.employeeId, 10); }),
+                                surBase ? 'Salaire de base appliqué' : 'Jours appliqués'
+                            );
+                        });
+                    });
+                });
 
                 filtrer();
             })();

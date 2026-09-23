@@ -158,6 +158,15 @@
         .pm1-mass-clear { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--navy-line); border-radius: 7px; background: var(--surface); font-size: 12px; font-weight: 600; color: var(--navy-text); }
         .pm1-mass-clear:hover { background: var(--surface-2); }
 
+        .pm1-mass-act { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border: 1px solid var(--navy-line); border-radius: 7px; background: var(--surface); font-size: 12px; font-weight: 600; color: var(--navy-text); }
+        .pm1-mass-act:hover { background: var(--navy); border-color: var(--navy); color: #fff; }
+        .pm1-mass-act i { font-size: 11px; }
+
+        /* Saisie directe du salaire de base dans la grille. */
+        .pm1-base { width: 108px; padding: 3px 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; color: var(--ink); }
+        .pm1-base:hover { border-color: var(--line); background: var(--surface-2); }
+        .pm1-base:focus { outline: 0; border-color: var(--navy); background: var(--surface); box-shadow: 0 0 0 3px var(--navy-tint); }
+
         /* Grille */
         .pm1-table th { white-space: nowrap; }
         .pm1-table td.pm1-check, .pm1-table th.pm1-check { width: 42px; text-align: center; }
