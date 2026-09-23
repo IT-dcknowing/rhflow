@@ -11,7 +11,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="mb-1">❌ Gestion des Ruptures
+                        <h4 class="mb-1"> Gestion des Ruptures
                             @if($periode) | Exercice :
                                 {{ $periode->exercice->nom }} - <span
                                     class="badge bg-label-{{ $periode->statut === 'en_cours' ? 'success' : ($periode->statut === 'cloture' ? 'secondary' : 'warning') }}">
@@ -27,7 +27,8 @@
                                 <li class="breadcrumb-item active">Gestion des ruptures @if($periode) - Période :
                                     {{ $periode->nom }} - <span
                                         class="badge bg-label-{{ $periode->statut === 'en_cours' ? 'success' : ($periode->statut === 'cloture' ? 'secondary' : 'warning') }}">{{ ucfirst($periode->statut) }}</span>
-                                @endif</li>
+                                @endif
+                                </li>
                             </ol>
                         </nav>
                         <small class="text-primary">
@@ -47,6 +48,14 @@
                                 <i class="ti ti-settings me-1"></i> Types de rupture
                             </a>
                         @endif
+                        {{-- Hors du @if : on arrive souvent ici depuis la paie du mois, et
+                             sans période sélectionnée la page n'offrait aucune sortie. --}}
+                        <a href="{{ $periode
+                                ? route('company.paiesalaries.periodes.show', $periode->id)
+                                : route('company.dashboard') }}"
+                            class="btn btn-outline-secondary">
+                            <i class="ti ti-arrow-left me-1"></i> Retour
+                        </a>
                     </div>
                 </div>
             </div>
@@ -101,11 +110,10 @@
                                     <div class="row mb-4">
                                         <div class="col-md-4">
                                             <label for="employee_filter" class="form-label">Employé</label>
-                                            <select id="employee_filter" class="select2 form-select" data-allow-clear="true">
-                                                <option value="">Tous les employés</option>
-                                                @foreach($employees as $employee)
-                                                    <option value="{{ $employee->id }}">{{ $employee->name }}</option>
-                                                @endforeach
+                                            {{-- Aucune option rendue ici : les salariés arrivent
+                                                 par recherche, via company.employees.search. --}}
+                                            <select id="employee_filter" class="form-select" data-allow-clear="true">
+                                                <option value=""></option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
@@ -183,8 +191,8 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <a href="{{ route('company.ruptures.show', $rupture->id) }}"
-                                                            class="btn btn-icon btn-sm btn-label-info me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Voir">
+                                                            class="btn btn-icon btn-sm btn-label-info me-2" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" title="Voir">
                                                             <i class="ti ti-eye"></i>
                                                         </a>
                                                         <a href="{{ route('company.ruptures.edit', $rupture->id) }}"
@@ -238,7 +246,8 @@
                                         <div class="timeline-item">
                                             <div class="timeline-badge d-flex align-items-center">
                                                 <h5 class="text-muted"> <i class="fas fa-calendar-alt me-2 text-primary"></i> Exercice :
-                                                    {{ $exercice->nom }}</h5>
+                                                    {{ $exercice->nom }}
+                                                </h5>
                                             </div>
                                             <div class="card mb-3">
                                                 <div class="card-body">
@@ -331,6 +340,28 @@
                     placeholder: 'Sélectionner une option',
                     dropdownParent: $this.parent()
                 });
+            });
+
+            // Le filtre « Employé » ne précharge plus l'effectif : il interroge le
+            // serveur à partir de deux caractères et n'affiche que les correspondances.
+            var $filtreEmploye = $('#employee_filter');
+            $filtreEmploye.wrap('<div class="position-relative"></div>').select2({
+                placeholder: 'Rechercher un salarié…',
+                allowClear: true,
+                minimumInputLength: 2,
+                dropdownParent: $filtreEmploye.parent(),
+                ajax: {
+                    url: '{{ route('company.employees.search') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return { q: params.term };
+                    },
+                    processResults: function (donnees) {
+                        return { results: donnees.results || [] };
+                    },
+                    cache: true
+                }
             });
 
             // Filtrage des données

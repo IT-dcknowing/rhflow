@@ -1403,6 +1403,41 @@ class EmployeesController extends Controller
     }
 
     /**
+     * Recherche de salariés pour les listes déroulantes alimentées à la frappe.
+     *
+     * Rend le format attendu par Select2 ({results: [{id, text}]}). Le but est
+     * d'éviter de rendre l'intégralité de l'effectif dans le HTML des pages qui
+     * n'ont besoin que d'un salarié : on interroge au fil de la saisie.
+     */
+    public function search(Request $request)
+    {
+        $terme = trim((string) $request->query('q', ''));
+
+        $employees = Employee::where('company_id', auth()->user()->company_id)
+            ->where('is_active', 1)
+            ->when($terme !== '', function ($query) use ($terme) {
+                $query->where(function ($sous) use ($terme) {
+                    $sous->where('name', 'like', '%' . $terme . '%')
+                        ->orWhere('employee_id', 'like', '%' . $terme . '%');
+                });
+            })
+            ->orderBy('name')
+            ->limit(20)
+            ->get(['id', 'name', 'employee_id']);
+
+        return response()->json([
+            'results' => $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'text' => $employee->employee_id
+                        ? $employee->name . ' — ' . $employee->employee_id
+                        : $employee->name,
+                ];
+            })->values(),
+        ]);
+    }
+
+    /**
      * Télécharger l'attestation de travail
      */
     public function downloadWorkCertificate($id)

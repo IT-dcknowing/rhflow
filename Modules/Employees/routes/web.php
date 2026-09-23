@@ -20,6 +20,8 @@ Route::middleware(['auth', 'maintenance'])->prefix('company')->name('company.')-
         Route::get('adresses/suggestions', [EmployeesController::class, 'addressSuggestions'])->name('address-suggestions');
         Route::post('import', [EmployeesController::class, 'import'])->name('import');
         Route::get('import-template', [EmployeesController::class, 'downloadTemplate'])->name('import.template');
+        // À déclarer avant la route « {id} », qui capterait sinon ce segment unique.
+        Route::get('recherche', [EmployeesController::class, 'search'])->name('search');
 
         Route::post('/', [EmployeesController::class, 'store'])->name('store');
 

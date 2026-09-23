@@ -1760,10 +1760,27 @@
                         }
                     }
 
+            // Le serveur renvoie déjà un message précis par champ (« Un exercice portant
+            // ce nom existe déjà », etc.). L'afficher vaut mieux que la phrase générique,
+            // qui obligeait à fermer le popup pour aller lire l'erreur dans le formulaire.
+            const messages = Array.from(document.querySelectorAll('.invalid-feedback'))
+                .map(function (element) { return (element.textContent || '').trim(); })
+                .filter(function (texte, index, liste) { return texte !== '' && liste.indexOf(texte) === index; });
+
+            const echapper = function (texte) {
+                return texte.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            };
+
             Swal.fire({
                 icon: 'warning',
-            title: '💡 Saisie Incomplète',
-            text: 'Certains champs requis sont manquants ou incorrects. L\'assistant a surligné les erreurs en rouge pour vous aider à corriger la saisie.',
+            title: messages.length === 1 ? 'Correction nécessaire' : '💡 Saisie Incomplète',
+            html: messages.length === 0
+                ? 'Certains champs requis sont manquants ou incorrects. L\'assistant a surligné les erreurs en rouge pour vous aider à corriger la saisie.'
+                : (messages.length === 1
+                    ? echapper(messages[0])
+                    : '<ul style="text-align:left;margin:0;padding-left:1.2em">'
+                        + messages.map(function (texte) { return '<li>' + echapper(texte) + '</li>'; }).join('')
+                        + '</ul>'),
             confirmButtonColor: '#253e87',
             background: '#ffffff'
                     });
