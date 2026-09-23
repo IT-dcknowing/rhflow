@@ -237,16 +237,65 @@ class SalaryService
             return false;
         }
 
-        // La rubrique 104 est déclinée par entreprise. Sans elle, on ne devine
-        // pas le paramétrage fiscal et social : on s'abstient plutôt que d'inventer.
-        $option = \App\Models\AllowanceOption::where('code', '104')
-            ->where('company_id', $employee->company_id)
+        // La rubrique 104 est déclinée par entreprise, et toutes ne l'ont pas : le
+        // seeder des rubriques par défaut ne renseigne pas les codes, et les
+        // entreprises créées depuis ne l'ont jamais reçue. S'abstenir dans ce cas
+        // revenait à priver ces entreprises d'une prime légale (Art. 55 CCI), sans
+        // rien afficher à l'écran. On la crée donc si elle manque, avec les mêmes
+        // paramètres que partout ailleurs.
+        $option = \App\Models\AllowanceOption::where('company_id', $employee->company_id)
+            ->where(function ($requete) {
+                $requete->where('code', '104')->orWhere('name', "Prime d'ancienneté");
+            })
+            ->orderByRaw("CASE WHEN code = '104' THEN 0 ELSE 1 END")
             ->first();
 
         if (!$option) {
-            \Log::warning("Prime d'ancienneté non appliquée : rubrique 104 absente pour l'entreprise #{$employee->company_id}");
-            return false;
+            $option = \App\Models\AllowanceOption::create([
+                'code' => '104',
+                'code_compta' => 6611,
+                'name' => "Prime d'ancienneté",
+                'param_fiscal' => 'exo 0%',
+                'param_social' => 'Soumis',
+                'type' => 'default',
+                'type_montant' => 1,
+                'company_id' => $employee->company_id,
+                'is_active' => 1,
+                'created_by' => auth()->id() ?? 0,
+            ]);
+
+            \Log::info("Rubrique 104 (prime d'ancienneté) créée pour l'entreprise #{$employee->company_id}");
         }
+
+        // Une rubrique retrouvée par son nom peut n'avoir ni code ni paramètres :
+        // on les complète, sans quoi la prime serait posée sans traitement fiscal.
+        if (!$option->code || !$option->param_fiscal || !$option->param_social) {
+            $option->fill([
+                'code' => $option->code ?: '104',
+                'code_compta' => $option->code_compta ?: 6611,
+                'param_fiscal' => $option->param_fiscal ?: 'exo 0%',
+                'param_social' => $option->param_social ?: 'Soumis',
+            ])->save();
+        }
+
+        // Jours travaillés de la période. On les lit sur une autre prime que la 104 :
+        // get_jours_work() prend la première ligne venue, et si la prime d'ancienneté
+        // est la seule de la période, on relirait la valeur qu'on s'apprête à écraser.
+        // Écrire 30 en dur, comme le faisait cette méthode, annulait pire encore tout
+        // changement de jours effectué juste avant.
+        $jours = (int) (Allowance::where('employee_id', $employee->id)
+            ->where('periode_id', $periode->id)
+            ->where('code', '!=', '104')
+            ->where('jours_work', '>', 0)
+            ->value('jours_work') ?: ($employee->tax_payer_id ?: 30));
+
+        if (in_array($jours, [28, 29, 31], true) || $jours <= 0) {
+            $jours = 30;
+        }
+
+        // montant = droit plein, amount = part du mois effectivement travaillée,
+        // comme toute prime conventionnelle (type_amount = 1).
+        $montantProratise = $jours === 30 ? $montant : round(($montant / 30) * $jours);
 
         Allowance::updateOrCreate(
             [
@@ -261,10 +310,10 @@ class SalaryService
                 'trait_fisc' => $option->param_fiscal,
                 'trait_cnps' => $option->param_social,
                 'base_heures' => 0,
-                'amount' => $montant,
-                'amount_imp' => $montant,
+                'amount' => $montantProratise,
+                'amount_imp' => $montantProratise,
                 'montant' => $montant,
-                'jours_work' => 30,
+                'jours_work' => $jours,
                 'jours_leave' => 0,
                 'type' => 'fixed',
                 'type_amount' => 1,
