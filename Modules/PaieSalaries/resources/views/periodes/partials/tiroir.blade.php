@@ -115,24 +115,24 @@
             @else
                 <span class="pm1-actions-titre pm1-traitement-titre">Saisir ou corriger</span>
                 <div class="pm1-traitement">
-                    <a class="pm1-tr" href="{{ route('company.paiesalaries.retenues.index') }}?periode_id={{ $periode->id }}">
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="retenue">
                         <i class="fas fa-minus-circle"></i><span>Retenues sur salaire</span>
-                    </a>
-                    <a class="pm1-tr" href="{{ route('company.loans.index') }}?periode_id={{ $periode->id }}">
+                    </button>
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="pret">
                         <i class="fas fa-university"></i><span>Prêts et échéances</span>
-                    </a>
-                    <a class="pm1-tr" href="{{ route('company.avantages.index') }}?periode_id={{ $periode->id }}">
+                    </button>
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="avantage">
                         <i class="fas fa-gift"></i><span>Avantages en nature</span>
-                    </a>
-                    <a class="pm1-tr" href="{{ route('company.times.overtime.index') }}?periode_id={{ $periode->id }}">
+                    </button>
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="heures_sup">
                         <i class="fas fa-clock"></i><span>Heures supplémentaires</span>
-                    </a>
-                    <a class="pm1-tr" href="{{ route('company.leaves.index') }}?periode_id={{ $periode->id }}">
+                    </button>
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="conge">
                         <i class="fas fa-umbrella-beach"></i><span>Congés</span>
-                    </a>
-                    <a class="pm1-tr" href="{{ route('company.times.absences.index') }}?periode_id={{ $periode->id }}">
+                    </button>
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="absence">
                         <i class="fas fa-user-clock"></i><span>Absences</span>
-                    </a>
+                    </button>
                 </div>
             @endif
         </section>
@@ -180,6 +180,48 @@
         </button>
         <button type="button" class="btn pm1-fermer" id="pm1DrawerFermer">Fermer</button>
     </footer>
+
+    {{-- Barre latérale coulissante secondaire (Nested Drawer) pour traiter la thématique --}}
+    <div class="pm1-nested-drawer" id="pm1NestedDrawer" aria-hidden="true">
+        <div class="pm1-nested-head">
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" id="pm1NestedBack" title="Retour au détail du salarié">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div>
+                    <span class="pm1-nested-badge" id="pm1NestedBadge">THÉMATIQUE</span>
+                    <h3 class="pm1-nested-title" id="pm1NestedTitle">Formulaire</h3>
+                </div>
+            </div>
+            <button type="button" class="pm1-drawer-close" id="pm1NestedClose" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="pm1-nested-body">
+            <p class="pm1-nested-subtitle">
+                Salarié : <strong id="pm1NestedEmpNom"></strong> <span class="badge bg-label-primary font-monospace ms-1" id="pm1NestedEmpMat"></span>
+            </p>
+
+            <form id="pm1NestedForm">
+                <input type="hidden" id="pm1NestedTheme" name="theme" value="">
+                <input type="hidden" id="pm1NestedEmpId" name="employee_id" value="">
+                <input type="hidden" id="pm1NestedPeriodeId" name="periode_id" value="{{ $periode->id }}">
+
+                {{-- Contenu dynamique selon la thématique cliquée --}}
+                <div id="pm1NestedFormContent"></div>
+
+                <div class="pm1-nested-footer mt-4">
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="pm1NestedSubmit">
+                        <i class="fas fa-save me-1"></i>Enregistrer &amp; recalculer
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary w-100 mt-2" id="pm1NestedCancel">
+                        Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </div>
 
@@ -291,6 +333,72 @@
         #pm1Drawer .pm1-fermer { flex: 0 0 auto; padding: 12px 24px; border-radius: 8px; background: #e5e5e5;
             color: #1F1F1E; font-weight: 700; font-size: 13px; text-transform: uppercase; }
         #pm1Drawer .pm1-fermer:hover { background: #d4d4d4; color: #1F1F1E; }
+
+        /* Sous-panneau latéral coulissant (Nested Drawer) pour traiter la thématique */
+        .pm1-nested-drawer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: #ffffff;
+            z-index: 1055;
+            transform: translateX(100%);
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.12);
+        }
+        .pm1-nested-drawer.is-open {
+            transform: translateX(0);
+        }
+        .pm1-nested-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-bottom: 1px solid #E8E8E6;
+            background: #FAFAFA;
+        }
+        .pm1-nested-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            background: rgba(37, 62, 135, .1);
+            color: #253e87;
+            margin-bottom: 4px;
+        }
+        .pm1-nested-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1F1F1E;
+        }
+        .pm1-nested-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        .pm1-nested-subtitle {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #E8E8E6;
+            font-size: 13px;
+            color: #6B6B6B;
+        }
+        .pm1-nested-footer {
+            padding-top: 16px;
+            border-top: 1px solid #E8E8E6;
+        }
+        button.pm1-tr {
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+        }
     </style>
 @endpush
 
@@ -300,6 +408,12 @@
 @push('scripts')
     <script>
         (function () {
+            // Options dynamiques pour les formulaires des thématiques
+            window.pm1TypesRetenues = @json($typesRetenues ?? []);
+            window.pm1OptionsPrets = @json($optionsPrets ?? []);
+            window.pm1TypesConges = @json($typesConges ?? []);
+            window.pm1Periode = @json(['id' => $periode->id, 'debut' => $periode->date_debut, 'fin' => $periode->date_fin, 'nom' => $periode->nom]);
+
             // Tiroir latéral
             var tiroir = document.getElementById('pm1Drawer');
 
@@ -348,6 +462,9 @@
             function ouvrirTiroir(ligne) {
                 var d = ligne.dataset;
 
+                // Refermer le sous-tiroir thématique s'il était ouvert
+                fermerNestedDrawer();
+
                 remplir('pm1DrawerMat', d.matricule || '—');
                 remplir('pm1DrawerNom', d.employeeName || '');
                 remplir('pm1DrawerNom2', d.employeeName || 'ce salarié');
@@ -376,7 +493,7 @@
                     }
                 }
 
-                // Variables du mois : absences, heures supplémentaires, congés.
+                // Variables du mois : absences, heures supplémentaires, congés, retenues, etc.
                 var hoteVar = document.getElementById('pm1DrawerVariables');
                 var sourceVar = document.getElementById('pm1Var-' + d.employeeId);
                 if (hoteVar) {
@@ -397,7 +514,6 @@
 
                 recalculerProrataTiroir();
 
-
                 ['pm1DrawerJoursBtn', 'pm1DrawerAdd', 'pm1DrawerShow', 'pm1DrawerEdit', 'pm1DrawerBulletin']
                     .forEach(function (id) { cibler(id, d.employeeId, d.employeeName); });
 
@@ -415,9 +531,7 @@
                 afficher();
             }
 
-            // Bootstrap est chargé partout dans l'application et ses offcanvas y
-            // fonctionnent : on s'appuie dessus plutôt que de gérer soi-même voile,
-            // blocage du défilement et touche Échap. Repli manuel si jamais absent.
+            // Bootstrap offcanvas
             function instance() {
                 if (window.bootstrap && window.bootstrap.Offcanvas && tiroir) {
                     return window.bootstrap.Offcanvas.getOrCreateInstance(tiroir);
@@ -438,6 +552,7 @@
             }
 
             function fermerTiroir() {
+                fermerNestedDrawer();
                 var bs = instance();
                 if (bs) {
                     bs.hide();
@@ -449,14 +564,522 @@
                 }
             }
 
+            // =========================================================
+            // GESTION DU SOUS-PANNEAU LATÉRAL COULISSANT (NESTED DRAWER)
+            // =========================================================
+            var nestedDrawer = document.getElementById('pm1NestedDrawer');
+            var nestedForm = document.getElementById('pm1NestedForm');
+            var nestedFormContent = document.getElementById('pm1NestedFormContent');
+            var nestedTitle = document.getElementById('pm1NestedTitle');
+            var nestedBadge = document.getElementById('pm1NestedBadge');
+            var nestedThemeInput = document.getElementById('pm1NestedTheme');
+            var nestedEmpIdInput = document.getElementById('pm1NestedEmpId');
+            var nestedEmpNom = document.getElementById('pm1NestedEmpNom');
+            var nestedEmpMat = document.getElementById('pm1NestedEmpMat');
+
+            function getRetenueFormHtml() {
+                var opts = (window.pm1TypesRetenues || []).map(function (t) {
+                    return '<option value="' + t.id + '">' + t.libelle + '</option>';
+                }).join('');
+                return `
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Type / Rubrique de retenue</label>
+                        <select class="form-select" name="type_retenue_id">
+                            <option value="">Sélectionner une rubrique (optionnel)</option>
+                            ` + opts + `
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Libellé de la retenue <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="libelle" placeholder="Ex: Avance exceptionnelle, Retenue cantine..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Montant à retenir (FCFA) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="500" placeholder="Ex: 25000" required>
+                    </div>
+                `;
+            }
+
+            function getPretFormHtml() {
+                var opts = (window.pm1OptionsPrets || []).map(function (o) {
+                    return '<option value="' + o.id + '">' + o.name + '</option>';
+                }).join('');
+                return `
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nature du prêt <span class="text-danger">*</span></label>
+                        <select class="form-select" name="loan_option" required>
+                            ` + opts + `
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Intitulé du prêt <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="title" placeholder="Ex: Prêt rentrée scolaire, Caution..." required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Montant total (FCFA) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control font-monospace" id="nested_loan_amt" name="amount" min="1" step="1000" placeholder="Ex: 300000" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Durée (en mois) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="nested_loan_months" name="nbre_mois" min="1" max="120" value="6" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Échéance mensuelle (FCFA) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control font-monospace" id="nested_loan_deduc" name="amount_deduc" min="1" step="500" placeholder="Ex: 50000" required>
+                        <small class="text-muted">Calculée automatiquement selon le total et la durée.</small>
+                    </div>
+                `;
+            }
+
+            function getAvantageFormHtml() {
+                return `
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Type d'avantage <span class="text-danger">*</span></label>
+                        <select class="form-select" name="type_avantage" required>
+                            <option value="avantage_en_nature">Avantage en nature (Logement, Véhicule, etc.)</option>
+                            <option value="avantage_en_argent">Avantage en argent</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description / Libellé <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="libelle" placeholder="Ex: Logement de fonction, Véhicule..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Montant réel estimé (FCFA) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="500" placeholder="Ex: 75000" required>
+                    </div>
+                `;
+            }
+
+            function getHeuresSupFormHtml(baseSalary) {
+                var taux = Math.round(baseSalary / 173.33) || 1500;
+                var debut = (window.pm1Periode && window.pm1Periode.debut) || '';
+                var fin = (window.pm1Periode && window.pm1Periode.fin) || '';
+                return `
+                    <div class="alert alert-info py-2 px-3 mb-3 small">
+                        <i class="fas fa-info-circle me-1"></i> Taux horaire de base : <b id="nested_hs_taux_txt">` + formatMilliers(taux) + `</b> FCFA/h
+                    </div>
+                    <input type="hidden" name="taux_hour" id="nested_hs_taux" value="` + taux + `">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold small">Début de période</label>
+                            <input type="date" class="form-control form-control-sm" name="start_date" value="` + debut + `">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold small">Fin de période</label>
+                            <input type="date" class="form-control form-control-sm" name="end_date" value="` + fin + `">
+                        </div>
+                    </div>
+                    <div class="table-responsive border rounded mb-3">
+                        <table class="table table-sm table-borderless mb-0">
+                            <thead class="table-light">
+                                <tr><th>Majoration légale</th><th style="width:110px">Heures</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><small class="fw-bold">41è à 46è heure (+15%)</small></td>
+                                    <td><input type="number" step="0.5" min="0" value="0" name="quar_heure" class="form-control form-control-sm nested-hs-champ"></td>
+                                </tr>
+                                <tr>
+                                    <td><small class="fw-bold">Au-delà de 46h (+50%)</small></td>
+                                    <td><input type="number" step="0.5" min="0" value="0" name="heure_audd" class="form-control form-control-sm nested-hs-champ"></td>
+                                </tr>
+                                <tr>
+                                    <td><small class="fw-bold">Nuit semaine (+75%)</small></td>
+                                    <td><input type="number" step="0.5" min="0" value="0" name="heure_nuit_ferie" class="form-control form-control-sm nested-hs-champ"></td>
+                                </tr>
+                                <tr>
+                                    <td><small class="fw-bold">Dimanche / Férié jour (+75%)</small></td>
+                                    <td><input type="number" step="0.5" min="0" value="0" name="heure_dim_ferie" class="form-control form-control-sm nested-hs-champ"></td>
+                                </tr>
+                                <tr>
+                                    <td><small class="fw-bold">Dimanche / Férié nuit (+100%)</small></td>
+                                    <td><input type="number" step="0.5" min="0" value="0" name="heure_nuit_dim_ferie" class="form-control form-control-sm nested-hs-champ"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-light rounded border mb-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Total à payer :</span>
+                        <b class="fs-5 text-primary font-monospace" id="nested_hs_total">0 FCFA</b>
+                    </div>
+                    <input type="hidden" name="montant" id="nested_hs_montant" value="0">
+                `;
+            }
+
+            function getCongeFormHtml() {
+                var opts = (window.pm1TypesConges || []).map(function (c) {
+                    return '<option value="' + c.id + '">' + c.title + '</option>';
+                }).join('');
+                var debut = (window.pm1Periode && window.pm1Periode.debut) || '';
+                var fin = (window.pm1Periode && window.pm1Periode.fin) || '';
+                return `
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Type de congé <span class="text-danger">*</span></label>
+                        <select class="form-select" name="leave_type_id" required>
+                            ` + opts + `
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Date de début <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="start_date" id="nested_conge_start" value="` + debut + `" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Date de fin <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="end_date" id="nested_conge_end" value="` + fin + `" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre de jours <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="days" id="nested_conge_days" min="1" max="60" value="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Allocation de congé (FCFA)</label>
+                        <input type="number" class="form-control font-monospace" name="amount_leave" min="0" step="500" value="0" placeholder="0 si maintien de salaire">
+                        <small class="text-muted">Laisser 0 si déjà inclus dans le salaire régulier.</small>
+                    </div>
+                `;
+            }
+
+            function getAbsenceFormHtml() {
+                var debut = (window.pm1Periode && window.pm1Periode.debut) || '';
+                var fin = (window.pm1Periode && window.pm1Periode.fin) || '';
+                return `
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Date de départ <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="start_date" value="` + debut + `" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Date de reprise <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="end_date" value="` + fin + `" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Heures d'absence <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control font-monospace" name="hours" min="0" step="0.5" value="8" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Jours retenus <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control font-monospace" name="days" min="0" step="0.5" value="1" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Absence justifiée ? <span class="text-danger">*</span></label>
+                        <select class="form-select" name="motif_justify" id="nested_abs_just">
+                            <option value="Non">Non (injustifiée)</option>
+                            <option value="Oui">Oui (permission autorisée)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="nested_abs_perm_bloc" style="display:none;">
+                        <label class="form-label fw-bold">Permission exceptionnelle</label>
+                        <select class="form-select" name="type_permis">
+                            <option value="Mariage du travailleur : 04 jours ouvrables">Mariage du travailleur : 04 jours ouvrables</option>
+                            <option value="Mariage d'un de ses enfants : 02 jours ouvrables">Mariage d'un de ses enfants : 02 jours ouvrables</option>
+                            <option value="Mariage d'un frère, d'une sœur : 02 jours ouvrables">Mariage d'un frère, d'une sœur : 02 jours ouvrables</option>
+                            <option value="Décès du conjoint : 05 jours ouvrables">Décès du conjoint : 05 jours ouvrables</option>
+                            <option value="Décès d'un enfant, du père, de la mère : 05 jours ouvrables">Décès d'un enfant, du père, de la mère : 05 jours ouvrables</option>
+                            <option value="Naissance d'un enfant : 02 jours ouvrables">Naissance d'un enfant : 02 jours ouvrables</option>
+                            <option value="Autres">Autres</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Motif / Commentaire</label>
+                        <textarea class="form-control" name="remark" rows="2" placeholder="Détails du motif..."></textarea>
+                    </div>
+                `;
+            }
+
+            function ouvrirNestedDrawer(theme) {
+                var empId = document.getElementById('pm1DrawerEnregistrer') ? document.getElementById('pm1DrawerEnregistrer').dataset.employeeId : null;
+                var empNom = document.getElementById('pm1DrawerNom') ? document.getElementById('pm1DrawerNom').textContent : '';
+                var empMat = document.getElementById('pm1DrawerMat') ? document.getElementById('pm1DrawerMat').textContent : '';
+                var hote = document.getElementById('pm1DrawerElements');
+                var champBase = hote ? hote.querySelector('.pm1-champ-base') : null;
+                var baseSalary = champBase ? (parseFloat(champBase.value) || 0) : 0;
+
+                if (!empId) return;
+
+                nestedThemeInput.value = theme;
+                nestedEmpIdInput.value = empId;
+                nestedEmpNom.textContent = empNom;
+                nestedEmpMat.textContent = empMat;
+
+                var config = {
+                    'retenue': {
+                        title: 'Ajouter une retenue sur salaire',
+                        badge: 'Retenue',
+                        html: getRetenueFormHtml()
+                    },
+                    'pret': {
+                        title: 'Ajouter un prêt ou une échéance',
+                        badge: 'Prêt & Échéance',
+                        html: getPretFormHtml()
+                    },
+                    'avantage': {
+                        title: 'Ajouter un avantage en nature / argent',
+                        badge: 'Avantage',
+                        html: getAvantageFormHtml()
+                    },
+                    'heures_sup': {
+                        title: 'Saisir des heures supplémentaires',
+                        badge: 'Heures sup',
+                        html: getHeuresSupFormHtml(baseSalary)
+                    },
+                    'conge': {
+                        title: 'Poser un congé',
+                        badge: 'Congé',
+                        html: getCongeFormHtml()
+                    },
+                    'absence': {
+                        title: 'Enregistrer une absence',
+                        badge: 'Absence',
+                        html: getAbsenceFormHtml()
+                    }
+                };
+
+                var cur = config[theme];
+                if (!cur) return;
+
+                nestedTitle.textContent = cur.title;
+                nestedBadge.textContent = cur.badge;
+                nestedFormContent.innerHTML = cur.html;
+
+                // Calculs automatiques
+                if (theme === 'pret') {
+                    var tot = document.getElementById('nested_loan_amt');
+                    var mois = document.getElementById('nested_loan_months');
+                    var ded = document.getElementById('nested_loan_deduc');
+                    function calcDeduc() {
+                        var t = parseFloat(tot.value) || 0;
+                        var m = parseInt(mois.value, 10) || 1;
+                        if (t > 0 && m > 0) {
+                            ded.value = Math.round(t / m);
+                        }
+                    }
+                    if (tot && mois && ded) {
+                        tot.addEventListener('input', calcDeduc);
+                        mois.addEventListener('input', calcDeduc);
+                    }
+                } else if (theme === 'heures_sup') {
+                    var champsHs = nestedFormContent.querySelectorAll('.nested-hs-champ');
+                    var txtTot = document.getElementById('nested_hs_total');
+                    var inpTot = document.getElementById('nested_hs_montant');
+                    var inpTaux = document.getElementById('nested_hs_taux');
+                    var tauxH = parseFloat(inpTaux ? inpTaux.value : 0) || 1500;
+
+                    function calcHs() {
+                        var h15 = parseFloat(nestedFormContent.querySelector('[name="quar_heure"]')?.value) || 0;
+                        var h50 = parseFloat(nestedFormContent.querySelector('[name="heure_audd"]')?.value) || 0;
+                        var h75a = parseFloat(nestedFormContent.querySelector('[name="heure_nuit_ferie"]')?.value) || 0;
+                        var h75b = parseFloat(nestedFormContent.querySelector('[name="heure_dim_ferie"]')?.value) || 0;
+                        var h100 = parseFloat(nestedFormContent.querySelector('[name="heure_nuit_dim_ferie"]')?.value) || 0;
+
+                        var tot = Math.round(
+                            (h15 * tauxH * 1.15) +
+                            (h50 * tauxH * 1.50) +
+                            (h75a * tauxH * 1.75) +
+                            (h75b * tauxH * 1.75) +
+                            (h100 * tauxH * 2.00)
+                        );
+                        if (txtTot) txtTot.textContent = formatMilliers(tot) + ' FCFA';
+                        if (inpTot) inpTot.value = tot;
+                    }
+                    champsHs.forEach(function (inp) {
+                        inp.addEventListener('input', calcHs);
+                    });
+                } else if (theme === 'absence') {
+                    var justSel = document.getElementById('nested_abs_just');
+                    var permBloc = document.getElementById('nested_abs_perm_bloc');
+                    if (justSel && permBloc) {
+                        justSel.addEventListener('change', function () {
+                            permBloc.style.display = justSel.value === 'Oui' ? 'block' : 'none';
+                        });
+                    }
+                }
+
+                if (nestedDrawer) {
+                    nestedDrawer.classList.add('is-open');
+                }
+            }
+
+            function fermerNestedDrawer() {
+                if (nestedDrawer) {
+                    nestedDrawer.classList.remove('is-open');
+                }
+            }
+
+            // Écouteur pour ouvrir le sous-tiroir
+            document.querySelectorAll('.js-open-nested').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var theme = btn.dataset.theme;
+                    ouvrirNestedDrawer(theme);
+                });
+            });
+
+            // Écouteurs de fermeture du sous-tiroir
+            [document.getElementById('pm1NestedBack'), document.getElementById('pm1NestedClose'), document.getElementById('pm1NestedCancel')].forEach(function (el) {
+                if (el) el.addEventListener('click', fermerNestedDrawer);
+            });
+
+            // Soumission du formulaire de la thématique
+            if (nestedForm) {
+                nestedForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    var empId = document.getElementById('pm1NestedEmpId').value;
+                    if (!empId) return;
+
+                    var formData = new FormData(nestedForm);
+                    var payload = {};
+                    formData.forEach(function (v, k) {
+                        payload[k] = v;
+                    });
+
+                    Swal.fire({
+                        title: 'Enregistrement…',
+                        allowOutsideClick: false,
+                        didOpen: function () { Swal.showLoading(); }
+                    });
+
+                    var urlAjout = @json(route('company.paiesalaries.periodes.ajouter-variable', [$periode->id, ':emp'])).replace(':emp', empId);
+
+                    fetch(urlAjout, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+                    .then(function (res) {
+                        if (!res.ok || !res.d.success) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: res.d.message || "L'enregistrement a échoué.",
+                                confirmButtonColor: '#253e87'
+                            });
+                            return;
+                        }
+
+                        fermerNestedDrawer();
+                        sessionStorage.setItem('pm1ReouvrirTiroir', String(empId));
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Enregistré',
+                            text: res.d.message,
+                            timer: 900,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Le serveur ne répond pas.',
+                            confirmButtonColor: '#253e87'
+                        });
+                    });
+                });
+            }
+
+            // Gestionnaire de retrait pour TOUTES les variables (absence, overtime, conge, retenue, pret, avantage)
+            document.addEventListener('click', function (e) {
+                var btn = e.target.closest('.pm1-btn-retirer-variable');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                var type = btn.dataset.type;
+                var id = btn.dataset.id;
+                var empId = btn.dataset.employeeId || (document.getElementById('pm1DrawerEnregistrer') ? document.getElementById('pm1DrawerEnregistrer').dataset.employeeId : null);
+                var libelle = btn.dataset.libelle || 'cet élément';
+
+                if (!type || !id) return;
+
+                Swal.fire({
+                    title: 'Retirer cet élément ?',
+                    text: 'Voulez-vous retirer "' + libelle + '" pour ce salarié ?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Oui, retirer',
+                    cancelButtonText: 'Annuler'
+                }).then(function (result) {
+                    if (!result.isConfirmed) return;
+
+                    Swal.fire({
+                        title: 'Retrait en cours…',
+                        allowOutsideClick: false,
+                        didOpen: function () { Swal.showLoading(); }
+                    });
+
+                    var urlRetirer = @json(route('company.paiesalaries.periodes.retirer-variable', [$periode->id, ':emp'])).replace(':emp', empId);
+
+                    fetch(urlRetirer, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ type: type, id: id })
+                    })
+                    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+                    .then(function (res) {
+                        if (!res.ok || !res.d.success) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: res.d.message || "Le retrait a échoué.",
+                                confirmButtonColor: '#253e87'
+                            });
+                            return;
+                        }
+
+                        if (empId) {
+                            sessionStorage.setItem('pm1ReouvrirTiroir', String(empId));
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Élément retiré',
+                            text: res.d.message,
+                            timer: 800,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Le serveur ne répond pas.',
+                            confirmButtonColor: '#253e87'
+                        });
+                    });
+                });
+            });
+
             // Délégation sur le corps du tableau plutôt qu'un écouteur par ligne :
             // un seul point d'attache, qui survit à un re-rendu des lignes et ne
             // dépend pas de l'ordre d'exécution des scripts de la page.
             var corpsTableau = document.getElementById('pmLignes');
             if (corpsTableau) {
                 corpsTableau.addEventListener('click', function (evenement) {
-                    // Une seule exception : la case à cocher, sans quoi la sélection
-                    // deviendrait impossible. Tout le reste de la ligne ouvre le détail.
                     if (evenement.target.closest('.pm1-check')) {
                         return;
                     }
@@ -466,9 +1089,6 @@
                         return;
                     }
 
-                    // La ligne de détail reste dans le tableau mais ne se déplie plus :
-                    // elle sert de source au tiroir, qui en recopie le contenu. Afficher
-                    // les deux en même temps brouillait l'écran.
                     document.querySelectorAll('tr.pm1-row').forEach(function (autre) {
                         autre.classList.remove('is-ouvert');
                     });
@@ -499,8 +1119,6 @@
                 if (element) { element.addEventListener('click', fermerTiroir); }
             });
 
-            // Les actions qui ouvrent une modale effacent le tiroir : sans cela la
-            // fenêtre Bootstrap se retrouverait empilée derrière lui.
             ['pm1DrawerJoursBtn', 'pm1DrawerAdd', 'pm1DrawerShow', 'pm1DrawerEdit', 'pm1DrawerBulletin']
                 .forEach(function (id) {
                     var bouton = document.getElementById(id);
@@ -508,7 +1126,6 @@
                 });
 
             // Enregistrer & recalculer : jours, salaire de base et montants des primes
-            // partent ensemble, le serveur rejoue ensuite ancienneté et retenues légales.
             var boutonEnregistrer = document.getElementById('pm1DrawerEnregistrer');
             if (boutonEnregistrer) {
                 boutonEnregistrer.addEventListener('click', function () {

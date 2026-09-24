@@ -133,7 +133,7 @@
         return ['oui' => stripos($trait, 'Non Soumis') === false, 'titre' => $trait];
     };
 
-    $poserElement = function ($employeeId, $sens, $libelle, $montant, $fiscal = null, $social = null, $note = null, $allowanceId = null) use (&$elementsParSalarie) {
+    $poserElement = function ($employeeId, $sens, $libelle, $montant, $fiscal = null, $social = null, $note = null, $allowanceId = null, $varType = null, $varId = null) use (&$elementsParSalarie) {
         if (!$employeeId) {
             return;
         }
@@ -145,6 +145,8 @@
             'social' => $social,
             'note' => $note,
             'allowance_id' => $allowanceId,
+            'var_type' => $varType,
+            'var_id' => $varId,
         ];
     };
 
@@ -154,16 +156,16 @@
             $element->montant ?: $element->amount,
             $element->trait_fisc, $element->trait_cnps,
             $element->jours_work && $element->jours_work != 30 ? $element->jours_work . ' j' : null,
-            $element->id);
+            $element->id, 'allowance', $element->id);
     }
 
     foreach ($avantages as $element) {
         $poserElement($element->employee_id, '+', $element->libelle, $element->amount_reel,
-            $element->taxe_its, $element->taxe_cnps, 'Avantage en nature');
+            $element->taxe_its, $element->taxe_cnps, 'Avantage en nature', null, 'avantage', $element->id);
     }
 
     foreach ($retenues as $element) {
-        $poserElement($element->employee_id, '–', $element->libelle, $element->amount, null, null, 'Retenue');
+        $poserElement($element->employee_id, '–', $element->libelle, $element->amount, null, null, 'Retenue', null, 'retenue', $element->id);
     }
 
     // Échéances de prêt : rendues ici aussi, pour que chaque salarié voie la sienne
@@ -178,7 +180,10 @@
             null,
             $echeance->applied
                 ? 'Échéance appliquée'
-                : 'Échéance non appliquée — à valider dans les éléments du mois'
+                : 'Échéance non appliquée — à valider dans les éléments du mois',
+            null,
+            'pret',
+            optional($echeance->loan)->id
         );
     }
 
@@ -631,11 +636,7 @@
                                                                 @endif
                                                                 @if($soc)
                                                                     <span class="pm1-badge {{ $soc['oui'] ? 'social' : 'neutre' }}" title="{{ $soc['titre'] }}">Soc {{ $soc['oui'] ? 'OUI' : 'NON' }}</span>
-                                                                @endif
-                                                                @if($element['note'])<span class="pm1-badge neutre">{{ $element['note'] }}</span>@endif
-                                                            </span>
-                                                        </div>
-                                                        @if(!$verrouille && $element['allowance_id'])
+                                                                @end                                                        @if(!$verrouille && $element['allowance_id'])
                                                             <span class="pm1-el-saisie">
                                                                 <b class="pm1-signe pos">+</b>
                                                                 <input type="number" class="pm1-champ pm1-champ-element" min="0" step="500"
@@ -654,6 +655,16 @@
                                                         @else
                                                             <span class="pm1-el-amt {{ $element['sens'] === '+' ? 'pos' : 'neg' }}">
                                                                 {{ $element['sens'] }}{{ $fmt($element['montant']) }} <small>FCFA</small>
+                                                                @if(!$verrouille && !empty($element['var_type']) && !empty($element['var_id']))
+                                                                    <button type="button" class="pm1-btn-retirer-variable ms-2"
+                                                                        data-type="{{ $element['var_type'] }}"
+                                                                        data-id="{{ $element['var_id'] }}"
+                                                                        data-employee-id="{{ $idEmp }}"
+                                                                        data-libelle="{{ $element['libelle'] }}"
+                                                                        title="Retirer {{ $element['libelle'] }}">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                @endif
                                                             </span>
                                                         @endif
                                                     </div>
@@ -668,13 +679,16 @@
                                                     $sesAbsences = $absencesParSalarie[$idEmp] ?? collect();
                                                     $sesHeures = $heuresSupParSalarie[$idEmp] ?? collect();
                                                     $sesConges = $congesParSalarie[$idEmp] ?? collect();
-                                                    $aucuneVariable = $sesAbsences->isEmpty() && $sesHeures->isEmpty() && $sesConges->isEmpty();
+                                                    $sesRetenuesVar = $retenues->where('employee_id', $idEmp);
+                                                    $sesAvantagesVar = $avantages->where('employee_id', $idEmp);
+                                                    $sesPretsVar = $loanPayments->filter(fn($lp) => optional($lp->loan)->employee_id == $idEmp);
+                                                    $aucuneVariable = $sesAbsences->isEmpty() && $sesHeures->isEmpty() && $sesConges->isEmpty() && $sesRetenuesVar->isEmpty() && $sesAvantagesVar->isEmpty() && $sesPretsVar->isEmpty();
                                                 @endphp
 
-                                                @forelse($sesAbsences as $absence)
+                                                @foreach($sesAbsences as $absence)
                                                     <div class="pm1-var-line">
                                                         <div class="pm1-var-main">
-                                                            <b><i class="fas fa-user-clock"></i>Absence</b>
+                                                            <b><i class="fas fa-user-clock text-warning me-1"></i>Absence</b>
                                                             <span class="pm1-var-meta">
                                                                 {{ \Carbon\Carbon::parse($absence->date)->format('d/m/Y') }}
                                                                 @if($absence->arrival_date)
@@ -688,18 +702,29 @@
                                                                 @endif
                                                             </span>
                                                         </div>
-                                                        <span class="pm1-var-val">
-                                                            {{ (int) $absence->hours }} h
-                                                            @if($absence->retenue)<small>· {{ (int) $absence->retenue }} j retenus</small>@endif
-                                                        </span>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="pm1-var-val">
+                                                                {{ (int) $absence->hours }} h
+                                                                @if($absence->retenue)<small>· {{ (int) $absence->retenue }} j retenus</small>@endif
+                                                            </span>
+                                                            @unless($verrouille)
+                                                                <button type="button" class="pm1-btn-retirer-variable"
+                                                                    data-type="absence"
+                                                                    data-id="{{ $absence->id }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="Absence du {{ \Carbon\Carbon::parse($absence->date)->format('d/m/Y') }}"
+                                                                    title="Retirer cette absence">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endunless
+                                                        </div>
                                                     </div>
-                                                @empty
-                                                @endforelse
+                                                @endforeach
 
                                                 @foreach($sesHeures as $heure)
                                                     <div class="pm1-var-line">
                                                         <div class="pm1-var-main">
-                                                            <b><i class="fas fa-clock"></i>Heures supplémentaires</b>
+                                                            <b><i class="fas fa-clock text-info me-1"></i>Heures supplémentaires</b>
                                                             <span class="pm1-var-meta">
                                                                 du {{ \Carbon\Carbon::parse($heure->start_date)->format('d/m/Y H:i') }}
                                                                 au {{ \Carbon\Carbon::parse($heure->end_date)->format('d/m/Y H:i') }}
@@ -707,32 +732,134 @@
                                                                 @if($heure->paid === 'paid')<span class="pm1-el-tag">Payées</span>@endif
                                                             </span>
                                                         </div>
-                                                        <span class="pm1-var-val">
-                                                            {{ $heuresTotal($heure) }} h
-                                                            @if((float) $heure->montant > 0)<small>· {{ $fmt((float) $heure->montant) }} FCFA</small>@endif
-                                                        </span>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="pm1-var-val">
+                                                                {{ $heuresTotal($heure) }} h
+                                                                @if((float) $heure->montant > 0)<small>· {{ $fmt((float) $heure->montant) }} FCFA</small>@endif
+                                                            </span>
+                                                            @unless($verrouille)
+                                                                <button type="button" class="pm1-btn-retirer-variable"
+                                                                    data-type="overtime"
+                                                                    data-id="{{ $heure->id }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="Heures sup ({{ $heuresTotal($heure) }} h)"
+                                                                    title="Retirer ces heures supplémentaires">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endunless
+                                                        </div>
                                                     </div>
                                                 @endforeach
 
                                                 @foreach($sesConges as $conge)
                                                     <div class="pm1-var-line">
                                                         <div class="pm1-var-main">
-                                                            <b><i class="fas fa-umbrella-beach"></i>{{ $conge->leaveType->name ?? 'Congé' }}</b>
+                                                            <b><i class="fas fa-umbrella-beach text-success me-1"></i>{{ $conge->leaveType->title ?? ($conge->leaveType->name ?? 'Congé') }}</b>
                                                             <span class="pm1-var-meta">
                                                                 du {{ \Carbon\Carbon::parse($conge->start_date)->format('d/m/Y') }}
                                                                 au {{ \Carbon\Carbon::parse($conge->end_date)->format('d/m/Y') }}
                                                                 <span class="pm1-el-tag">{{ $conge->status }}</span>
                                                             </span>
                                                         </div>
-                                                        <span class="pm1-var-val">
-                                                            {{ (int) $conge->total_leave_days }} j
-                                                            @if((int) $conge->amount_leave > 0)<small>· {{ $fmt($conge->amount_leave) }} FCFA</small>@endif
-                                                        </span>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="pm1-var-val">
+                                                                {{ (int) $conge->total_leave_days }} j
+                                                                @if((int) $conge->amount_leave > 0)<small>· {{ $fmt($conge->amount_leave) }} FCFA</small>@endif
+                                                            </span>
+                                                            @unless($verrouille)
+                                                                <button type="button" class="pm1-btn-retirer-variable"
+                                                                    data-type="conge"
+                                                                    data-id="{{ $conge->id }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="Congé {{ $conge->leaveType->title ?? 'de l\'employé' }}"
+                                                                    title="Retirer ce congé">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endunless
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+
+                                                @foreach($sesRetenuesVar as $ret)
+                                                    <div class="pm1-var-line">
+                                                        <div class="pm1-var-main">
+                                                            <b><i class="fas fa-minus-circle text-danger me-1"></i>Retenue : {{ $ret->libelle }}</b>
+                                                            <span class="pm1-var-meta">
+                                                                <span class="pm1-el-tag">{{ $ret->typeRetenue->libelle ?? 'Retenue diverse' }}</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="pm1-var-val text-danger">
+                                                                –{{ $fmt($ret->amount) }} <small>FCFA</small>
+                                                            </span>
+                                                            @unless($verrouille)
+                                                                <button type="button" class="pm1-btn-retirer-variable"
+                                                                    data-type="retenue"
+                                                                    data-id="{{ $ret->id }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="Retenue : {{ $ret->libelle }}"
+                                                                    title="Retirer cette retenue">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endunless
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+
+                                                @foreach($sesPretsVar as $lp)
+                                                    <div class="pm1-var-line">
+                                                        <div class="pm1-var-main">
+                                                            <b><i class="fas fa-university text-primary me-1"></i>Prêt : {{ optional($lp->loan)->title ?: 'Prêt en cours' }}</b>
+                                                            <span class="pm1-var-meta">
+                                                                <span class="pm1-el-tag">Échéance mensuelle</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="pm1-var-val text-danger">
+                                                                –{{ $fmt($lp->amount) }} <small>FCFA</small>
+                                                            </span>
+                                                            @unless($verrouille)
+                                                                <button type="button" class="pm1-btn-retirer-variable"
+                                                                    data-type="pret"
+                                                                    data-id="{{ optional($lp->loan)->id }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="Prêt : {{ optional($lp->loan)->title ?: 'Échéance' }}"
+                                                                    title="Retirer cette échéance de prêt">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endunless
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+
+                                                @foreach($sesAvantagesVar as $av)
+                                                    <div class="pm1-var-line">
+                                                        <div class="pm1-var-main">
+                                                            <b><i class="fas fa-gift text-purple me-1"></i>Avantage : {{ $av->libelle }}</b>
+                                                            <span class="pm1-var-meta">
+                                                                <span class="pm1-el-tag">{{ $av->type_avantage === 'avantage_en_argent' ? 'En argent' : 'En nature' }}</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="pm1-var-val text-success">
+                                                                +{{ $fmt($av->amount_reel) }} <small>FCFA</small>
+                                                            </span>
+                                                            @unless($verrouille)
+                                                                <button type="button" class="pm1-btn-retirer-variable"
+                                                                    data-type="avantage"
+                                                                    data-id="{{ $av->id }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="Avantage : {{ $av->libelle }}"
+                                                                    title="Retirer cet avantage">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endunless
+                                                        </div>
                                                     </div>
                                                 @endforeach
 
                                                 @if($aucuneVariable)
-                                                    <p class="pm1-el-vide">Aucune absence, heure supplémentaire ni congé ce mois-ci.</p>
+                                                    <p class="pm1-el-vide">Aucune variable saisie pour ce salarié ce mois-ci.</p>
                                                 @endif
                                             </div>
                                                 </div>

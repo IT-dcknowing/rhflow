@@ -917,7 +917,12 @@ class PaieSalariesController extends Controller
             ->orderBy("name")
             ->get(["id", "name", "code", "param_fiscal", "param_social"]);
 
-        return view("paiesalaries::periodes.show", compact("periode", "activeLoans", "loans",  "totalPaid", "remainingAmount", "repaymentPercentage", "repaymentSchedule", "retenuesLoan", "loanPayments", "retenues", "allowances", "avantages", "previousPeriode", "employees", "optionsPrimes"));
+        // Options pour les tiroirs latéraux de saisie des variables
+        $typesRetenues = \Modules\PaieSalaries\Models\TypeRetenue::where('is_active', true)->get(['id', 'libelle']);
+        $optionsPrets = \Modules\Loans\Models\LoanOption::where('company_id', $companyId)->get(['id', 'name']);
+        $typesConges = \Modules\Leaves\Models\LeaveType::where('company_id', $companyId)->get(['id', 'title']);
+
+        return view("paiesalaries::periodes.show", compact("periode", "activeLoans", "loans",  "totalPaid", "remainingAmount", "repaymentPercentage", "repaymentSchedule", "retenuesLoan", "loanPayments", "retenues", "allowances", "avantages", "previousPeriode", "employees", "optionsPrimes", "typesRetenues", "optionsPrets", "typesConges"));
     }
 
     /**
@@ -1210,6 +1215,297 @@ class PaieSalariesController extends Controller
             'message' => $employee->name . ' : montants recalculés.',
             'net' => (float) $employee->get_net_salary($periode->id),
         ]);
+    }
+
+    /**
+     * Ajoute une variable du mois (retenue, prêt, avantage, heures sup, congé, absence)
+     * directement depuis le panneau latéral de la paie, sans changer de page.
+     */
+    public function ajouterVariableSalarie(Request $request, $periodeId, $employeeId)
+    {
+        $companyId = Auth::user()->company_id;
+        $periode = PaiePeriode::where('company_id', $companyId)->find($periodeId);
+
+        if (!$periode) {
+            return response()->json(['success' => false, 'message' => "Période introuvable."], 404);
+        }
+
+        if (in_array($periode->statut, ['payee', 'cloture', 'annulee'], true) || $periode->bulletins()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => "Période verrouillée : les bulletins sont déjà générés.",
+            ], 422);
+        }
+
+        $employee = Employee::where('company_id', $companyId)->find($employeeId);
+        if (!$employee) {
+            return response()->json(['success' => false, 'message' => "Salarié introuvable."], 404);
+        }
+
+        $theme = $request->input('theme');
+        $service = app(\App\Services\SalaryService::class);
+
+        try {
+            \DB::transaction(function () use ($request, $periode, $employee, $theme, $companyId) {
+                switch ($theme) {
+                    case 'retenue':
+                        $request->validate([
+                            'libelle' => 'required|string|max:255',
+                            'amount' => 'required|numeric|min:1',
+                        ]);
+                        Retenue::create([
+                            'employee_id' => $employee->id,
+                            'periode_id' => $periode->id,
+                            'company_id' => $companyId,
+                            'libelle' => $request->input('libelle'),
+                            'type_retenue_id' => $request->input('type_retenue_id') ?: null,
+                            'amount' => (float) $request->input('amount'),
+                            'is_active' => 1,
+                            'type' => 'created',
+                            'month_paie' => Carbon::parse($periode->date_debut)->format('Y-m'),
+                            'date_application' => now(),
+                        ]);
+                        break;
+
+                    case 'pret':
+                        $request->validate([
+                            'title' => 'required|string|max:255',
+                            'amount' => 'required|numeric|min:1',
+                            'amount_deduc' => 'required|numeric|min:1',
+                            'nbre_mois' => 'required|integer|min:1',
+                        ]);
+                        $loanOptionId = $request->input('loan_option');
+                        if (!$loanOptionId) {
+                            $loanOptionId = \Modules\Loans\Models\LoanOption::where('company_id', $companyId)->value('id') ?: 1;
+                        }
+                        $nbreMois = (int) $request->input('nbre_mois');
+                        $loan = \Modules\Loans\Models\Loan::create([
+                            'employee_id' => $employee->id,
+                            'periode_id' => $periode->id,
+                            'company_id' => $companyId,
+                            'loan_option' => $loanOptionId,
+                            'title' => $request->input('title'),
+                            'type' => 'fixe',
+                            'amount' => (float) $request->input('amount'),
+                            'amount_deduc' => (float) $request->input('amount_deduc'),
+                            'nbre_mois' => $nbreMois,
+                            'start_date' => $periode->date_debut,
+                            'end_date' => Carbon::parse($periode->date_debut)->addMonths($nbreMois)->format('Y-m-d'),
+                            'statut' => 'running',
+                            'is_active' => 1,
+                            'month_paie' => Carbon::parse($periode->date_debut)->format('Y-m'),
+                        ]);
+
+                        \Modules\Loans\Models\LoanPayment::create([
+                            'loan_id' => $loan->id,
+                            'periode_id' => $periode->id,
+                            'amount' => (float) $request->input('amount_deduc'),
+                            'payment_date' => $periode->date_paiement ?: now(),
+                            'company_id' => $companyId,
+                            'note' => 'Échéance appliquée depuis la paie du mois',
+                        ]);
+                        break;
+
+                    case 'avantage':
+                        $request->validate([
+                            'libelle' => 'required|string|max:255',
+                            'amount' => 'required|numeric|min:1',
+                        ]);
+                        $montant = (float) $request->input('amount');
+                        $avantage = new \Modules\NatureAvantage\Models\Avantage();
+                        $avantage->employee_Id = $employee->id;
+                        $avantage->periode_id = $periode->id;
+                        $avantage->type_avantage = $request->input('type_avantage', 'avantage_en_nature');
+                        $avantage->libelle = $request->input('libelle');
+                        $avantage->amount_reel = $montant;
+                        $avantage->amount = $montant;
+                        $avantage->taxe_its = 0;
+                        $avantage->taxe_cnps = 0;
+                        $avantage->traitement = 'non_soumis';
+                        $avantage->status = 'pending';
+                        $avantage->is_active = 1;
+                        $avantage->company_id = $companyId;
+                        $avantage->save();
+                        break;
+
+                    case 'heures_sup':
+                        $h15 = (float) $request->input('quar_heure', 0);
+                        $h50 = (float) $request->input('heure_audd', 0);
+                        $h75a = (float) $request->input('heure_nuit_ferie', 0);
+                        $h75b = (float) $request->input('heure_dim_ferie', 0);
+                        $h100 = (float) $request->input('heure_nuit_dim_ferie', 0);
+                        $baseSalaire = (float) ($employee->salary ?: 0);
+                        $taux = (float) ($request->input('taux_hour') ?: round($baseSalaire / 173.33, 2));
+                        $montantCalc = round(
+                            ($h15 * $taux * 1.15) +
+                            ($h50 * $taux * 1.50) +
+                            ($h75a * $taux * 1.75) +
+                            ($h75b * $taux * 1.75) +
+                            ($h100 * $taux * 2.00)
+                        );
+                        $montant = (float) ($request->input('montant') ?: $montantCalc);
+
+                        $overtime = new \Modules\Time\Models\Overtime();
+                        $overtime->employee_id = $employee->id;
+                        $overtime->periode_id = $periode->id;
+                        $overtime->start_date = $request->input('start_date') ?: ($periode->date_debut . ' 08:00:00');
+                        $overtime->end_date = $request->input('end_date') ?: ($periode->date_fin . ' 18:00:00');
+                        $overtime->quar_heure = $h15;
+                        $overtime->heure_audd = $h50;
+                        $overtime->heure_nuit_ferie = $h75a;
+                        $overtime->heure_dim_ferie = $h75b;
+                        $overtime->heure_nuit_dim_ferie = $h100;
+                        $overtime->taux_hour = $taux;
+                        $overtime->montant = $montant > 0 ? $montant : $montantCalc;
+                        $overtime->statut = 'approved';
+                        $overtime->company_id = $companyId;
+                        $overtime->save();
+                        break;
+
+                    case 'conge':
+                        $request->validate([
+                            'leave_type_id' => 'required',
+                            'start_date' => 'required|date',
+                            'end_date' => 'required|date',
+                        ]);
+                        $leave = new \Modules\Leaves\Models\Leave();
+                        $leave->employee_id = $employee->id;
+                        $leave->periode_id = $periode->id;
+                        $leave->leave_type_id = $request->input('leave_type_id');
+                        $leave->start_date = $request->input('start_date');
+                        $leave->end_date = $request->input('end_date');
+                        $leave->leave_back = $request->input('end_date');
+                        $leave->applied_on = now();
+                        $leave->total_leave_days = (int) $request->input('days', 1);
+                        $leave->amount_leave = (float) $request->input('amount_leave', 0);
+                        $leave->status = 'Approuvé';
+                        $leave->is_active = 1;
+                        $leave->company_id = $companyId;
+                        $leave->created_by = Auth::id() ?: 1;
+                        $leave->save();
+                        break;
+
+                    case 'absence':
+                        $request->validate([
+                            'start_date' => 'required|date',
+                            'end_date' => 'required|date',
+                        ]);
+                        $sheet = new \Modules\Time\Models\TimeSheet();
+                        $sheet->employee_id = $employee->id;
+                        $sheet->periode_id = $periode->id;
+                        $sheet->date = $request->input('start_date');
+                        $sheet->arrival_date = $request->input('end_date');
+                        $sheet->hours = (float) $request->input('hours', 0);
+                        $sheet->retenue = (float) $request->input('days', 0);
+                        $sheet->motif_justify = $request->input('motif_justify', 'Non');
+                        $sheet->type_permis = $request->input('motif_justify') === 'Oui' ? $request->input('type_permis') : null;
+                        $sheet->remark = $request->input('remark');
+                        $sheet->monthpaie = Carbon::parse($periode->date_debut)->format('m');
+                        $sheet->company_id = $companyId;
+                        $sheet->statut = 'approved';
+                        $sheet->save();
+                        break;
+
+                    default:
+                        throw new \Exception("Thématique inconnue : " . $theme);
+                }
+            });
+
+            // Recalculer légal
+            $employee->refresh();
+            $service->appliquerPrimeAnciennete($employee, $periode);
+            $service->appliquerRetenuesLegales($employee, $periode);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Élément ajouté et paie recalculée avec succès.',
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Ajout variable salarie', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => "L'enregistrement a échoué : " . $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Supprime ou retire une variable du mois pour ce salarié et recalcule la paie.
+     */
+    public function retirerVariableSalarie(Request $request, $periodeId, $employeeId)
+    {
+        $companyId = Auth::user()->company_id;
+        $periode = PaiePeriode::where('company_id', $companyId)->find($periodeId);
+
+        if (!$periode) {
+            return response()->json(['success' => false, 'message' => "Période introuvable."], 404);
+        }
+
+        if (in_array($periode->statut, ['payee', 'cloture', 'annulee'], true) || $periode->bulletins()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => "Période verrouillée : les bulletins sont déjà générés.",
+            ], 422);
+        }
+
+        $employee = Employee::where('company_id', $companyId)->find($employeeId);
+        if (!$employee) {
+            return response()->json(['success' => false, 'message' => "Salarié introuvable."], 404);
+        }
+
+        $type = $request->input('type');
+        $id = $request->input('id');
+        $service = app(\App\Services\SalaryService::class);
+
+        try {
+            switch ($type) {
+                case 'retenue':
+                    Retenue::where('company_id', $companyId)->where('id', $id)->delete();
+                    break;
+                case 'pret':
+                    \Modules\Loans\Models\LoanPayment::where('periode_id', $periode->id)
+                        ->where('loan_id', $id)
+                        ->delete();
+                    $loan = \Modules\Loans\Models\Loan::where('company_id', $companyId)->find($id);
+                    if ($loan && $loan->periode_id == $periode->id && $loan->payments()->count() == 0) {
+                        $loan->delete();
+                    }
+                    break;
+                case 'avantage':
+                    \Modules\NatureAvantage\Models\Avantage::where('company_id', $companyId)->where('id', $id)->delete();
+                    break;
+                case 'overtime':
+                    \Modules\Time\Models\Overtime::where('company_id', $companyId)->where('id', $id)->delete();
+                    break;
+                case 'conge':
+                    \Modules\Leaves\Models\Leave::where('company_id', $companyId)->where('id', $id)->delete();
+                    break;
+                case 'absence':
+                    \Modules\Time\Models\TimeSheet::where('company_id', $companyId)->where('id', $id)->delete();
+                    break;
+                case 'allowance':
+                    Allowance::where('company_id', $companyId)->where('id', $id)->delete();
+                    break;
+                default:
+                    throw new \Exception("Type d'élément inconnu : " . $type);
+            }
+
+            // Recalculer légal
+            $employee->refresh();
+            $service->appliquerPrimeAnciennete($employee, $periode);
+            $service->appliquerRetenuesLegales($employee, $periode);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Élément retiré et paie recalculée avec succès.',
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Retrait variable salarie', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => "Le retrait a échoué : " . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

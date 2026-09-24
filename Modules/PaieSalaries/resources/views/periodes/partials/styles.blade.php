@@ -315,7 +315,8 @@
         /* Champs de saisie des montants, dans le détail du salarié. */
         .pm1-el-saisie { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .pm1-el-saisie small { font-size: 10.5px; color: var(--muted); }
-        .pm1-btn-retirer-prime {
+        .pm1-btn-retirer-prime,
+        .pm1-btn-retirer-variable {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -332,7 +333,8 @@
             transition: all .15s ease;
             flex-shrink: 0;
         }
-        .pm1-btn-retirer-prime:hover {
+        .pm1-btn-retirer-prime:hover,
+        .pm1-btn-retirer-variable:hover {
             background: #ef4444;
             color: #ffffff;
             border-color: #ef4444;
