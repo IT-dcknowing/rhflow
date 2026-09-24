@@ -60,7 +60,7 @@
         <!-- Graphique et dernières fiches de paie -->
         <div class="row mb-4">
             <!-- Graphique d'évolution de la masse salariale -->
-            <div class="col-12 col-lg-8 mb-4">
+            <div class="col-12 col-lg-5 mb-4">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Évolution de la masse salariale</h5>
@@ -82,7 +82,7 @@
             </div>
 
             <!-- Dernières fiches de paie -->
-            <div class="col-12 col-lg-4 mb-4">
+            <div class="col-12 col-lg-7 mb-4">
                 <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Dernières fiches de paie</h5>
@@ -91,7 +91,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover mb-0">
                                 <tbody>
                                     @forelse($dernieres_paies as $paie)
                                         <tr>
@@ -111,8 +111,8 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="text-end">
-                                                <span class="fw-semibold">{{ number_format($paie->salaire_net, 0, ',', ' ') }}
+                                            <td class="text-end" style="white-space:nowrap;">
+                                                <span class="fw-semibold">{{ number_format($paie->salaire_net, 0, ',', '\u00a0') }}
                                                     FCFA</span>
                                             </td>
                                         </tr>
@@ -225,41 +225,55 @@
                         <h5 class="mb-0">Répartition des charges du mois</h5>
                     </div>
                     <div class="card-body">
-                        <div id="repartitionChargesChart" class="mb-4"></div>
-                        <div class="row g-3">
-                            <div class="col-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="badge bg-label-primary me-2" style="width: 12px; height: 12px;"></span>
-                                    <span>Salaire de base</span>
-                                    <span
-                                        class="ms-auto fw-semibold">{{ number_format($stats['masse_salariale_mensuelle'] - $stats['total_primes_mois'], 0, ',', ' ') }}
-                                        FCFA</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="badge bg-label-success me-2" style="width: 12px; height: 12px;"></span>
-                                    <span>Primes</span>
-                                    <span
-                                        class="ms-auto fw-semibold">{{ number_format($stats['total_primes_mois'], 0, ',', ' ') }}
-                                        FCFA</span>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="badge bg-label-warning me-2" style="width: 12px; height: 12px;"></span>
-                                    <span>Retenues</span>
-                                    <span
-                                        class="ms-auto fw-semibold">{{ number_format($stats['total_retenues_mois'], 0, ',', ' ') }}
-                                        FCFA</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="badge bg-label-info me-2" style="width: 12px; height: 12px;"></span>
-                                    <span>Cotisations</span>
-                                    <span
-                                        class="ms-auto fw-semibold">{{ number_format(($stats['masse_salariale_mensuelle'] * 0.1), 0, ',', ' ') }}
-                                        FCFA</span>
-                                </div>
-                            </div>
+                        <div id="repartitionChargesChart" class="mb-2"></div>
+                        {{-- Total affiché sous le donut, bien visible --}}
+                        <div class="text-center mb-3">
+                            <span class="text-muted small">Total</span><br>
+                            <strong class="fs-5" style="white-space:nowrap;">
+                                {{ number_format($stats['masse_salariale_mensuelle'] + $stats['total_retenues_mois'] + $stats['masse_salariale_mensuelle'] * 0.1, 0, ',', '\u00a0') }} FCFA
+                            </strong>
                         </div>
+                        {{-- Tableau de répartition aligné --}}
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="ps-0 border-0">
+                                        <span class="badge me-1" style="background:#696cff;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
+                                        Salaire de base
+                                    </td>
+                                    <td class="text-end fw-semibold border-0" style="white-space:nowrap;">
+                                        {{ number_format($stats['masse_salariale_mensuelle'] - $stats['total_primes_mois'], 0, ',', '\u00a0') }} FCFA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 border-0">
+                                        <span class="badge me-1" style="background:#71dd37;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
+                                        Primes
+                                    </td>
+                                    <td class="text-end fw-semibold border-0" style="white-space:nowrap;">
+                                        {{ number_format($stats['total_primes_mois'], 0, ',', '\u00a0') }} FCFA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 border-0">
+                                        <span class="badge me-1" style="background:#ffab00;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
+                                        Retenues
+                                    </td>
+                                    <td class="text-end fw-semibold border-0" style="white-space:nowrap;">
+                                        {{ number_format($stats['total_retenues_mois'], 0, ',', '\u00a0') }} FCFA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">
+                                        <span class="badge me-1" style="background:#03c3ec;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
+                                        Cotisations
+                                    </td>
+                                    <td class="text-end fw-semibold" style="white-space:nowrap;">
+                                        {{ number_format($stats['masse_salariale_mensuelle'] * 0.1, 0, ',', '\u00a0') }} FCFA
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -278,7 +292,7 @@
                     data: @json($masse_salariale['data'])
                 }],
                 chart: {
-                    height: 300,
+                    height: 220,
                     type: 'area',
                     parentHeightOffset: 0,
                     toolbar: {
@@ -357,7 +371,7 @@
                 ],
                 chart: {
                     type: 'donut',
-                    height: 200,
+                    height: 160,
                     parentHeightOffset: 0,
                     toolbar: {
                         show: false
@@ -386,21 +400,7 @@
                         donut: {
                             size: '70%',
                             labels: {
-                                show: true,
-                                value: {
-                                    offsetY: 5,
-                                    formatter: function (val) {
-                                        return (val / {{ $stats['masse_salariale_mensuelle'] }} * 100).toFixed(1) + '%';
-                                    }
-                                },
-                                total: {
-                                    show: true,
-                                    label: 'Total',
-                                    formatter: function (w) {
-                                        const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                                        return total.toLocaleString('fr-FR') + ' FCFA';
-                                    }
-                                }
+                                show: false
                             }
                         }
                     }

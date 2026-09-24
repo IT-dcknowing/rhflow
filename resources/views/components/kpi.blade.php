@@ -1,4 +1,4 @@
-﻿{{--
+{{--
     Tuile KPI : grand chiffre en haut, libelle + sous-libelle juste en dessous.
     L icone est affichee en petit en haut a droite pour garder le contexte visuel.
 
@@ -26,8 +26,8 @@
     <div class="d-flex flex-column p-3 border rounded h-100">
 
         {{-- Ligne du haut : chiffre principal + icone a droite --}}
-        <div class="d-flex align-items-start justify-content-between">
-            <h3 class="mb-0 text-{{ $color }} fw-bold">
+        <div class="d-flex align-items-start justify-content-between gap-2">
+            <h3 class="mb-0 text-{{ $color }} fw-bold" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;">
                 @if (trim($slot) !== '')
                     {{ $slot }}
                 @else
