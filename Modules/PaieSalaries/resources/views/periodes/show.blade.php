@@ -651,6 +651,13 @@
                                                                     value="{{ (int) $element['montant'] }}"
                                                                     aria-label="Montant de {{ $element['libelle'] }}">
                                                                 <small>FCFA</small>
+                                                                <button type="button" class="pm1-btn-retirer-prime"
+                                                                    data-allowance="{{ $element['allowance_id'] }}"
+                                                                    data-employee-id="{{ $idEmp }}"
+                                                                    data-libelle="{{ $element['libelle'] }}"
+                                                                    title="Retirer {{ $element['libelle'] }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
                                                             </span>
                                                         @else
                                                             <span class="pm1-el-amt {{ $element['sens'] === '+' ? 'pos' : 'neg' }}">
@@ -1097,7 +1104,10 @@
                                 Swal.fire({ icon: 'error', title: 'Non enregistré', text: resultat.d.message || 'Le traitement a échoué.', confirmButtonColor: '#253e87' });
                                 return;
                             }
-                            Swal.fire({ icon: 'success', title: 'Prime appliquée', text: resultat.d.message, timer: 1400, showConfirmButton: false })
+                            if (identifiants && identifiants.length === 1) {
+                                sessionStorage.setItem('pm1ReouvrirTiroir', String(identifiants[0]));
+                            }
+                            Swal.fire({ icon: 'success', title: 'Prime ajoutée', text: resultat.d.message, timer: 900, showConfirmButton: false })
                                 .then(function () { window.location.reload(); });
                         })
                         .catch(function () {

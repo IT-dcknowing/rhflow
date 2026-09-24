@@ -2370,31 +2370,40 @@ class PaieSalariesController extends Controller
     {
         \DB::beginTransaction();
         try {
+            $user = Auth::user();
+            $companyId = $user->company_id ?: ($user->creatorId() ?? $user->id);
+
             $allowance = Allowance::where("id", $id)
-                ->where("company_id", Auth::user()->company_id)
+                ->where(function ($q) use ($companyId, $user) {
+                    $q->where("company_id", $companyId)
+                      ->orWhere("company_id", $user->id)
+                      ->orWhereNull("company_id");
+                })
                 ->firstOrFail();
 
-            // Vérifier si l'allocation peut être supprimée (par exemple, si elle n'est pas déjà utilisée dans des bulletins de paie)
-            // À implémenter selon les règles métier spécifiques
+            $employeeId = $allowance->employee_id;
+            $periodeId = $allowance->periode_id;
 
             $allowance->delete();
 
-            $this->recalculateEmployeeRetenues(
-                $allowance->employee_id,
-                $allowance->periode_id,
-            );
+            if ($employeeId && $periodeId) {
+                $this->recalculateEmployeeRetenues(
+                    $employeeId,
+                    $periodeId,
+                );
+            }
 
             \DB::commit();
 
             return response()->json([
                 "success" => true,
-                "message" => "Allocation supprimée avec succès",
+                "message" => "Prime retirée avec succès",
             ]);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(
                 [
                     "success" => false,
-                    "message" => "Allocation non trouvée ou déjà supprimée",
+                    "message" => "Prime non trouvée ou déjà supprimée",
                 ],
                 404,
             );

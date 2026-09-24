@@ -562,9 +562,12 @@
                                 });
                                 return;
                             }
+                            if (salarieId) {
+                                sessionStorage.setItem('pm1ReouvrirTiroir', String(salarieId));
+                            }
                             Swal.fire({
                                 icon: 'success', title: 'Recalculé', text: res.d.message,
-                                timer: 1400, showConfirmButton: false
+                                timer: 900, showConfirmButton: false
                             }).then(function () { window.location.reload(); });
                         })
                         .catch(function () {
@@ -577,8 +580,105 @@
                 });
             }
 
-            // Rendu accessible au reste de la page : le formulaire de prime rapide
-            // a besoin de fermer le tiroir après enregistrement.
+            // Suppression / retrait d'une prime depuis le tiroir
+            document.addEventListener('click', function (e) {
+                var btn = e.target.closest('.pm1-btn-retirer-prime');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                var allowanceId = btn.dataset.allowance;
+                var empId = btn.dataset.employeeId || (document.getElementById('pm1DrawerEnregistrer') ? document.getElementById('pm1DrawerEnregistrer').dataset.employeeId : null);
+                var libelle = btn.dataset.libelle || 'cette prime';
+
+                if (!allowanceId) return;
+
+                Swal.fire({
+                    title: 'Retirer la prime ?',
+                    text: 'Voulez-vous retirer "' + libelle + '" pour ce salarié ?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Oui, retirer',
+                    cancelButtonText: 'Annuler'
+                }).then(function (result) {
+                    if (!result.isConfirmed) return;
+
+                    Swal.fire({
+                        title: 'Suppression…',
+                        allowOutsideClick: false,
+                        didOpen: function () { Swal.showLoading(); }
+                    });
+
+                    var urlSuppr = @json(route('company.paiesalaries.allowance.destroy', ':id')).replace(':id', allowanceId);
+
+                    fetch(urlSuppr, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+                    .then(function (res) {
+                        if (!res.ok || !res.d.success) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: res.d.message || "La suppression a échoué.",
+                                confirmButtonColor: '#253e87'
+                            });
+                            return;
+                        }
+
+                        if (empId) {
+                            sessionStorage.setItem('pm1ReouvrirTiroir', String(empId));
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Prime retirée',
+                            text: res.d.message,
+                            timer: 800,
+                            showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    })
+                    .catch(function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Le serveur ne répond pas.',
+                            confirmButtonColor: '#253e87'
+                        });
+                    });
+                });
+            });
+
+            // Réouverture automatique du tiroir pour rester sur l'interface du salarié après ajout ou retrait de prime
+            var reouvrirId = sessionStorage.getItem('pm1ReouvrirTiroir');
+            if (reouvrirId) {
+                sessionStorage.removeItem('pm1ReouvrirTiroir');
+                setTimeout(function () {
+                    var ligneCible = document.querySelector('tr.pm1-row[data-employee-id="' + reouvrirId + '"]');
+                    if (ligneCible) {
+                        document.querySelectorAll('tr.pm1-row').forEach(function (autre) {
+                            autre.classList.remove('is-ouvert');
+                        });
+                        ligneCible.classList.add('is-ouvert');
+                        try {
+                            ouvrirTiroir(ligneCible);
+                        } catch (err) {
+                            console.error('Erreur réouverture tiroir :', err);
+                        }
+                    }
+                }, 120);
+            }
+
+            // Rendu accessible au reste de la page
             window.pm1FermerTiroir = fermerTiroir;
         })();
     </script>

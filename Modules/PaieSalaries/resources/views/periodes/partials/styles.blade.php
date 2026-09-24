@@ -315,6 +315,29 @@
         /* Champs de saisie des montants, dans le détail du salarié. */
         .pm1-el-saisie { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .pm1-el-saisie small { font-size: 10.5px; color: var(--muted); }
+        .pm1-btn-retirer-prime {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            margin-left: 2px;
+            border: 1px solid #fee2e2;
+            border-radius: 6px;
+            background: #fff5f5;
+            color: #ef4444;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all .15s ease;
+            flex-shrink: 0;
+        }
+        .pm1-btn-retirer-prime:hover {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: #ef4444;
+            transform: scale(1.08);
+        }
         .pm1-signe { font-size: 13px; font-weight: 700; }
         .pm1-signe.pos { color: var(--ok); }
         .pm1-champ { width: 116px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; text-align: right; color: var(--ink); }
