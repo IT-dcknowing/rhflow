@@ -117,78 +117,85 @@
     <!-- Actions rapides -->
     <div class="card mb-4 shadow-sm border-0">
         <div class="card-body p-3 p-md-4">
-            <div class="d-flex flex-wrap align-items-center gap-3 gap-xl-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 gap-xl-4 w-100">
 
                 {{-- Groupe : Nouvel employé --}}
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column flex-grow-1" style="min-width: 220px;">
                     <small class="text-muted text-uppercase fw-bold mb-2 d-flex align-items-center gap-1" style="font-size: 0.72rem; letter-spacing: .06em;">
                         <i class="fas fa-user-plus text-primary"></i> Nouvel employé
                     </small>
                     <div class="d-flex align-items-center gap-2">
                         <a href="{{ isModuleActive('employee') ? route('company.employees.create', ['type' => 1]) : '#' }}"
-                           class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 shadow-sm">
+                           class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2 px-3 flex-fill shadow-sm">
                             <i class="fas fa-calendar-alt"></i>
                             <span>Mensuel</span>
                         </a>
                         <a href="{{ isModuleActive('employee') ? route('company.employees.create', ['type' => 2]) : '#' }}"
-                           class="btn btn-outline-primary d-inline-flex align-items-center gap-2 px-3">
+                           class="btn btn-outline-primary d-inline-flex align-items-center justify-content-center gap-2 px-3 flex-fill">
                             <i class="fas fa-clock"></i>
                             <span>Journalier</span>
                         </a>
                     </div>
                 </div>
 
-                <div class="vr d-none d-lg-block mx-1 opacity-25" style="height: 48px; align-self: center;"></div>
+                <div class="vr d-none d-xl-block mx-1 opacity-25" style="height: 48px; align-self: center;"></div>
 
                 {{-- Paie --}}
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column flex-grow-1" style="min-width: 180px;">
                     <small class="text-muted text-uppercase fw-bold mb-2 d-flex align-items-center gap-1" style="font-size: 0.72rem; letter-spacing: .06em;">
                         <i class="fas fa-dollar text-success"></i> Paie
                     </small>
                     <div class="d-flex align-items-center">
                         <a href="{{ isModuleActive('salary') ? route('company.paiesalaries.exercices.index') : '#' }}"
-                           class="btn btn-success d-inline-flex align-items-center gap-2 px-3 shadow-sm">
+                           class="btn btn-success d-inline-flex align-items-center justify-content-center gap-2 px-3 w-100 shadow-sm">
                             <i class="fas fa-file-invoice-dollar"></i>
                             <span>Générer la paie</span>
                         </a>
                     </div>
                 </div>
 
-                <div class="vr d-none d-lg-block mx-1 opacity-25" style="height: 48px; align-self: center;"></div>
+                <div class="vr d-none d-xl-block mx-1 opacity-25" style="height: 48px; align-self: center;"></div>
 
                 {{-- Actions secondaires --}}
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column flex-grow-1" style="min-width: 250px;">
                     <small class="text-muted text-uppercase fw-bold mb-2 d-flex align-items-center gap-1" style="font-size: 0.72rem; letter-spacing: .06em;">
                         <i class="fas fa-tasks text-warning"></i> Gestion
                     </small>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="d-flex align-items-center gap-2">
                         <a href="{{ isModuleActive('leaves') ? route('company.leaves.index') : '#' }}"
-                           class="btn btn-outline-warning d-inline-flex align-items-center gap-2 px-3">
+                           class="btn btn-outline-warning d-inline-flex align-items-center justify-content-center gap-2 px-3 flex-fill">
                             <i class="fas fa-calendar-check"></i>
                             <span>Congés</span>
                         </a>
                         <a href="{{ isModuleActive('Declarations') ? route('company.declarations.livrepaie.mensuel') : '#' }}"
-                           class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 px-3">
+                           class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center gap-2 px-3 flex-fill">
                             <i class="fas fa-file-alt"></i>
                             <span>Rapport mensuel</span>
                         </a>
                     </div>
                 </div>
 
+                <div class="vr d-none d-xl-block mx-1 opacity-25" style="height: 48px; align-self: center;"></div>
+
                 {{-- Actions de service à droite --}}
-                <div class="ms-auto d-flex align-items-center gap-2 pt-2 pt-md-0">
-                    <a href="{{ route('company.settings.settings') }}" 
-                       class="btn btn-outline-secondary btn-icon rounded-circle shadow-sm" 
-                       style="width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;"
-                       title="Paramètres">
-                        <i class="fas fa-cog"></i>
-                    </a>
-                    <a href="{{ isModuleActive('PaieSalaries') ? route('company.paiesalaries.dashboard') : '#' }}"
-                       class="btn btn-outline-secondary btn-icon rounded-circle shadow-sm {{ isModuleActive('PaieSalaries') ? '' : 'disabled' }}" 
-                       style="width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;"
-                       title="Analytics">
-                        <i class="fas fa-chart-bar"></i>
-                    </a>
+                <div class="d-flex flex-column align-items-xl-end">
+                    <small class="text-muted text-uppercase fw-bold mb-2 d-flex align-items-center gap-1" style="font-size: 0.72rem; letter-spacing: .06em;">
+                        <i class="fas fa-cog text-secondary"></i> Outils
+                    </small>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="{{ isModuleActive('PaieSalaries') ? route('company.paiesalaries.dashboard') : '#' }}"
+                           class="btn btn-outline-secondary btn-icon rounded-circle shadow-sm {{ isModuleActive('PaieSalaries') ? '' : 'disabled' }}" 
+                           style="width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;"
+                           title="Analytics & Statistiques">
+                            <i class="fas fa-chart-bar"></i>
+                        </a>
+                        <a href="{{ route('company.settings.settings') }}" 
+                           class="btn btn-outline-secondary btn-icon rounded-circle shadow-sm" 
+                           style="width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;"
+                           title="Paramètres de l'entreprise">
+                            <i class="fas fa-cog"></i>
+                        </a>
+                    </div>
                 </div>
 
             </div>
