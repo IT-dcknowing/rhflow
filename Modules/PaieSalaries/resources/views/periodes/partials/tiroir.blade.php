@@ -412,7 +412,7 @@
             window.pm1TypesRetenues = @json($typesRetenues ?? []);
             window.pm1OptionsPrets = @json($optionsPrets ?? []);
             window.pm1TypesConges = @json($typesConges ?? []);
-            window.pm1Periode = @json(['id' => $periode->id, 'debut' => $periode->date_debut, 'fin' => $periode->date_fin, 'nom' => $periode->nom]);
+            window.pm1Periode = { id: {{ (int) $periode->id }}, debut: {!! json_encode($periode->date_debut) !!}, fin: {!! json_encode($periode->date_fin) !!} };
 
             // Tiroir latéral
             var tiroir = document.getElementById('pm1Drawer');
@@ -947,7 +947,7 @@
                         didOpen: function () { Swal.showLoading(); }
                     });
 
-                    var urlAjout = @json(route('company.paiesalaries.periodes.ajouter-variable', [$periode->id, ':emp'])).replace(':emp', empId);
+                    var urlAjout = "{{ route('company.paiesalaries.periodes.ajouter-variable', [$periode->id, '__EMPID__']) }}".replace('__EMPID__', empId);
 
                     fetch(urlAjout, {
                         method: 'POST',
@@ -1026,7 +1026,7 @@
                         didOpen: function () { Swal.showLoading(); }
                     });
 
-                    var urlRetirer = @json(route('company.paiesalaries.periodes.retirer-variable', [$periode->id, ':emp'])).replace(':emp', empId);
+                    var urlRetirer = "{{ route('company.paiesalaries.periodes.retirer-variable', [$periode->id, '__EMPID__']) }}".replace('__EMPID__', empId);
 
                     fetch(urlRetirer, {
                         method: 'POST',
@@ -1158,7 +1158,7 @@
                         didOpen: function () { Swal.showLoading(); }
                     });
 
-                    var base = @json(route('company.paiesalaries.periodes.enregistrer-salarie', [$periode->id, 0]));
+                    var base = "{{ route('company.paiesalaries.periodes.enregistrer-salarie', [$periode->id, 0]) }}";
 
                     fetch(base.slice(0, -1) + salarieId, {
                         method: 'POST',

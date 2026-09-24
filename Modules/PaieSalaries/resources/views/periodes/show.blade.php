@@ -636,7 +636,11 @@
                                                                 @endif
                                                                 @if($soc)
                                                                     <span class="pm1-badge {{ $soc['oui'] ? 'social' : 'neutre' }}" title="{{ $soc['titre'] }}">Soc {{ $soc['oui'] ? 'OUI' : 'NON' }}</span>
-                                                                @end                                                        @if(!$verrouille && $element['allowance_id'])
+                                                                @endif
+                                                                @if($element['note'])<span class="pm1-badge neutre">{{ $element['note'] }}</span>@endif
+                                                            </span>
+                                                        </div>
+                                                        @if(!$verrouille && $element['allowance_id'])
                                                             <span class="pm1-el-saisie">
                                                                 <b class="pm1-signe pos">+</b>
                                                                 <input type="number" class="pm1-champ pm1-champ-element" min="0" step="500"
@@ -1303,7 +1307,7 @@
                             Swal.fire({
                                 title: 'Appliquer une prime',
                                 html: '<select id="pm1PrimeOption" class="swal2-select" style="width:100%">'
-                                    + @json($optionsPrimes->map(function ($o) { return ['id' => $o->id, 'name' => $o->name]; })->values())
+                                    + {!! json_encode($optionsPrimes->map(function ($o) { return ['id' => $o->id, 'name' => $o->name]; })->values()) !!}
                                         .map(function (o) { return '<option value="' + o.id + '">' + o.name + '</option>'; }).join('')
                                     + '</select>'
                                     + '<input id="pm1PrimeMontant" type="number" min="0" step="500" class="swal2-input" placeholder="Montant en FCFA">',
