@@ -60,18 +60,20 @@
                                         @endif
                                     </p>
                                     @php
-                                        // users_count / employees_count ne sont jamais charges : on compte directement.
-                                        // Les utilisateurs sont rattaches par company_id (la relation users() utilise config_company).
+                                        // users_count / employees_count : les employés possèdent aussi un compte utilisateur de type 'employee'
+                                        // pour accéder au portail salarié. On distingue donc les employés et les comptes administrateurs/RH
+                                        // pour ne pas compter chaque salarié en double.
                                         $currentCompany = auth()->user()->company;
                                         $currentPlan = $currentCompany->companyPlan;
-                                        $nbTotal = \App\Models\User::where('company_id', $currentCompany->id)->count()
-                                            + $currentCompany->employees()->count();
-                                        // 0 signifie illimite : si l'une des deux limites l'est, le total l'est aussi
-                                        $maxTotal = ($currentPlan->max_users == 0 || $currentPlan->max_employees == 0)
-                                            ? 'Illimité'
-                                            : $currentPlan->max_users + $currentPlan->max_employees;
+                                        $nbEmployes = $currentCompany->employees()->count();
+                                        $maxEmployes = ($currentPlan->max_employees == 0) ? 'Illimité' : $currentPlan->max_employees;
+                                        $nbUsersAdmin = \App\Models\User::where('company_id', $currentCompany->id)->where('type', '!=', 'employee')->count();
+                                        $maxUsersAdmin = ($currentPlan->max_users == 0) ? 'Illimité' : $currentPlan->max_users;
                                     @endphp
-                                    <p class="mb-2"><strong>Utilisateurs / Employés:</strong> {{ $nbTotal }} / {{ $maxTotal }}</p>
+                                    <p class="mb-2"><strong>Employés :</strong> {{ $nbEmployes }} / {{ $maxEmployes }}</p>
+                                    @if($currentPlan->max_users > 0)
+                                        <p class="mb-2"><small class="text-muted"><strong>Comptes RH / Admin :</strong> {{ $nbUsersAdmin }} / {{ $maxUsersAdmin }}</small></p>
+                                    @endif
                                 </div>
                                 <div class="col-md-6">
                                     @php

@@ -79,6 +79,7 @@
     $nbAnomalies = 0;
     $nbConformes = 0;
     $nbEnAttente = 0;
+    $lignesAnomalies = [];
 
     // Variables du mois par salarié : absences, heures supplémentaires, congés.
     // Trois requêtes pour toute la page, groupées ensuite en mémoire : une par
@@ -193,15 +194,40 @@
 
     $ajouterLigne = function (array $ligne) use (&$lignes, &$totalBrut, &$totalNet, &$totalJours,
         &$totalBase, &$totalPrimes, &$totalCotis, &$totalImpot,
-        &$nbAnomalies, &$nbConformes, &$nbEnAttente, &$aVerifier) {
+        &$nbAnomalies, &$nbConformes, &$nbEnAttente, &$aVerifier, &$lignesAnomalies) {
 
-        $estAnomalie = ($ligne['jours'] != 30) || ($ligne['net'] <= 0 && $ligne['base'] > 0);
+        $anomaliesMotifs = [];
+        if ($ligne['jours'] != 30) {
+            $anomaliesMotifs[] = [
+                'type' => 'jours',
+                'titre' => 'Jours travaillés : ' . $ligne['jours'] . ' j / 30 j',
+                'description' => ($ligne['jours'] < 30 ? 'Mois incomplet (' . (30 - $ligne['jours']) . ' j d\'écart).' : 'Dépassement du forfait de 30 jours.')
+            ];
+        }
+        if ($ligne['net'] <= 0 && $ligne['base'] > 0) {
+            $anomaliesMotifs[] = [
+                'type' => 'net',
+                'titre' => 'Net à payer nul ou négatif (' . number_format($ligne['net'], 0, ',', ' ') . ' FCFA)',
+                'description' => 'Les retenues ou cotisations excèdent le salaire brut.'
+            ];
+        }
+        if ($ligne['base'] <= 0) {
+            $anomaliesMotifs[] = [
+                'type' => 'base',
+                'titre' => 'Salaire de base non renseigné (0 FCFA)',
+                'description' => 'Le salarié ne dispose d\'aucun salaire de base contractuel.'
+            ];
+        }
+
+        $estAnomalie = count($anomaliesMotifs) > 0;
         $ligne['verifier'] = $estAnomalie;
+        $ligne['anomalies_motifs'] = $anomaliesMotifs;
         $ligne['primes'] = max(0, $ligne['brut'] - $ligne['base']);
 
         if ($estAnomalie) {
             $ligne['statut'] = 'anomaly';
             $nbAnomalies++;
+            $lignesAnomalies[] = $ligne;
         } elseif ($ligne['net'] <= 0) {
             $ligne['statut'] = 'pending';
             $nbEnAttente++;
@@ -372,9 +398,9 @@
                     <a class="btn btn-outline-secondary" href="{{ route('company.paiesalaries.periodes.edit', $periode->id) }}">
                         <i class="fas fa-edit me-2"></i>Modifier la période
                     </a>
-                    <a class="btn btn-outline-secondary" href="{{ route('company.paiesalaries.calcule') }}?periode_id={{ $periode->id }}">
+                    <button type="button" class="btn btn-outline-secondary text-muted" disabled style="opacity: 0.6; cursor: not-allowed;" title="Bientôt disponible — Design en cours d'amélioration">
                         <i class="fas fa-calculator me-2"></i>Aperçu détaillé des salaires
-                    </a>
+                    </button>
                     <a class="btn btn-outline-secondary" href="{{ route('company.paiesalaries.exercices.show', $periode->exercice_id) }}">
                         <i class="fas fa-history me-2"></i>Périodes de l'exercice
                     </a>
@@ -442,6 +468,33 @@
                                 <i class="fas fa-times"></i>Tout décocher
                             </button>
                         </div>
+
+                        {{-- Bandeau d'alerte des anomalies (au-dessus du tableau) --}}
+                        @if($nbAnomalies > 0)
+                            <div class="pm1-anomalies-bar d-flex align-items-center justify-content-between p-3 mb-3 rounded-3 shadow-sm"
+                                style="background: #FFF1F2; border: 1px solid #FECDD3; color: #9F1239;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                                        style="width: 42px; height: 42px; background: #FFE4E6; color: #E11D48; font-size: 18px;">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                                    <div>
+                                        <div class="fw-bold fs-6" style="color: #9F1239;">
+                                            {{ $nbAnomalies }} salarié{{ $nbAnomalies > 1 ? 's ont' : ' a' }} une anomalie bloquante
+                                        </div>
+                                        <div class="small" style="color: #BE123C;">
+                                            La validation et la génération des bulletins est bloquée tant que ces situations ne sont pas régularisées.
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm px-3 py-2 d-flex align-items-center gap-2 shadow-sm"
+                                    data-bs-toggle="offcanvas" data-bs-target="#pm1AnomaliesDrawer">
+                                    <i class="fas fa-list-ul"></i>
+                                    <span>Voir les anomalies ({{ $nbAnomalies }})</span>
+                                    <i class="fas fa-arrow-right small"></i>
+                                </button>
+                            </div>
+                        @endif
 
                         {{-- Barre d'outils : recherche, filtre de statut, mode expert --}}
                         <div class="pm1-tools">
@@ -955,7 +1008,12 @@
                             @elseif(count($lignes) === 0)
                                 <span><b>Aucun salarié sur cette période</b> — vérifiez les dates d'embauche : un salarié n'entre dans la paie que si son contrat couvre le mois</span>
                             @elseif($nbAnomalies > 0)
-                                <span><b>{{ $nbAnomalies }} anomalie{{ $nbAnomalies > 1 ? 's' : '' }} détectée{{ $nbAnomalies > 1 ? 's' : '' }}</b> — cliquez sur une ligne pour ouvrir le détail</span>
+                                <span><b class="text-danger">{{ $nbAnomalies }} anomalie{{ $nbAnomalies > 1 ? 's' : '' }} détectée{{ $nbAnomalies > 1 ? 's' : '' }}</b> —
+                                    <button type="button" class="btn btn-link p-0 text-danger fw-bold text-decoration-underline align-baseline"
+                                        data-bs-toggle="offcanvas" data-bs-target="#pm1AnomaliesDrawer">
+                                        voir la liste des anomalies
+                                    </button>
+                                </span>
                             @elseif(count($alerts) > 0)
                                 <span><b>{{ count($alerts) }} point{{ count($alerts) > 1 ? 's' : '' }} d'attention</b> — détail sous la grille, vous pouvez continuer</span>
                             @else
@@ -982,8 +1040,14 @@
                                     <i class="fas fa-exclamation-triangle me-2"></i>Pack expiré : renouveler
                                 </a>
                             @else
-                                <button type="button" class="btn btn-primary pm1-valider" data-bs-toggle="modal"
-                                    data-bs-target="#genererBulletinsModal" {{ count($lignes) === 0 ? 'disabled' : '' }}>
+                                @php $peutGenerer = count($lignes) > 0 && $nbAnomalies === 0; @endphp
+                                <button type="button" class="btn {{ $peutGenerer ? 'btn-primary' : 'btn-secondary' }} pm1-valider"
+                                    @if($peutGenerer)
+                                        data-bs-toggle="modal" data-bs-target="#genererBulletinsModal"
+                                    @else
+                                        disabled style="opacity: 0.65; cursor: not-allowed;"
+                                        title="{{ $nbAnomalies > 0 ? 'Validation impossible : ' . $nbAnomalies . ' anomalie(s) doivent être traitées.' : 'Aucun salarié à traiter.' }}"
+                                    @endif>
                                     <i class="fas fa-check-circle me-2"></i>Valider et générer les {{ count($lignes) }} bulletins
                                     <span class="pm1-valider-montant">{{ number_format($totalNet / 1000000, 2, ',', ' ') }} M FCFA</span>
                                 </button>
@@ -1020,6 +1084,7 @@
 
     @if($etape !== 'annulee')
         @include('paiesalaries::periodes.partials.tiroir')
+        @include('paiesalaries::periodes.partials.anomalies-drawer')
         @include('paiesalaries::payslip.partials.employee-modals')
         @unless($packExpire || $verrouille)
             @include('paiesalaries::periodes.modals.generer-bulletins')

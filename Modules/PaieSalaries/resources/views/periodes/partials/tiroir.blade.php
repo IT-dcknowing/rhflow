@@ -1297,6 +1297,41 @@
 
             // Rendu accessible au reste de la page
             window.pm1FermerTiroir = fermerTiroir;
+            window.pm1OuvrirTiroirParId = function (empId) {
+                var ligneCible = document.querySelector('tr.pm1-row[data-employee-id="' + empId + '"]');
+                if (ligneCible) {
+                    document.querySelectorAll('tr.pm1-row').forEach(function (autre) {
+                        autre.classList.remove('is-ouvert');
+                    });
+                    ligneCible.classList.add('is-ouvert');
+                    try {
+                        ouvrirTiroir(ligneCible);
+                    } catch (err) {
+                        console.error('Erreur ouverture tiroir :', err);
+                    }
+                }
+            };
+
+            // Traitement direct depuis le tiroir des anomalies
+            document.addEventListener('click', function (e) {
+                var btn = e.target.closest('.js-traiter-anomalie-depuis-tiroir');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                var empId = btn.dataset.employeeId;
+                if (!empId) return;
+
+                var elAno = document.getElementById('pm1AnomaliesDrawer');
+                if (elAno && window.bootstrap && window.bootstrap.Offcanvas) {
+                    var bsAno = window.bootstrap.Offcanvas.getInstance(elAno);
+                    if (bsAno) bsAno.hide();
+                }
+
+                setTimeout(function () {
+                    window.pm1OuvrirTiroirParId(empId);
+                }, 200);
+            });
         })();
     </script>
 @endpush
