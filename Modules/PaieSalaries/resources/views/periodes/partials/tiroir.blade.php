@@ -31,7 +31,7 @@
             <div class="pm1-card">
                 <div class="pm1-card-row">
                     <div>
-                        <span class="pm1-lbl">Jours travaillés (base 30j calendaires)</span>
+                        <span class="pm1-lbl">Temps de travail effectif <small class="text-muted">(base 30j calendaires)</small></span>
                         <span class="pm1-hint prorata" id="pm1DrawerProrata"></span>
                     </div>
                     @if($verrouille)
@@ -39,7 +39,7 @@
                     @else
                         <span class="pm1-el-saisie">
                             <input type="number" class="pm1-champ" id="pm1DrawerJoursChamp" min="0" max="30" step="1"
-                                aria-label="Jours travaillés">
+                                aria-label="Temps de travail effectif (Jours)">
                             <small>jours</small>
                         </span>
                     @endif

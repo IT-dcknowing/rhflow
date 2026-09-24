@@ -1,5 +1,7 @@
 {{-- Tiroir latéral récapitulant les salariés ayant des anomalies --}}
-<div class="offcanvas offcanvas-end" tabindex="-1" id="pm1AnomaliesDrawer" aria-labelledby="pm1AnomaliesTitle" style="width: 520px; max-width: 95vw; z-index: 1060;">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="pm1AnomaliesDrawer" aria-labelledby="pm1AnomaliesTitle"
+     data-bs-backdrop="false" data-bs-scroll="true"
+     style="width: 520px; max-width: 95vw; z-index: 1060; box-shadow: -4px 0 24px rgba(0,0,0,0.15);">
     <div class="offcanvas-header border-bottom py-3 px-4" style="background: #FFF1F2;">
         <div class="d-flex align-items-center gap-2">
             <span class="d-inline-flex align-items-center justify-content-center rounded-circle"

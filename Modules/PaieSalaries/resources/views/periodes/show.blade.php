@@ -196,26 +196,22 @@
         &$totalBase, &$totalPrimes, &$totalCotis, &$totalImpot,
         &$nbAnomalies, &$nbConformes, &$nbEnAttente, &$aVerifier, &$lignesAnomalies) {
 
+        // Seules les situations réellement bloquantes pour la génération sont des anomalies.
+        // Les jours travaillés inférieurs à 30 (mois incomplet, embauche en cours de mois, absence, etc.)
+        // sont normaux et gèrent par la proratisation — ce n'est pas une anomalie bloquante.
         $anomaliesMotifs = [];
-        if ($ligne['jours'] != 30) {
+        if ($ligne['base'] <= 0) {
             $anomaliesMotifs[] = [
-                'type' => 'jours',
-                'titre' => 'Jours travaillés : ' . $ligne['jours'] . ' j / 30 j',
-                'description' => ($ligne['jours'] < 30 ? 'Mois incomplet (' . (30 - $ligne['jours']) . ' j d\'écart).' : 'Dépassement du forfait de 30 jours.')
+                'type' => 'base',
+                'titre' => 'Salaire de base non renseigné (0 FCFA)',
+                'description' => 'Le salarié ne dispose d\'aucun salaire de base contractuel. Renseignez-le dans la grille.'
             ];
         }
         if ($ligne['net'] <= 0 && $ligne['base'] > 0) {
             $anomaliesMotifs[] = [
                 'type' => 'net',
                 'titre' => 'Net à payer nul ou négatif (' . number_format($ligne['net'], 0, ',', ' ') . ' FCFA)',
-                'description' => 'Les retenues ou cotisations excèdent le salaire brut.'
-            ];
-        }
-        if ($ligne['base'] <= 0) {
-            $anomaliesMotifs[] = [
-                'type' => 'base',
-                'titre' => 'Salaire de base non renseigné (0 FCFA)',
-                'description' => 'Le salarié ne dispose d\'aucun salaire de base contractuel.'
+                'description' => 'Les retenues ou cotisations dépassent le salaire brut. Vérifiez les éléments du bulletin.'
             ];
         }
 
@@ -461,7 +457,7 @@
                                     <i class="fas fa-money-bill"></i>Salaire de base…
                                 </button>
                                 <button type="button" class="pm1-mass-act" data-action="jours">
-                                    <i class="fas fa-calendar-day"></i>Jours travaillés…
+                                    <i class="fas fa-calendar-day"></i>Temps de travail effectif (Jours)…
                                 </button>
                             @endunless
                             <button type="button" class="pm1-mass-clear" id="pm1MassClear">
@@ -588,7 +584,7 @@
                                                     <span class="pm1-ouvrir"><i class="fas fa-chevron-right"></i>Voir le détail</span>
                                                 </div>
                                                 @if($ligne['statut'] === 'anomaly')
-                                                    <span class="pm1-pill anomaly" title="Jours travaillés différents de 30 ou situation à vérifier">
+                                                    <span class="pm1-pill anomaly" title="Situation bloquante : base manquante ou net négatif">
                                                         <i class="fas fa-exclamation-triangle"></i>Anomalie
                                                     </span>
                                                 @elseif($ligne['statut'] === 'pending')
@@ -1369,24 +1365,88 @@
                         // Une prime : on choisit la rubrique puis le montant, appliqués
                         // à toute la sélection d'un coup.
                         if (action === 'prime') {
+                            var optionsPrimesHTML = {!! json_encode($optionsPrimes->map(function ($o) { return ['id' => $o->id, 'name' => $o->name]; })->values()) !!}
+                                .map(function (o) { return '<option value="' + o.id + '">' + o.name + '</option>'; }).join('');
+
                             Swal.fire({
-                                title: 'Appliquer une prime',
-                                html: '<select id="pm1PrimeOption" class="swal2-select" style="width:100%">'
-                                    + {!! json_encode($optionsPrimes->map(function ($o) { return ['id' => $o->id, 'name' => $o->name]; })->values()) !!}
-                                        .map(function (o) { return '<option value="' + o.id + '">' + o.name + '</option>'; }).join('')
-                                    + '</select>'
-                                    + '<input id="pm1PrimeMontant" type="number" min="0" step="500" class="swal2-input" placeholder="Montant en FCFA">',
+                                width: 520,
+                                padding: '0',
+                                showCloseButton: true,
                                 focusConfirm: false,
                                 showCancelButton: true,
-                                confirmButtonText: 'Appliquer aux ' + choisies.length + ' salarié(s)',
+                                confirmButtonText: '<i class="fas fa-check me-1"></i> Appliquer aux ' + choisies.length + ' salarié(s)',
                                 cancelButtonText: 'Annuler',
                                 confirmButtonColor: '#253e87',
-                                cancelButtonColor: '#8592a3',
+                                cancelButtonColor: '#e5e7eb',
+                                customClass: {
+                                    popup: 'pm1-swal-prime-popup',
+                                    confirmButton: 'pm1-swal-btn-confirm',
+                                    cancelButton: 'pm1-swal-btn-cancel',
+                                    actions: 'pm1-swal-actions'
+                                },
+                                html: [
+                                    '<div class="pm1-swal-prime">',
+                                    '  <div class="pm1-swal-prime-header">',
+                                    '    <span class="pm1-swal-prime-icon"><i class="fas fa-gift"></i></span>',
+                                    '    <div>',
+                                    '      <h3 class="pm1-swal-prime-title">Appliquer une prime</h3>',
+                                    '      <p class="pm1-swal-prime-sub">Application groupée sur <strong>' + choisies.length + ' salarié(s)</strong> sélectionné(s)</p>',
+                                    '    </div>',
+                                    '  </div>',
+                                    '  <div class="pm1-swal-prime-body">',
+                                    '    <div class="pm1-swal-prime-field">',
+                                    '      <label class="pm1-swal-prime-label"><i class="fas fa-list-ul"></i> Rubrique de prime</label>',
+                                    '      <div class="pm1-swal-prime-select-wrap">',
+                                    '        <select id="pm1PrimeOption" class="pm1-swal-prime-select">' + optionsPrimesHTML + '</select>',
+                                    '        <i class="fas fa-chevron-down pm1-swal-select-arrow"></i>',
+                                    '      </div>',
+                                    '    </div>',
+                                    '    <div class="pm1-swal-prime-field">',
+                                    '      <label class="pm1-swal-prime-label"><i class="fas fa-coins"></i> Montant (FCFA)</label>',
+                                    '      <div class="pm1-swal-prime-input-wrap">',
+                                    '        <input id="pm1PrimeMontant" type="number" min="0" step="500"',
+                                    '               class="pm1-swal-prime-input" placeholder="Ex : 25 000">',
+                                    '        <span class="pm1-swal-prime-currency">FCFA</span>',
+                                    '      </div>',
+                                    '    </div>',
+                                    '    <div class="pm1-swal-prime-employees" id="pm1PrimeEmpList">',
+                                    '      <i class="fas fa-users"></i>',
+                                    '      <span>' + choisies.map(function(l){ var n=l.querySelector('.pm1-nom'); return n?n.textContent.trim():''; }).filter(Boolean).slice(0,4).join(', ') + (choisies.length > 4 ? ' +' + (choisies.length - 4) + ' autres…' : '') + '</span>',
+                                    '    </div>',
+                                    '  </div>',
+                                    '</div>',
+                                    '<style>',
+                                    '.pm1-swal-prime-popup { border-radius: 16px !important; overflow: hidden; padding: 0 !important; font-family: "Inter", sans-serif; }',
+                                    '.pm1-swal-prime { text-align: left; }',
+                                    '.pm1-swal-prime-header { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, #253e87 0%, #3d5fc4 100%); padding: 20px 24px; }',
+                                    '.pm1-swal-prime-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 20px; color: #fff; flex-shrink: 0; }',
+                                    '.pm1-swal-prime-title { margin: 0; font-size: 17px; font-weight: 700; color: #fff; }',
+                                    '.pm1-swal-prime-sub { margin: 2px 0 0; font-size: 12px; color: rgba(255,255,255,0.75); }',
+                                    '.pm1-swal-prime-body { padding: 20px 24px 8px; display: flex; flex-direction: column; gap: 16px; }',
+                                    '.pm1-swal-prime-field { display: flex; flex-direction: column; gap: 6px; }',
+                                    '.pm1-swal-prime-label { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: .5px; display: flex; align-items: center; gap: 6px; }',
+                                    '.pm1-swal-prime-label i { color: #253e87; }',
+                                    '.pm1-swal-prime-select-wrap { position: relative; }',
+                                    '.pm1-swal-prime-select { width: 100%; padding: 10px 36px 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #1f2937; background: #f9fafb; appearance: none; cursor: pointer; transition: border-color .2s; outline: none; }',
+                                    '.pm1-swal-prime-select:focus { border-color: #253e87; background: #fff; }',
+                                    '.pm1-swal-select-arrow { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; font-size: 11px; }',
+                                    '.pm1-swal-prime-input-wrap { position: relative; display: flex; align-items: center; }',
+                                    '.pm1-swal-prime-input { width: 100%; padding: 10px 60px 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 15px; font-weight: 600; color: #1f2937; background: #f9fafb; transition: border-color .2s; outline: none; }',
+                                    '.pm1-swal-prime-input:focus { border-color: #253e87; background: #fff; }',
+                                    '.pm1-swal-prime-currency { position: absolute; right: 14px; font-size: 12px; font-weight: 600; color: #9ca3af; pointer-events: none; }',
+                                    '.pm1-swal-prime-employees { display: flex; align-items: center; gap: 8px; background: #f0f4ff; border: 1px solid #c7d4f7; border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: #253e87; margin-top: 4px; }',
+                                    '.pm1-swal-prime-employees i { flex-shrink: 0; }',
+                                    '.pm1-swal-actions { padding: 12px 24px 20px !important; gap: 10px !important; }',
+                                    '.pm1-swal-btn-confirm { border-radius: 10px !important; font-size: 13.5px !important; font-weight: 600 !important; padding: 10px 20px !important; }',
+                                    '.pm1-swal-btn-cancel { border-radius: 10px !important; font-size: 13.5px !important; font-weight: 500 !important; color: #374151 !important; padding: 10px 18px !important; border: 1.5px solid #e5e7eb !important; background: #fff !important; }',
+                                    '.pm1-swal-btn-cancel:hover { background: #f3f4f6 !important; }',
+                                    '</style>'
+                                ].join(''),
                                 preConfirm: function () {
                                     var rubrique = document.getElementById('pm1PrimeOption').value;
                                     var montant = document.getElementById('pm1PrimeMontant').value;
                                     if (!rubrique) { Swal.showValidationMessage('Choisissez une rubrique.'); return false; }
-                                    if (montant === '' || Number(montant) < 0) { Swal.showValidationMessage('Saisissez un montant.'); return false; }
+                                    if (montant === '' || Number(montant) < 0) { Swal.showValidationMessage('Saisissez un montant valide.'); return false; }
                                     return { rubrique: parseInt(rubrique, 10), montant: parseInt(montant, 10) };
                                 }
                             }).then(function (resultat) {
@@ -1403,10 +1463,10 @@
                         var surBase = action === 'base';
 
                         Swal.fire({
-                            title: surBase ? 'Salaire de base' : 'Jours travaillés',
+                            title: surBase ? 'Salaire de base' : 'Temps de travail effectif (Jours)',
                             input: 'number',
                             inputLabel: 'Valeur appliquée aux ' + choisies.length + ' salarié(s) sélectionné(s)',
-                            inputAttributes: surBase ? { min: 0, step: 1000 } : { min: 0, max: 30, step: 1 },
+                            inputAttributes: surBase ? { min: 0, step: 1000 } : { min: 0, max: 31, step: 1 },
                             showCancelButton: true,
                             confirmButtonText: 'Appliquer',
                             cancelButtonText: 'Annuler',
@@ -1414,7 +1474,7 @@
                             cancelButtonColor: '#8592a3',
                             inputValidator: function (valeur) {
                                 if (valeur === '' || valeur === null) { return 'Saisissez une valeur.'; }
-                                if (!surBase && (valeur < 0 || valeur > 30)) { return 'Les jours vont de 0 à 30.'; }
+                                if (!surBase && (valeur < 0 || valeur > 31)) { return 'Le temps de travail effectif va de 0 à 31 jours.'; }
                                 if (surBase && valeur < 0) { return 'Le salaire ne peut pas être négatif.'; }
                                 return null;
                             }
@@ -1424,7 +1484,7 @@
                                 action,
                                 parseInt(resultat.value, 10),
                                 choisies.map(function (ligne) { return parseInt(ligne.dataset.employeeId, 10); }),
-                                surBase ? 'Salaire de base appliqué' : 'Jours appliqués'
+                                surBase ? 'Salaire de base appliqué' : 'Temps de travail effectif appliqué'
                             );
                         });
                     });
