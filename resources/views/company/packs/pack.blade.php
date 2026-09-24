@@ -47,7 +47,7 @@
                                 <div class="col-md-6">
                                     <p class="mb-2"><strong>Plan:</strong> {{ auth()->user()->company->companyPlan->name }}</p>
                                     <p class="mb-2"><strong>Statut:</strong> 
-                                        @if(auth()->user()->company->subscription_expires_at && auth()->user()->company->subscription_expires_at->isPast())
+                                        @if(auth()->user()->company->subscription_end_date && auth()->user()->company->subscription_end_date->endOfDay()->isPast())
                                         <span class="badge bg-danger">
                                             <i class="fas fa-times-circle me-1"></i>
                                             Expiré
@@ -85,15 +85,15 @@
                                             <small class="text-muted">({{ $octetsStockage > 0 && $pourcentStockage < 0.1 ? 'moins de 0,1' : number_format($pourcentStockage, 1, ',', ' ') }} %)</small>
                                         @endif
                                     </p>
-                                    @if(auth()->user()->company->subscription_expires_at)
-                                    <p class="mb-2"><strong>Expire le:</strong> {{ auth()->user()->company->subscription_expires_at->format('d/m/Y') }}</p>
+                                    @if(auth()->user()->company->subscription_end_date)
+                                    <p class="mb-2"><strong>Expire le:</strong> {{ auth()->user()->company->subscription_end_date->format('d/m/Y') }}</p>
                                     @endif
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 text-end">
                             <div class="d-grid gap-2">
-                                @if(auth()->user()->company->subscription_expires_at && auth()->user()->company->subscription_expires_at->isPast())
+                                @if(auth()->user()->company->subscription_end_date && auth()->user()->company->subscription_end_date->endOfDay()->isPast())
                                 <button class="btn btn-primary" onclick="showRenewModal()">
                                     <i class="fas fa-refresh me-2"></i>
                                     Renouveler
@@ -182,7 +182,7 @@
 
                     <div class="mt-auto">
                         @if(auth()->user()->company && auth()->user()->company->plan_id == $plan->id)
-                            @if(auth()->user()->company->subscription_expires_at && auth()->user()->company->subscription_expires_at->isPast())
+                            @if(auth()->user()->company->subscription_end_date && auth()->user()->company->subscription_end_date->endOfDay()->isPast())
                             <button class="btn btn-warning w-100" onclick="showRenewModal()">
                                 <i class="fas fa-refresh me-2"></i>
                                 Renouveler (Expiré)

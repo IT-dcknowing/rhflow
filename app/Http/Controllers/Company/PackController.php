@@ -155,12 +155,14 @@ class PackController extends Controller
         $user = Auth::user();
         $company = $user->company;
         
-        if (!$company || !$company->plan) {
+        // La relation s'appelle companyPlan ; $company->plan renvoyait null, donc
+        // le renouvellement échouait systématiquement sur ce test.
+        if (!$company || !$company->companyPlan) {
             return redirect()->back()
                 ->with('error', 'Vous n\'avez pas d\'abonnement actif à renouveler.');
         }
 
-        $plan = $company->plan;
+        $plan = $company->companyPlan;
         $duration = $request->duration;
         $amount = $plan->price * $duration;
 
@@ -239,7 +241,7 @@ class PackController extends Controller
                 'payment_method' => $request->payment_method,
                 'payment_reference' => 'UPGRADE-' . time() . '-' . Str::random(6),
                 'phone' => $request->phone,
-                'notes' => "Changement de plan: {$company->plan->name} → {$newPlan->name}",
+                'notes' => 'Changement de plan: ' . (optional($company->companyPlan)->name ?: 'aucun') . ' → ' . $newPlan->name,
                 'expires_at' => now()->addDays(7),
             ]);
 
@@ -465,15 +467,17 @@ class PackController extends Controller
      */
     private function calculateUpgradeAmount(Company $company, Plan $newPlan): float
     {
-        $currentPlan = $company->plan;
+        $currentPlan = $company->companyPlan;
         
         // Si c'est une première fois ou pas d'abonnement actif
-        if (!$currentPlan || !$company->subscription_expires_at) {
+        if (!$currentPlan || !$company->subscription_end_date) {
             return $newPlan->price;
         }
-        
-        // Calculer le temps restant sur l'abonnement actuel
-        $remainingDays = (int) $company->subscription_expires_at->diffInDays(now());
+
+        // Jours restants, comptés depuis maintenant vers l'échéance. L'ordre compte :
+        // en Carbon 3 diffInDays() est signé, et $echeance->diffInDays(now()) rendait
+        // un nombre négatif pour une échéance à venir — donc jamais de crédit.
+        $remainingDays = (int) now()->diffInDays($company->subscription_end_date->endOfDay(), false);
         
         if ($remainingDays <= 0) {
             return $newPlan->price;
