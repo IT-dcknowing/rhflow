@@ -474,17 +474,8 @@
 @push('scripts')
 <script src="{{ asset('vendor/fullcalendar/main.min.js') }}"></script>
 <script>
-    // Initialisation de DataTable
-    var table = $('#table_exercice').DataTable({
-        responsive: true,
-        order: [[0, 'desc']],
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
-        },
-        dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-    });
+    // DataTable non initialisée ici : la table utilise la pagination Laravel côté serveur.
+    // L'initialisation DataTable côté client causait l'avertissement "Incorrect column count".
 
     // Initialisation des tooltips
     document.addEventListener('DOMContentLoaded', function() {
