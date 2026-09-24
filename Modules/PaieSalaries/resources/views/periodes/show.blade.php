@@ -476,7 +476,7 @@
                                         </th>
                                         <th>Salarié</th>
                                         <th>Département</th>
-                                        <th class="text-center">Jours</th>
+                                        <th class="text-center">Jours (travaillés)</th>
                                         <th class="pm-num">Base (FCFA)</th>
                                         <th class="pm-num">Primes (FCFA)</th>
                                         <th class="pm-num pm1-exp" hidden>Cotis. (CI)</th>
@@ -539,15 +539,7 @@
                                             </td>
                                             <td class="pm1-dept">{{ $ligne['dept'] }}</td>
                                             <td class="text-center">
-                                                @if($verrouille)
-                                                    <span class="pm-days {{ $ligne['verifier'] ? 'warn' : '' }}">{{ $ligne['jours'] }} j</span>
-                                                @else
-                                                    <button type="button" class="pm-days btn-update-days {{ $ligne['verifier'] ? 'warn' : '' }}"
-                                                        data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}"
-                                                        data-periode-id="{{ $periode->id }}" title="Modifier les jours travaillés">
-                                                        {{ $ligne['jours'] }} j <i class="fas fa-pen" style="font-size:10px"></i>
-                                                    </button>
-                                                @endif
+                                                <span class="pm-days {{ $ligne['verifier'] ? 'warn' : '' }}">{{ $ligne['jours'] }} j</span>
                                             </td>
                                             <td class="pm-num">
                                                 @if($verrouille)
