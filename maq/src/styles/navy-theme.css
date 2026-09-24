@@ -1,0 +1,49 @@
+/**
+ * Charte Graphique Partagée — Thème Bleu Navy RH Flow
+ * 
+ * Utilisé par l'ensemble des modèles de vue (Modèle 1, Modèle 2, Modèle 3)
+ */
+
+:root {
+  --navy-primary: #253e87;
+  --navy-dark: #0a1f44;
+  --navy-hover: #1c306d;
+  --navy-accent: #3b82f6;
+  --navy-light-bg: #f0f4fc;
+  
+  --dc-border: #e8e8e6;
+  --dc-text: #1f1f1e;
+  --dc-text-muted: #6b6b6b;
+  --dc-bg-light: #fafafa;
+  --dc-bg-subtle: #f4f4f5;
+  --dc-bg-hover: #f0f0ee;
+  
+  --status-anomaly-bg: #253e87;
+  --status-anomaly-text: #ffffff;
+  --status-ok-bg: #ecfdf5;
+  --status-ok-text: #047857;
+}
+
+.text-navy-primary {
+  color: #253e87;
+}
+
+.bg-navy-primary {
+  background-color: #253e87;
+}
+
+.bg-navy-dark {
+  background-color: #0a1f44;
+}
+
+.border-navy-primary {
+  border-color: #253e87;
+}
+
+.hover\:bg-navy-hover:hover {
+  background-color: #1c306d;
+}
+
+.text-navy-accent {
+  color: #3b82f6;
+}

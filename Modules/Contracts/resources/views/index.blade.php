@@ -91,12 +91,16 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Liste des contrats </h5>
             <div class="dropdown">
-                <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-success dropdown-toggle" type="button" 
+                        id="exportDropdown" 
+                        data-bs-toggle="dropdown" 
+                        data-bs-boundary="viewport"
+                        aria-expanded="false">
                     <i class="fas fa-download me-1"></i>Exporter
                 </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-excel me-1"></i>Excel</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-1"></i>PDF</a></li>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                    <li><a class="dropdown-item" href="{{ route('company.contracts.index', array_merge(request()->all(), ['export' => 'excel'])) }}"><i class="fas fa-file-excel me-1 text-success"></i>Excel</a></li>
+                    <li><a class="dropdown-item" href="{{ route('company.contracts.index', array_merge(request()->all(), ['export' => 'pdf'])) }}"><i class="fas fa-file-pdf me-1 text-danger"></i>PDF</a></li>
                 </ul>
             </div>
         </div>

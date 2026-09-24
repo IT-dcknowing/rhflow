@@ -1,0 +1,8 @@
+{
+  "name": "RH FLOW - MAQUETTE",
+  "description": "Logiciel de gestion de paie RH Flow pour la Côte d'Ivoire avec cotisations CNPS, CMU, barème ITS, réduction RICF et modèles opérationnels.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

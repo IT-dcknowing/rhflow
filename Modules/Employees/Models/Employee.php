@@ -921,12 +921,15 @@ public function get_salary_social($periode_id = null)
                 $j = intval($allowance->jours_work);
                 // Normalisation : si c'est un mois complet (28 = fév, 31 = mois long), on traite comme 30 jours
                 // 29 jours n'est PAS normalisé : c'est une absence d'un jour → proratisation (29/30)
-                return ($j == 28 || $j == 31) ? 30 : $j;
+                // Borne haute : la paie est assise sur 30 jours, au-delà on majorerait le
+                // salaire au lieu de le proratiser. Aucune donnée n'est dans ce cas
+                // aujourd'hui, c'est un garde-fou contre une saisie aberrante.
+                return ($j == 28 || $j == 31) ? 30 : min($j, 30);
             }
         }
 
-        // Fallback fiable : toujours tax_payer_id
-        return $this->tax_payer_id ?: 30;
+        // Repli sur la fiche du salarié, borné de la même façon.
+        return $this->tax_payer_id ? min(intval($this->tax_payer_id), 30) : 30;
     }
     public function get_avantage_bareme($periode_id = null)
     {

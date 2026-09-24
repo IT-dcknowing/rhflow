@@ -77,14 +77,16 @@
                                     </td>
                                     <td>
                                         <div class="d-flex">
-                                            <button type="button" class="btn btn-icon btn-sm btn-label-warning me-1 {{ $type->type == 'default' ? 'disabled' : '' }}" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#editTypeModal" 
-                                                data-id="{{ $type->id }}"
-                                                data-name="{{ $type->name }}"
-                                                data-active="{{ $type->is_active }}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
+                                            @if($type->type !== 'default')
+                                                <button type="button" class="btn btn-icon btn-sm btn-label-warning me-1" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editTypeModal" 
+                                                    data-id="{{ $type->id }}"
+                                                    data-name="{{ $type->name }}"
+                                                    data-active="{{ $type->is_active }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            @endif
                                             {{-- Les types « default » sont communs à toutes les entreprises :
                                                  la suppression n'est pas proposée. Le refus est aussi appliqué
                                                  côté serveur dans destroyContractType(). --}}

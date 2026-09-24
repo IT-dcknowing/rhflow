@@ -1,0 +1,62 @@
+@import "tailwindcss";
+@import "./styles/navy-theme.css";
+
+@layer base {
+  :root {
+    --navy-primary: #253e87;
+    --navy-hover: #1c306d;
+    --dc-border: #e8e8e6;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #ffffff;
+    color: #1f1f1e;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.numeric-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Montserrat for all currency amounts, totals, badges and rates */
+.font-montserrat,
+.font-amount,
+.font-mono {
+  font-family: 'Montserrat', sans-serif !important;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-feature-settings: "tnum";
+  font-feature-settings: "tnum";
+}
+
+/* Amount values formatting */
+.amount-value {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.amount-total {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

@@ -12,7 +12,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1 text-primary">💵 Grilles Salariales </h4>
+                    <h4 class="mb-1 text-primary">Grilles Salariales </h4>
                     <p class="text-muted mb-0">Gérez les grilles salariales des employés de votre entreprise</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>

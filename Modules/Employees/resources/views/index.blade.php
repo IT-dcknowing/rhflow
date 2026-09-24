@@ -48,13 +48,8 @@
             @endif
             <div class="col-xl-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center py-3">
+                    <div class="card-header py-3">
                         <h5 class="mb-0"><i class="fas fa-filter me-2 text-primary"></i>Filtres de recherche</h5>
-                        @if(request()->hasAny(['search', 'status', 'branch_id', 'department_id', 'contract_type_id']))
-                            <a href="{{ route('company.employees.index', $type !== 'tous' ? ['type' => $type] : []) }}" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-undo me-1"></i>Réinitialiser
-                            </a>
-                        @endif
                     </div>
                     <div class="card-body">
                         <form method="GET" action="{{ route('company.employees.index') }}" id="filterForm">
@@ -155,7 +150,12 @@
                                 </thead>
                                 <tbody>
                                     @forelse($employees as $employee)
-                                        <tr data-employee-id="{{ $employee->id }}">
+                                        @php
+                                            $rowBg = $employee->salary_type == 2
+                                                ? 'style="background-color: #fff8e1;"'
+                                                : 'style="background-color: #e8f4fd;"';
+                                        @endphp
+                                        <tr data-employee-id="{{ $employee->id }}" {!! $rowBg !!}>
                                             <td>
                                                 <span class="badge bg-label-primary" style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.3px;">
                                                     {{ \Auth::user()->employeeIdFormat($employee->employee_id) }}
