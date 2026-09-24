@@ -318,6 +318,10 @@ class ContractsController extends Controller
     {
         $request->validate([
             'attachment' => 'required|file|max:10240', // 10MB max
+        ], [
+            'attachment.required' => 'Veuillez sélectionner un fichier avant d\'ajouter une pièce jointe.',
+            'attachment.file' => 'Le fichier sélectionné n\'est pas valide.',
+            'attachment.max' => 'La taille du fichier ne doit pas dépasser 10 Mo.',
         ]);
         
         $user = Auth::user();

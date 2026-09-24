@@ -310,12 +310,12 @@
                                                     <div class="dropdown-divider"></div>
                                                     @if($enterprise->is_active == true)
                                                     <a class="dropdown-item bg-label-warning" href="{{ route('super-admin.enterprises.suspend', $enterprise->user_id ?? $enterprise) }}" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')">
-                                                        <i class="ti ti-control-pause me-2"></i>
+                                                        <i class="ti ti-ban me-2"></i>
                                                         <span>Suspendre</span>
                                                     </a>
                                                     @else
                                                     <a class="dropdown-item bg-label-success" href="{{ route('super-admin.enterprises.activate', $enterprise->user_id ?? $enterprise) }}" onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')">
-                                                        <i class="ti ti-control-play me-2"></i>
+                                                        <i class="ti ti-check me-2"></i>
                                                         <span>Activer</span>
                                                     </a>
                                                     @endif

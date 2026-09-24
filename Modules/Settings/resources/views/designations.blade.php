@@ -52,7 +52,7 @@
             <x-kpi icon="fas fa-check-circle" color="success" label="Actifs" sublabel="Postes"
                 :value="$stats['active_designations']" />
 
-            <x-kpi icon="fas fa-pause-circle" color="warning" label="Inactifs" sublabel="Postes"
+            <x-kpi icon="fas fa-ban" color="warning" label="Inactifs" sublabel="Postes"
                 :value="$stats['inactive_designations']" />
 
             <x-kpi icon="fas fa-sitemap" color="info" label="Services" sublabel="Au total"
@@ -136,7 +136,7 @@
                                                             <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleDesignation({{ $designation->id }}, '{{ addslashes($designation->name) }}', true)"
                                                                 title="Désactiver">
-                                                                <i class="fas fa-times"></i>
+                                                                <i class="fas fa-ban"></i>
                                                             </button>
                                                         @endif
                                                         <button class="btn btn-icon btn-sm btn-label-danger"

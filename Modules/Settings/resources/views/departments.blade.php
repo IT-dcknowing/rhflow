@@ -38,7 +38,7 @@
             <x-kpi icon="fas fa-check-circle" color="success" label="Actifs" sublabel="Services"
                 :value="$stats['active_departments']" />
 
-            <x-kpi icon="fas fa-pause-circle" color="warning" label="Inactifs" sublabel="Services"
+            <x-kpi icon="fas fa-ban" color="warning" label="Inactifs" sublabel="Services"
                 :value="$stats['inactive_departments']" />
 
             <x-kpi icon="fas fa-user-tie" color="primary" label="Postes" sublabel="Au total"
@@ -122,7 +122,7 @@
                                                             <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleDepartment({{ $department->id }}, '{{ addslashes($department->name) }}', true)"
                                                                 title="Désactiver">
-                                                                <i class="fas fa-times"></i>
+                                                                <i class="fas fa-ban"></i>
                                                             </button>
                                                         @endif
                                                         <button class="btn btn-icon btn-sm btn-label-danger"

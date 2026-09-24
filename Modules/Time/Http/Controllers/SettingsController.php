@@ -1269,23 +1269,23 @@ class SettingsController extends Controller
             'request_data' => $request->all()
         ]);
 
-        // Validation des données
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'code' => 'required|string|max:50|unique:branches,code',
-                'address' => 'nullable|string',
-                'phone' => 'nullable|string|max:20',
-                'email' => 'nullable|email|max:255',
-                'manager_id' => 'nullable|exists:users,id',
-                'is_active' => 'nullable|boolean'
-            ]);
-        } catch (\Exception $validationException) {
-            \Log::error('Validation error', [
-                'errors' => $validationException->validator->errors()->all(),
-            ]);
-            return redirect()->back()->with('error', 'Erreur de validation : ' . implode(', ', $validationException->validator->errors()->all()));
-        }
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('branches', 'name')
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
+            'code' => 'required|string|max:50|unique:branches,code',
+            'address' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'manager_id' => 'nullable|exists:users,id',
+            'is_active' => 'nullable|boolean'
+        ], [
+            'name.unique' => 'Un site portant ce nom existe déjà dans votre entreprise.',
+        ]);
 
         // Tentative de création de la succursale
         try {
@@ -1344,13 +1344,22 @@ class SettingsController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('branches', 'name')
+                    ->ignore($branch->id)
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
             'code' => 'required|string|max:50|unique:branches,code,' . $branch->id,
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'manager_id' => 'nullable|exists:users,id',
             'is_active' => 'nullable|boolean'
+        ], [
+            'name.unique' => 'Un site portant ce nom existe déjà dans votre entreprise.',
         ]);
 
         $branch->update([

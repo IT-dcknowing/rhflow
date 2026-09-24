@@ -652,12 +652,18 @@
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="skip_duplicates" id="skipDuplicates" value="1">
-                                    <label class="form-check-label" for="skipDuplicates">
+                                    <label class="form-check-label fw-semibold" for="skipDuplicates">
                                         Ignorer les doublons
                                     </label>
                                 </div>
+                                <div class="form-text text-muted" style="font-size: 0.8rem;">
+                                    Passe automatiquement les lignes dont l'adresse email existe déjà en base de données sans bloquer l'import.
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Importer</button>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-file-import me-1"></i> Importer</button>
+                            </div>
                         </form>
                     </div>
                 </div>

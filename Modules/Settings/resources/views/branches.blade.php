@@ -38,7 +38,7 @@
             <x-kpi icon="fas fa-check-circle" color="success" label="Actifs" sublabel="Sites"
                 :value="$stats['active_branches']" />
 
-            <x-kpi icon="fas fa-pause-circle" color="warning" label="Inactifs" sublabel="Sites"
+            <x-kpi icon="fas fa-ban" color="warning" label="Inactifs" sublabel="Sites"
                 :value="$stats['inactive_branches']" />
 
             <x-kpi icon="fas fa-users" color="info" label="Services" sublabel="Au total"
@@ -135,7 +135,7 @@
                                                             <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="activateBranch({{ $branch->id }}, '{{ addslashes($branch->name) }}', true)"
                                                                 title="Désactiver">
-                                                                <i class="fas fa-times"></i>
+                                                                <i class="fas fa-ban"></i>
                                                             </button>
                                                         @endif
                                                         <button class="btn btn-icon btn-sm btn-label-danger"

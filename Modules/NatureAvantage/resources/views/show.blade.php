@@ -121,11 +121,11 @@
                                         <div class="d-flex justify-content-between">
                                             @if($avantage->is_active)
                                                 <button type="button" class="btn btn-warning toggle-status-btn" data-id="{{ $avantage->id }}" data-action="suspend">
-                                                    <i class="fas fa-pause me-1"></i> Suspendre
+                                                    <i class="fas fa-ban me-1"></i> Suspendre
                                                 </button>
                                                 @else
                                                 <button type="button" class="btn btn-info toggle-status-btn" data-id="{{ $avantage->id }}" data-action="resume">
-                                                    <i class="fas fa-play me-1"></i> Reprendre
+                                                    <i class="fas fa-check me-1"></i> Reprendre
                                                 </button>
                                             @endif
                                         </div>

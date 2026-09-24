@@ -781,6 +781,13 @@
             z-index: 99999 !important;
         }
 
+        /* Empêcher que les boutons masqués par SweetAlert soient réaffichés par le display: inline-flex !important de .btn */
+        .swal2-container .swal2-actions button[style*="display: none"],
+        .swal2-container .swal2-actions button[style*="display:none"],
+        .swal2-container .swal2-actions button.swal2-hide {
+            display: none !important;
+        }
+
         /* Si vous utilisez Bootstrap */
         .modal-backdrop {
             z-index: 1040 !important;
@@ -1559,17 +1566,51 @@
             const ouvrir = Swal.fire.bind(Swal);
 
             Swal.fire = function (options) {
-                // Forme courte Swal.fire('titre', 'texte', 'icone') : aucun bouton à renommer.
+                // Support de la forme courte Swal.fire('titre', 'texte', 'icone')
                 if (typeof options !== 'object' || options === null) {
-                    return ouvrir.apply(null, arguments);
+                    options = {
+                        title: arguments[0] || '',
+                        html: arguments[1] || '',
+                        icon: arguments[2] || undefined,
+                    };
                 }
 
-                return ouvrir(Object.assign({}, options, {
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Retour',
-                    // Un troisième bouton romprait la règle des deux libellés.
-                    showDenyButton: false,
-                }));
+                const opts = Object.assign({}, options);
+                opts.confirmButtonText = opts.confirmButtonText || 'OK';
+                opts.cancelButtonText = opts.cancelButtonText || 'Retour';
+                opts.showDenyButton = opts.showDenyButton === true;
+
+                const userDidOpen = opts.didOpen;
+                opts.didOpen = function (popup) {
+                    var denyBtn = popup.querySelector('.swal2-deny');
+                    var cancelBtn = popup.querySelector('.swal2-cancel');
+
+                    if (denyBtn) {
+                        if (opts.showDenyButton === true) {
+                            denyBtn.classList.add('swal2-visible');
+                            denyBtn.style.setProperty('display', 'inline-flex', 'important');
+                        } else {
+                            denyBtn.classList.remove('swal2-visible');
+                            denyBtn.remove();
+                        }
+                    }
+
+                    if (cancelBtn) {
+                        if (opts.showCancelButton === true) {
+                            cancelBtn.classList.add('swal2-visible');
+                            cancelBtn.style.setProperty('display', 'inline-flex', 'important');
+                        } else {
+                            cancelBtn.classList.remove('swal2-visible');
+                            cancelBtn.remove();
+                        }
+                    }
+
+                    if (typeof userDidOpen === 'function') {
+                        userDidOpen(popup);
+                    }
+                };
+
+                return ouvrir(opts);
             };
         })();
     </script>
@@ -1773,17 +1814,27 @@
 
             Swal.fire({
                 icon: 'warning',
-            title: messages.length === 1 ? 'Correction nécessaire' : '💡 Saisie Incomplète',
-            html: messages.length === 0
-                ? 'Certains champs requis sont manquants ou incorrects. L\'assistant a surligné les erreurs en rouge pour vous aider à corriger la saisie.'
-                : (messages.length === 1
-                    ? echapper(messages[0])
-                    : '<ul style="text-align:left;margin:0;padding-left:1.2em">'
-                        + messages.map(function (texte) { return '<li>' + echapper(texte) + '</li>'; }).join('')
-                        + '</ul>'),
-            confirmButtonColor: '#253e87',
-            background: '#ffffff'
-                    });
+                title: messages.length === 1 ? 'Correction nécessaire' : '💡 Saisie Incomplète',
+                html: messages.length === 0
+                    ? 'Certains champs requis sont manquants ou incorrects. L\'assistant a surligné les erreurs en rouge pour vous aider à corriger la saisie.'
+                    : (messages.length === 1
+                        ? echapper(messages[0])
+                        : '<ul style="text-align:left;margin:0;padding-left:1.2em">'
+                            + messages.map(function (texte) { return '<li>' + echapper(texte) + '</li>'; }).join('')
+                            + '</ul>'),
+                showConfirmButton: true,
+                showCancelButton: false,
+                showDenyButton: false,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#253e87',
+                background: '#ffffff',
+                didOpen: function (popup) {
+                    var cancel = popup.querySelector('.swal2-cancel');
+                    if (cancel) cancel.remove();
+                    var deny = popup.querySelector('.swal2-deny');
+                    if (deny) deny.remove();
+                }
+            });
                 }
 
             this.renderWorkflowWidget();
@@ -1871,13 +1922,15 @@
             // Message encodé en JSON : il s'affiche tel quel (apostrophes non transformées en &#039;)
             const messageErreurSession = @json(session('error'));
             if (!SmartGuard.analyzeError(messageErreurSession)) {
+                const isHtmlError = typeof messageErreurSession === 'string' && /<[a-z][\s\S]*>/i.test(messageErreurSession);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erreur',
-                    text: messageErreurSession,
+                    [isHtmlError ? 'html' : 'text']: messageErreurSession,
                     confirmButtonColor: '#253e87',
                     background: '#ffffff',
                     iconColor: '#ff4d4f',
+                    width: isHtmlError ? '580px' : undefined,
                     customClass: {
                         popup: 'animate__animated animate__shakeX'
                     }
@@ -1906,8 +1959,18 @@
                             + cellule.innerHTML + '</li>';
                     }).join('')
                     + '</ul>',
+                showConfirmButton: true,
+                showCancelButton: false,
+                showDenyButton: false,
+                confirmButtonText: 'OK',
                 confirmButtonColor: '#253e87',
-                background: '#ffffff'
+                background: '#ffffff',
+                didOpen: function (popup) {
+                    var cancel = popup.querySelector('.swal2-cancel');
+                    if (cancel) cancel.remove();
+                    var deny = popup.querySelector('.swal2-deny');
+                    if (deny) deny.remove();
+                }
             });
         @endif
     </script>

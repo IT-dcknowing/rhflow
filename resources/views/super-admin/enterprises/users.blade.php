@@ -201,12 +201,12 @@
                                                     <div class="dropdown-divider"></div>
                                                     @if($user->is_active == true)
                                                     <a class="dropdown-item bg-label-warning" href="{{ route('super-admin.users.suspend', $user->user_id ?? $user) }}" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')">
-                                                        <i class="ti ti-control-pause me-2"></i>
+                                                        <i class="ti ti-ban me-2"></i>
                                                         <span>Suspendre</span>
                                                     </a>
                                                     @else
                                                     <a class="dropdown-item bg-label-success" href="{{ route('super-admin.users.activate', $user->user_id ?? $user) }}" onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')">
-                                                        <i class="ti ti-control-play me-2"></i>
+                                                        <i class="ti ti-check me-2"></i>
                                                         <span>Activer</span>
                                                     </a>
                                                     @endif
@@ -438,11 +438,11 @@ function createUserRow(user) {
                     <div class="dropdown-divider"></div>
                     ${user.is_active
                         ? `<a class="dropdown-item bg-label-warning" href="${suspendUrl}" onclick="return confirm('Êtes-vous sûr de vouloir suspendre cet utilisateur ?')">
-                            <i class="ti ti-control-pause me-2"></i>
+                            <i class="ti ti-ban me-2"></i>
                             <span>Suspendre</span>
                         </a>`
                         : `<a class="dropdown-item bg-label-success" href="${activateUrl}" onclick="return confirm('Êtes-vous sûr de vouloir activer cet utilisateur ?')">
-                            <i class="ti ti-control-play me-2"></i>
+                            <i class="ti ti-check me-2"></i>
                             <span>Activer</span>
                         </a>`
                     }

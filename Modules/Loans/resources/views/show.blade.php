@@ -34,6 +34,72 @@
             </div>
         </div>
 
+        @php
+            $totalPaye = $loan->payments->sum('amount') ?? 0;
+            $resteAPayer = max(0, $loan->amount - $totalPaye);
+            $nbEcheancesPayees = $loan->payments->count();
+        @endphp
+
+        <!-- Indicateurs clés du Prêt -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                    <div>
+                        <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                            Prêts actifs en cours
+                        </p>
+                        <p class="fw-bold mb-1" style="font-size: 1.85rem; color: #1e3a8a; line-height: 1.1;">
+                            {{ number_format($loan->amount, 0, ',', ' ') }} F
+                        </p>
+                        <p class="text-muted mb-0" style="font-size: 0.75rem;">
+                            Salarié éligible : {{ $loan->employee->name }}
+                        </p>
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: #EFF6FF; color: #1e3a8a;">
+                        <i class="fas fa-hand-holding-usd fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                    <div>
+                        <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                            Retenues appliquées ce mois
+                        </p>
+                        <p class="fw-bold mb-1" style="font-size: 1.85rem; color: #1e3a8a; line-height: 1.1;">
+                            {{ number_format($loan->amount_deduc, 0, ',', ' ') }} F
+                        </p>
+                        <p class="text-muted mb-0" style="font-size: 0.75rem;">
+                            {{ $loan->type == 'fixe' ? 'Mensualité fixe' : 'Prélèvement proportionnel' }} &bull; Échéance sur {{ $loan->nbre_mois }} mois
+                        </p>
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: #EFF6FF; color: #1e3a8a;">
+                        <i class="fas fa-credit-card fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                    <div>
+                        <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                            Total mensualités prélevées
+                        </p>
+                        <p class="fw-bold mb-1" style="font-size: 1.85rem; color: #1F1F1E; line-height: 1.1;">
+                            {{ number_format($totalPaye, 0, ',', ' ') }} F
+                        </p>
+                        <p class="text-muted mb-0" style="font-size: 0.75rem;">
+                            {{ $loan->title }} échéance {{ $nbEcheancesPayees }}/{{ $loan->nbre_mois }} (Reste : {{ number_format($resteAPayer, 0, ',', ' ') }} F)
+                        </p>
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: #EFF6FF; color: #1e3a8a;">
+                        <i class="fas fa-calendar-alt fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card-body">

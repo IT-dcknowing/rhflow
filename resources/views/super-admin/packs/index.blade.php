@@ -233,7 +233,7 @@
                                             </button>
                                             @else
                                             <button class="btn btn-outline-success btn-sm" onclick="togglePack({{ $pack['id'] }})">
-                                                <i class="ti ti-control-play me-1"></i>
+                                                <i class="ti ti-check me-1"></i>
                                             </button>
                                             @endif
                                         </div>

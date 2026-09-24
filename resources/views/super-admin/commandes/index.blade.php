@@ -189,12 +189,12 @@
                                                     <div class="dropdown-divider"></div>
                                                     @if($sector->is_active)
                                                         <a class="dropdown-item text-warning" href="javascript:void(0)" onclick="toggleSector({{ $sector->id }}, false)">
-                                                            <i class="ti ti-control-pause me-2"></i>
+                                                            <i class="ti ti-ban me-2"></i>
                                                             Désactiver
                                                         </a>
                                                     @else
                                                         <a class="dropdown-item text-success" href="javascript:void(0)" onclick="toggleSector({{ $sector->id }}, true)">
-                                                            <i class="ti ti-control-play me-2"></i>
+                                                            <i class="ti ti-check me-2"></i>
                                                             Activer
                                                         </a>
                                                     @endif

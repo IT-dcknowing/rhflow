@@ -1317,13 +1317,50 @@ class SettingsController extends Controller
             }
 
             $refus = collect($import->failures())
-                ->map(fn ($echec) => 'ligne ' . $echec->row() . ' : ' . implode(' ', $echec->errors()))
-                ->unique()
+                ->map(fn ($echec) => [
+                    'row' => $echec->row(),
+                    'error' => implode(' ', $echec->errors()),
+                ])
+                ->unique(fn ($item) => $item['row'] . '-' . $item['error'])
                 ->values();
-            if ($refus->isNotEmpty()) {
-                $message .= ' ' . $refus->count() . ' ligne(s) refusée(s) — ' . $refus->take(5)->implode(' · ') . ($refus->count() > 5 ? ' …' : '');
 
-                return redirect()->back()->with('error', $message);
+            if ($refus->isNotEmpty()) {
+                $countRefus = $refus->count();
+                $hasDuplicates = $refus->contains(fn ($r) => str_contains($r['error'], 'doublons'));
+
+                $html = '<div class="text-start" style="font-size: 0.9rem; max-width: 520px; margin: 0 auto;">';
+                
+                // Badges récapitulatifs
+                $html .= '<div class="d-flex flex-wrap gap-2 mb-3">';
+                $html .= '<span class="badge bg-label-info px-2 py-1"><i class="fas fa-user-check me-1"></i>' . $import->importes . ' importé(s)</span>';
+                if ($import->ignores > 0) {
+                    $html .= '<span class="badge bg-label-secondary px-2 py-1"><i class="fas fa-copy me-1"></i>' . $import->ignores . ' doublon(s) ignoré(s)</span>';
+                }
+                $html .= '<span class="badge bg-label-danger px-2 py-1"><i class="fas fa-times-circle me-1"></i>' . $countRefus . ' ligne(s) refusée(s)</span>';
+                $html .= '</div>';
+
+                if ($hasDuplicates && !$request->boolean('skip_duplicates')) {
+                    $html .= '<div class="alert alert-warning py-2 px-3 mb-3 border-0 rounded-2" style="font-size: 0.82rem; background-color: #fff8e6; color: #8a6100;">';
+                    $html .= '<i class="fas fa-lightbulb me-1 text-warning"></i> <strong>Astuce :</strong> Cochez l\'option <em>« Ignorer les doublons »</em> lors de l\'import pour passer automatiquement les emails déjà utilisés.';
+                    $html .= '</div>';
+                }
+
+                $html .= '<div class="fw-semibold text-secondary mb-2" style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;">Détail des lignes refusées :</div>';
+                $html .= '<div style="max-height: 220px; overflow-y: auto; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px;">';
+                $html .= '<ul class="mb-0 ps-3 text-dark" style="line-height: 1.6; font-size: 0.82rem;">';
+
+                $maxDisplay = 25;
+                foreach ($refus->take($maxDisplay) as $item) {
+                    $html .= '<li class="mb-1"><strong>Ligne ' . e($item['row']) . ' :</strong> ' . e($item['error']) . '</li>';
+                }
+
+                if ($countRefus > $maxDisplay) {
+                    $html .= '<li class="text-muted fst-italic mt-2">... et ' . ($countRefus - $maxDisplay) . ' autre(s) ligne(s) refusée(s).</li>';
+                }
+
+                $html .= '</ul></div></div>';
+
+                return redirect()->back()->with('error', $html);
             }
 
             return redirect()->back()->with('success', $message);
@@ -1428,29 +1465,29 @@ class SettingsController extends Controller
             'request_data' => $request->all()
         ]);
 
-        // Validation des données
-        try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'code' => 'required|string|max:50|unique:branches,code',
-                'address' => 'nullable|string',
-                'phone' => 'nullable|string|max:20',
-                'email' => 'nullable|email|max:255',
-                'type' => 'required|in:siege,succursale',
-                'manager_id' => 'required|exists:users,id',
-                'is_active' => 'nullable|boolean'
-            ], [
-                'type.required' => 'Le type de site est obligatoire.',
-                'type.in' => 'Le type de site doit être « siège » ou « succursale ».',
-                'manager_id.required' => 'Le manager du site est obligatoire.',
-                'manager_id.exists' => "Le manager sélectionné n'existe pas.",
-            ]);
-        } catch (\Exception $validationException) {
-            \Log::error('Validation error', [
-                'errors' => $validationException->validator->errors()->all(),
-            ]);
-            return redirect()->back()->with('error', 'Erreur de validation : ' . implode(', ', $validationException->validator->errors()->all()));
-        }
+        // Validation des données : le nom du site doit être unique au sein de l'entreprise
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('branches', 'name')
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
+            'code' => 'required|string|max:50|unique:branches,code',
+            'address' => 'nullable|string',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'type' => 'required|in:siege,succursale',
+            'manager_id' => 'required|exists:users,id',
+            'is_active' => 'nullable|boolean'
+        ], [
+            'name.unique' => 'Un site portant ce nom existe déjà dans votre entreprise.',
+            'type.required' => 'Le type de site est obligatoire.',
+            'type.in' => 'Le type de site doit être « siège » ou « succursale ».',
+            'manager_id.required' => 'Le manager du site est obligatoire.',
+            'manager_id.exists' => "Le manager sélectionné n'existe pas.",
+        ]);
 
         // Tentative de création de la succursale
         try {
@@ -1595,7 +1632,14 @@ class SettingsController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('branches', 'name')
+                    ->ignore($branch->id)
+                    ->where(fn($query) => $query->where('company_id', $company->id)),
+            ],
             'code' => 'required|string|max:50|unique:branches,code,' . $branch->id,
             'address' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
@@ -1604,6 +1648,7 @@ class SettingsController extends Controller
             'manager_id' => 'required|exists:users,id',
             'is_active' => 'nullable|boolean'
         ], [
+            'name.unique' => 'Un site portant ce nom existe déjà dans votre entreprise.',
             'type.required' => 'Le type de site est obligatoire.',
             'type.in' => 'Le type de site doit être « siège » ou « succursale ».',
             'manager_id.required' => 'Le manager du site est obligatoire.',

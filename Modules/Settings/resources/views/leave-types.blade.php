@@ -45,7 +45,7 @@
                                     <thead>
                                         <tr>
                                             <th>Type de Congé</th>
-                                            <th>Jours</th>
+                                            <th>Durée (jours)</th>
                                             <th>Statut</th>
                                             <th class="text-end">Actions</th>
                                         </tr>
@@ -58,7 +58,7 @@
                                                 </td>
                                                 {{-- data-order : tri numerique sur le nombre de jours --}}
                                                 <td data-order="{{ $leaveType->days }}">
-                                                    <span class="badge bg-label-primary">{{ $leaveType->days }} jours</span>
+                                                    <span class="badge bg-label-primary">{{ $leaveType->days }}</span>
                                                 </td>
                                                 {{-- data-order : DataTables trie sur la valeur brute, pas sur le libelle --}}
                                                 <td data-order="{{ $leaveType->is_active ? 1 : 0 }}">
@@ -84,7 +84,7 @@
                                                             <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleLeaveType({{ $leaveType->id }}, '{{ addslashes($leaveType->title) }}', true)"
                                                                 title="Désactiver">
-                                                                <i class="fas fa-times"></i>
+                                                                <i class="fas fa-ban"></i>
                                                             </button>
                                                         @endif
                                                         <button class="btn btn-icon btn-sm btn-label-danger"
@@ -126,7 +126,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">➕ Nouveau Type de Congé</h5>
+                    <h5 class="modal-title">Nouveau Type de Congé</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form method="POST" action="{{ route('company.settings.leave-types.store') }}">
@@ -138,7 +138,7 @@
                                 placeholder="Ex: Congé Annuel, Congé Maladie...">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Nombre (en jours) *</label>
+                            <label class="form-label">Durée (en jours) *</label>
                             <input type="number" class="form-control" name="days" required min="1" max="365"
                                 placeholder="Ex: 30">
 
@@ -505,6 +505,6 @@
                     dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>'
                 });
             @endif
-                                });
+                                        });
     </script>
 @endpush

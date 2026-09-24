@@ -1521,3 +1521,22 @@ table td .btn-group > .btn-icon {
         align-items: stretch;
     }
 }
+
+/* ==========================================================================
+   SweetAlert2 Button Consistency
+   Empêche les boutons non désirés (ex: deny "No" ou cancel "Retour")
+   d'être affichés par inadvertance à cause de .btn { display: inline-flex !important }
+   ========================================================================== */
+.swal2-container .swal2-actions .swal2-deny:not(.swal2-visible),
+.swal2-container .swal2-actions .swal2-cancel:not(.swal2-visible),
+.swal2-container .swal2-actions button[style*="display: none"],
+.swal2-container .swal2-actions button[style*="display:none"],
+.swal2-container .swal2-actions button.swal2-hide {
+    display: none !important;
+}
+
+.swal2-container .swal2-actions .swal2-deny.swal2-visible,
+.swal2-container .swal2-actions .swal2-cancel.swal2-visible {
+    display: inline-flex !important;
+}
+

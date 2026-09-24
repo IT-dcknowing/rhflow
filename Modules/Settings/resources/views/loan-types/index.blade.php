@@ -208,7 +208,7 @@
                                                         class="btn btn-icon btn-sm btn-label-{{ $loanType->is_active ? 'secondary' : 'success' }}"
                                                         data-bs-toggle="tooltip"
                                                         title="{{ $loanType->is_active ? 'Désactiver' : 'Activer' }}">
-                                                        <i class="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }}"></i>
+                                                        <i class="fas fa-{{ $loanType->is_active ? 'ban' : 'check' }}"></i>
                                                     </button>
                                                 </form>
                                                 <form action="{{ route('company.settings.loan-types.destroy', $loanType->id) }}"

@@ -57,23 +57,8 @@
         color: #ff4961 !important;
     }
 
-    .stats-card {
-        background: linear-gradient(135deg, #696cff 0%, #696cff 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-    }
-
-    .stats-card .card-title {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .stats-card .card-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0.5rem 0;
+    .shadow-xs {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 </style>
 @endpush
@@ -118,34 +103,71 @@
     </div>
 
     <!-- Statistiques principales -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="stats-card">
-                <div class="card-title">Montant Maximum</div>
-                <div class="card-value">{{ $loanType->formatted_max_amount }}</div>
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                <div>
+                    <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                        Montant Maximum
+                    </p>
+                    <p class="fw-bold mb-1" style="font-size: 1.65rem; color: #1e3a8a; line-height: 1.2;">
+                        {{ $loanType->formatted_max_amount }}
+                    </p>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem;">Plafond accordé</p>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: #EFF6FF; color: #1e3a8a;">
+                    <i class="fas fa-hand-holding-usd fa-lg"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="stats-card">
-                <div class="card-title">Taux d'Intérêt</div>
-                <div class="card-value">{{ $loanType->formatted_interest_rate }}</div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                <div>
+                    <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                        Taux d'Intérêt
+                    </p>
+                    <p class="fw-bold mb-1" style="font-size: 1.65rem; color: #1e3a8a; line-height: 1.2;">
+                        {{ $loanType->formatted_interest_rate }}
+                    </p>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem;">Taux annuel appliqué</p>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: #EFF6FF; color: #1e3a8a;">
+                    <i class="fas fa-percentage fa-lg"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="stats-card">
-                <div class="card-title">Période Max</div>
-                <div class="card-value">{{ $loanType->repayment_period_max }} mois</div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                <div>
+                    <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                        Période Max
+                    </p>
+                    <p class="fw-bold mb-1" style="font-size: 1.65rem; color: #1e3a8a; line-height: 1.2;">
+                        {{ $loanType->repayment_period_max }} mois
+                    </p>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem;">Échéance maximale</p>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: #EFF6FF; color: #1e3a8a;">
+                    <i class="fas fa-calendar-alt fa-lg"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="stats-card">
-                <div class="card-title">Statut</div>
-                <div class="card-value">
-                    @if($loanType->is_active)
-                        <span class="badge bg-label-success">Actif</span>
-                    @else
-                        <span class="badge bg-label-danger">Inactif</span>
-                    @endif
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="bg-white border rounded-3 p-4 shadow-xs d-flex align-items-center justify-content-between h-100" style="border-color: #E8E8E6 !important;">
+                <div>
+                    <p class="text-xs fw-bold text-muted text-uppercase tracking-wider mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                        Statut
+                    </p>
+                    <p class="fw-bold mb-1" style="font-size: 1.65rem; color: {{ $loanType->is_active ? '#28c848' : '#8592a3' }}; line-height: 1.2;">
+                        {{ $loanType->is_active ? 'Actif' : 'Inactif' }}
+                    </p>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem;">{{ $loanType->is_active ? 'Disponible aux salariés' : 'Désactivé' }}</p>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px; background-color: {{ $loanType->is_active ? '#E8FADF' : '#EFF6FF' }}; color: {{ $loanType->is_active ? '#28c848' : '#1e3a8a' }};">
+                    <i class="fas fa-{{ $loanType->is_active ? 'check-circle' : 'ban' }} fa-lg"></i>
                 </div>
             </div>
         </div>
@@ -282,7 +304,7 @@
                     @csrf
                     @method('PUT')
                     <x-quick-action type="submit"
-                        icon="fas fa-{{ $loanType->is_active ? 'pause' : 'play' }}"
+                        icon="fas fa-{{ $loanType->is_active ? 'ban' : 'check' }}"
                         label="{{ $loanType->is_active ? 'Désactiver' : 'Activer' }}"
                         variant="outline" color="{{ $loanType->is_active ? 'secondary' : 'success' }}" />
                 </form>

@@ -683,7 +683,7 @@ class SuperAdminController extends Controller
         if ($company->subscription_start_date) {
             $timeline[] = [
                 'time' => $company->subscription_start_date,
-                'icon' => 'ti ti-control-play',
+                'icon' => 'ti ti-check',
                 'title' => 'Début d\'abonnement',
                 'desc' => 'Activation de l\'abonnement.'
             ];
@@ -698,7 +698,7 @@ class SuperAdminController extends Controller
         }
         $timeline[] = [
             'time' => $company->updated_at ?? $company->created_at,
-            'icon' => $company->is_active ? 'ti ti-check' : 'ti ti-control-pause',
+            'icon' => $company->is_active ? 'ti ti-check' : 'ti ti-ban',
             'title' => $company->is_active ? 'Entreprise active' : 'Entreprise inactive',
             'desc' => 'Statut courant de l\'entreprise.'
         ];

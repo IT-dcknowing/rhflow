@@ -128,13 +128,13 @@
                                                             <button class="btn btn-icon btn-sm btn-label-secondary"
                                                                 onclick="toggleWorkLocationStatus({{ $location->id }}, true)"
                                                                 title="Désactiver">
-                                                                <i class="fas fa-toggle-off"></i>
+                                                                <i class="fas fa-ban"></i>
                                                             </button>
                                                         @else
                                                             <button class="btn btn-icon btn-sm btn-label-success"
                                                                 onclick="toggleWorkLocationStatus({{ $location->id }}, false)"
                                                                 title="Activer">
-                                                                <i class="fas fa-toggle-on"></i>
+                                                                <i class="fas fa-check"></i>
                                                             </button>
                                                         @endif
                                                         <button class="btn btn-icon btn-sm btn-label-primary"

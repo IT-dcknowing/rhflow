@@ -235,32 +235,32 @@
             <!-- Sidebar -->
             <div class="col-md-4">
                 <!-- Pièces jointes -->
-                <div class="card mb-4">
+                <div class="card mb-4" style="overflow: hidden;">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Pièces jointes</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <ul class="list-group list-group-flush">
                             @forelse($contract->attachments as $attachment)
-                                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                                    <div>
-                                        <i class="fas fa-file me-2"></i>
-                                        <span>{{ $attachment->file_name }}</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 gap-2">
+                                    <div class="d-flex align-items-center text-truncate" style="min-width: 0; flex: 1;">
+                                        <i class="fas fa-file me-2 text-primary flex-shrink-0"></i>
+                                        <span class="text-truncate" title="{{ $attachment->file_name }}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $attachment->file_name }}</span>
                                     </div>
-                                    <div>
+                                    <div class="d-flex align-items-center flex-shrink-0 gap-1">
                                         <a href="{{ route('company.contracts.attachment.download', $attachment->id) }}"
-                                            class="btn btn-sm btn-icon btn-outline-primary me-1">
+                                            class="btn btn-sm btn-icon btn-outline-primary" title="Télécharger">
                                             <i class="fas fa-download"></i>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-icon btn-outline-danger"
                                             data-bs-toggle="modal" data-bs-target="#deleteAttachmentModal"
-                                            data-id="{{ $attachment->id }}" data-name="{{ $attachment->file_name }}">
+                                            data-id="{{ $attachment->id }}" data-name="{{ $attachment->file_name }}" title="Supprimer">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </li>
                             @empty
-                                <li class="list-group-item text-center py-3">Aucune pièce jointe</li>
+                                <li class="list-group-item text-center py-3 text-muted">Aucune pièce jointe</li>
                             @endforelse
                         </ul>
                     </div>
@@ -269,7 +269,7 @@
                             enctype="multipart/form-data">
                             @csrf
                             <div class="input-group">
-                                <input type="file" class="form-control" name="attachment" id="attachment">
+                                <input type="file" class="form-control" name="attachment" id="attachment" required>
                                 <button class="btn btn-primary" type="submit">Ajouter</button>
                             </div>
                         </form>
@@ -299,13 +299,17 @@
                         </div>
 
                     </div>
-                    @if(!$contract->employee_signature)
-                        <div class="card-footer">
+                    <div class="card-footer">
+                        @if($contract->employee_signature)
+                            <a href="{{ route('company.contracts.signature', $contract->id) }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-edit me-1"></i>Modifier la signature
+                            </a>
+                        @else
                             <a href="{{ route('company.contracts.signature', $contract->id) }}" class="btn btn-primary w-100">
                                 <i class="fas fa-signature me-1"></i>Gérer les signatures
                             </a>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

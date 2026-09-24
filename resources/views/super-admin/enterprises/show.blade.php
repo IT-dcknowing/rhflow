@@ -162,12 +162,12 @@
                                 <!-- Actions rapides -->
                                 <x-quick-actions title="Actions" class="border mt-3" stacked>
                                     @if($company->is_active == true)
-                                        <x-quick-action icon="ti ti-control-pause" label="Suspendre"
+                                        <x-quick-action icon="ti ti-ban" label="Suspendre"
                                             :href="route('super-admin.enterprises.suspend', $enterprise)"
                                             variant="outline" color="warning"
                                             onclick="return confirm('Êtes-vous sûr de vouloir suspendre cette entreprise ?')" />
                                     @else
-                                        <x-quick-action icon="ti ti-control-play" label="Activer"
+                                        <x-quick-action icon="ti ti-check" label="Activer"
                                             :href="route('super-admin.enterprises.activate', $enterprise)"
                                             variant="outline" color="success"
                                             onclick="return confirm('Êtes-vous sûr de vouloir activer cette entreprise ?')" />
