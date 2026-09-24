@@ -119,11 +119,11 @@
     <x-quick-actions>
         <x-quick-action icon="fas fa-user-plus"
             label="Nouvel Employé (Mensuel)"
-            :href="isModuleActive('employee') ? route('company.employees.create') : '#'" />
+            :href="isModuleActive('employee') ? route('company.employees.create', ['type' => 1]) : '#'" />
 
         <x-quick-action icon="fas fa-user-plus"
             label="Nouvel Employé (Journalier)"
-            :href="isModuleActive('employee') ? route('company.employees.create') : '#'" />
+            :href="isModuleActive('employee') ? route('company.employees.create', ['type' => 2]) : '#'" />
 
         <x-quick-action icon="fas fa-dollar"
             label="Générer la paie (Mois en cours)"

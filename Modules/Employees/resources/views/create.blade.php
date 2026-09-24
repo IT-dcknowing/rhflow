@@ -596,8 +596,9 @@
                                         <label for="salary_type" class="form-label required">Type d'employé</label>
                                         <select name="salary_type" class="form-select @error('salary_type') is-invalid @enderror" id="salary_type" required>
                                             <option value="">-- Sélectionner le type --</option>
-                                            <option value="1" {{ old('salary_type') == 1 ? 'selected' : '' }}>Mensuel</option>
-                                            <option value="2" {{ old('salary_type') == 2 ? 'selected' : '' }}>Journalier</option>
+                                            @php $selectedType = old('salary_type', request('type')); @endphp
+                                            <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Mensuel</option>
+                                            <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>Journalier</option>
                                         </select>
                                         <small class="text-muted">Mensuel : rémunéré au salaire mensuel. Journalier : rémunéré au taux horaire.</small>
                                         @error('salary_type')
