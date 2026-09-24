@@ -114,54 +114,75 @@
             </div>
         </div>
     </div>
-
     <!-- Actions rapides -->
-    <x-quick-actions>
-        <x-quick-action icon="fas fa-user-plus"
-            label="Nouvel Employé (Mensuel)"
-            :href="isModuleActive('employee') ? route('company.employees.create', ['type' => 1]) : '#'" />
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-3">
 
-        <x-quick-action icon="fas fa-user-plus"
-            label="Nouvel Employé (Journalier)"
-            :href="isModuleActive('employee') ? route('company.employees.create', ['type' => 2]) : '#'" />
+                {{-- Groupe : Nouvel employé --}}
+                <div class="d-flex flex-column gap-1">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size:0.7rem; letter-spacing:.05em">
+                        <i class="fas fa-user-plus me-1"></i>Nouvel employé
+                    </small>
+                    <div class="btn-group" role="group">
+                        <a href="{{ isModuleActive('employee') ? route('company.employees.create', ['type' => 1]) : '#' }}"
+                           class="btn btn-primary">
+                            <i class="fas fa-calendar-alt me-1"></i>Mensuel
+                        </a>
+                        <a href="{{ isModuleActive('employee') ? route('company.employees.create', ['type' => 2]) : '#' }}"
+                           class="btn btn-outline-primary">
+                            <i class="fas fa-clock me-1"></i>Journalier
+                        </a>
+                    </div>
+                </div>
 
-        <x-quick-action icon="fas fa-dollar"
-            label="Générer la paie (Mois en cours)"
-            :href="isModuleActive('salary') ? route('company.paiesalaries.exercices.index') : '#'" />
+                <div class="vr d-none d-md-block" style="height:40px"></div>
 
-        {{-- Deuxième ligne : actions secondaires à gauche. --}}
-        <x-slot:secondary>
-            <x-quick-action icon="fas fa-calendar"
-                label="Approuver les congés"
-                :href="isModuleActive('leaves') ? route('company.leaves.index') : '#'"
-                variant="outline" color="warning" />
+                {{-- Paie --}}
+                <div class="d-flex flex-column gap-1">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size:0.7rem; letter-spacing:.05em">
+                        <i class="fas fa-dollar me-1"></i>Paie
+                    </small>
+                    <a href="{{ isModuleActive('salary') ? route('company.paiesalaries.exercices.index') : '#' }}"
+                       class="btn btn-success">
+                        <i class="fas fa-file-invoice-dollar me-1"></i>Générer la paie
+                    </a>
+                </div>
 
-            <x-quick-action icon="fas fa-file-text"
-                label="Rapport Mensuel"
-                :href="isModuleActive('Declarations') ? route('company.declarations.livrepaie.mensuel') : '#'"
-                variant="outline" />
-        </x-slot:secondary>
+                <div class="vr d-none d-md-block" style="height:40px"></div>
 
-        {{-- ... et actions de service sans cadre, repoussées à droite. --}}
-        <x-slot:end>
-            <x-quick-action icon="fas fa-cog"
-                label="Paramètres"
-                :href="route('company.settings.settings')"
-                variant="ghost" />
+                {{-- Actions secondaires --}}
+                <div class="d-flex flex-column gap-1">
+                    <small class="text-muted text-uppercase fw-semibold" style="font-size:0.7rem; letter-spacing:.05em">
+                        <i class="fas fa-tasks me-1"></i>Gestion
+                    </small>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{{ isModuleActive('leaves') ? route('company.leaves.index') : '#' }}"
+                           class="btn btn-outline-warning">
+                            <i class="fas fa-calendar me-1"></i>Congés
+                        </a>
+                        <a href="{{ isModuleActive('Declarations') ? route('company.declarations.livrepaie.mensuel') : '#' }}"
+                           class="btn btn-outline-secondary">
+                            <i class="fas fa-file-text me-1"></i>Rapport mensuel
+                        </a>
+                    </div>
+                </div>
 
-            <x-quick-action icon="fas fa-headset"
-                label="Support"
-                href="#"
-                variant="ghost"
-                :disabled="true" />
+                {{-- Actions de service à droite --}}
+                <div class="ms-auto d-flex gap-2 align-items-center">
+                    <a href="{{ route('company.settings.settings') }}" class="btn btn-icon btn-outline-secondary" title="Paramètres">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                    <a href="{{ isModuleActive('PaieSalaries') ? route('company.paiesalaries.dashboard') : '#' }}"
+                       class="btn btn-icon btn-outline-secondary {{ isModuleActive('PaieSalaries') ? '' : 'disabled' }}" title="Analytics">
+                        <i class="fas fa-chart-bar"></i>
+                    </a>
+                </div>
 
-            <x-quick-action icon="fas fa-chart-bar"
-                label="Analytics"
-                :href="isModuleActive('PaieSalaries') ? route('company.paiesalaries.dashboard') : '#'"
-                variant="ghost"
-                :disabled="!isModuleActive('PaieSalaries')" />
-        </x-slot:end>
-    </x-quick-actions>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @endsection

@@ -77,11 +77,6 @@
                                                             class="{{ $document->isExpired() ? 'text-danger' : ($document->isExpiringSoon() ? 'text-warning' : 'text-success') }}">
                                                             {{ $document->expiry_date->format('d/m/Y') }}
                                                         </small>
-                                                        @if($document->isExpired())
-                                                            <span class="badge bg-label-danger ms-1">Expiré</span>
-                                                        @elseif($document->isExpiringSoon())
-                                                            <span class="badge bg-label-warning ms-1">Bientôt</span>
-                                                        @endif
                                                     @else
                                                         <small class="text-muted">-</small>
                                                     @endif
