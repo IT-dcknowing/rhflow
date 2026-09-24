@@ -18,6 +18,12 @@
         .pm-chip.bad { background: var(--bad-bg); border-color: var(--bad-line); color: var(--bad); }
         .pm-chip.faint { background: var(--surface-2); border-color: var(--line); color: var(--muted); }
 
+        /* Actions de l'en-tête : alignées à droite, elles passent à la ligne sur
+           les écrans étroits plutôt que de comprimer le titre. */
+        .pm-head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .pm-head-actions .btn { white-space: nowrap; }
+        @media (max-width: 768px) { .pm-head-actions { width: 100%; justify-content: flex-start; } }
+
         /* Étapes */
         .pm-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
         .pm-step { position: relative; }

@@ -172,6 +172,85 @@ use Modules\Loans\Services\LoanCalculatorService;
 class PaieSalariesController extends Controller
 {
     /**
+     * Répartition réelle des charges du mois, lue sur les bulletins émis.
+     *
+     * La carte du tableau de bord affichait auparavant la somme des salaires
+     * contractuels de *tous* les salariés, inactifs compris, des primes filtrées
+     * sur un champ month_paie souvent vide, et des cotisations forfaitaires à
+     * 10 % de la masse — un chiffre qui n'était calculé nulle part.
+     *
+     * Ici tout vient des bulletins du mois : montants figés, donc exacts. Les
+     * cotisations sont réparties par code, comme sur le bulletin lui-même :
+     * 301 et 302 pour la part salariale, 307 et 308 pour la part employeur,
+     * 409 à 412, 305 et 306 pour les taxes et charges patronales.
+     *
+     * @return array{base: float, primes: float, retenues: float, cotisations: float, bulletins: int}
+     */
+    private function getRepartitionChargesMois($companyId, $mois)
+    {
+        $vide = ['base' => 0.0, 'primes' => 0.0, 'retenues' => 0.0, 'patronales' => 0.0,
+            'bulletins' => 0, 'mois' => $mois];
+
+        $bulletins = PaySlip::where('company_id', $companyId)
+            ->where('salary_month', $mois)
+            ->get(['basic_salary', 'salary_brut', 'retenues']);
+
+        // Le mois en cours n'est pas toujours traite. Plutot que d'afficher un
+        // graphique vide, on se rabat sur le dernier mois reellement paye, sans
+        // aller chercher dans le futur : la vue indique alors lequel.
+        if ($bulletins->isEmpty()) {
+            $dernier = PaySlip::where('company_id', $companyId)
+                ->where('salary_month', '<', $mois)
+                ->max('salary_month');
+
+            if (!$dernier) {
+                return $vide;
+            }
+
+            $mois = $dernier;
+            $bulletins = PaySlip::where('company_id', $companyId)
+                ->where('salary_month', $mois)
+                ->get(['basic_salary', 'salary_brut', 'retenues']);
+        }
+
+        // Cote employeur : accident du travail, prestations familiales, CMU et
+        // retraite patronales, contribution employeur, taxe expatrie,
+        // apprentissage et FPC. Tout le reste est preleve sur le brut du
+        // salarie : impot 403, CNPS 301, CMU 302, echeances de pret 500.
+        $codesPatronaux = ['305', '306', '307', '308', '409', '410', '411', '412'];
+        $codesIntermediaires = ['401', '402'];
+
+        $repartition = $vide;
+        $repartition['bulletins'] = $bulletins->count();
+        $repartition['mois'] = $mois;
+
+        foreach ($bulletins as $bulletin) {
+            $base = (float) $bulletin->basic_salary;
+            $repartition['base'] += $base;
+            $repartition['primes'] += max(0, (float) $bulletin->salary_brut - $base);
+
+            foreach (json_decode($bulletin->retenues, true) ?: [] as $poste) {
+                $code = (string) ($poste['code'] ?? '');
+                $montant = (float) ($poste['amount'] ?? 0);
+
+                // 401 et 402 sont des étapes du calcul de l'impôt, pas des montants
+                // prélevés : les compter reviendrait à doubler la 403.
+                if (in_array($code, $codesIntermediaires, true)) {
+                    continue;
+                }
+
+                if (in_array($code, $codesPatronaux, true)) {
+                    $repartition['patronales'] += $montant;
+                } else {
+                    $repartition['retenues'] += $montant;
+                }
+            }
+        }
+
+        return $repartition;
+    }
+
+    /**
      * Dashboard principal de la paie
      */
     public function dashboard()
@@ -204,6 +283,7 @@ class PaieSalariesController extends Controller
             "total_primes_mois" => Allowance::where("company_id", $companyId)
                 ->where("month_paie", "like", "%$currentMonth%")
                 ->sum("amount"),
+            "repartition_charges" => $this->getRepartitionChargesMois($companyId, $currentMonth),
         ];
 
         // Derniers exercices

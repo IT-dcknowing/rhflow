@@ -358,22 +358,18 @@
                         <span><i class="fas fa-users"></i>{{ $etape === 'preparer' ? count($lignes) . ' salarié(s)' : $nbBulletins . ' bulletin(s)' }}</span>
                     </div>
                 </div>
-                <div class="dropdown">
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Plus
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="{{ route('company.paiesalaries.periodes.edit', $periode->id) }}">
-                            <i class="fas fa-edit me-2"></i>Modifier la période
-                        </a>
-                        <a class="dropdown-item" href="{{ route('company.paiesalaries.calcule') }}?periode_id={{ $periode->id }}">
-                            <i class="fas fa-calculator me-2"></i>Aperçu détaillé des salaires
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ route('company.paiesalaries.exercices.show', $periode->exercice_id) }}">
-                            <i class="fas fa-history me-2"></i>Périodes de l'exercice
-                        </a>
-                    </div>
+                {{-- Les trois actions étaient cachées derrière un menu « Plus » : elles
+                     sont peu nombreuses et toutes utiles, autant les poser à l'écran. --}}
+                <div class="pm-head-actions">
+                    <a class="btn btn-outline-secondary" href="{{ route('company.paiesalaries.periodes.edit', $periode->id) }}">
+                        <i class="fas fa-edit me-2"></i>Modifier la période
+                    </a>
+                    <a class="btn btn-outline-secondary" href="{{ route('company.paiesalaries.calcule') }}?periode_id={{ $periode->id }}">
+                        <i class="fas fa-calculator me-2"></i>Aperçu détaillé des salaires
+                    </a>
+                    <a class="btn btn-outline-secondary" href="{{ route('company.paiesalaries.exercices.show', $periode->exercice_id) }}">
+                        <i class="fas fa-history me-2"></i>Périodes de l'exercice
+                    </a>
                 </div>
             </div>
 

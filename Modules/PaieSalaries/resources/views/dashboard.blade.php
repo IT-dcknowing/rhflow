@@ -112,7 +112,11 @@
                                                 </div>
                                             </td>
                                             <td class="text-end" style="white-space:nowrap;">
-                                                <span class="fw-semibold">{{ number_format($paie->salaire_net, 0, ',', '\u00a0') }}
+                                                {{-- S\u00e9parateur : une espace, comme partout ailleurs. En
+                                                     PHP, '\u00a0' entre apostrophes n'est pas une espace
+                                                     ins\u00e9cable mais les six caract\u00e8res eux-m\u00eames, qui
+                                                     s'affichaient tels quels dans le montant. --}}
+                                                <span class="fw-semibold">{{ number_format($paie->salaire_net, 0, ',', ' ') }}
                                                     FCFA</span>
                                             </td>
                                         </tr>
@@ -218,19 +222,47 @@
                 </div>
             </div>
 
+            {{-- Les quatre parts viennent des bulletins du mois, pas d'une estimation :
+                 le total cotisations etait auparavant un forfait de 10 % de la masse
+                 salariale, et les retenues ne comptaient que les primes negatives. --}}
+            @php
+                $charges = $stats['repartition_charges'] ?? [
+                    'base' => 0, 'primes' => 0, 'retenues' => 0, 'patronales' => 0,
+                    'bulletins' => 0, 'mois' => now()->format('Y-m'),
+                ];
+                $moisCharges = $charges['mois'] ?? now()->format('Y-m');
+                $chargesDecalees = $moisCharges !== now()->format('Y-m');
+                $libelleMoisCharges = \Carbon\Carbon::createFromFormat('Y-m', $moisCharges)
+                    ->locale('fr')->isoFormat('MMMM YYYY');
+            @endphp
+
             <!-- Répartition des charges -->
             <div class="col-12 col-lg-6 mb-4">
                 <div class="card h-100">
                     <div class="card-header">
                         <h5 class="mb-0">Répartition des charges du mois</h5>
+                        {{-- Le mois affiché n'est pas toujours le mois courant : on le dit. --}}
+                        <small class="text-muted">
+                            @if($charges['bulletins'] == 0)
+                                Aucun bulletin émis pour le moment
+                            @elseif($chargesDecalees)
+                                Dernier mois traité : {{ $libelleMoisCharges }}
+                                ({{ $charges['bulletins'] }} bulletin{{ $charges['bulletins'] > 1 ? 's' : '' }})
+                            @else
+                                {{ $libelleMoisCharges }} ·
+                                {{ $charges['bulletins'] }} bulletin{{ $charges['bulletins'] > 1 ? 's' : '' }}
+                            @endif
+                        </small>
                     </div>
                     <div class="card-body">
                         <div id="repartitionChargesChart" class="mb-2"></div>
-                        {{-- Total affiché sous le donut, bien visible --}}
+                        {{-- Le total est le coût employeur : base + primes + charges
+                             patronales. Les retenues salarié ne s'y ajoutent pas, elles
+                             sont prélevées sur le brut — les compter doublerait la somme. --}}
                         <div class="text-center mb-3">
-                            <span class="text-muted small">Total</span><br>
+                            <span class="text-muted small">Coût total employeur</span><br>
                             <strong class="fs-5" style="white-space:nowrap;">
-                                {{ number_format($stats['masse_salariale_mensuelle'] + $stats['total_retenues_mois'] + $stats['masse_salariale_mensuelle'] * 0.1, 0, ',', '\u00a0') }} FCFA
+                                {{ number_format($charges['base'] + $charges['primes'] + $charges['patronales'], 0, ',', ' ') }} FCFA
                             </strong>
                         </div>
                         {{-- Tableau de répartition aligné --}}
@@ -242,34 +274,41 @@
                                         Salaire de base
                                     </td>
                                     <td class="text-end fw-semibold border-0" style="white-space:nowrap;">
-                                        {{ number_format($stats['masse_salariale_mensuelle'] - $stats['total_primes_mois'], 0, ',', '\u00a0') }} FCFA
+                                        {{ number_format($charges['base'], 0, ',', ' ') }} FCFA
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="ps-0 border-0">
                                         <span class="badge me-1" style="background:#71dd37;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
-                                        Primes
+                                        Primes et indemnités
                                     </td>
                                     <td class="text-end fw-semibold border-0" style="white-space:nowrap;">
-                                        {{ number_format($stats['total_primes_mois'], 0, ',', '\u00a0') }} FCFA
+                                        {{ number_format($charges['primes'], 0, ',', ' ') }} FCFA
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="ps-0 border-0">
-                                        <span class="badge me-1" style="background:#ffab00;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
-                                        Retenues
+                                        <span class="badge me-1" style="background:#03c3ec;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
+                                        Charges patronales
                                     </td>
                                     <td class="text-end fw-semibold border-0" style="white-space:nowrap;">
-                                        {{ number_format($stats['total_retenues_mois'], 0, ',', '\u00a0') }} FCFA
+                                        {{ number_format($charges['patronales'], 0, ',', ' ') }} FCFA
+                                    </td>
+                                </tr>
+                                {{-- Hors donut : prélevé sur le brut, pas ajouté au coût. --}}
+                                <tr>
+                                    <td class="ps-0 text-muted small">
+                                        <span class="me-1" style="width:10px;height:10px;display:inline-block;"></span>
+                                        dont retenues salarié (impôt, CNPS, CMU, prêts)
+                                    </td>
+                                    <td class="text-end text-muted small" style="white-space:nowrap;">
+                                        &minus; {{ number_format($charges['retenues'], 0, ',', ' ') }} FCFA
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="ps-0">
-                                        <span class="badge me-1" style="background:#03c3ec;width:10px;height:10px;padding:0;display:inline-block;border-radius:2px;"></span>
-                                        Cotisations
-                                    </td>
+                                    <td class="ps-0 fw-semibold">Net à payer</td>
                                     <td class="text-end fw-semibold" style="white-space:nowrap;">
-                                        {{ number_format($stats['masse_salariale_mensuelle'] * 0.1, 0, ',', '\u00a0') }} FCFA
+                                        {{ number_format($charges['base'] + $charges['primes'] - $charges['retenues'], 0, ',', ' ') }} FCFA
                                     </td>
                                 </tr>
                             </tbody>
@@ -364,10 +403,9 @@
         if (repartitionChargesEl) {
             const repartitionChargesChart = new ApexCharts(repartitionChargesEl, {
                 series: [
-                {{ $stats['masse_salariale_mensuelle'] - $stats['total_primes_mois'] }},
-                {{ $stats['total_primes_mois'] }},
-                {{ $stats['total_retenues_mois'] }},
-                    {{ $stats['masse_salariale_mensuelle'] * 0.1 }}
+                    {{ (int) $charges['base'] }},
+                    {{ (int) $charges['primes'] }},
+                    {{ (int) $charges['patronales'] }}
                 ],
                 chart: {
                     type: 'donut',
@@ -377,8 +415,8 @@
                         show: false
                     }
                 },
-                labels: ['Salaire de base', 'Primes', 'Retenues', 'Cotisations'],
-                colors: ['#696cff', '#71dd37', '#ffab00', '#03c3ec'],
+                labels: ['Salaire de base', 'Primes et indemnités', 'Charges patronales'],
+                colors: ['#696cff', '#71dd37', '#03c3ec'],
                 stroke: {
                     width: 0
                 },

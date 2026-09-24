@@ -94,25 +94,7 @@
                 @endif
             @endunless
 
-            @unless($verrouille)
-            <div class="pm1-actions pm1-actions-elements">
-                <button type="button" class="btn btn-primary btn-sm btn-add-elements" id="pm1DrawerAdd"
-                    data-bs-toggle="modal" data-bs-target="#addElementsModal"
-                    data-employee-id="" data-employee-name="" data-periode-id="{{ $periode->id }}">
-                    <i class="fas fa-plus me-1"></i>Ajouter un élément
-                </button>
-                <button type="button" class="btn btn-outline-secondary btn-sm btn-show-elements" id="pm1DrawerShow"
-                    data-bs-toggle="modal" data-bs-target="#showElementsModal"
-                    data-employee-id="" data-employee-name="" data-periode-id="{{ $periode->id }}">
-                    <i class="fas fa-eye me-1"></i>Afficher les éléments
-                </button>
-                <button type="button" class="btn btn-outline-secondary btn-sm btn-edit-elements" id="pm1DrawerEdit"
-                    data-bs-toggle="modal" data-bs-target="#editElementsModal"
-                    data-employee-id="" data-employee-name="" data-periode-id="{{ $periode->id }}">
-                    <i class="fas fa-pen me-1"></i>Modifier les éléments
-                </button>
-            </div>
-            @endunless
+
         </section>
 
         {{-- Section 3 : les autres natures d'éléments. Chaque lien ouvre l'écran
