@@ -1221,6 +1221,89 @@ class PaieSalariesController extends Controller
      * Ajoute une variable du mois (retenue, prêt, avantage, heures sup, congé, absence)
      * directement depuis le panneau latéral de la paie, sans changer de page.
      */
+    /**
+     * Crée à la volée un type de prêt ou de congé depuis le tiroir de la paie.
+     *
+     * Tomber sur une liste vide en pleine saisie ne doit pas obliger à quitter
+     * l'écran pour aller dans la configuration : on crée le référentiel sur place
+     * et la liste se recharge. Ces deux tables ne portent que du libellé ; aucun
+     * calcul de paie ne dépend de ce qui est créé ici.
+     */
+    /**
+     * Prochain numéro d'ordre libre pour une retenue de l'entreprise.
+     *
+     * La colonne retenues.ordre est NOT NULL sans valeur par défaut et sert au
+     * classement des lignes sur le bulletin.
+     */
+    private function prochainOrdreRetenue($companyId): int
+    {
+        return ((int) Retenue::where('company_id', $companyId)->max('ordre')) + 1;
+    }
+
+    public function creerReferentiel(Request $request)
+    {
+        $companyId = Auth::user()->company_id;
+
+        if (!$companyId) {
+            return response()->json(['success' => false, 'message' => "Entreprise introuvable."], 403);
+        }
+
+        $type = $request->input('referentiel');
+
+        // Validation à la main plutôt que $request->validate() : le gestionnaire
+        // d'exceptions global renvoie 500 sur une ValidationException en JSON, ce
+        // qui masquerait une simple erreur de saisie derrière une erreur serveur.
+        $nom = trim((string) $request->input('nom'));
+
+        if ($nom === '' || mb_strlen($nom) > 255) {
+            return response()->json([
+                'success' => false,
+                'message' => $nom === ''
+                    ? "Indiquez un nom."
+                    : "Le nom ne doit pas dépasser 255 caractères.",
+            ], 422);
+        }
+
+        if ($type === 'pret') {
+            $donnees = ['nom' => $nom];
+
+            $option = \Modules\Loans\Models\LoanOption::firstOrCreate(
+                ['company_id' => $companyId, 'name' => $donnees['nom']],
+                ['is_active' => true]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => "Type de prêt « " . $option->name . " » créé.",
+                'option' => ['id' => $option->id, 'name' => $option->name],
+            ]);
+        }
+
+        if ($type === 'conge') {
+            $donnees = [
+                'nom' => $nom,
+                'jours' => max(0, min(365, (int) $request->input('jours', 0))),
+            ];
+
+            $option = \Modules\Leaves\Models\LeaveType::firstOrCreate(
+                ['company_id' => $companyId, 'title' => $donnees['nom']],
+                [
+                    'days' => (int) ($donnees['jours'] ?? 0),
+                    'is_active' => true,
+                    'created_by' => Auth::id(),
+                ]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => "Type de congé « " . $option->title . " » créé.",
+                'option' => ['id' => $option->id, 'title' => $option->title],
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => "Référentiel inconnu."], 422);
+    }
+
     public function ajouterVariableSalarie(Request $request, $periodeId, $employeeId)
     {
         $companyId = Auth::user()->company_id;
@@ -1259,6 +1342,9 @@ class PaieSalariesController extends Controller
                             'company_id' => $companyId,
                             'libelle' => $request->input('libelle'),
                             'type_retenue_id' => $request->input('type_retenue_id') ?: null,
+                            // retenues.ordre est NOT NULL sans valeur par défaut :
+                            // l'omettre faisait échouer l'insertion en mode SQL strict.
+                            'ordre' => $this->prochainOrdreRetenue($companyId),
                             'amount' => (float) $request->input('amount'),
                             'is_active' => 1,
                             'type' => 'created',
@@ -1385,6 +1471,30 @@ class PaieSalariesController extends Controller
                         $leave->save();
                         break;
 
+                    case 'remboursement':
+                        // Un remboursement de frais est une retenue de type 5 : le
+                        // système la compte en gain, hors cotisations et hors impôt.
+                        // Même forme que celles créées par l'écran « Remboursements ».
+                        $request->validate([
+                            'libelle' => 'required|string|max:255',
+                            'amount' => 'required|numeric|min:1',
+                        ]);
+                        Retenue::create([
+                            'employee_id' => $employee->id,
+                            'periode_id' => $periode->id,
+                            'company_id' => $companyId,
+                            'libelle' => $request->input('libelle'),
+                            'type_retenue_id' => 5,
+                            'code' => '601',
+                            'ordre' => $this->prochainOrdreRetenue($companyId),
+                            'amount' => (float) $request->input('amount'),
+                            'is_active' => 1,
+                            'type' => 'add',
+                            'month_paie' => Carbon::parse($periode->date_debut)->format('Y-m'),
+                            'date_application' => now(),
+                        ]);
+                        break;
+
                     case 'absence':
                         $request->validate([
                             'start_date' => 'required|date',
@@ -1463,12 +1573,39 @@ class PaieSalariesController extends Controller
                     Retenue::where('company_id', $companyId)->where('id', $id)->delete();
                     break;
                 case 'pret':
-                    \Modules\Loans\Models\LoanPayment::where('periode_id', $periode->id)
+                    // Le tiroir affiche l'échéance du mois même quand aucune ligne
+                    // n'existe encore en base : elle est calculée à la volée pour tout
+                    // prêt actif. Supprimer « l'échéance » ne faisait alors rien du
+                    // tout, et l'écran annonçait quand même un succès.
+                    $loan = \Modules\Loans\Models\Loan::where('company_id', $companyId)->find($id);
+
+                    if (!$loan) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Prêt introuvable.",
+                        ], 404);
+                    }
+
+                    $echeancesRetirees = \Modules\Loans\Models\LoanPayment::where('periode_id', $periode->id)
                         ->where('loan_id', $id)
                         ->delete();
-                    $loan = \Modules\Loans\Models\Loan::where('company_id', $companyId)->find($id);
-                    if ($loan && $loan->periode_id == $periode->id && $loan->payments()->count() == 0) {
-                        $loan->delete();
+
+                    if ($echeancesRetirees > 0) {
+                        // Une échéance réelle existait : on la retire de cette période,
+                        // le prêt lui-même continue de courir.
+                        $messageRetrait = "Échéance retirée de cette période. Le prêt reste en cours.";
+
+                        if ($loan->periode_id == $periode->id && $loan->payments()->count() == 0) {
+                            $loan->delete();
+                            $messageRetrait = "Prêt supprimé : il n'avait aucune échéance payée.";
+                        }
+                    } else {
+                        // Rien à retirer sur la période : la seule action qui ait un sens
+                        // est de sortir le prêt de la paie. On l'annule plutôt que de le
+                        // supprimer, pour garder trace des échéances déjà prélevées.
+                        $loan->statut = 'cancelled';
+                        $loan->save();
+                        $messageRetrait = "Prêt annulé : il ne sera plus prélevé sur aucune période.";
                     }
                     break;
                 case 'avantage':
@@ -1497,7 +1634,7 @@ class PaieSalariesController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Élément retiré et paie recalculée avec succès.',
+                'message' => ($messageRetrait ?? 'Élément retiré') . ' La paie a été recalculée.',
             ]);
         } catch (\Throwable $e) {
             \Log::error('Retrait variable salarie', ['error' => $e->getMessage()]);

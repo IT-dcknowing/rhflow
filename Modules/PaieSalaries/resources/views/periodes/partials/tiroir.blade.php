@@ -133,6 +133,9 @@
                     <button type="button" class="pm1-tr js-open-nested" data-theme="absence">
                         <i class="fas fa-user-clock"></i><span>Absences</span>
                     </button>
+                    <button type="button" class="pm1-tr js-open-nested" data-theme="remboursement">
+                        <i class="fas fa-receipt"></i><span>Remboursement de frais</span>
+                    </button>
                 </div>
             @endif
         </section>
@@ -577,6 +580,118 @@
             var nestedEmpNom = document.getElementById('pm1NestedEmpNom');
             var nestedEmpMat = document.getElementById('pm1NestedEmpMat');
 
+            // Un <select> obligatoire sans option est une impasse : l'utilisateur ne
+            // peut ni choisir, ni comprendre pourquoi. Plutôt que de le renvoyer vers
+            // l'écran de configuration — ce qui lui ferait perdre le tiroir, le salarié
+            // et sa saisie en cours — le référentiel se crée ici même, puis la liste se
+            // recharge et le formulaire reprend son cours.
+            function blocReferentielVide(libelle, cle) {
+                var champJours = cle === 'conge'
+                    ? '<div class="pm1-ref-jours">'
+                        + '<label for="pm1RefJours">Jours accordés</label>'
+                        + '<input type="number" id="pm1RefJours" class="form-control form-control-sm" min="0" max="365" value="0">'
+                      + '</div>'
+                    : '';
+
+                return '<div class="pm1-ref-vide" data-referentiel="' + cle + '">'
+                    + '<i class="fas fa-info-circle"></i>'
+                    + '<div class="pm1-ref-corps">'
+                        + '<strong>Aucun ' + libelle + ' n’est encore enregistré</strong>'
+                        + '<p>Créez-en un ici pour continuer, sans quitter le tiroir.</p>'
+                        + '<div class="pm1-ref-form">'
+                            + '<div class="pm1-ref-nom">'
+                                + '<label for="pm1RefNom">Nom du ' + libelle + '</label>'
+                                + '<input type="text" id="pm1RefNom" class="form-control form-control-sm" maxlength="255" placeholder="Ex : ' + (cle === 'conge' ? 'Congé annuel' : 'Avance sur salaire') + '">'
+                            + '</div>'
+                            + champJours
+                            + '<button type="button" class="btn btn-primary btn-sm" id="pm1RefCreer">'
+                                + '<i class="fas fa-plus me-1"></i>Créer'
+                            + '</button>'
+                        + '</div>'
+                        + '<span class="pm1-ref-erreur" id="pm1RefErreur" hidden></span>'
+                    + '</div></div>';
+            }
+
+            // Création du référentiel depuis le tiroir, puis rechargement de la liste.
+            function brancherCreationReferentiel(theme) {
+                var bloc = nestedFormContent.querySelector('.pm1-ref-vide');
+                if (!bloc) return;
+
+                var cle = bloc.dataset.referentiel;
+                var champNom = document.getElementById('pm1RefNom');
+                var champJours = document.getElementById('pm1RefJours');
+                var bouton = document.getElementById('pm1RefCreer');
+                var erreur = document.getElementById('pm1RefErreur');
+
+                function afficherErreur(message) {
+                    if (!erreur) return;
+                    erreur.textContent = message;
+                    erreur.hidden = false;
+                }
+
+                function creer() {
+                    var nom = (champNom && champNom.value || '').trim();
+                    if (!nom) {
+                        afficherErreur('Indiquez un nom.');
+                        if (champNom) champNom.focus();
+                        return;
+                    }
+
+                    if (erreur) erreur.hidden = true;
+                    bouton.disabled = true;
+                    bouton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Création…';
+
+                    fetch(@json(route('company.paiesalaries.referentiels.store')), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            referentiel: cle,
+                            nom: nom,
+                            jours: champJours ? (parseInt(champJours.value, 10) || 0) : null
+                        })
+                    })
+                    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+                    .then(function (res) {
+                        if (!res.ok || !res.d.success) {
+                            throw new Error(res.d.message || 'Création impossible.');
+                        }
+
+                        // La liste est alimentée côté navigateur : pas besoin de
+                        // recharger la page pour que le <select> se remplisse.
+                        if (cle === 'pret') {
+                            window.pm1OptionsPrets = (window.pm1OptionsPrets || []).concat([res.d.option]);
+                        } else if (cle === 'conge') {
+                            window.pm1TypesConges = (window.pm1TypesConges || []).concat([res.d.option]);
+                        }
+
+                        if (window.toastr) {
+                            toastr.success(res.d.message);
+                        }
+
+                        // Le panneau se redessine avec le vrai formulaire.
+                        ouvrirNestedDrawer(theme);
+                    })
+                    .catch(function (e) {
+                        afficherErreur(e.message || 'Création impossible.');
+                        bouton.disabled = false;
+                        bouton.innerHTML = '<i class="fas fa-plus me-1"></i>Créer';
+                    });
+                }
+
+                if (bouton) bouton.addEventListener('click', creer);
+                if (champNom) {
+                    champNom.addEventListener('keydown', function (e) {
+                        // Entrée valide la création sans soumettre le formulaire parent.
+                        if (e.key === 'Enter') { e.preventDefault(); creer(); }
+                    });
+                    champNom.focus();
+                }
+            }
+
             function getRetenueFormHtml() {
                 var opts = (window.pm1TypesRetenues || []).map(function (t) {
                     return '<option value="' + t.id + '">' + t.libelle + '</option>';
@@ -601,7 +716,11 @@
             }
 
             function getPretFormHtml() {
-                var opts = (window.pm1OptionsPrets || []).map(function (o) {
+                var natures = window.pm1OptionsPrets || [];
+                if (!natures.length) {
+                    return blocReferentielVide('type de prêt', 'pret');
+                }
+                var opts = natures.map(function (o) {
                     return '<option value="' + o.id + '">' + o.name + '</option>';
                 }).join('');
                 return `
@@ -710,7 +829,11 @@
             }
 
             function getCongeFormHtml() {
-                var opts = (window.pm1TypesConges || []).map(function (c) {
+                var types = window.pm1TypesConges || [];
+                if (!types.length) {
+                    return blocReferentielVide('type de congé', 'conge');
+                }
+                var opts = types.map(function (c) {
                     return '<option value="' + c.id + '">' + c.title + '</option>';
                 }).join('');
                 var debut = (window.pm1Periode && window.pm1Periode.debut) || '';
@@ -740,6 +863,20 @@
                         <label class="form-label fw-bold">Allocation de congé (FCFA)</label>
                         <input type="number" class="form-control font-monospace" name="amount_leave" min="0" step="500" value="0" placeholder="0 si maintien de salaire">
                         <small class="text-muted">Laisser 0 si déjà inclus dans le salaire régulier.</small>
+                    </div>
+                `;
+            }
+
+            function getRemboursementFormHtml() {
+                return `
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Objet du remboursement <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="libelle" placeholder="Ex : Frais de mission, carburant, téléphone…" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Montant (FCFA) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="500" placeholder="Ex : 25000" required>
+                        <small class="text-muted">Versé en plus du salaire, sans cotisation ni impôt.</small>
                     </div>
                 `;
             }
@@ -839,6 +976,11 @@
                         title: 'Enregistrer une absence',
                         badge: 'Absence',
                         html: getAbsenceFormHtml()
+                    },
+                    'remboursement': {
+                        title: 'Ajouter un remboursement de frais',
+                        badge: 'Remboursement',
+                        html: getRemboursementFormHtml()
                     }
                 };
 
@@ -848,6 +990,21 @@
                 nestedTitle.textContent = cur.title;
                 nestedBadge.textContent = cur.badge;
                 nestedFormContent.innerHTML = cur.html;
+
+                // Referentiel vide : le panneau n'affiche qu'une explication, il n'y a
+                // rien a enregistrer. Le bouton de soumission serait trompeur.
+                // Referentiel vide : le panneau n'affiche qu'un formulaire de creation,
+                // il n'y a rien a enregistrer. On masque par la classe et non par
+                // l'attribut hidden : Bootstrap impose display:inline-block sur .btn,
+                // qui l'emporte sur la regle [hidden] du navigateur.
+                var referentielVide = !!nestedFormContent.querySelector('.pm1-ref-vide');
+                var boutonEnvoyer = document.getElementById('pm1NestedSubmit');
+                var boutonAnnuler = document.getElementById('pm1NestedCancel');
+                if (boutonEnvoyer) boutonEnvoyer.classList.toggle('d-none', referentielVide);
+                if (boutonAnnuler) boutonAnnuler.classList.toggle('mt-2', !referentielVide);
+                if (referentielVide) {
+                    brancherCreationReferentiel(theme);
+                }
 
                 // Calculs automatiques
                 if (theme === 'pret') {
@@ -1008,9 +1165,23 @@
 
                 if (!type || !id) return;
 
+                // Un pret dont l'echeance n'est pas encore posee sur la periode ne peut
+                // pas en etre « retire » : il n'y a rien a retirer. La seule action qui
+                // ait un sens est de le sortir de la paie. Le dire avant, pas apres.
+                var applique = btn.dataset.applique !== '0';
+                var titreConfirmation = 'Retirer cet élément ?';
+                var texteConfirmation = 'Voulez-vous retirer "' + libelle + '" pour ce salarié ?';
+
+                if (type === 'pret' && !applique) {
+                    titreConfirmation = 'Annuler ce prêt ?';
+                    texteConfirmation = 'Aucune échéance de "' + libelle + '" n’est posée sur cette période. '
+                        + 'Le retirer revient à annuler le prêt : il ne sera plus prélevé sur aucune période. '
+                        + 'Les échéances déjà prélevées sont conservées.';
+                }
+
                 Swal.fire({
-                    title: 'Retirer cet élément ?',
-                    text: 'Voulez-vous retirer "' + libelle + '" pour ce salarié ?',
+                    title: titreConfirmation,
+                    text: texteConfirmation,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',

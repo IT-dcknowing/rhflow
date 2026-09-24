@@ -349,6 +349,28 @@
         .pm1-enregistrer { flex: 1; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
 
         .pm1-el-vide { margin: 0; padding: 14px; border: 1px dashed var(--line); border-radius: 10px; font-size: 12.5px; color: var(--muted); text-align: center; }
+
+        /* Referentiel vide (types de pret, de conge...) : on explique et on renvoie
+           vers l'ecran de configuration plutot que d'afficher une liste morte. */
+        .pm1-ref-vide { display: flex; align-items: flex-start; gap: 11px; padding: 14px 16px; border: 1px solid var(--navy-line); border-radius: 11px; background: var(--navy-tint); }
+        .pm1-ref-vide > i { margin-top: 2px; color: var(--navy); }
+        .pm1-ref-vide strong { display: block; font-size: 13px; font-weight: 600; color: var(--navy-text); }
+        .pm1-ref-vide p { margin: 3px 0 9px; font-size: 12.5px; color: var(--ink-2); }
+        .pm1-ref-corps { flex: 1; min-width: 0; }
+        /* Grille plutot que flex-wrap : le bouton reste sur la meme ligne que les
+           champs et aligne sur leur bas, au lieu de retomber seul en dessous. */
+        .pm1-ref-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 9px; }
+        .pm1-ref-form:has(.pm1-ref-jours) { grid-template-columns: minmax(0, 1fr) 96px auto; }
+        .pm1-ref-nom { min-width: 0; }
+        .pm1-ref-jours { min-width: 0; }
+        .pm1-ref-form label { display: block; margin-bottom: 3px; font-size: 11px; font-weight: 600; color: var(--muted); }
+        .pm1-ref-form .btn { white-space: nowrap; height: 31px; }
+
+        @media (max-width: 560px) {
+            .pm1-ref-form, .pm1-ref-form:has(.pm1-ref-jours) { grid-template-columns: minmax(0, 1fr); }
+        }
+        .pm1-ref-erreur { display: block; margin-top: 7px; font-size: 12px; font-weight: 600; color: var(--bad); }
+        .pm1-ref-erreur[hidden] { display: none; }
         .pm1-el-totaux { margin-top: 10px; }
 
         .pm1-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }

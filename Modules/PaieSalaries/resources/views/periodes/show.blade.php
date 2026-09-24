@@ -134,7 +134,7 @@
         return ['oui' => stripos($trait, 'Non Soumis') === false, 'titre' => $trait];
     };
 
-    $poserElement = function ($employeeId, $sens, $libelle, $montant, $fiscal = null, $social = null, $note = null, $allowanceId = null, $varType = null, $varId = null) use (&$elementsParSalarie) {
+    $poserElement = function ($employeeId, $sens, $libelle, $montant, $fiscal = null, $social = null, $note = null, $allowanceId = null, $varType = null, $varId = null, $varApplique = true) use (&$elementsParSalarie) {
         if (!$employeeId) {
             return;
         }
@@ -148,6 +148,9 @@
             'allowance_id' => $allowanceId,
             'var_type' => $varType,
             'var_id' => $varId,
+            // Une échéance de prêt peut être affichée sans exister en base : le
+            // retrait n'a alors pas le même sens, d'où ce drapeau.
+            'var_applique' => $varApplique,
         ];
     };
 
@@ -166,7 +169,22 @@
     }
 
     foreach ($retenues as $element) {
-        $poserElement($element->employee_id, '–', $element->libelle, $element->amount, null, null, 'Retenue', null, 'retenue', $element->id);
+        // Le type 5 est un remboursement de frais : il s'ajoute au net au lieu d'en
+        // être déduit. L'afficher en « – » comme les autres retenues le faisait lire
+        // à l'envers dans le tiroir.
+        $estRemboursement = (int) $element->type_retenue_id === 5;
+        $poserElement(
+            $element->employee_id,
+            $estRemboursement ? '+' : '–',
+            $element->libelle,
+            $element->amount,
+            null,
+            null,
+            $estRemboursement ? 'Remboursement de frais' : 'Retenue',
+            null,
+            'retenue',
+            $element->id
+        );
     }
 
     // Échéances de prêt : rendues ici aussi, pour que chaque salarié voie la sienne
@@ -184,7 +202,8 @@
                 : 'Échéance non appliquée — à valider dans les éléments du mois',
             null,
             'pret',
-            optional($echeance->loan)->id
+            optional($echeance->loan)->id,
+            (bool) $echeance->applied
         );
     }
 
@@ -714,6 +733,7 @@
                                                                         data-id="{{ $element['var_id'] }}"
                                                                         data-employee-id="{{ $idEmp }}"
                                                                         data-libelle="{{ $element['libelle'] }}"
+                                                                        data-applique="{{ ($element['var_applique'] ?? true) ? 1 : 0 }}"
                                                                         title="Retirer {{ $element['libelle'] }}">
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </button>
