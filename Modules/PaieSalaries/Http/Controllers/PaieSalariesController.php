@@ -937,7 +937,7 @@ class PaieSalariesController extends Controller
                         // Prorata identique aux autres primes conventionnelles : montant
                         // = droit plein, amount = part du mois travaillée.
                         $jours = (int) $employee->get_jours_work($periode->id);
-                        $jours = (in_array($jours, [28, 29, 31], true) || $jours <= 0) ? 30 : $jours;
+                        $jours = (in_array($jours, [28, 31], true) || $jours <= 0) ? 30 : $jours;
                         $proratise = $jours === 30 ? $valeur : round(($valeur / 30) * $jours);
 
                         Allowance::updateOrCreate(
@@ -1020,6 +1020,115 @@ class PaieSalariesController extends Controller
             'success' => true,
             'message' => $message,
             'traites' => $nombre,
+        ]);
+    }
+
+    /**
+     * Enregistre le détail d'un salarié depuis le tiroir de la paie du mois :
+     * jours travaillés, salaire de base et montants des primes, en une fois.
+     *
+     * C'est le « Enregistrer & recalculer » de la maquette. Comme le traitement en
+     * masse, le calcul est confié à SalaryService, et non refait à la main.
+     */
+    public function enregistrerSalarie(Request $request, $periodeId, $employeeId)
+    {
+        $periode = PaiePeriode::where('company_id', Auth::user()->company_id)->find($periodeId);
+
+        if (!$periode) {
+            return response()->json(['success' => false, 'message' => "Période introuvable."], 404);
+        }
+
+        if (in_array($periode->statut, ['payee', 'cloture', 'annulee'], true) || $periode->bulletins()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => "Période verrouillée : les bulletins sont déjà générés.",
+            ], 422);
+        }
+
+        $employee = Employee::where('company_id', Auth::user()->company_id)->find($employeeId);
+
+        if (!$employee) {
+            return response()->json(['success' => false, 'message' => "Salarié introuvable."], 404);
+        }
+
+        $validateur = \Validator::make($request->all(), [
+            'jours' => 'required|integer|min:0|max:30',
+            'base' => 'required|numeric|min:0',
+            'elements' => 'array',
+            'elements.*.id' => 'required|integer',
+            'elements.*.montant' => 'required|numeric|min:0',
+        ], [
+            'jours.required' => 'Indiquez les jours travaillés.',
+            'jours.max' => 'Les jours travaillés sont comptés sur une base de 30.',
+            'base.required' => 'Indiquez le salaire de base.',
+            'base.min' => 'Le salaire de base ne peut pas être négatif.',
+        ]);
+
+        if ($validateur->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validateur->errors()->first(),
+                'errors' => $validateur->errors(),
+            ], 422);
+        }
+
+        $valide = $validateur->validated();
+        $jours = (int) $valide['jours'];
+        $service = app(\App\Services\SalaryService::class);
+
+        try {
+            \DB::transaction(function () use ($employee, $periode, $valide, $jours, $service) {
+
+                $employee->update([
+                    'salary' => (float) $valide['base'],
+                    'tax_payer_id' => $jours,
+                ]);
+
+                // Montants saisis dans le tiroir. montant porte le droit plein,
+                // amount la part du mois travaillée : c'est la convention des primes
+                // conventionnelles, et get_salary_imposable() lit montant.
+                $saisis = collect($valide['elements'] ?? [])->keyBy('id');
+
+                foreach (Allowance::where('employee_id', $employee->id)
+                    ->where('periode_id', $periode->id)->get() as $allowance) {
+
+                    $plein = $saisis->has($allowance->id)
+                        ? (float) $saisis[$allowance->id]['montant']
+                        : (float) ($allowance->montant ?: $allowance->amount);
+
+                    $allowance->montant = $plein;
+                    $allowance->amount = ($allowance->type_amount == 1 && $jours != 30)
+                        ? round(($plein / 30) * $jours)
+                        : $plein;
+                    $allowance->amount_imp = $allowance->amount;
+                    $allowance->jours_work = $jours;
+                    $allowance->updated_by = auth()->id();
+                    $allowance->save();
+                }
+
+                $employee->refresh();
+                $service->appliquerPrimeAnciennete($employee, $periode);
+                $service->appliquerRetenuesLegales($employee, $periode);
+            });
+        } catch (\Throwable $e) {
+            \Log::error('Enregistrement du détail salarié', [
+                'periode_id' => $periode->id,
+                'employee_id' => $employee->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => "L'enregistrement a échoué : " . $e->getMessage(),
+            ], 500);
+        }
+
+        $employee->refresh();
+
+        return response()->json([
+            'success' => true,
+            'message' => $employee->name . ' : montants recalculés.',
+            'net' => (float) $employee->get_net_salary($periode->id),
         ]);
     }
 
@@ -3555,45 +3664,33 @@ public function storeRemboursement(Request $request)
             $month = Carbon::parse($periode->date_debut)->format('Y-m');
             $year = Carbon::parse($periode->date_debut)->year;
 
-            $validatePaysilp = PaySlip::where('salary_month', '=', $month)
-                                ->where('company_id', $companyId)
-                                ->pluck('employee_id');
-            $lastDayOfMonth = Carbon::createFromDate($year, Carbon::parse($periode->date_debut)->month)->endOfMonth()->toDateString();
-            $firstDayOfMonth = Carbon::parse($periode->date_debut)->startOfMonth()->toDateString();
-
-            $payslip_employee = Employee::where('company_id', $companyId)
-                                    ->where('is_active', 1)
-                                    ->whereHas('contracts', function($query) use ($firstDayOfMonth, $lastDayOfMonth) {
-                                        $query->where('start_date', '<=', $lastDayOfMonth)
-                                              ->where(function($q) use ($firstDayOfMonth) {
-                                                  $q->where('end_date', '>=', $firstDayOfMonth)
-                                                    ->orWhereNull('end_date');
-                                              });
-                                    })
-                                    ->pluck('id');
+            $employees = Employee::active()
+                ->where('company_id', $companyId)
+                ->where('start_date', '<=', $periode->date_fin)
+                ->where(function ($query) use ($periode) {
+                    $query->whereNull('end_date')
+                          ->orWhere('end_date', '>=', $periode->date_debut);
+                })
+                ->get();
 
             $avantages = Avantage::whereHas('periode', function($query) use ($periode) {
                     $query->where('id', $periode->id);
                 })->where('is_active', 1)->sum('amount_reel');
 
             $total_avtg = $avantages;
-
-            // Déterminer les employés sans fiche de paie
-            $missing_payslips = $payslip_employee->diff($validatePaysilp);
             $user = User::where('company_id', $companyId)->first();
 
-            if ($missing_payslips->count() > 0) {
-                foreach ($missing_payslips as $employee_id) {
-                    $employee = Employee::where('id', $employee_id)->where('is_active', 1)->first();
-
+            if ($employees->count() > 0) {
+                foreach ($employees as $employee) {
                     // Aucun bulletin sans ITS, CNPS et CMU : retenues légales appliquées juste avant le calcul
                     // Prime d'ancienneté posée avant les retenues : elle entre dans le brut.
                     app(\App\Services\SalaryService::class)->appliquerPrimeAnciennete($employee, $periode);
                     app(\App\Services\SalaryService::class)->appliquerRetenuesLegales($employee, $periode);
 
-                    $payslipEmployee = new PaySlip();
-                    $payslipEmployee->employee_id = $employee->id;
-                    $payslipEmployee->periode_id = $periode->id;
+                    $payslipEmployee = PaySlip::firstOrNew([
+                        'employee_id' => $employee->id,
+                        'periode_id' => $periode->id,
+                    ]);
                     $payslipEmployee->net_payble = $employee->get_net_salary($periode->id);
                     $payslipEmployee->salary_month = $month;
                     $payslipEmployee->status = 0;

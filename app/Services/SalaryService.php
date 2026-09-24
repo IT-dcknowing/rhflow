@@ -101,7 +101,7 @@ class SalaryService
 
         // 1. Calcul de l'IRS Brut selon les tranches mensuelles (Barème 2024)
         $j = intval($nbre_jours);
-        $normalized_days = ($j == 28 || $j == 29 || $j == 31 || $j == 0) ? 30 : $j;
+        $normalized_days = ($j == 28 || $j == 31 || $j == 0) ? 30 : $j;
 
         // Base imposable = Brut Imposable (Réforme 2024: suppression de l'abattement de 20%)
         $base_imposable_reelle = $brut;
@@ -163,9 +163,9 @@ class SalaryService
      * Calcule la prime d'ancienneté selon l'Art. 55 de la CCI de juillet 1977.
      *
      * Règle :
-     *   - < 25 mois de présence → 0 FCFA
-     *   - 25 à 36 mois         → 2% du salaire de base
-     *   - > 36 mois            → 2% + 1% par année supplémentaire (plafonné à 25%)
+     *   - < 2 ans de présence → 0 FCFA
+     *   - 2 à 3 ans           → 2% du salaire de base
+     *   - au-delà de 3 ans    → 2% + 1% par année supplémentaire (plafonné à 25%)
      *
      * @param  Employee    $employee     L'employé concerné
      * @param  PaiePeriode $periode      La période de paie de référence
@@ -192,12 +192,13 @@ class SalaryService
             $diff = $date_embauche->diff($date_ref);
             $total_mois = ($diff->y * 12) + $diff->m;
 
-            // Art. 55 CCI : pas de prime avant 25 mois révolus
-            if ($total_mois < 25) return 0.0;
+            // Le droit s'ouvre à deux ans d'ancienneté révolus. Le seuil était fixé à
+            // 25 mois, ce qui privait de prime le salarié pendant son 25e mois.
+            if ($total_mois < 24) return 0.0;
 
             // Calcul du taux :
-            // Phase 1 (25e–36e mois) → 2%
-            // Phase 2 (> 36 mois)    → 2% + 1%/an supplémentaire, max 25%
+            // Phase 1 (2e à 3e année) → 2%
+            // Phase 2 (au-delà)       → 2% + 1%/an supplémentaire, max 25%
             $annees_completes = (int) floor($total_mois / 12);
             if ($annees_completes <= 2) {
                 $taux = 2;
@@ -289,7 +290,7 @@ class SalaryService
             ->where('jours_work', '>', 0)
             ->value('jours_work') ?: ($employee->tax_payer_id ?: 30));
 
-        if (in_array($jours, [28, 29, 31], true) || $jours <= 0) {
+        if (in_array($jours, [28, 31], true) || $jours <= 0) {
             $jours = 30;
         }
 
@@ -396,7 +397,7 @@ class SalaryService
 
         // IRS
         $j = intval($employee->tax_payer_id);
-        $nbre_jours = ($j == 28 || $j == 29 || $j == 31 || $j == 0) ? 30 : $j;
+        $nbre_jours = ($j == 28 || $j == 31 || $j == 0) ? 30 : $j;
         $parts = $employee->parts;
 
         $irs_brut = 0;

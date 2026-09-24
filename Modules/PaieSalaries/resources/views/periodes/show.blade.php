@@ -80,12 +80,60 @@
     $nbConformes = 0;
     $nbEnAttente = 0;
 
+    // Variables du mois par salarié : absences, heures supplémentaires, congés.
+    // Trois requêtes pour toute la page, groupées ensuite en mémoire : une par
+    // salarié aurait multiplié les allers-retours sans rien apporter.
+    $absencesParSalarie = \Modules\Time\Models\TimeSheet::where('periode_id', $periode->id)
+        ->orderBy('date')
+        ->get()
+        ->groupBy('employee_id');
+
+    $heuresSupParSalarie = \Modules\Time\Models\Overtime::where('periode_id', $periode->id)
+        ->orderBy('start_date')
+        ->get()
+        ->groupBy('employee_id');
+
+    $congesParSalarie = \Modules\Leaves\Models\Leave::with('leaveType')
+        ->where('periode_id', $periode->id)
+        ->orderBy('start_date')
+        ->get()
+        ->groupBy('employee_id');
+
+    // Total d'heures d'une ligne d'heures supplémentaires, toutes majorations
+    // confondues. Le détail par taux reste consultable sur l'écran dédié.
+    $heuresTotal = function ($ligne) {
+        return (int) $ligne->quar_heure + (int) $ligne->heure_audd
+            + (int) $ligne->heure_nuit_ferie + (int) $ligne->heure_dim_ferie
+            + (int) $ligne->heure_nuit_dim_ferie;
+    };
+
     // Éléments de paie regroupés par salarié, pour le détail du tiroir.
     // Purement de la lecture : les collections sont déjà chargées par le
     // contrôleur, on ne fait que les trier et les mettre en forme.
     $elementsParSalarie = [];
 
-    $poserElement = function ($employeeId, $sens, $libelle, $montant, $fiscal = null, $social = null, $note = null) use (&$elementsParSalarie) {
+    // $allowanceId n'est renseigné que pour les primes : ce sont les seules dont le
+    // montant se saisit dans le tiroir. Retenues et échéances de prêt s'affichent,
+    // mais se modifient sur leur écran propre.
+    // Traduction des paramètres de rubrique en étiquettes de la maquette.
+    // « exo 100% » veut dire entièrement exonéré, donc Impôt NON ; « exo 0% »,
+    // aucune exonération, donc Impôt OUI. La valeur d'origine reste en infobulle.
+    $etiquetteFiscale = function ($trait) {
+        if (!$trait) {
+            return null;
+        }
+        return ['oui' => strpos($trait, 'exo 100%') !== 0 && stripos($trait, 'Remboursement') === false,
+                'titre' => $trait];
+    };
+
+    $etiquetteSociale = function ($trait) {
+        if (!$trait) {
+            return null;
+        }
+        return ['oui' => stripos($trait, 'Non Soumis') === false, 'titre' => $trait];
+    };
+
+    $poserElement = function ($employeeId, $sens, $libelle, $montant, $fiscal = null, $social = null, $note = null, $allowanceId = null) use (&$elementsParSalarie) {
         if (!$employeeId) {
             return;
         }
@@ -96,13 +144,17 @@
             'fiscal' => $fiscal,
             'social' => $social,
             'note' => $note,
+            'allowance_id' => $allowanceId,
         ];
     };
 
     foreach ($allowances as $element) {
-        $poserElement($element->employee_id, '+', $element->title, $element->amount,
+        // On expose le montant plein : c'est lui qu'on saisit, le prorata en découle.
+        $poserElement($element->employee_id, '+', $element->title,
+            $element->montant ?: $element->amount,
             $element->trait_fisc, $element->trait_cnps,
-            $element->jours_work && $element->jours_work != 30 ? $element->jours_work . ' j' : null);
+            $element->jours_work && $element->jours_work != 30 ? $element->jours_work . ' j' : null,
+            $element->id);
     }
 
     foreach ($avantages as $element) {
@@ -138,15 +190,11 @@
         &$totalBase, &$totalPrimes, &$totalCotis, &$totalImpot,
         &$nbAnomalies, &$nbConformes, &$nbEnAttente, &$aVerifier) {
 
-        $ligne['verifier'] = $ligne['jours'] != 30;
+        $ligne['verifier'] = false;
         $ligne['primes'] = max(0, $ligne['brut'] - $ligne['base']);
 
-        // « Anomalie » reprend la règle déjà en place (jours ≠ 30) ; « en attente »
-        // signale un salarié dont rien n'a encore été calculé pour le mois.
-        if ($ligne['verifier']) {
-            $ligne['statut'] = 'anomaly';
-            $nbAnomalies++;
-        } elseif ($ligne['net'] <= 0) {
+        // Un salarié avec des jours proratisés est conforme et normal
+        if ($ligne['net'] <= 0) {
             $ligne['statut'] = 'pending';
             $nbEnAttente++;
         } else {
@@ -403,8 +451,7 @@
                             <label class="visually-hidden" for="pm1Filtre">Filtrer par statut</label>
                             <select class="form-select pm1-filter" id="pm1Filtre">
                                 <option value="all">Filtre : tous ({{ count($lignes) }})</option>
-                                <option value="anomaly">Avec anomalies ({{ $nbAnomalies }})</option>
-                                <option value="ok">Sans anomalie ({{ $nbConformes }})</option>
+                                <option value="ok">Conformes ({{ $nbConformes }})</option>
                                 <option value="pending">En attente ({{ $nbEnAttente }})</option>
                             </select>
 
@@ -471,6 +518,7 @@
                                                         @if($ligne['rembourse'] > 0)<span class="pm-tag">Frais</span>@endif
                                                     </b>
                                                     <small>ID <span class="pm-mono">{{ $emp->employee_id }}</span>@if($ligne['anciennete']) · anc. {{ $ligne['anciennete'] }}@endif</small>
+                                                    <span class="pm1-ouvrir"><i class="fas fa-chevron-right"></i>Voir le détail</span>
                                                 </div>
                                                 @if($ligne['statut'] === 'anomaly')
                                                     <span class="pm1-pill anomaly" title="Jours travaillés différents de 30">
@@ -530,28 +578,155 @@
                                                         aria-expanded="false" aria-label="Actions pour {{ $emp->name }}">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
+                                                    {{-- Ajouter, afficher et modifier les éléments ont quitté ce menu :
+                                                         ils vivent dans le tiroir du salarié, ouvert au clic sur la ligne.
+                                                         Ne reste ici que l'accès direct au bulletin. --}}
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        @unless($verrouille)
-                                                        <a class="dropdown-item btn-add-elements" href="#" data-bs-toggle="modal" data-bs-target="#addElementsModal"
-                                                            data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}" data-periode-id="{{ $periode->id }}">
-                                                            <i class="fas fa-plus me-2"></i>Ajouter des éléments
-                                                        </a>
-                                                        <a class="dropdown-item btn-show-elements" href="#" data-bs-toggle="modal" data-bs-target="#showElementsModal"
-                                                            data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}" data-periode-id="{{ $periode->id }}">
-                                                            <i class="fas fa-eye me-2"></i>Afficher les éléments
-                                                        </a>
-                                                        <a class="dropdown-item btn-edit-elements" href="#" data-bs-toggle="modal" data-bs-target="#editElementsModal"
-                                                            data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}" data-periode-id="{{ $periode->id }}">
-                                                            <i class="fas fa-pen me-2"></i>Modifier les éléments
-                                                        </a>
-                                                        <div class="dropdown-divider"></div>
-                                                        @endunless
                                                         <a class="dropdown-item btn-aperçu-bulletin" href="#" data-bs-toggle="modal" data-bs-target="#showBulletinModal"
                                                             data-employee-id="{{ $emp->id }}" data-employee-name="{{ $emp->name }}"
                                                             data-exercice-id="{{ $periode->exercice_id }}" data-periode-id="{{ $periode->id }}">
                                                             <i class="fas fa-file-invoice me-2"></i>Aperçu du bulletin
                                                         </a>
                                                     </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        {{-- Détail du salarié, replié sous sa ligne. Rendu ici plutôt
+                                             qu'en bas de page : ces éléments valent pour ce salarié. --}}
+                                        <tr class="pm1-detail" data-detail-pour="{{ $emp->id }}" hidden>
+                                            <td colspan="10">
+                                                <div class="pm1-detail-corps">
+                                            @php $idEmp = $ligne['emp']->id; @endphp
+                                            <div id="pm1El-{{ $idEmp }}">
+                                                <div class="pm1-el-line socle">
+                                                    <div class="pm1-el-main">
+                                                        <b>Salaire de base contractuel</b>
+                                                        <span class="pm1-el-meta">Élément obligatoire soumis à cotisation</span>
+                                                    </div>
+                                                    @if($verrouille)
+                                                        <span class="pm1-el-amt">{{ $fmt($ligne['salaire']) }} <small>FCFA</small></span>
+                                                    @else
+                                                        <span class="pm1-el-saisie">
+                                                            <input type="number" class="pm1-champ pm1-champ-base" min="0" step="500"
+                                                                value="{{ (int) $ligne['salaire'] }}"
+                                                                aria-label="Salaire de base de {{ $emp->name }}">
+                                                            <small>FCFA</small>
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                @forelse($elementsParSalarie[$idEmp] ?? [] as $element)
+                                                    <div class="pm1-el-line">
+                                                        <div class="pm1-el-main">
+                                                            <b>{{ $element['libelle'] }}</b>
+                                                            <span class="pm1-el-meta">
+                                                                @php
+                                                                    $fisc = $etiquetteFiscale($element['fiscal']);
+                                                                    $soc = $etiquetteSociale($element['social']);
+                                                                @endphp
+                                                                @if($fisc)
+                                                                    <span class="pm1-badge {{ $fisc['oui'] ? 'impot' : 'neutre' }}" title="{{ $fisc['titre'] }}">Impôt {{ $fisc['oui'] ? 'OUI' : 'NON' }}</span>
+                                                                @endif
+                                                                @if($soc)
+                                                                    <span class="pm1-badge {{ $soc['oui'] ? 'social' : 'neutre' }}" title="{{ $soc['titre'] }}">Soc {{ $soc['oui'] ? 'OUI' : 'NON' }}</span>
+                                                                @endif
+                                                                @if($element['note'])<span class="pm1-badge neutre">{{ $element['note'] }}</span>@endif
+                                                            </span>
+                                                        </div>
+                                                        @if(!$verrouille && $element['allowance_id'])
+                                                            <span class="pm1-el-saisie">
+                                                                <b class="pm1-signe pos">+</b>
+                                                                <input type="number" class="pm1-champ pm1-champ-element" min="0" step="500"
+                                                                    data-allowance="{{ $element['allowance_id'] }}"
+                                                                    value="{{ (int) $element['montant'] }}"
+                                                                    aria-label="Montant de {{ $element['libelle'] }}">
+                                                                <small>FCFA</small>
+                                                            </span>
+                                                        @else
+                                                            <span class="pm1-el-amt {{ $element['sens'] === '+' ? 'pos' : 'neg' }}">
+                                                                {{ $element['sens'] }}{{ $fmt($element['montant']) }} <small>FCFA</small>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                @empty
+                                                    <p class="pm1-el-vide">Aucune prime ni retenue saisie pour ce mois.</p>
+                                                @endforelse
+                                            </div>
+
+                                            {{-- Variables du mois de ce salarié, recopiées dans le tiroir. --}}
+                                            <div id="pm1Var-{{ $idEmp }}">
+                                                @php
+                                                    $sesAbsences = $absencesParSalarie[$idEmp] ?? collect();
+                                                    $sesHeures = $heuresSupParSalarie[$idEmp] ?? collect();
+                                                    $sesConges = $congesParSalarie[$idEmp] ?? collect();
+                                                    $aucuneVariable = $sesAbsences->isEmpty() && $sesHeures->isEmpty() && $sesConges->isEmpty();
+                                                @endphp
+
+                                                @forelse($sesAbsences as $absence)
+                                                    <div class="pm1-var-line">
+                                                        <div class="pm1-var-main">
+                                                            <b><i class="fas fa-user-clock"></i>Absence</b>
+                                                            <span class="pm1-var-meta">
+                                                                {{ \Carbon\Carbon::parse($absence->date)->format('d/m/Y') }}
+                                                                @if($absence->arrival_date)
+                                                                    → retour le {{ \Carbon\Carbon::parse($absence->arrival_date)->format('d/m/Y') }}
+                                                                @endif
+                                                                @if($absence->type_permis)
+                                                                    <span class="pm1-el-tag">{{ Str::limit($absence->type_permis, 46) }}</span>
+                                                                @endif
+                                                                @if($absence->motif_justify)
+                                                                    <span class="pm1-el-tag">Justifiée : {{ $absence->motif_justify }}</span>
+                                                                @endif
+                                                            </span>
+                                                        </div>
+                                                        <span class="pm1-var-val">
+                                                            {{ (int) $absence->hours }} h
+                                                            @if($absence->retenue)<small>· {{ (int) $absence->retenue }} j retenus</small>@endif
+                                                        </span>
+                                                    </div>
+                                                @empty
+                                                @endforelse
+
+                                                @foreach($sesHeures as $heure)
+                                                    <div class="pm1-var-line">
+                                                        <div class="pm1-var-main">
+                                                            <b><i class="fas fa-clock"></i>Heures supplémentaires</b>
+                                                            <span class="pm1-var-meta">
+                                                                du {{ \Carbon\Carbon::parse($heure->start_date)->format('d/m/Y H:i') }}
+                                                                au {{ \Carbon\Carbon::parse($heure->end_date)->format('d/m/Y H:i') }}
+                                                                <span class="pm1-el-tag {{ $heure->statut === 'approved' ? 'soc' : '' }}">{{ ucfirst($heure->statut) }}</span>
+                                                                @if($heure->paid === 'paid')<span class="pm1-el-tag">Payées</span>@endif
+                                                            </span>
+                                                        </div>
+                                                        <span class="pm1-var-val">
+                                                            {{ $heuresTotal($heure) }} h
+                                                            @if((float) $heure->montant > 0)<small>· {{ $fmt((float) $heure->montant) }} FCFA</small>@endif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+
+                                                @foreach($sesConges as $conge)
+                                                    <div class="pm1-var-line">
+                                                        <div class="pm1-var-main">
+                                                            <b><i class="fas fa-umbrella-beach"></i>{{ $conge->leaveType->name ?? 'Congé' }}</b>
+                                                            <span class="pm1-var-meta">
+                                                                du {{ \Carbon\Carbon::parse($conge->start_date)->format('d/m/Y') }}
+                                                                au {{ \Carbon\Carbon::parse($conge->end_date)->format('d/m/Y') }}
+                                                                <span class="pm1-el-tag">{{ $conge->status }}</span>
+                                                            </span>
+                                                        </div>
+                                                        <span class="pm1-var-val">
+                                                            {{ (int) $conge->total_leave_days }} j
+                                                            @if((int) $conge->amount_leave > 0)<small>· {{ $fmt($conge->amount_leave) }} FCFA</small>@endif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+
+                                                @if($aucuneVariable)
+                                                    <p class="pm1-el-vide">Aucune absence, heure supplémentaire ni congé ce mois-ci.</p>
+                                                @endif
+                                            </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -586,43 +761,48 @@
                             <span>Montants en FCFA · base de 30 jours</span>
                             <span>Les primes affichées sont l'écart entre le brut et le salaire de base.</span>
                         </div>
+
+                        {{-- Ce volet ne concerne plus que les périodes verrouillées :
+                             paiement et documents. Les éléments du mois, les variables et
+                             les échéances de prêt ont rejoint le détail de chaque ligne,
+                             où ils valent pour un salarié précis. --}}
+                        @if($verrouille)
+                            <details class="pm1-annexes" open>
+                                <summary>
+                                    <i class="fas fa-sliders-h"></i>
+                                    <span>Paiement et documents de la paie</span>
+                                </summary>
+                                <div class="pm1-annexes-body">
+
+                                        @if($etape !== 'payee')
+                                            <section class="pm-panel">
+                                                <div class="pm-panel-head">
+                                                    <div>
+                                                        <h2>Valider le paiement</h2>
+                                                        <p>Marque la période et ses {{ count($lignes) }} bulletin(s) comme payés. Le bouton se trouve dans la barre du bas.</p>
+                                                    </div>
+                                                </div>
+                                                <div class="pm-panel-body">
+                                                    <form id="pmFormPaiement" action="{{ route('company.paiesalaries.periodes.valider-paiement', $periode->id) }}" method="POST">
+                                                        @csrf
+                                                        <label class="form-label" for="date_paiement_effectif">Date de paiement effectif</label>
+                                                        <input type="date" class="form-control pm-mono mb-3" id="date_paiement_effectif" name="date_paiement_effectif"
+                                                            value="{{ now()->format('Y-m-d') }}" required>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="envoyerNotifications" name="envoyer_notifications" checked>
+                                                            <label class="form-check-label" for="envoyerNotifications">Envoyer les notifications aux employés</label>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </section>
+                                        @endif
+
+                                        @include('paiesalaries::periodes.partials.documents')
+                                </div>
+                            </details>
+                        @endif
                     </section>
 
-                    {{-- Détail des éléments de paie, un bloc masqué par salarié. Le tiroir
-                         recopie celui de la ligne cliquée. Rendu ici plutôt qu'appelé en
-                         AJAX : les collections sont déjà en mémoire, autant s'en servir. --}}
-                    <div class="pm1-el-sources" hidden>
-                        @foreach($lignes as $ligne)
-                            @php $idEmp = $ligne['emp']->id; @endphp
-                            <div id="pm1El-{{ $idEmp }}">
-                                <div class="pm1-el-line socle">
-                                    <div class="pm1-el-main">
-                                        <b>Salaire de base contractuel</b>
-                                        <span class="pm1-el-meta">Élément obligatoire soumis à cotisation</span>
-                                    </div>
-                                    <span class="pm1-el-amt">{{ $fmt($ligne['salaire']) }} <small>FCFA</small></span>
-                                </div>
-
-                                @forelse($elementsParSalarie[$idEmp] ?? [] as $element)
-                                    <div class="pm1-el-line">
-                                        <div class="pm1-el-main">
-                                            <b>{{ $element['libelle'] }}</b>
-                                            <span class="pm1-el-meta">
-                                                @if($element['fiscal'])<span class="pm1-el-tag fisc">Fiscal : {{ $element['fiscal'] }}</span>@endif
-                                                @if($element['social'])<span class="pm1-el-tag soc">CNPS : {{ $element['social'] }}</span>@endif
-                                                @if($element['note'])<span class="pm1-el-tag">{{ $element['note'] }}</span>@endif
-                                            </span>
-                                        </div>
-                                        <span class="pm1-el-amt {{ $element['sens'] === '+' ? 'pos' : 'neg' }}">
-                                            {{ $element['sens'] }}{{ $fmt($element['montant']) }} <small>FCFA</small>
-                                        </span>
-                                    </div>
-                                @empty
-                                    <p class="pm1-el-vide">Aucune prime ni retenue saisie pour ce mois.</p>
-                                @endforelse
-                            </div>
-                        @endforeach
-                    </div>
 
                     {{-- Bandeau d'audit : état de la paie à gauche, action de clture à
                          droite. Une seule barre pour les trois états de la période. --}}
@@ -672,243 +852,6 @@
                         </div>
                     </div>
 
-                    {{-- Bloc replié : le modèle 1 met la grille au centre, tout le reste
-                         passe au second plan sans disparaître. Son contenu dépend de
-                         l'état de la période : saisies du mois avant génération,
-                         paiement et documents ensuite. --}}
-                    <details class="pm1-annexes">
-                        <summary>
-                            <i class="fas fa-sliders-h"></i>
-                            @if($verrouille)
-                                <span>Paiement et documents de la paie</span>
-                            @else
-                                <span>Éléments du mois, variables et échéances de prêt</span>
-                                @if(count($alerts) > 0)
-                                    <span class="pm-chip warn">{{ count($alerts) }} à regarder</span>
-                                @endif
-                            @endif
-                        </summary>
-                        <div class="pm1-annexes-body">
-
-                            @if($verrouille)
-
-                                @if($etape !== 'payee')
-                                    <section class="pm-panel">
-                                        <div class="pm-panel-head">
-                                            <div>
-                                                <h2>Valider le paiement</h2>
-                                                <p>Marque la période et ses {{ count($lignes) }} bulletin(s) comme payés. Le bouton se trouve dans la barre du bas.</p>
-                                            </div>
-                                        </div>
-                                        <div class="pm-panel-body">
-                                            <form id="pmFormPaiement" action="{{ route('company.paiesalaries.periodes.valider-paiement', $periode->id) }}" method="POST">
-                                                @csrf
-                                                <label class="form-label" for="date_paiement_effectif">Date de paiement effectif</label>
-                                                <input type="date" class="form-control pm-mono mb-3" id="date_paiement_effectif" name="date_paiement_effectif"
-                                                    value="{{ now()->format('Y-m-d') }}" required>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="envoyerNotifications" name="envoyer_notifications" checked>
-                                                    <label class="form-check-label" for="envoyerNotifications">Envoyer les notifications aux employés</label>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </section>
-                                @endif
-
-                                @include('paiesalaries::periodes.partials.documents')
-
-                            @else
-
-
-                                <div class="pm-grid-2">
-                                    <section class="pm-panel">
-                                        <div class="pm-panel-head">
-                                            <div>
-                                                <h2>{{ $previousPeriode ? 'Repris de ' . $previousPeriode->nom : 'Éléments du mois' }}</h2>
-                                                <p>
-                                                    {{ $previousPeriode
-                                                        ? "Copiés à l'ouverture de la paie. Récapitulatif : la saisie se fait dans le détail de chaque salarié."
-                                                        : 'Récapitulatif du mois. La saisie se fait dans le détail de chaque salarié.' }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="pm-panel-body">
-                                            <ul class="pm-list">
-                                                <li>
-                                                    <span class="pm-bx ok"><i class="fas fa-plus"></i></span>
-                                                    <span class="pm-txt"><b>Primes et indemnités</b><small>{{ $allowances->count() }} ligne(s) · montants par salarié</small></span>
-                                                    <span class="pm-amt">{{ $fmt($allowances->sum('amount')) }}</span>
-                                                </li>
-                                                <li>
-                                                    <span class="pm-bx bad"><i class="fas fa-minus"></i></span>
-                                                    <span class="pm-txt"><b>Retenues sur salaire</b><small>{{ $retenuesSalaire->count() }} ligne(s)</small></span>
-                                                    <span class="pm-amt">{{ $fmt($retenuesSalaire->sum('amount')) }}</span>
-                                                </li>
-                                                <li>
-                                                    <span class="pm-bx warn"><i class="fas fa-university"></i></span>
-                                                    <span class="pm-txt">
-                                                        <b>Échéances de prêt</b>
-                                                        <small>{{ $echeancesAppliquees->count() }} appliquée(s) sur {{ $loanPayments->count() }}</small>
-                                                    </span>
-                                                    <span class="pm-amt">{{ $fmt($echeancesAppliquees->sum('amount')) }}</span>
-                                                    @if($loanPayments->count() > 0)
-                                                        <a class="pm-link" href="#pm-echeances">Voir</a>
-                                                    @else
-                                                        <a class="pm-link" href="{{ route('company.loans.index') }}?periode_id={{ $periode->id }}">Prêts</a>
-                                                    @endif
-                                                </li>
-                                                <li>
-                                                    <span class="pm-bx"><i class="fas fa-gift"></i></span>
-                                                    <span class="pm-txt"><b>Avantages en nature</b><small>{{ $avantages->count() }} ligne(s)</small></span>
-                                                    <span class="pm-amt">{{ $fmt($avantages->sum('amount_reel')) }}</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </section>
-
-                                    <section class="pm-panel">
-                                        <div class="pm-panel-head">
-                                            <div>
-                                                <h2>Points d'attention</h2>
-                                                <p>À regarder avant de vérifier les montants.</p>
-                                            </div>
-                                            @if(count($alerts) > 0)
-                                                <span class="pm-chip warn">{{ count($alerts) }}</span>
-                                            @endif
-                                        </div>
-                                        <div class="pm-panel-body">
-                                            <ul class="pm-alerts">
-                                                @forelse($alerts as $alert)
-                                                    <li class="pm-alert {{ $alert['type'] === 'info' ? 'info' : 'warning' }}">
-                                                        <i class="fas {{ $alert['type'] === 'info' ? 'fa-info-circle' : 'fa-exclamation-triangle' }}"></i>
-                                                        <p>{{ $alert['message'] }}</p>
-                                                    </li>
-                                                @empty
-                                                    <li class="pm-alert ok">
-                                                        <i class="fas fa-check"></i>
-                                                        <p>Rien à signaler pour cette période.</p>
-                                                    </li>
-                                                @endforelse
-                                            </ul>
-                                        </div>
-                                    </section>
-                                </div>
-
-                                <section class="pm-panel">
-                                    <div class="pm-panel-head">
-                                        <div>
-                                            <h2>Ce qui change ce mois-ci</h2>
-                                            <p>Chaque case ouvre la saisie filtrée sur {{ $periode->nom }}.</p>
-                                        </div>
-                                    </div>
-                                    <div class="pm-panel-body">
-                                        <div class="pm-vars">
-                                            <a class="pm-var" href="{{ route('company.times.absences.index') }}?periode_id={{ $periode->id }}">
-                                                <span class="pm-var-top"><i class="fas fa-user-clock"></i>Absences</span>
-                                                <span class="pm-var-val">Saisir ou vérifier</span>
-                                            </a>
-                                            <a class="pm-var" href="{{ route('company.times.overtime.index') }}?periode_id={{ $periode->id }}">
-                                                <span class="pm-var-top"><i class="fas fa-clock"></i>Heures supplémentaires</span>
-                                                <span class="pm-var-val">Saisir ou vérifier</span>
-                                            </a>
-                                            <a class="pm-var" href="{{ route('company.leaves.index') }}?periode_id={{ $periode->id }}">
-                                                <span class="pm-var-top"><i class="fas fa-umbrella-beach"></i>Congés</span>
-                                                <span class="pm-var-val">Saisir ou vérifier</span>
-                                            </a>
-                                            <a class="pm-var {{ $remboursements->count() > 0 ? 'has' : '' }}" href="{{ route('company.paiesalaries.remboursements') }}?periode_id={{ $periode->id }}">
-                                                <span class="pm-var-top"><i class="fas fa-receipt"></i>Remboursements de frais</span>
-                                                <span class="pm-var-val">
-                                                    {{ $remboursements->count() > 0 ? $remboursements->count() . ' ligne(s) · ' . $fmt($remboursements->sum('amount')) : 'Aucun ce mois-ci' }}
-                                                </span>
-                                            </a>
-                                            <a class="pm-var" href="{{ route('company.ruptures.index') }}?periode_id={{ $periode->id }}">
-                                                <span class="pm-var-top"><i class="fas fa-user-slash"></i>Ruptures de contrat</span>
-                                                <span class="pm-var-val">Saisir ou vérifier</span>
-                                            </a>
-                                            <a class="pm-var" href="{{ route('company.loans.index') }}?periode_id={{ $periode->id }}">
-                                                <span class="pm-var-top"><i class="fas fa-university"></i>Prêts</span>
-                                                <span class="pm-var-val">Accorder ou suivre</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </section>
-
-                                @if($loanPayments->count() > 0)
-                                    <section class="pm-panel" id="pm-echeances">
-                                        <div class="pm-panel-head">
-                                            <div>
-                                                <h2>Échéances de prêt ({{ $loanPayments->count() }})</h2>
-                                                <p>Appliquez l'échéance du mois pour qu'elle soit retenue sur le bulletin. Un prêt n'entre dans la paie que période par période.</p>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Salarié</th>
-                                                        <th>Prêt</th>
-                                                        <th class="text-center">Avancement</th>
-                                                        <th class="pm-num">Reste dû</th>
-                                                        <th class="pm-num">Échéance</th>
-                                                        <th class="text-end">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach($loanPayments as $echeance)
-                                                        <tr>
-                                                            <td>{{ $echeance->loan->employee->name ?? '-' }}</td>
-                                                            <td>
-                                                                {{ $echeance->loan->title }}
-                                                                @if($echeance->hors_periode)
-                                                                    <br>
-                                                                    <small class="text-warning">
-                                                                        <i class="fas fa-exclamation-triangle me-1"></i>
-                                                                        Hors échéancier ({{ \Carbon\Carbon::parse($echeance->loan->start_date)->format('m/Y') }}
-                                                                        → {{ \Carbon\Carbon::parse($echeance->loan->end_date)->format('m/Y') }})
-                                                                    </small>
-                                                                @endif
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <span class="badge bg-label-info">{{ $echeance->echeances_payees }} / {{ $echeance->nbre_mois }} mois</span>
-                                                            </td>
-                                                            <td class="pm-num">{{ $fmt($echeance->remaining_amount) }}</td>
-                                                            <td class="pm-num">{{ $fmt($echeance->amount) }}</td>
-                                                            <td class="text-end">
-                                                                @if($echeance->applied)
-                                                                    <span class="badge bg-label-success me-1"><i class="fas fa-check me-1"></i>Appliquée</span>
-                                                                    <form action="{{ route('company.paiesalaries.periodes.loanpaiement.retirer', $echeance->loan->id) }}"
-                                                                        method="POST" class="d-inline"
-                                                                        onsubmit="return confirm('Retirer l\'échéance de ce prêt pour {{ $periode->nom }} ? Le prêt reste actif, il ne sera simplement pas retenu ce mois-ci.');">
-                                                                        @csrf
-                                                                        <input type="hidden" name="periode_id" value="{{ $periode->id }}">
-                                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="Ne pas retenir ce prêt sur cette période">
-                                                                            <i class="fas fa-ban"></i>Retirer
-                                                                        </button>
-                                                                    </form>
-                                                                @else
-                                                                    <form action="{{ route('company.paiesalaries.periodes.loanpaiement', $echeance->loan->id) }}"
-                                                                        method="POST" class="d-inline"
-                                                                        onsubmit="return confirm('Appliquer une échéance de {{ $fmt($echeance->amount) }} FCFA sur cette période ?');">
-                                                                        @csrf
-                                                                        <input type="hidden" name="periode_id" value="{{ $periode->id }}">
-                                                                        <input type="hidden" name="amount" value="{{ (int) $echeance->amount }}">
-                                                                        <button type="submit" class="btn btn-sm btn-outline-primary">
-                                                                            <i class="fas fa-plus"></i>Appliquer
-                                                                        </button>
-                                                                    </form>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </section>
-                                @endif
-                            @endif
-
-                        </div>
-                    </details>
 
 
                 </div>
@@ -1070,115 +1013,18 @@
                     });
                 }
 
-                // Tiroir latéral
-                var tiroir = document.getElementById('pm1Drawer');
-                var voile = document.getElementById('pm1Backdrop');
-
-                function remplir(id, valeur) {
-                    var cible = document.getElementById(id);
-                    if (cible) cible.textContent = valeur;
-                }
-
-                // Les gestionnaires des modales lisent $(this).data(...), qui met en
-                // cache la valeur initiale de l'attribut. Écrire par setAttribute ne
-                // suffirait donc pas : il faut aussi rafraîchir le cache jQuery.
-                function cibler(id, employeId, nom) {
-                    var bouton = document.getElementById(id);
-                    if (!bouton) return;
-                    bouton.setAttribute('data-employee-id', employeId);
-                    bouton.setAttribute('data-employee-name', nom);
-                    if (window.jQuery) {
-                        window.jQuery(bouton).data('employee-id', employeId).data('employee-name', nom);
-                    }
-                }
-
-                function ouvrirTiroir(ligne) {
-                    var d = ligne.dataset;
-
-                    remplir('pm1DrawerMat', d.matricule || '—');
-                    remplir('pm1DrawerNom', d.employeeName || '');
-                    remplir('pm1DrawerNom2', d.employeeName || 'ce salarié');
-                    remplir('pm1DrawerDept', d.dept || '—');
-                    remplir('pm1DrawerAnc', d.anciennete || '');
-                    remplir('pm1DrawerSit', d.situation || '');
-                    remplir('pm1DrawerJours', d.jours || '0');
-                    remplir('pm1DrawerBase', (d.base || '0') + ' FCFA');
-                    // Détail des éléments : on recopie le bloc pré-rendu du salarié.
-                    var hote = document.getElementById('pm1DrawerElements');
-                    var source = document.getElementById('pm1El-' + d.employeeId);
-                    if (hote) {
-                        hote.innerHTML = source
-                            ? source.innerHTML
-                            : '<p class="pm1-el-vide">Détail indisponible pour ce salarié.</p>';
-                    }
-                    remplir('pm1DrawerPrimes', '+' + (d.primes || '0') + ' FCFA');
-                    remplir('pm1DrawerRetenues', '–' + (d.retenues || '0') + ' FCFA');
-                    remplir('pm1DrawerRetenues2', '–' + (d.retenues || '0') + ' FCFA');
-                    remplir('pm1DrawerBrut', (d.brut || '0') + ' FCFA');
-                    remplir('pm1DrawerCotis', '–' + (d.cotis || '0') + ' FCFA');
-                    remplir('pm1DrawerImpot', '–' + (d.impot || '0') + ' FCFA');
-                    remplir('pm1DrawerNet', (d.netFmt || '0') + ' FCFA');
-
-                    var blocAnc = document.getElementById('pm1DrawerAncBloc');
-                    if (blocAnc) blocAnc.hidden = !d.anciennete;
-                    var blocSit = document.getElementById('pm1DrawerSitBloc');
-                    if (blocSit) blocSit.hidden = !d.situation;
-
-                    var jours = parseInt(d.jours, 10) || 0;
-                    remplir('pm1DrawerProrata', jours === 30
-                        ? 'Mois complet (30/30 j)'
-                        : 'Prorata appliqué : ' + jours + '/30 j (' + (30 - jours) + ' j d’écart)');
-
-                    var alerte = document.getElementById('pm1DrawerAlerte');
-                    if (alerte) alerte.hidden = d.statut !== 'anomaly';
-
-                    ['pm1DrawerJoursBtn', 'pm1DrawerAdd', 'pm1DrawerShow', 'pm1DrawerEdit', 'pm1DrawerBulletin']
-                        .forEach(function (id) { cibler(id, d.employeeId, d.employeeName); });
-
-                    if (voile) voile.hidden = false;
-                    if (tiroir) {
-                        tiroir.hidden = false;
-                        tiroir.classList.add('is-open');
-                    }
-                    document.body.style.overflow = 'hidden';
-                }
-
-                function fermerTiroir() {
-                    if (voile) voile.hidden = true;
-                    if (tiroir) {
-                        tiroir.hidden = true;
-                        tiroir.classList.remove('is-open');
-                    }
-                    document.body.style.overflow = '';
-                }
-
-                lignes.forEach(function (ligne) {
-                    ligne.addEventListener('click', function (evenement) {
-                        // Case à cocher, menu d'actions et bouton « jours » gardent leur rôle.
-                        if (evenement.target.closest('.pm1-check, .dropdown, .pm-days, a, button, input')) return;
-                        ouvrirTiroir(ligne);
-                    });
-                });
-
                 document.querySelectorAll('.pm1-pick').forEach(function (caseACocher) {
                     caseACocher.addEventListener('change', majSelection);
                 });
 
-                [document.getElementById('pm1DrawerClose'), document.getElementById('pm1DrawerFermer'), voile]
-                    .forEach(function (element) {
-                        if (element) element.addEventListener('click', fermerTiroir);
+                // Le bouton des jours et le menu d'actions gardent leur propre rôle :
+                // on arrête la propagation chez eux plutôt que de conditionner la ligne.
+                document.querySelectorAll('#pmLignes .pm-days, #pmLignes .dropdown').forEach(function (element) {
+                    element.addEventListener('click', function (evenement) {
+                        evenement.stopPropagation();
                     });
-
-                document.addEventListener('keydown', function (evenement) {
-                    if (evenement.key === 'Escape' && tiroir && !tiroir.hidden) fermerTiroir();
                 });
 
-                // Les actions du tiroir ouvrent une modale : le tiroir doit s'effacer.
-                ['pm1DrawerJoursBtn', 'pm1DrawerAdd', 'pm1DrawerShow', 'pm1DrawerEdit', 'pm1DrawerBulletin']
-                    .forEach(function (id) {
-                        var bouton = document.getElementById(id);
-                        if (bouton) bouton.addEventListener('click', fermerTiroir);
-                    });
 
 
                 // ---------- Écriture : base d'un salarié et actions de masse ----------
@@ -1248,6 +1094,34 @@
                         .catch(function () {
                             Swal.fire({ icon: 'error', title: 'Non enregistré', text: 'Le serveur ne répond pas.', confirmButtonColor: '#253e87' });
                         });
+                }
+
+                // Ajout d'une prime depuis le tiroir, pour le salarié ouvert.
+                var boutonPrimeDirecte = document.getElementById('pm1PrimeAjouter');
+                if (boutonPrimeDirecte) {
+                    boutonPrimeDirecte.addEventListener('click', function () {
+                        var rubrique = document.getElementById('pm1PrimeRubrique');
+                        var montant = document.getElementById('pm1PrimeMontantDirect');
+                        var employeId = boutonPrimeDirecte.dataset.employeeId;
+
+                        if (!employeId) { return; }
+
+                        if (!montant.value || Number(montant.value) < 0) {
+                            montant.focus();
+                            Swal.fire({
+                                icon: 'warning', title: 'Montant manquant',
+                                text: 'Saisissez le montant de la prime.',
+                                confirmButtonColor: '#253e87'
+                            });
+                            return;
+                        }
+
+                        envoyerPrime(
+                            parseInt(rubrique.value, 10),
+                            parseInt(montant.value, 10),
+                            [parseInt(employeId, 10)]
+                        );
+                    });
                 }
 
                 // Édition en place du salaire de base

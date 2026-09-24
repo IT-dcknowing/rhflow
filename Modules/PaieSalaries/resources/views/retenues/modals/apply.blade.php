@@ -615,7 +615,7 @@
 
             // 2. Gestion de la proratisation des jours travaillés
             $j = intval($employee->tax_payer_id);
-            $nbre_jours = ($j == 28 || $j == 29 || $j == 31 || $j == 0) ? 30 : $j;
+            $nbre_jours = ($j == 28 || $j == 31 || $j == 0) ? 30 : $j;
 
             // Mise à l'échelle mensuelle 30j pour application du barème
             $base_mensuelle = ($nbre_jours >= 30) ? $base_imposable_reelle : ($base_imposable_reelle * 30 / $nbre_jours);

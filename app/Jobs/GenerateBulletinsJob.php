@@ -45,25 +45,24 @@ class GenerateBulletinsJob implements ShouldQueue
             $year = Carbon::parse($periode->date_debut)->year;
 
 
-            $validatePaysilp = PaySlip::where('salary_month', '=', $month)
-                                ->where('company_id', $this->companyId)
-                                ->pluck('employee_id');
-            $lastDayOfMonth = Carbon::createFromDate($year, substr($month, 5, 2))->endOfMonth()->toDateString();
-            $payslip_employee = Employee::where('company_id', $this->companyId)
-                                ->where('is_active', 1)
-                                ->where('company_doj', '<=', $lastDayOfMonth)
-                                ->pluck('id');
+            $employees = Employee::active()
+                ->where('company_id', $this->companyId)
+                ->where('start_date', '<=', $periode->date_fin)
+                ->where(function ($query) use ($periode) {
+                    $query->whereNull('end_date')
+                          ->orWhere('end_date', '>=', $periode->date_debut);
+                })
+                ->get();
 
-            // Déterminer les employés sans fiche de paie
-            $missing_payslips = $payslip_employee->diff($validatePaysilp);
-           
-            if ($missing_payslips->count() > 0) {
-               foreach ($missing_payslips as $employee_id) {
-                    $employee = Employee::where('id', $employee_id)->where('is_active', 1)->first();
+            if ($employees->count() > 0) {
+               foreach ($employees as $employee) {
+                    app(\App\Services\SalaryService::class)->appliquerPrimeAnciennete($employee, $periode);
+                    app(\App\Services\SalaryService::class)->appliquerRetenuesLegales($employee, $periode);
 
-                    $payslipEmployee = new PaySlip();
-                    $payslipEmployee->employee_id = $employee->id;
-                    $payslipEmployee->periode_id = $periode->id;
+                    $payslipEmployee = PaySlip::firstOrNew([
+                        'employee_id' => $employee->id,
+                        'periode_id' => $periode->id,
+                    ]);
                     $payslipEmployee->net_payble = $employee->get_net_salary($periode->id);
                     $payslipEmployee->salary_month = $month;
                     $payslipEmployee->status = 0;

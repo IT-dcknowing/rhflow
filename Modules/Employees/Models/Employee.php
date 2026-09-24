@@ -919,8 +919,9 @@ public function get_salary_social($periode_id = null)
 
             if ($allowance && $allowance->jours_work > 0) {
                 $j = intval($allowance->jours_work);
-                // Normalisation : si c'est un mois complet (28, 29, 31), on traite comme 30 jours
-                return ($j == 28 || $j == 29 || $j == 31) ? 30 : $j;
+                // Normalisation : si c'est un mois complet (28 = fév, 31 = mois long), on traite comme 30 jours
+                // 29 jours n'est PAS normalisé : c'est une absence d'un jour → proratisation (29/30)
+                return ($j == 28 || $j == 31) ? 30 : $j;
             }
         }
 

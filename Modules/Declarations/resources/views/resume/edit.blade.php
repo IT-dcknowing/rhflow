@@ -466,7 +466,7 @@
 
             // 2. Gestion de la proratisation selon les jours travaillés
             const nbre_jour_input = parseInt(document.getElementById('nbre_jour')?.value) || 30;
-            const nbre_jours = (nbre_jour_input == 28 || nbre_jour_input == 29 || nbre_jour_input == 31 || nbre_jour_input == 0) ? 30 : nbre_jour_input;
+            const nbre_jours = (nbre_jour_input == 28 || nbre_jour_input == 31 || nbre_jour_input == 0) ? 30 : nbre_jour_input;
 
             // Mise à l'échelle mensuelle 30j pour application du barème
             const base_mensuelle = (nbre_jours >= 30) ? base_imposable_reelle : (base_imposable_reelle * 30 / nbre_jours);

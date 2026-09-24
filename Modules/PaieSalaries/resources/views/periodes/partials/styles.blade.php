@@ -174,6 +174,11 @@
         .pm1-row td { vertical-align: middle; }
         .pm1-who b { display: inline-flex; align-items: center; gap: 8px; }
         .pm1-who b i { font-size: 12px; color: var(--navy); }
+        /* Indice d'ouverture, révélé au survol de la ligne. */
+        .pm1-ouvrir { display: inline-flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 11px; font-weight: 600; color: var(--navy-text); opacity: 0; transition: opacity .15s ease; }
+        .pm1-ouvrir i { font-size: 9px; }
+        .pm1-row:hover .pm1-ouvrir { opacity: 1; }
+
         .pm1-dept { font-size: 12.5px; color: var(--ink-2); }
         .pm1-primes { color: var(--ink-2); }
 
@@ -200,6 +205,15 @@
 
         .pm1-totaux td { border-top: 2px solid var(--navy); background: var(--surface-2); font-weight: 600; font-size: 12.5px; color: var(--ink); }
         .pm1-total-net { font-size: 14px; font-weight: 700; color: var(--navy-text); }
+
+        /* Détail déplié sous la ligne du salarié. */
+        .pm1-detail > td { padding: 0 !important; background: var(--surface-2); border-top: 0; }
+        .pm1-detail[hidden] { display: none; }
+        .pm1-detail-corps { display: flex; flex-direction: column; gap: 8px; padding: 16px 20px 18px; border-left: 3px solid var(--navy); }
+        .pm1-row.is-ouvert > td { background: var(--navy-tint); }
+        .pm1-row.is-ouvert .pm1-ouvrir { opacity: 1; }
+        .pm1-row.is-ouvert .pm1-ouvrir i { transform: rotate(90deg); }
+        .pm1-ouvrir i { transition: transform .15s ease; }
 
         /* Bandeau d'audit sous la grille */
         .pm1-audit { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 13px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
@@ -232,12 +246,10 @@
         .pm1-annexes-body .pm-panel { border-color: var(--line-soft); }
 
         /* ---------- Tiroir latéral ---------- */
-        .pm1-drawer-backdrop { position: fixed; inset: 0; z-index: 1045; background: rgba(10, 31, 68, .28); }
-        .pm1-drawer-backdrop[hidden] { display: none; }
 
-        .pm1-drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 1046; display: flex; flex-direction: column; width: 50%; max-width: 680px; background: var(--surface); border-left: 1px solid var(--line); box-shadow: -12px 0 32px rgba(10, 31, 68, .14); }
-        .pm1-drawer[hidden] { display: none; }
-        .pm1-drawer.is-open { animation: pm1Slide .22s ease-out; }
+        /* Positionnement, z-index et animation viennent de l'offcanvas Bootstrap :
+           les redéfinir ici l'empêchait de s'afficher. On ne garde que l'ombre. */
+        .pm1-drawer { box-shadow: -12px 0 32px rgba(10, 31, 68, .14); }
         @keyframes pm1Slide { from { transform: translateX(28px); opacity: .4; } to { transform: translateX(0); opacity: 1; } }
 
         .pm1-drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--line); }
@@ -288,10 +300,33 @@
         .pm1-el-amt small { font-size: 10.5px; font-weight: 400; color: var(--muted); }
         .pm1-el-amt.pos { color: var(--ok); }
         .pm1-el-amt.neg { color: var(--bad); }
+        /* Champs de saisie des montants, dans le détail du salarié. */
+        .pm1-el-saisie { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .pm1-el-saisie small { font-size: 10.5px; color: var(--muted); }
+        .pm1-signe { font-size: 13px; font-weight: 700; }
+        .pm1-signe.pos { color: var(--ok); }
+        .pm1-champ { width: 116px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; text-align: right; color: var(--ink); }
+        .pm1-champ:focus { outline: 0; border-color: var(--navy); box-shadow: 0 0 0 3px var(--navy-tint); }
+        .pm1-champ::-webkit-outer-spin-button, .pm1-champ::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .pm1-champ[type=number] { -moz-appearance: textfield; }
+        .pm1-enregistrer { flex: 1; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+
         .pm1-el-vide { margin: 0; padding: 14px; border: 1px dashed var(--line); border-radius: 10px; font-size: 12.5px; color: var(--muted); text-align: center; }
         .pm1-el-totaux { margin-top: 10px; }
 
         .pm1-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+        /* Variables du mois dans le tiroir : une ligne par événement. */
+        .pm1-variables { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+        .pm1-variables:empty { display: none; }
+        .pm1-var-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+        .pm1-var-main { min-width: 0; }
+        .pm1-var-main b { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--ink); }
+        .pm1-var-main b i { font-size: 11.5px; color: var(--navy); }
+        .pm1-var-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 3px; font-size: 11px; color: var(--muted); }
+        .pm1-var-val { flex-shrink: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--navy-text); white-space: nowrap; }
+        .pm1-var-val small { font-size: 10.5px; font-weight: 400; color: var(--muted); }
+        .pm1-traitement-titre { display: block; margin-bottom: 7px; }
 
         .pm1-actions-titre { width: 100%; margin-bottom: -2px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
@@ -302,12 +337,23 @@
         .pm1-tr i { width: 15px; text-align: center; font-size: 13px; color: var(--navy); }
         @media (max-width: 640px) { .pm1-traitement { grid-template-columns: minmax(0, 1fr); } }
 
+        /* Trois actions de saisie, une par ligne : elles sont désormais le seul
+           chemin vers les éléments du salarié. */
+        /* Formulaire d'ajout de prime, directement dans le tiroir. */
+        .pm1-prime-rapide { margin-top: 12px; padding: 12px 13px; border: 1px solid var(--navy-line); border-radius: 11px; background: var(--navy-tint); }
+        .pm1-prime-champs { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: 7px; margin: 7px 0 5px; }
+        .pm1-prime-rapide .pm1-hint { display: block; }
+        @media (max-width: 560px) { .pm1-prime-champs { grid-template-columns: minmax(0, 1fr); } }
+
+        .pm1-actions-elements { display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px; margin-top: 12px; }
+        .pm1-actions-elements .btn { justify-content: center; }
+
         .pm1-drawer-foot { display: flex; gap: 10px; padding: 14px 22px; border-top: 1px solid var(--line); }
         .pm1-drawer-foot .btn { flex: 1; }
         .pm1-drawer-foot .btn-outline-secondary { flex: 0 0 auto; }
 
         @media (max-width: 992px) {
-            .pm1-drawer { width: 100%; max-width: none; }
+            .offcanvas.pm1-drawer { width: 100%; }
         }
         @media (max-width: 768px) {
             .pm1-tools { flex-direction: column; align-items: stretch; }
@@ -315,6 +361,72 @@
             .pm1-filter { width: 100%; }
             .pm1-audit { flex-direction: column; align-items: flex-start; }
         }
+
+        /* ----- Alignement sur la maquette (Model1Drawer) -----
+           Les valeurs viennent des classes Tailwind du fichier de référence :
+           bordures #E8E8E6, fonds #FAFAFA, texte #1F1F1E, gris #6B6B6B, navy #253e87.
+           Reprises telles quelles plutôt que réinterprétées. */
+
+        .pm1-drawer-head { padding: 24px; }
+        .pm1-drawer-mat { font-family: var(--font-mono); font-weight: 700; font-size: 12px; padding: 4px 10px; }
+        .pm1-drawer-head h2 { font-size: 18px; font-weight: 700; }
+        .pm1-drawer-sub { font-size: 12px; }
+
+        .pm1-drawer-body { padding: 24px; gap: 24px; }
+
+        /* Titres de section : capitales espacées, icône navy. */
+        .pm1-sec h3 { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #6B6B6B; }
+        .pm1-sec h3 i { color: #253e87; }
+
+        /* Cartes : fond gris très clair, coins arrondis larges. */
+        .pm1-card { padding: 16px; border-radius: 12px; background: #FAFAFA; border-color: #E8E8E6; }
+        .pm1-lbl { font-size: 12px; font-weight: 700; color: #6B6B6B; }
+        .pm1-hint { font-size: 11px; color: #6B6B6B; }
+        .pm1-hint.prorata { color: #253e87; font-weight: 700; }
+        .pm1-card-line { font-size: 12px; font-weight: 700; color: #6B6B6B; border-top-color: #E8E8E6; }
+        .pm1-card-line b { font-family: var(--font-mono); font-size: 13px; color: #253e87; }
+        .pm1-card-total { border-top-color: #E8E8E6; font-size: 13px; }
+        .pm1-card-total b { font-size: 17px; }
+
+        /* Lignes d'éléments : cartes blanches, texte compact. */
+        .pm1-el-line { padding: 12px; border-radius: 12px; background: #fff; border-color: #E8E8E6; }
+        .pm1-el-line.socle { background: #FAFAFA; }
+        .pm1-el-main b { font-size: 12px; font-weight: 700; color: #1F1F1E; }
+        .pm1-el-meta { gap: 6px; margin-top: 4px; font-size: 10.5px; color: #6B6B6B; }
+
+        /* Badges « Impôt OUI/NON » et « Soc OUI/NON » de la maquette. */
+        .pm1-badge { padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+        .pm1-badge.impot { background: #fef3c7; color: #92400e; }
+        .pm1-badge.social { background: #dbeafe; color: #1e40af; }
+        .pm1-badge.neutre { background: #f3f4f6; color: #4b5563; }
+
+        /* Champs de saisie : fond blanc, chiffres alignés à droite. */
+        .pm1-champ { border-color: #E8E8E6; border-radius: 8px; }
+        .pm1-champ-base { width: 144px; }
+        .pm1-champ-element { width: 112px; background: #FAFAFA; font-size: 12px; padding: 4px 10px; }
+        #pm1DrawerJoursChamp { width: 80px; text-align: center; }
+        .pm1-signe { font-size: 13px; }
+        .pm1-signe.pos { color: #047857; }
+
+        /* Pied : action principale pleine largeur en navy, fermeture en gris. */
+        .pm1-drawer-foot { padding: 24px; gap: 12px; border-top-color: #E8E8E6; }
+        .pm1-enregistrer { flex: 1; padding: 12px; border-radius: 8px; background: #253e87; border-color: #253e87; color: #fff; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: 13px; }
+        .pm1-enregistrer:hover { background: #1c306d; border-color: #1c306d; color: #fff; }
+        .pm1-fermer { flex: 0 0 auto; padding: 12px 24px; border-radius: 8px; background: #e5e5e5; color: #1F1F1E; font-weight: 700; text-transform: uppercase; font-size: 13px; }
+        .pm1-fermer:hover { background: #d4d4d4; color: #1F1F1E; }
+        .pm1-drawer-foot .btn-outline-secondary { border-radius: 8px; font-weight: 600; }
+
+        /* Voile : noir léger et flou, comme le backdrop-blur de la maquette. */
+        .pm1-drawer-backdrop { background: rgba(0, 0, 0, .3); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+
+        /* La ligne de détail ne sert plus que de source au tiroir. */
+        .pm1-detail { display: none !important; }
+
+        /* Le panneau est un offcanvas Bootstrap : on ne redéfinit que sa largeur et
+           son habillage, le positionnement et l'animation viennent du framework. */
+        .offcanvas.pm1-drawer { width: 50%; max-width: none; border-left: 1px solid #E8E8E6; background: var(--surface); }
+        .offcanvas.pm1-drawer .pm1-drawer-body { overflow-y: auto; }
+        @media (max-width: 992px) { .offcanvas.pm1-drawer { width: 100%; } }
 
         @media (max-width: 1100px) {
             .pm-grid-2 { grid-template-columns: minmax(0, 1fr); }
