@@ -190,11 +190,14 @@
         &$totalBase, &$totalPrimes, &$totalCotis, &$totalImpot,
         &$nbAnomalies, &$nbConformes, &$nbEnAttente, &$aVerifier) {
 
-        $ligne['verifier'] = false;
+        $estAnomalie = ($ligne['jours'] != 30) || ($ligne['net'] <= 0 && $ligne['base'] > 0);
+        $ligne['verifier'] = $estAnomalie;
         $ligne['primes'] = max(0, $ligne['brut'] - $ligne['base']);
 
-        // Un salarié avec des jours proratisés est conforme et normal
-        if ($ligne['net'] <= 0) {
+        if ($estAnomalie) {
+            $ligne['statut'] = 'anomaly';
+            $nbAnomalies++;
+        } elseif ($ligne['net'] <= 0) {
             $ligne['statut'] = 'pending';
             $nbEnAttente++;
         } else {
@@ -447,12 +450,15 @@
                             <label class="visually-hidden" for="pm1Filtre">Filtrer par statut</label>
                             <select class="form-select pm1-filter" id="pm1Filtre">
                                 <option value="all">Filtre : tous ({{ count($lignes) }})</option>
+                                @if($nbAnomalies > 0)
+                                    <option value="anomaly">Anomalies ({{ $nbAnomalies }})</option>
+                                @endif
                                 <option value="ok">Conformes ({{ $nbConformes }})</option>
                                 <option value="pending">En attente ({{ $nbEnAttente }})</option>
                             </select>
 
                             <button type="button" class="pm1-expert" id="pm1Expert" aria-pressed="false">
-                                <i class="fas fa-sliders-h"></i>Mode expert : <b id="pm1ExpertEtat">OFF</b>
+                                <i class="fas fa-sliders-h"></i>Mode expert : <b id="pm1ExpertEtat">Désactivé</b>
                             </button>
 
                             <button type="button" class="pm1-expert" id="pm1Reset" title="Vider la recherche, le filtre et la sélection">
@@ -508,16 +514,23 @@
                                             </td>
                                             <td>
                                                 <div class="pm-who pm1-who">
-                                                    <b>
-                                                        <i class="fas fa-user"></i>{{ $emp->name }}
-                                                        @if($ligne['pret'] > 0)<span class="pm-tag">Prêt</span>@endif
-                                                        @if($ligne['rembourse'] > 0)<span class="pm-tag">Frais</span>@endif
-                                                    </b>
-                                                    <small>ID <span class="pm-mono">{{ $emp->employee_id }}</span>@if($ligne['anciennete']) · anc. {{ $ligne['anciennete'] }}@endif</small>
+                                                    <div class="pm1-who-name">
+                                                        <b>
+                                                            <i class="fas fa-user"></i>{{ $emp->name }}
+                                                            @if($ligne['pret'] > 0)<span class="pm-tag">Prêt</span>@endif
+                                                            @if($ligne['rembourse'] > 0)<span class="pm-tag">Frais</span>@endif
+                                                        </b>
+                                                    </div>
+                                                    <div class="pm1-who-mat">
+                                                        <small class="text-muted">Matricule : <span class="pm-mono">{{ \Auth::user()->employeeIdFormat($emp->employee_id) ?: $emp->employee_id }}</span></small>
+                                                    </div>
+                                                    <div class="pm1-who-anc">
+                                                        <small class="text-muted">Ancienneté : <span>{{ $ligne['anciennete'] ?: '0 an' }}</span></small>
+                                                    </div>
                                                     <span class="pm1-ouvrir"><i class="fas fa-chevron-right"></i>Voir le détail</span>
                                                 </div>
                                                 @if($ligne['statut'] === 'anomaly')
-                                                    <span class="pm1-pill anomaly" title="Jours travaillés différents de 30">
+                                                    <span class="pm1-pill anomaly" title="Jours travaillés différents de 30 ou situation à vérifier">
                                                         <i class="fas fa-exclamation-triangle"></i>Anomalie
                                                     </span>
                                                 @elseif($ligne['statut'] === 'pending')
@@ -935,7 +948,7 @@
                     boutonExpert.addEventListener('click', function () {
                         var actif = boutonExpert.getAttribute('aria-pressed') !== 'true';
                         boutonExpert.setAttribute('aria-pressed', actif ? 'true' : 'false');
-                        if (etatExpert) etatExpert.textContent = actif ? 'ON' : 'OFF';
+                        if (etatExpert) etatExpert.textContent = actif ? 'Activé' : 'Désactivé';
                         document.querySelectorAll('.pm1-exp').forEach(function (cellule) {
                             cellule.hidden = !actif;
                         });

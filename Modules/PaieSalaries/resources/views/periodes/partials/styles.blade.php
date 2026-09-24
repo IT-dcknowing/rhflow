@@ -178,8 +178,11 @@
         .pm1-table td.pm1-check, .pm1-table th.pm1-check { width: 42px; text-align: center; }
         .pm1-row { cursor: pointer; }
         .pm1-row td { vertical-align: middle; }
-        .pm1-who b { display: inline-flex; align-items: center; gap: 8px; }
-        .pm1-who b i { font-size: 12px; color: var(--navy); }
+        .pm1-who { display: flex; flex-direction: column; gap: 2px; }
+        .pm1-who-name b { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
+        .pm1-who-name b i { font-size: 12px; color: var(--navy); }
+        .pm1-who-mat small, .pm1-who-anc small { font-size: 11.5px; color: var(--muted); }
+        .pm1-who-mat .pm-mono { font-weight: 600; color: var(--ink-2); }
         /* Indice d'ouverture, révélé au survol de la ligne. */
         .pm1-ouvrir { display: inline-flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 11px; font-weight: 600; color: var(--navy-text); opacity: 0; transition: opacity .15s ease; }
         .pm1-ouvrir i { font-size: 9px; }
@@ -192,21 +195,24 @@
         .pm1-table thead th { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); background: var(--surface-2); }
         .pm1-table thead th.pm1-check { letter-spacing: normal; }
 
-        /* Un liseré navy à gauche signale l'anomalie sans recourir au rouge :
-           une ligne à vérifier n'est pas une erreur. */
-        .pm1-row.is-anomaly > td:first-child { box-shadow: inset 4px 0 0 var(--navy); }
-        .pm1-row.is-anomaly { background: var(--surface-2); }
+        /* Salariés avec anomalies : fond légèrement rouge doux (reposant pour les yeux) avec texte parfaitement lisible */
+        .pm1-table tbody tr.pm1-row.is-anomaly > td { background-color: #fef2f2 !important; }
+        .pm1-table tbody tr.pm1-row.is-anomaly:hover > td { background-color: #fee2e2 !important; }
+        .pm1-table tbody tr.pm1-row.is-anomaly > td:first-child { box-shadow: inset 4px 0 0 #ef4444; }
+        .pm1-row.is-anomaly { background-color: #fef2f2; }
+        .pm1-table tbody tr.pm1-row.is-anomaly.is-ouvert > td { background-color: #fee2e2 !important; }
         .pm1-row.is-pending > td:first-child { box-shadow: inset 4px 0 0 var(--line); }
 
-        .pm1-pill { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; padding: 1px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 600; }
-        .pm1-pill.anomaly { background: var(--navy); color: #fff; }
+        .pm1-pill { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; padding: 2px 9px; border-radius: 20px; font-size: 10.5px; font-weight: 600; }
+        .pm1-pill.anomaly { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .pm1-pill.anomaly i { color: #dc2626; }
         .pm1-pill.pending { border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); }
         .pm1-pill i { font-size: 9.5px; }
 
         .pm1-net-wrap { display: inline-flex; align-items: center; justify-content: flex-end; gap: 7px; }
         .pm1-ico { font-size: 12px; }
         .pm1-ico.ok { color: var(--ok); }
-        .pm1-ico.warn { color: var(--navy); }
+        .pm1-ico.warn { color: #dc2626; }
         .pm1-ico.faint { color: var(--faint); }
 
         .pm1-totaux td { border-top: 2px solid var(--navy); background: var(--surface-2); font-weight: 600; font-size: 12.5px; color: var(--ink); }
