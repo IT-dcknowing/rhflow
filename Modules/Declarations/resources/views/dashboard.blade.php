@@ -345,7 +345,7 @@
         <x-quick-actions>
             <x-quick-action-group title="DÉCLARATIONS" icon="fas fa-landmark" color="primary" minWidth="260px">
                 <x-quick-action icon="fas fa-file-invoice" label="Déclarations mensuelles"
-                    :href="route('company.declarations.decla_mensuelle')" variant="primary" />
+                    :href="route('company.declarations.declaration.mensuelle')" variant="primary" />
             </x-quick-action-group>
 
             <x-quick-action-divider />
