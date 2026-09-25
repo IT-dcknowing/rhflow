@@ -137,7 +137,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Valeur</label>
-                                    <p>{{ $contract->value ? number_format($contract->value, 0, ',', ' ') . ' XOF' : 'Non définie' }}
+                                    <p>{{ $contract->value ? number_format($contract->value, 0, ',', ' ') . ' FCFA' : 'Non définie' }}
                                     </p>
                                 </div>
                             </div>
@@ -429,7 +429,7 @@
                                             <input type="number" step="0.01"
                                                 class="form-control @error('value') is-invalid @enderror" id="value"
                                                 name="value" value="{{ old('value') }}">
-                                            <span class="input-group-text">{{ $company->currency ?? 'XOF' }}</span>
+                                            <span class="input-group-text">{{ (!empty($company->currency) && $company->currency !== 'XOF') ? $company->currency : 'FCFA' }}</span>
                                         </div>
                                         @error('value')
                                             <div class="invalid-feedback">{{ $message }}</div>

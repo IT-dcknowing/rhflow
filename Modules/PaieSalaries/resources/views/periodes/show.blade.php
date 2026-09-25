@@ -498,7 +498,7 @@
                                             {{ $nbAnomalies }} salarié{{ $nbAnomalies > 1 ? 's ont' : ' a' }} une anomalie bloquante
                                         </div>
                                         <div class="small" style="color: #BE123C;">
-                                            La validation et la génération des bulletins est bloquée tant que ces situations ne sont pas régularisées.
+                                            La validation et la génération des bulletins sont bloquées tant que ces situations ne sont pas régularisées.
                                         </div>
                                     </div>
                                 </div>
@@ -580,6 +580,8 @@
                                             data-cotis="{{ $fmt($ligne['cotis']) }}"
                                             data-impot="{{ $fmt($ligne['impot']) }}"
                                             data-retenues="{{ $fmt($ligne['pret'] + $ligne['autre']) }}"
+                                            data-rembourse="{{ $fmt($ligne['rembourse']) }}"
+                                            data-rembourse-val="{{ (float) $ligne['rembourse'] }}"
                                             data-net-fmt="{{ $fmt($ligne['net']) }}">
                                             <td class="pm1-check">
                                                 <input type="checkbox" class="form-check-input pm1-pick"
@@ -682,7 +684,7 @@
                                                         <span class="pm1-el-amt">{{ $fmt($ligne['salaire']) }} <small>FCFA</small></span>
                                                     @else
                                                         <span class="pm1-el-saisie">
-                                                            <input type="number" class="pm1-champ pm1-champ-base" min="0" step="500"
+                                                            <input type="number" class="pm1-champ pm1-champ-base" min="0" step="1"
                                                                 value="{{ (int) $ligne['salaire'] }}"
                                                                 aria-label="Salaire de base de {{ $emp->name }}">
                                                             <small>FCFA</small>
@@ -711,7 +713,7 @@
                                                         @if(!$verrouille && $element['allowance_id'])
                                                             <span class="pm1-el-saisie">
                                                                 <b class="pm1-signe pos">+</b>
-                                                                <input type="number" class="pm1-champ pm1-champ-element" min="0" step="500"
+                                                                <input type="number" class="pm1-champ pm1-champ-element" min="0" step="1"
                                                                     data-allowance="{{ $element['allowance_id'] }}"
                                                                     value="{{ (int) $element['montant'] }}"
                                                                     aria-label="Montant de {{ $element['libelle'] }}">
@@ -854,24 +856,38 @@
                                                 @endforeach
 
                                                 @foreach($sesRetenuesVar as $ret)
+                                                    @php $estRemb = ((int) $ret->type_retenue_id === 5 || $ret->code === '601'); @endphp
                                                     <div class="pm1-var-line">
                                                         <div class="pm1-var-main">
-                                                            <b><i class="fas fa-minus-circle text-danger me-1"></i>Retenue : {{ $ret->libelle }}</b>
-                                                            <span class="pm1-var-meta">
-                                                                <span class="pm1-el-tag">{{ $ret->typeRetenue->libelle ?? 'Retenue diverse' }}</span>
-                                                            </span>
+                                                            @if($estRemb)
+                                                                <b><i class="fas fa-receipt text-success me-1"></i>Remboursement de frais : {{ $ret->libelle }}</b>
+                                                                <span class="pm1-var-meta">
+                                                                    <span class="pm1-el-tag soc">Remboursement (non soumis)</span>
+                                                                </span>
+                                                            @else
+                                                                <b><i class="fas fa-minus-circle text-danger me-1"></i>Retenue : {{ $ret->libelle }}</b>
+                                                                <span class="pm1-var-meta">
+                                                                    <span class="pm1-el-tag">{{ $ret->typeRetenue->libelle ?? 'Retenue diverse' }}</span>
+                                                                </span>
+                                                            @endif
                                                         </div>
                                                         <div class="d-flex align-items-center gap-2">
-                                                            <span class="pm1-var-val text-danger">
-                                                                –{{ $fmt($ret->amount) }} <small>FCFA</small>
-                                                            </span>
+                                                            @if($estRemb)
+                                                                <span class="pm1-var-val text-success fw-bold">
+                                                                    +{{ $fmt($ret->amount) }} <small>FCFA</small>
+                                                                </span>
+                                                            @else
+                                                                <span class="pm1-var-val text-danger">
+                                                                    –{{ $fmt($ret->amount) }} <small>FCFA</small>
+                                                                </span>
+                                                            @endif
                                                             @unless($verrouille)
                                                                 <button type="button" class="pm1-btn-retirer-variable"
                                                                     data-type="retenue"
                                                                     data-id="{{ $ret->id }}"
                                                                     data-employee-id="{{ $idEmp }}"
-                                                                    data-libelle="Retenue : {{ $ret->libelle }}"
-                                                                    title="Retirer cette retenue">
+                                                                    data-libelle="{{ $estRemb ? 'Remboursement' : 'Retenue' }} : {{ $ret->libelle }}"
+                                                                    title="{{ $estRemb ? 'Retirer ce remboursement' : 'Retirer cette retenue' }}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             @endunless
@@ -983,22 +999,33 @@
                                 <div class="pm1-annexes-body">
 
                                         @if($etape !== 'payee')
-                                            <section class="pm-panel">
+                                            <section class="pm-panel mb-4">
                                                 <div class="pm-panel-head">
                                                     <div>
-                                                        <h2>Valider le paiement</h2>
-                                                        <p>Marque la période et ses {{ count($lignes) }} bulletin(s) comme payés. Le bouton se trouve dans la barre du bas.</p>
+                                                        <h2><i class="fas fa-money-check-alt text-success me-2"></i>Valider le paiement des salaires</h2>
+                                                        <p>Marque la période et ses {{ count($lignes) }} bulletin(s) comme payés.</p>
                                                     </div>
                                                 </div>
                                                 <div class="pm-panel-body">
                                                     <form id="pmFormPaiement" action="{{ route('company.paiesalaries.periodes.valider-paiement', $periode->id) }}" method="POST">
                                                         @csrf
-                                                        <label class="form-label" for="date_paiement_effectif">Date de paiement effectif</label>
-                                                        <input type="date" class="form-control pm-mono mb-3" id="date_paiement_effectif" name="date_paiement_effectif"
-                                                            value="{{ now()->format('Y-m-d') }}" required>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="envoyerNotifications" name="envoyer_notifications" checked>
-                                                            <label class="form-check-label" for="envoyerNotifications">Envoyer les notifications aux employés</label>
+                                                        <div class="row align-items-end g-3">
+                                                            <div class="col-md-5">
+                                                                <label class="form-label fw-bold" for="date_paiement_effectif">Date de paiement effectif</label>
+                                                                <input type="date" class="form-control pm-mono" id="date_paiement_effectif" name="date_paiement_effectif"
+                                                                    value="{{ now()->format('Y-m-d') }}" required>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-check pt-2">
+                                                                    <input class="form-check-input" type="checkbox" id="envoyerNotifications" name="envoyer_notifications" checked>
+                                                                    <label class="form-check-label" for="envoyerNotifications">Notifier les employés</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <button type="submit" class="btn btn-success w-100 py-2">
+                                                                    <i class="fas fa-check-circle me-1"></i>Valider le paiement
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -1065,7 +1092,6 @@
                                         title="{{ $nbAnomalies > 0 ? 'Validation impossible : ' . $nbAnomalies . ' anomalie(s) doivent être traitées.' : 'Aucun salarié à traiter.' }}"
                                     @endif>
                                     <i class="fas fa-check-circle me-2"></i>Valider et générer les {{ count($lignes) }} bulletins
-                                    <span class="pm1-valider-montant">{{ number_format($totalNet / 1000000, 2, ',', ' ') }} M FCFA</span>
                                 </button>
                             @endif
                         </div>
@@ -1237,9 +1263,10 @@
                     caseACocher.addEventListener('change', majSelection);
                 });
 
-                // Le bouton des jours et le menu d'actions gardent leur propre rôle :
-                // on arrête la propagation chez eux plutôt que de conditionner la ligne.
-                document.querySelectorAll('#pmLignes .pm-days, #pmLignes .dropdown').forEach(function (element) {
+                // Le menu d'actions garde son propre rôle : on arrête la propagation
+                // chez lui plutôt que de conditionner la ligne. Les jours ne sont plus
+                // cliquables, le clic dessus ouvre donc le tiroir comme ailleurs.
+                document.querySelectorAll('#pmLignes .dropdown').forEach(function (element) {
                     element.addEventListener('click', function (evenement) {
                         evenement.stopPropagation();
                     });
@@ -1424,7 +1451,7 @@
                                     '    <div class="pm1-swal-prime-field">',
                                     '      <label class="pm1-swal-prime-label"><i class="fas fa-coins"></i> Montant (FCFA)</label>',
                                     '      <div class="pm1-swal-prime-input-wrap">',
-                                    '        <input id="pm1PrimeMontant" type="number" min="0" step="500"',
+                                    '        <input id="pm1PrimeMontant" type="number" min="0" step="1"',
                                     '               class="pm1-swal-prime-input" placeholder="Ex : 25 000">',
                                     '        <span class="pm1-swal-prime-currency">FCFA</span>',
                                     '      </div>',

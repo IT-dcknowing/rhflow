@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">📝 Création d'un nouveau contrat</h4>
+                    <h4 class="mb-1">Création d'un nouveau contrat</h4>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-0">
                             <li class="breadcrumb-item">
@@ -98,7 +98,7 @@
                                     <label for="value" class="form-label">Valeur du contrat</label>
                                     <div class="input-group">
                                         <input type="number" step="0.01" class="form-control @error('value') is-invalid @enderror" id="value" name="value" value="{{ old('value') }}">
-                                        <span class="input-group-text">{{ $company->currency ?? 'XOF' }}</span>
+                                        <span class="input-group-text">{{ (!empty($company->currency) && $company->currency !== 'XOF') ? $company->currency : 'FCFA' }}</span>
                                     </div>
                                     @error('value')
                                         <div class="invalid-feedback">{{ $message }}</div>

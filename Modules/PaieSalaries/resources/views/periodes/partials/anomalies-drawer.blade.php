@@ -36,7 +36,7 @@
             <div class="alert alert-danger d-flex align-items-start gap-2 py-2 px-3 mb-3 small border-0 shadow-sm" style="background: #FFF5F5; border-left: 4px solid #E11D48 !important;">
                 <i class="fas fa-info-circle mt-1 text-danger"></i>
                 <div style="color: #4B1218;">
-                    La génération et validation des bulletins est <strong>bloquée</strong> tant que ces anomalies subsistent. Cliquez sur <strong>« Traiter »</strong> pour ouvrir le tiroir et corriger la situation.
+                    La génération et la validation des bulletins sont <strong>bloquées</strong> tant que ces anomalies subsistent. Cliquez sur <strong>« Traiter »</strong> pour ouvrir le tiroir et corriger la situation.
                 </div>
             </div>
 

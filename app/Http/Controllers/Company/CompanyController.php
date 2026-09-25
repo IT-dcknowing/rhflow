@@ -251,7 +251,17 @@ class CompanyController extends Controller
                 }
 
                 // Prochaines échéances (Paie)
-                $targetDate = $periode ? ($periode->date_paiement ?? $periode->date_fin) : now()->addMonth()->endOfMonth();
+                //
+                // « Prochaine paie » correspond à la période actuellement sélectionnée
+                // dans le bandeau ($periode). Cela reste cohérent avec le sélecteur :
+                // si l'utilisateur navigue sur Avril 2030, la prochaine échéance
+                // indiquée est celle d'Avril 2030 et non celle d'une période ancienne
+                // encore non payée.
+                $periodeAPayer = $periode;
+
+                $targetDate = $periodeAPayer
+                    ? ($periodeAPayer->date_paiement ?? $periodeAPayer->date_fin)
+                    : now()->addMonth()->endOfMonth();
                 $nextPayrollDays = (int)now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($targetDate)->startOfDay(), false);
                 $isPayrollLate = $nextPayrollDays < 0;
 
@@ -288,6 +298,7 @@ class CompanyController extends Controller
                     'next_payroll_date' => $targetDate,
                     'next_payroll_days' => abs($nextPayrollDays),
                     'is_payroll_late' => $isPayrollLate,
+                    'next_payroll_periode' => $periodeAPayer ? $periodeAPayer->nom : null,
                     'periode_name' => $periode ? $periode->nom : 'N/A',
                 ];
 

@@ -40,17 +40,16 @@
         <div class="qa-bar{{ $stacked ? ' qa-bar-stacked' : '' }}">
             <div class="qa-row">{{ $slot }}</div>
 
-            @if (isset($secondary) || isset($end))
-                <div class="qa-row">
-                    @isset($secondary)
-                        {{ $secondary }}
-                    @endisset
+            @isset($secondary)
+                <div class="qa-row">{{ $secondary }}</div>
+            @endisset
 
-                    @isset($end)
-                        <div class="qa-end">{{ $end }}</div>
-                    @endisset
-                </div>
-            @endif
+            {{-- Les actions de service ont leur propre ligne. Partager celle des
+                 actions secondaires les faisait basculer seules à droite dès que
+                 la ligne débordait, sans lien visuel avec le reste. --}}
+            @isset($end)
+                <div class="qa-row qa-end">{{ $end }}</div>
+            @endisset
         </div>
     </div>
 </div>

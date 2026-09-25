@@ -98,16 +98,14 @@
                             </div>
                         </div>
 
+                        {{-- Le statut était écrit deux fois sur la même ligne : en texte à
+                             gauche et en pastille à droite. On ne garde que la pastille,
+                             qui porte déjà la couleur et se lit plus vite. --}}
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-0">Statut:</h6>
-                                <small class="text-muted">{{ $company->is_active ? 'Active' : 'Inactive' }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="badge {{ $company->is_active ? 'bg-label-success' : 'bg-label-danger' }}">
-                                    {{ $company->is_active ? '✅ Active' : '❌ Inactive' }}
-                                </span>
-                            </div>
+                            <h6 class="mb-0">Statut</h6>
+                            <span class="badge {{ $company->is_active ? 'bg-label-success' : 'bg-label-danger' }}">
+                                {{ $company->is_active ? '✅ Active' : '❌ Inactive' }}
+                            </span>
                         </div>
                     </div>
                 </div>

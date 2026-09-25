@@ -84,7 +84,7 @@
                             </select>
                             <label class="visually-hidden" for="pm1PrimeMontantDirect">Montant</label>
                             <input type="number" id="pm1PrimeMontantDirect" class="form-control form-control-sm"
-                                min="0" step="500" placeholder="Montant FCFA">
+                                min="0" step="1" placeholder="Montant FCFA">
                             <button type="button" class="btn btn-primary btn-sm" id="pm1PrimeAjouter">
                                 <i class="fas fa-plus me-1"></i>Ajouter
                             </button>
@@ -160,6 +160,10 @@
                     <span>Prêts et retenues</span>
                     <b class="pm-mono neg" id="pm1DrawerRetenues2"></b>
                 </div>
+                <div class="pm1-card-line" id="pm1DrawerRembourseLigne" hidden>
+                    <span>Remboursement de frais (gain)</span>
+                    <b class="pm-mono pos" id="pm1DrawerRembourse"></b>
+                </div>
                 <div class="pm1-card-total">
                     <span>Net à payer</span>
                     <b class="pm-mono" id="pm1DrawerNet"></b>
@@ -181,7 +185,7 @@
             data-exercice-id="{{ $periode->exercice_id }}" data-periode-id="{{ $periode->id }}">
             <i class="fas fa-file-invoice me-2"></i>Bulletin
         </button>
-        <button type="button" class="btn pm1-fermer" id="pm1DrawerFermer">Fermer</button>
+        <button type="button" class="btn pm1-fermer" id="pm1DrawerFermer">Terminer</button>
     </footer>
 
     {{-- Barre latérale coulissante secondaire (Nested Drawer) pour traiter la thématique --}}
@@ -510,6 +514,13 @@
                 remplir('pm1DrawerImpot', '–' + (d.impot || '0') + ' FCFA');
                 remplir('pm1DrawerNet', (d.netFmt || '0') + ' FCFA');
 
+                var ligneRemb = document.getElementById('pm1DrawerRembourseLigne');
+                var valRemb = parseFloat(d.rembourseVal || 0) || 0;
+                if (ligneRemb) {
+                    ligneRemb.hidden = (valRemb <= 0);
+                    remplir('pm1DrawerRembourse', '+' + (d.rembourse || '0') + ' FCFA');
+                }
+
                 var blocAnc = document.getElementById('pm1DrawerAncBloc');
                 if (blocAnc) blocAnc.hidden = !d.anciennete;
                 var blocSit = document.getElementById('pm1DrawerSitBloc');
@@ -710,7 +721,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Montant à retenir (FCFA) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="500" placeholder="Ex: 25000" required>
+                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="1" placeholder="Ex: 25000" required>
                     </div>
                 `;
             }
@@ -737,7 +748,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Montant total (FCFA) <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control font-monospace" id="nested_loan_amt" name="amount" min="1" step="1000" placeholder="Ex: 300000" required>
+                            <input type="number" class="form-control font-monospace" id="nested_loan_amt" name="amount" min="1" step="1" placeholder="Ex: 300000" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Durée (en mois) <span class="text-danger">*</span></label>
@@ -746,7 +757,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Échéance mensuelle (FCFA) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control font-monospace" id="nested_loan_deduc" name="amount_deduc" min="1" step="500" placeholder="Ex: 50000" required>
+                        <input type="number" class="form-control font-monospace" id="nested_loan_deduc" name="amount_deduc" min="1" step="1" placeholder="Ex: 50000" required>
                         <small class="text-muted">Calculée automatiquement selon le total et la durée.</small>
                     </div>
                 `;
@@ -767,7 +778,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Montant réel estimé (FCFA) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="500" placeholder="Ex: 75000" required>
+                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="1" placeholder="Ex: 75000" required>
                     </div>
                 `;
             }
@@ -783,14 +794,15 @@
                     <input type="hidden" name="taux_hour" id="nested_hs_taux" value="` + taux + `">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold small">Début de période</label>
-                            <input type="date" class="form-control form-control-sm" name="start_date" value="` + debut + `">
+                            <label class="form-label fw-bold small">Début de période <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control form-control-sm" name="start_date" value="` + debut + `" min="` + debut + `" max="` + fin + `" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold small">Fin de période</label>
-                            <input type="date" class="form-control form-control-sm" name="end_date" value="` + fin + `">
+                            <label class="form-label fw-bold small">Fin de période <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control form-control-sm" name="end_date" value="` + fin + `" min="` + debut + `" max="` + fin + `" required>
                         </div>
                     </div>
+                    <small class="text-muted d-block mb-3">Période limitée au mois : du ` + debut + ` au ` + fin + `</small>
                     <div class="table-responsive border rounded mb-3">
                         <table class="table table-sm table-borderless mb-0">
                             <thead class="table-light">
@@ -848,20 +860,22 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Date de début <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="start_date" id="nested_conge_start" value="` + debut + `" required>
+                            <input type="date" class="form-control" name="start_date" id="nested_conge_start" value="` + debut + `" min="` + debut + `" max="` + fin + `" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Date de fin <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="end_date" id="nested_conge_end" value="` + fin + `" required>
+                            <input type="date" class="form-control" name="end_date" id="nested_conge_end" value="` + fin + `" min="` + debut + `" max="` + fin + `" required>
                         </div>
                     </div>
+                    <small class="text-muted d-block mb-2">Les dates doivent être comprises dans le mois de paie (` + debut + ` au ` + fin + `)</small>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nombre de jours <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="days" id="nested_conge_days" min="1" max="60" value="1" required>
+                        <input type="number" class="form-control" name="days" id="nested_conge_days" min="1" max="31" value="1" required>
+                        <small class="text-muted">Calculé automatiquement selon les dates (modifiable si besoin).</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Allocation de congé (FCFA)</label>
-                        <input type="number" class="form-control font-monospace" name="amount_leave" min="0" step="500" value="0" placeholder="0 si maintien de salaire">
+                        <input type="number" class="form-control font-monospace" name="amount_leave" min="0" step="1" value="0" placeholder="0 si maintien de salaire">
                         <small class="text-muted">Laisser 0 si déjà inclus dans le salaire régulier.</small>
                     </div>
                 `;
@@ -875,7 +889,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Montant (FCFA) <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="500" placeholder="Ex : 25000" required>
+                        <input type="number" class="form-control font-monospace" name="amount" min="1" step="1" placeholder="Ex : 25000" required>
                         <small class="text-muted">Versé en plus du salaire, sans cotisation ni impôt.</small>
                     </div>
                 `;
@@ -888,13 +902,14 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Date de départ <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="start_date" value="` + debut + `" required>
+                            <input type="date" class="form-control" name="start_date" id="nested_abs_start" value="` + debut + `" min="` + debut + `" max="` + fin + `" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Date de reprise <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="end_date" value="` + fin + `" required>
+                            <input type="date" class="form-control" name="end_date" id="nested_abs_end" value="` + fin + `" min="` + debut + `" max="` + fin + `" required>
                         </div>
                     </div>
+                    <small class="text-muted d-block mb-2">Les dates d'absence doivent être comprises dans le mois de paie (` + debut + ` au ` + fin + `)</small>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Heures d'absence <span class="text-danger">*</span></label>
@@ -1049,7 +1064,60 @@
                     champsHs.forEach(function (inp) {
                         inp.addEventListener('input', calcHs);
                     });
+                } else if (theme === 'conge') {
+                    var cDebut = document.getElementById('nested_conge_start');
+                    var cFin = document.getElementById('nested_conge_end');
+                    var cDays = document.getElementById('nested_conge_days');
+
+                    function calcJoursConge() {
+                        if (!cDebut || !cFin || !cDays) return;
+                        var d1 = new Date(cDebut.value);
+                        var d2 = new Date(cFin.value);
+                        if (!isNaN(d1.getTime()) && !isNaN(d2.getTime())) {
+                            if (d2 < d1) {
+                                cFin.value = cDebut.value;
+                                d2 = d1;
+                            }
+                            var diffMs = d2.getTime() - d1.getTime();
+                            var diffJours = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
+                            cDays.value = Math.max(1, diffJours);
+                        }
+                    }
+
+                    if (cDebut && cFin) {
+                        cDebut.addEventListener('change', calcJoursConge);
+                        cFin.addEventListener('change', calcJoursConge);
+                        calcJoursConge();
+                    }
                 } else if (theme === 'absence') {
+                    var aDebut = document.getElementById('nested_abs_start');
+                    var aFin = document.getElementById('nested_abs_end');
+                    var aDays = nestedFormContent.querySelector('[name="days"]');
+                    var aHours = nestedFormContent.querySelector('[name="hours"]');
+
+                    function calcJoursAbsence() {
+                        if (!aDebut || !aFin || !aDays) return;
+                        var d1 = new Date(aDebut.value);
+                        var d2 = new Date(aFin.value);
+                        if (!isNaN(d1.getTime()) && !isNaN(d2.getTime())) {
+                            if (d2 < d1) {
+                                aFin.value = aDebut.value;
+                                d2 = d1;
+                            }
+                            var diffMs = d2.getTime() - d1.getTime();
+                            var diffJours = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1;
+                            var j = Math.max(1, diffJours);
+                            aDays.value = j;
+                            if (aHours) aHours.value = j * 8;
+                        }
+                    }
+
+                    if (aDebut && aFin) {
+                        aDebut.addEventListener('change', calcJoursAbsence);
+                        aFin.addEventListener('change', calcJoursAbsence);
+                        calcJoursAbsence();
+                    }
+
                     var justSel = document.getElementById('nested_abs_just');
                     var permBloc = document.getElementById('nested_abs_perm_bloc');
                     if (justSel && permBloc) {

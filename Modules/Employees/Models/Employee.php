@@ -225,7 +225,25 @@ class Employee extends Model
             $total_avantages_real = $total_avantages_real + $avantage->amount_reel;
         }
 
-        $salary_brut_total = ((float) $base_salary + (float) $total_allowance + (float) $total_avantages_real);
+        // Heures supplémentaires
+        $heuresSup = 0;
+        if ($periode_id) {
+            $heuresSup = (float) \Modules\Time\Models\Overtime::where('employee_id', $this->id)
+                ->where('periode_id', $periode_id)
+                ->where(function ($q) {
+                    $q->where('statut', 'approved')->orWhereNull('statut');
+                })
+                ->sum('montant');
+        }
+
+        // NOTE : Le montant de l'allocation congé est déjà inclus dans $total_allowance.
+        // Lors de l'activation d'un congé (LeavesController::activate), le système crée
+        // une ligne Allowance avec code='CONGE-{leave_id}' et le periode_id de la période
+        // d'activation (activated_periode_id). Cette ligne est récupérée par la requête
+        // $allowancesQuery ci-dessus. Requêter Leave.amount_leave avec Leave.periode_id
+        // (période de dépôt de la demande) est INCORRECT car ce n'est pas la période paie.
+
+        $salary_brut_total = ((float) $base_salary + (float) $total_allowance + (float) $total_avantages_real + $heuresSup);
 
         return $salary_brut_total;
     }
@@ -509,14 +527,12 @@ public function get_salary_social($periode_id = null)
             if ($retenue->code == 403 || $retenue->code == 301 || $retenue->code == 302) {
                 $totalretenues += $retenue->amount;
             }
-            if ($retenue->code == 601) {
+            if ($retenue->code == 601 || (int) $retenue->type_retenue_id === 5) {
                 $rembourssement += $retenue->amount;
-            }
-            if ($retenue->code == 501 && $retenue->type == 'add') {
-                $autreretenue += $retenue->amount;
-            }
-            if ($retenue->code == 500) {
+            } elseif ($retenue->code == 500) {
                 $loan += $retenue->amount;
+            } elseif ($retenue->type == 'add' && (int) $retenue->type_retenue_id !== 5) {
+                $autreretenue += $retenue->amount;
             }
         }
 
@@ -1035,12 +1051,14 @@ public function get_salary_social($periode_id = null)
 
     public function get_Rembourssement($periodeId = null)
     {
-        // Vérifie si des Rembourssement actifs existent pour l'employé sans retenue
+        // Vérifie si des Remboursements actifs existent pour l'employé
         $totalRembourssement = \Modules\PaieSalaries\Models\Retenue::where('employee_id', $this->id)
-            ->where('type_retenue_id', 5)
+            ->where(function ($q) {
+                $q->where('type_retenue_id', 5)->orWhere('code', '601');
+            })
             ->where('periode_id', '=', $periodeId)
-            ->where('type', 'add') // Rembourssement en cours
-            ->sum('amount'); // Calcule directement le total des déductions
+            ->where('type', 'add')
+            ->sum('amount');
 
         return $totalRembourssement ?? 0;
     }

@@ -73,8 +73,10 @@ class SalaryService
         $cantine = $allowances->where('allowance_option', 31)->sum('amount');
         $prime = $allowances->whereIn('allowance_option', [27, 28])->sum('amount');
 
-        // 7️⃣ Calcul net = Brut - CNPS - CMU - Impôts - Prêts - Autres retenues
+        // 7️⃣ Calcul net = Brut + Remboursements - CNPS - CMU - Impôts - Prêts - Autres retenues
+        $remboursement = (float) $employee->get_Rembourssement($periode_id);
         $net = $brut_total
+            + $remboursement
             - $cnps
             - $coticmu
             - ($impots + $cantine + $avantagesReal)

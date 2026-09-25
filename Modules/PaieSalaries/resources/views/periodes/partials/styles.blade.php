@@ -101,9 +101,11 @@
         .pm td.pm-net { font-weight: 600; color: var(--navy-text); }
         .pm-who b { display: block; font-weight: 600; color: var(--ink); }
         .pm-who small { font-size: 11.5px; color: var(--muted); }
-        .pm-days { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-2); }
-        .pm-days:hover { border-color: var(--navy-line); color: var(--navy-text); }
-        .pm-days.warn { border-color: var(--warn-line); background: var(--warn-bg); color: var(--warn); }
+        /* Nombre de jours : simple valeur affichée, plus un bouton. Le cadre et le
+           fond le faisaient passer pour un champ de saisie ; seule la couleur
+           distingue encore un mois incomplet. */
+        .pm-days { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--ink-2); }
+        .pm-days.warn { font-weight: 600; color: var(--warn); }
         .pm-tag { margin-left: 6px; padding: 1px 6px; border-radius: 5px; background: var(--navy-tint); color: var(--navy-text); font-size: 10.5px; font-weight: 600; white-space: nowrap; }
         .pm-table-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 18px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--muted); }
 

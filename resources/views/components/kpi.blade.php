@@ -25,9 +25,14 @@
 <div {{ $attributes->merge(['class' => $col . ' mb-4']) }}>
     <div class="d-flex flex-column p-3 border rounded h-100">
 
-        {{-- Ligne du haut : chiffre principal + icone a droite --}}
+        {{-- Ligne du haut : chiffre principal + icone a droite.
+             Le chiffre etait coupe par une ellipse des qu il depassait la largeur
+             restante : une masse salariale a huit chiffres s affichait « 76 411 ... ».
+             Il se reduit maintenant plutot que d etre tronque, et peut passer a la
+             ligne en dernier recours. L icone reste, pour ne pas depareiller les
+             autres tuiles. --}}
         <div class="d-flex align-items-start justify-content-between gap-2">
-            <h3 class="mb-0 text-{{ $color }} fw-bold" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;">
+            <h3 class="mb-0 text-{{ $color }} fw-bold kpi-value">
                 @if (trim($slot) !== '')
                     {{ $slot }}
                 @else

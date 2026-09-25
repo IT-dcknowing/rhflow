@@ -117,7 +117,7 @@
                                             <input type="number" step="0.01"
                                                 class="form-control @error('value') is-invalid @enderror" id="value"
                                                 name="value" value="{{ old('value', $contract->value) }}">
-                                            <span class="input-group-text">{{ $company->currency ?? 'XOF' }}</span>
+                                            <span class="input-group-text">{{ (!empty($company->currency) && $company->currency !== 'XOF') ? $company->currency : 'FCFA' }}</span>
                                         </div>
                                         @error('value')
                                             <div class="invalid-feedback">{{ $message }}</div>

@@ -19,9 +19,9 @@
                     </small> 
                 </div>
                 <div>
-                    <a href="{{ route('company.evenements.annonces.create') }}" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary" disabled title="Fonctionnalité désactivée">
                         <i class="fas fa-plus me-1"></i>Nouvelle Annonce
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -224,6 +224,21 @@
         </div>
     </div>
 </div>
+
+<!-- Actions Rapides -->
+<x-quick-actions>
+    <x-quick-action icon="fas fa-plus-circle" label="Nouvelle annonce" disabled />
+
+    <x-slot:secondary>
+        <x-quick-action icon="fas fa-list" label="Voir toutes les annonces"
+            :href="route('company.evenements.annonces.index')" variant="outline" color="primary" />
+    </x-slot:secondary>
+
+    <x-slot:end>
+        <x-quick-action icon="fas fa-file-export" label="Exporter en Excel" href="#" variant="ghost" />
+        <x-quick-action icon="fas fa-cog" label="Paramètres" href="#" variant="ghost" />
+    </x-slot:end>
+</x-quick-actions>
 
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

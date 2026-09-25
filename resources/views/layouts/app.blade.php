@@ -813,9 +813,10 @@
             <div class="loader-fill"></div>
         </div>
     </div>
-    <!-- Bouton toggle mobile -->
+    <!-- Bouton toggle mobile & Voile d'arrière-plan -->
+    <div class="sidebar-mobile-backdrop" id="sidebarMobileBackdrop" onclick="closeMobileSidebar()"></div>
     <button class="sidebar-mobile-toggle" id="mobileSidebarToggle"
-        onclick="document.querySelector('.unified-sidebar').classList.toggle('mobile-open')">
+        onclick="toggleMobileSidebar()">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -883,6 +884,9 @@
                 <div style="display:flex;align-items:center;gap:10px;">
                     <img src="{{ asset('img/logos/logo.png') }}" alt="RH Flow" style="height:40px;">
                 </div>
+                <button type="button" class="btn btn-sm d-lg-none ms-auto text-muted p-1" onclick="closeMobileSidebar()" aria-label="Fermer le menu" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 6px; border: none; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             @if($menusGrises)
@@ -1266,8 +1270,8 @@
             <nav class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
                 <div class="container-xxl">
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                            <i class="fas fa-menu-2 ti-sm"></i>
+                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)" onclick="toggleMobileSidebar()" aria-label="Menu principal">
+                            <i class="fas fa-bars ti-sm"></i>
                         </a>
                     </div>
 
@@ -1440,6 +1444,24 @@
     <!-- Scripts -->
 
     <script>
+        // Fonctions d'ouverture/fermeture de la sidebar mobile
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('unifiedSidebar');
+            const backdrop = document.getElementById('sidebarMobileBackdrop');
+            if (!sidebar) return;
+            const isOpen = sidebar.classList.toggle('mobile-open');
+            if (backdrop) {
+                backdrop.classList.toggle('active', isOpen);
+            }
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('unifiedSidebar');
+            const backdrop = document.getElementById('sidebarMobileBackdrop');
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+
         // Fonction toggle sous-menu sidebar - Mode Drill-Down Premium
         function openSubmenu(panelId, title) {
             const sidebar = document.getElementById('unifiedSidebar');

@@ -63,7 +63,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">📅 Tableau de bord Événements</h4>
+                    <h4 class="mb-1"> Tableau de bord Événements</h4>
                     <p class="text-muted mb-0">Vue d'ensemble des activités et événements de votre entreprise</p>
                     <small class="text-primary">
                         <i class="fas fa-calendar me-1"></i>
@@ -194,13 +194,11 @@
                 <div class="card-body p-0">
                     <div id="miniCalendar"></div>
                     <div class="p-3 border-top">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small">Légende :</span>
-                            <div class="d-flex gap-2">
-                                @foreach($eventTypes as $type)
-                                    <span class="badge" style="background-color: {{ $type['color'] }};">{{ $type['name'] }} ({{ $type['count'] }})</span>
-                                @endforeach
-                            </div>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="text-muted small me-1">Légende :</span>
+                            @foreach($eventTypes as $type)
+                                <span class="badge text-white" style="background-color: {{ $type['color'] }}; white-space: normal; line-height: 1.2;">{{ $type['name'] }} ({{ $type['count'] }})</span>
+                            @endforeach
                         </div>
                     </div>
                 </div>

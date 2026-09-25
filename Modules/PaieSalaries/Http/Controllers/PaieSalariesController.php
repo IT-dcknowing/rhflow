@@ -1407,7 +1407,11 @@ class PaieSalariesController extends Controller
                         $avantage->amount = $montant;
                         $avantage->taxe_its = 0;
                         $avantage->taxe_cnps = 0;
-                        $avantage->traitement = 'non_soumis';
+                        // La colonne traitement est la périodicité, enum('mensuel','annuel'),
+                        // et non un traitement fiscal : « non_soumis » y était tronqué et
+                        // faisait échouer l'enregistrement. Un avantage posé sur une
+                        // période de paie est mensuel.
+                        $avantage->traitement = 'mensuel';
                         $avantage->status = 'pending';
                         $avantage->is_active = 1;
                         $avantage->company_id = $companyId;

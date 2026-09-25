@@ -22,9 +22,9 @@
                     <a href="{{ route('company.evenements.meetings.calendar') }}" class="btn btn-outline-primary">
                         <i class="fas fa-calendar-alt me-1"></i>Vue Calendrier
                     </a>
-                    <a href="{{ route('company.evenements.meetings.create') }}" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary" disabled title="Fonctionnalité désactivée">
                         <i class="fas fa-plus me-1"></i>Nouvelle Réunion
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>

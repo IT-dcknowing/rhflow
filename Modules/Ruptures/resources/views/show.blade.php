@@ -144,7 +144,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <strong>Montant de l'indemnité:</strong>
-                                        {{ $rupture->solde ? number_format($rupture->solde, 0, ',', ' ') . ' XOF' : 'N/A' }}
+                                        {{ $rupture->solde ? number_format($rupture->solde, 0, ',', ' ') . ' FCFA' : 'N/A' }}
                                     </div>
                                     <div class="mb-3">
                                         <strong>Créé par:</strong> {{ $rupture->company->name ?? 'Système' }}

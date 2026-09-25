@@ -1349,6 +1349,25 @@ table td .btn-group > .btn-icon {
 
 
 /* =====================================================================
+   Tuile KPI : la valeur s'adapte à la largeur disponible.
+   Elle était figée à la taille d'un h3 avec une ellipse, ce qui coupait les
+   montants longs (« 76 411 ... »). clamp() la réduit progressivement, et le
+   retour à la ligne sert de dernier recours plutôt que la troncature.
+   ===================================================================== */
+.kpi-value {
+    min-width: 0;
+    font-size: clamp(1.05rem, 1.9vw, 1.5rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.kpi-value small {
+    font-size: .62em;
+    font-weight: 600;
+}
+
+
+/* =====================================================================
    ACTIONS RAPIDES — composant <x-quick-actions> / <x-quick-action>
    ---------------------------------------------------------------------
    Classes propres au composant, volontairement NON limitées à .ds : les
@@ -1385,13 +1404,16 @@ table td .btn-group > .btn-icon {
     gap: 8px;
 }
 
-/* Actions de service, repoussées à droite de leur ligne avec espacement aéré. */
+/* Actions de service : leur propre ligne, alignée à gauche comme les autres et
+   séparée par un filet. Le margin-left:auto d'avant les envoyait à droite dès
+   qu'elles passaient à la ligne, où elles paraissaient orphelines. */
 .qa-end {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 18px;
-    margin-left: auto;
+    padding-top: 10px;
+    border-top: 1px solid #eef0f4;
 }
 
 /* Colonne d'actions des pages de détail : boutons pleine largeur. */
@@ -1539,4 +1561,269 @@ table td .btn-group > .btn-icon {
 .swal2-container .swal2-actions .swal2-cancel.swal2-visible {
     display: inline-flex !important;
 }
+
+/* ==========================================================================
+   RH Flow - Responsive Design System & Mobile Breakpoints
+   ========================================================================== */
+
+/* Évite les débordements horizontaux globaux */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+.app-wrapper {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+}
+
+.app-main-content {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Voile d'arrière-plan pour la sidebar mobile */
+.sidebar-mobile-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-mobile-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ==========================================================================
+   Breakpoint : Tablette & Mobile (< 992px)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    .unified-sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100vh !important;
+        width: 270px !important;
+        max-width: 85vw !important;
+        transform: translateX(-100%);
+        z-index: 1050 !important;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.18);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .unified-sidebar.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+    .app-main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Le hamburger principal est logé dans la navbar */
+    .sidebar-mobile-toggle {
+        display: none !important;
+    }
+
+    .layout-menu-toggle {
+        display: flex !important;
+        align-items: center;
+        margin-right: 12px;
+    }
+
+    .layout-menu-toggle a {
+        font-size: 20px;
+        color: var(--navy);
+        padding: 4px 8px;
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+    }
+
+    .layout-menu-toggle a:hover {
+        background: var(--navy-tint);
+    }
+
+    /* Tableaux : défilement fluide sans élargir l'écran */
+    .table-responsive {
+        margin-bottom: 1rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .card-body > .table:not(.table-responsive),
+    .card > .table:not(.table-responsive),
+    .dataTables_wrapper {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Bouton guide d'utilisation compact */
+    #layout-navbar .guide-btn span {
+        display: none;
+    }
+
+    #layout-navbar .guide-btn {
+        padding: 0 10px;
+        width: 36px;
+        height: 36px;
+        justify-content: center;
+    }
+}
+
+/* ==========================================================================
+   Breakpoint : Mobile (< 768px)
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    /* Navbar compacte */
+    #layout-navbar.layout-navbar {
+        padding: 8px 14px;
+        min-height: 54px;
+    }
+
+    #layout-navbar .nb-sub span {
+        display: none;
+    }
+
+    #layout-navbar .nb-sub {
+        padding: 0 10px;
+        width: 36px;
+        height: 36px;
+        justify-content: center;
+    }
+
+    #layout-navbar .nb-card {
+        padding: 0 8px;
+        height: 36px;
+    }
+
+    #layout-navbar .nb-card-sub {
+        display: none !important;
+    }
+
+    #layout-navbar .nb-card-title {
+        font-size: 11.5px;
+    }
+
+    /* Conteneur principal */
+    .container-xxl.container-p-y {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        padding-top: 14px !important;
+        padding-bottom: 20px !important;
+    }
+
+    /* En-têtes de pages avec titre et actions */
+    .d-flex.justify-content-between.align-items-center:not(.card-header):not(.modal-header):not(.dropdown-header) {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    /* Modales */
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    /* Tiroirs / Offcanvas pleine largeur mobile */
+    .offcanvas {
+        max-width: 100vw !important;
+    }
+}
+
+/* ==========================================================================
+   Breakpoint : Petit Mobile (< 576px)
+   ========================================================================== */
+@media (max-width: 575.98px) {
+    #layout-navbar.layout-navbar {
+        padding: 6px 10px;
+    }
+
+    /* Télécharger l'App masqué sur très petit écran */
+    #layout-navbar .nb-app {
+        display: none !important;
+    }
+
+    /* Assistant IA en icône compacte */
+    #layout-navbar .nb-ia .nb-card-text {
+        display: none !important;
+    }
+
+    #layout-navbar .nb-ia {
+        padding: 0;
+        width: 36px;
+        height: 36px;
+        justify-content: center;
+    }
+
+    #layout-navbar .nb-ia .bx {
+        margin: 0;
+    }
+
+    /* Sélecteur de période compact */
+    #layout-navbar #periodeSelectorDropdown {
+        height: 34px;
+        padding: 0 8px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    #layout-navbar [aria-labelledby="periodeSelectorDropdown"] {
+        min-width: 270px !important;
+        max-width: calc(100vw - 20px) !important;
+        left: auto !important;
+        right: 0 !important;
+    }
+
+    /* Marges navbar réduites */
+    #layout-navbar .navbar-nav > li {
+        margin-right: 4px !important;
+    }
+
+    #layout-navbar #notificationDropdown {
+        margin-right: 4px !important;
+    }
+
+    /* Actions rapides : boutons pleine largeur */
+    .qa-bar .btn.qa-btn {
+        min-width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Cartes & listes */
+    .card .card-body {
+        padding: 14px;
+    }
+
+    .card .card-header {
+        padding: 14px;
+    }
+
+    /* Onglets */
+    .nav-tabs .nav-link {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    /* Pagination */
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+    }
+}
+
 

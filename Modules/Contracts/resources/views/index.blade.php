@@ -90,19 +90,15 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Liste des contrats </h5>
-            <div class="dropdown">
-                <button class="btn btn-outline-success dropdown-toggle" type="button" 
-                        id="exportDropdown" 
-                        data-bs-toggle="dropdown" 
-                        data-bs-boundary="viewport"
-                        aria-expanded="false">
-                    <i class="fas fa-download me-1"></i>Exporter
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
-                    <li><a class="dropdown-item" href="{{ route('company.contracts.index', array_merge(request()->all(), ['export' => 'excel'])) }}"><i class="fas fa-file-excel me-1 text-success"></i>Excel</a></li>
-                    <li><a class="dropdown-item" href="{{ route('company.contracts.index', array_merge(request()->all(), ['export' => 'pdf'])) }}"><i class="fas fa-file-pdf me-1 text-danger"></i>PDF</a></li>
-                </ul>
-            </div>
+            {{-- Export grisé : les deux liens pointaient vers la liste avec
+                 ?export=excel|pdf, paramètre que le contrôleur ne lit nulle part.
+                 Ils rechargeaient donc la page sans rien produire. Tant que
+                 l'export n'est pas implémenté, le bouton annonce son état plutôt
+                 que de promettre une action qui n'arrive pas. --}}
+            <button class="btn btn-outline-secondary" type="button" disabled
+                    title="L'export des contrats n'est pas encore disponible">
+                <i class="fas fa-download me-1"></i>Exporter
+            </button>
         </div>
         <div class="card-body">
             <div class="table-responsive text-nowrap">

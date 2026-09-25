@@ -490,7 +490,7 @@
                             </div>
                         </div>
                         <div class="border rounded p-3 mt-4">
-                            <div class="gap-2 d-flex justify-content-between">
+                            <div class="row g-3">
                                 <div class="col-12 col-sm-4">
                                     <div class="d-flex gap-2 align-items-center">
                                         <div class="badge rounded bg-label-primary p-1">
@@ -812,6 +812,11 @@
                             <span class="badge bg-label-{{ $stats['is_payroll_late'] ? 'danger' : 'success' }} fs-6">
                                 {{ \Carbon\Carbon::parse($stats['next_payroll_date'])->translatedFormat('d F Y') }}
                             </span>
+                            {{-- La date seule prêtait à confusion quand plusieurs exercices
+                                 sont ouverts : on nomme la période qu'elle concerne. --}}
+                            @if(!empty($stats['next_payroll_periode']))
+                                <small class="text-muted d-block mt-1">Période {{ $stats['next_payroll_periode'] }}</small>
+                            @endif
                         </div>
                     </div>
                 </div>
