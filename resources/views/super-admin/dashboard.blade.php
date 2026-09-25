@@ -200,21 +200,26 @@
 
 <!-- Quick Actions -->
 <x-quick-actions>
-    <x-quick-action icon="ti ti-bag" label="Créer une entreprise"
-        :href="route('super-admin.enterprises.create')" />
+    <x-quick-action-group title="ENTREPRISES" icon="ti ti-building" color="primary" minWidth="220px">
+        <x-quick-action icon="ti ti-bag" label="Créer une entreprise"
+            :href="route('super-admin.enterprises.create')" variant="primary" />
+    </x-quick-action-group>
 
-    <x-slot:secondary>
+    <x-quick-action-divider />
+
+    <x-quick-action-group title="GESTION COMMERCIALE" icon="ti ti-packages" color="success" minWidth="260px">
         <x-quick-action icon="ti ti-user" label="Gérer les commandes"
             :href="route('super-admin.commandes.index')" variant="outline" color="success" />
-
         <x-quick-action icon="ti ti-package" label="Gérer les packs"
             :href="route('super-admin.packs.index')" variant="outline" color="primary" />
-    </x-slot:secondary>
+    </x-quick-action-group>
 
-    <x-slot:end>
+    <x-quick-action-divider />
+
+    <x-quick-action-group title="RAPPORTS" icon="ti ti-file-analytics" color="secondary" end>
         <x-quick-action icon="ti ti-notepad" label="Générer un rapport"
-            :href="route('super-admin.reports.index')" variant="ghost" />
-    </x-slot:end>
+            :href="route('super-admin.reports.index')" variant="outline" color="secondary" />
+    </x-quick-action-group>
 </x-quick-actions>
 
 <!-- Entreprises récentes -->

@@ -56,79 +56,48 @@
         </x-kpi-grid>
 
         <!-- Accès rapides, selon le rôle -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Accès rapides</h5>
-            </div>
-            <div class="card-body">
-                {{-- Les sections proposées suivent config/menu_sections.php --}}
-                <div class="row g-3">
-                    @if(in_array('employes', $sections) && isModuleActive('employee'))
-                        <div class="col-md-4">
-                            <a href="{{ route('company.employees.dossiers.index') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-folder"></i>
-                                <span>Dossiers du personnel</span>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="{{ route('company.employees.demandes.index') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-inbox"></i>
-                                <span>Demandes employés</span>
-                            </a>
-                        </div>
-                    @endif
+        <x-quick-actions>
+            @if(in_array('employes', $sections) && isModuleActive('employee'))
+                <x-quick-action-group title="EMPLOYÉS" icon="fas fa-users" color="primary" minWidth="220px">
+                    <x-quick-action icon="fas fa-folder" label="Dossiers personnel"
+                        :href="route('company.employees.dossiers.index')" variant="primary" />
+                    <x-quick-action icon="fas fa-inbox" label="Demandes"
+                        :href="route('company.employees.demandes.index')" variant="outline" color="primary" />
+                </x-quick-action-group>
+            @endif
 
-                    @if(in_array('paie', $sections) && isModuleActive('salary'))
-                        <div class="col-md-4">
-                            <a href="{{ route('company.paiesalaries.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-money-bill"></i>
-                                <span>Paie et retenues</span>
-                            </a>
-                        </div>
-                    @endif
+            @if(in_array('paie', $sections) && isModuleActive('salary'))
+                <x-quick-action-divider />
+                <x-quick-action-group title="PAIE & RETENUES" icon="fas fa-dollar" color="success" minWidth="180px">
+                    <x-quick-action icon="fas fa-money-bill-wave" label="Paie et retenues"
+                        :href="route('company.paiesalaries.dashboard')" variant="primary" color="success" />
+                </x-quick-action-group>
+            @endif
 
-                    @if(in_array('declarations', $sections) && isModuleActive('declaration'))
-                        <div class="col-md-4">
-                            <a href="{{ route('company.declarations.resume.index') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Bulletins de paie</span>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="{{ route('company.declarations.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-landmark"></i>
-                                <span>Déclarations</span>
-                            </a>
-                        </div>
-                    @endif
+            @if(in_array('declarations', $sections) && isModuleActive('declaration'))
+                <x-quick-action-divider />
+                <x-quick-action-group title="DÉCLARATIONS" icon="fas fa-tasks" color="warning" minWidth="240px">
+                    <x-quick-action icon="fas fa-file-alt" label="Bulletins de paie"
+                        :href="route('company.declarations.resume.index')" variant="outline" color="warning" />
+                    <x-quick-action icon="fas fa-landmark" label="Déclarations"
+                        :href="route('company.declarations.dashboard')" variant="outline" color="secondary" />
+                </x-quick-action-group>
+            @endif
 
+            @if(in_array('evenements', $sections) || in_array('simulateur', $sections))
+                <x-quick-action-divider />
+                <x-quick-action-group title="OUTILS" icon="fas fa-cog" color="secondary" end>
                     @if(in_array('evenements', $sections) && isModuleActive('event'))
-                        <div class="col-md-4">
-                            <a href="{{ route('company.evenements.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Événements</span>
-                            </a>
-                        </div>
+                        <x-quick-action icon="fas fa-calendar-alt" label="Événements"
+                            :href="route('company.evenements.dashboard')" variant="outline" color="secondary" />
                     @endif
-
                     @if(in_array('simulateur', $sections))
-                        <div class="col-md-4">
-                            <a href="{{ route('company.simulator.dashboard') }}"
-                                class="btn btn-outline-primary w-100 text-start d-flex align-items-center gap-2">
-                                <i class="fas fa-calculator"></i>
-                                <span>Simulateur</span>
-                            </a>
-                        </div>
+                        <x-quick-action icon="fas fa-calculator" label="Simulateur"
+                            :href="route('company.simulator.dashboard')" variant="outline" color="secondary" />
                     @endif
-                </div>
-            </div>
-        </div>
+                </x-quick-action-group>
+            @endif
+        </x-quick-actions>
 
     @endif
 </div>

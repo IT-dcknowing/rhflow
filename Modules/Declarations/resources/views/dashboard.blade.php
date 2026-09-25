@@ -343,23 +343,28 @@
 
         <!-- Actions rapides -->
         <x-quick-actions>
-            <x-quick-action icon="fas fa-building" label="Nouvelle déclaration CNPS" href="#" />
+            <x-quick-action-group title="DÉCLARATIONS" icon="fas fa-landmark" color="primary" minWidth="260px">
+                <x-quick-action icon="fas fa-file-invoice" label="Déclarations mensuelles"
+                    :href="route('company.declarations.decla_mensuelle')" variant="primary" />
+            </x-quick-action-group>
 
-            <x-slot:secondary>
-                <x-quick-action icon="fas fa-file-invoice" label="Générer bulletins mensuels"
-                    href="#" variant="outline" color="primary" />
+            <x-quick-action-divider />
 
-                <x-quick-action icon="fas fa-receipt" label="Déclaration ITS" href="#" variant="outline" />
+            <x-quick-action-group title="BULLETINS DE PAIE" icon="fas fa-file-invoice-dollar" color="success" minWidth="260px">
+                <x-quick-action icon="fas fa-users" label="Bulletins individuels"
+                    :href="route('company.declarations.resume.index')" variant="primary" color="success" />
+                <x-quick-action icon="fas fa-calculator" label="Générer paie"
+                    :href="route('company.paiesalaries.exercices.index')" variant="outline" color="secondary" />
+            </x-quick-action-group>
 
-                <x-quick-action icon="fas fa-heartbeat" label="Déclaration CMU"
-                    href="#" variant="outline" color="warning" />
-            </x-slot:secondary>
+            <x-quick-action-divider />
 
-            <x-slot:end>
-                <x-quick-action icon="fas fa-book" label="Livre de paie annuel" href="#" variant="ghost" />
-                <x-quick-action icon="fas fa-users" label="Bulletins individuels" href="#" variant="ghost" />
-                <x-quick-action icon="fas fa-download" label="Exporter tout" href="#" variant="ghost" />
-            </x-slot:end>
+            <x-quick-action-group title="LIVRES DE PAIE" icon="fas fa-book" color="secondary" end>
+                <x-quick-action icon="fas fa-calendar-alt" label="Livre mensuel"
+                    :href="route('company.declarations.livrepaie.mensuel')" variant="outline" color="secondary" />
+                <x-quick-action icon="fas fa-calendar" label="Livre annuel"
+                    :href="route('company.declarations.livrepaie.annuel')" variant="outline" color="secondary" />
+            </x-quick-action-group>
         </x-quick-actions>
     </div>
 

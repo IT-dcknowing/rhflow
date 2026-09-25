@@ -1,14 +1,11 @@
 {{--
     Bouton d'une barre <x-quick-actions>.
 
-    variant : « primary » (bouton plein, actions principales),
-              « outline » (contour, actions secondaires),
-              « ghost »   (sans cadre, actions de service).
-    color   : accent d'un bouton « outline » ou « ghost »
-              (primary, success, warning, danger, info...).
-
-    Rendu en <a> si « href » est fourni et l'action active, en <button> sinon
-    (les actions d'un formulaire passent type="submit").
+    variant : « primary » (bouton plein),
+              « outline » (contour),
+              « ghost »   (sans cadre / texte épuré),
+              « icon »    (bouton icône rond).
+    color   : primary, success, warning, danger, info, secondary...
 --}}
 @props([
     'icon' => null,
@@ -18,18 +15,27 @@
     'color' => null,
     'disabled' => false,
     'type' => 'button',
+    'title' => null,
 ])
 
 @php
     $accent = $color ?: 'secondary';
-    $classes = 'btn qa-btn qa-btn-' . $variant;
+    $tooltip = $title ?: ($label ?: null);
 
-    if ($variant === 'primary') {
-        $classes .= ' btn-' . ($color ?: 'primary');
+    if ($variant === 'icon' || ($variant === 'ghost' && empty($label))) {
+        $classes = 'btn btn-outline-' . $accent . ' btn-icon rounded-circle shadow-sm qa-btn qa-btn-icon';
+        $style = 'width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;';
     } elseif ($variant === 'outline') {
-        $classes .= ' btn-outline-' . $accent;
+        $classes = 'btn btn-outline-' . $accent . ' d-inline-flex align-items-center justify-content-center gap-2 px-3 qa-btn qa-btn-outline';
+        $style = '';
+    } elseif ($variant === 'ghost') {
+        $classes = 'btn btn-outline-secondary btn-sm d-inline-flex align-items-center justify-content-center gap-2 px-2 qa-btn qa-btn-ghost';
+        $style = '';
     } else {
-        $classes .= ' qa-accent-' . $accent;
+        // primary
+        $btnColor = $color ?: 'primary';
+        $classes = 'btn btn-' . $btnColor . ' d-inline-flex align-items-center justify-content-center gap-2 px-3 shadow-sm qa-btn qa-btn-primary';
+        $style = '';
     }
 
     if ($disabled) {
@@ -40,17 +46,30 @@
 @endphp
 
 @if ($isLink)
-    <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes]) }}>
+    <a href="{{ $href }}" 
+       @if($tooltip) title="{{ $tooltip }}" @endif
+       @if(!empty($style)) style="{{ $style }}" @endif
+       {{ $attributes->merge(['class' => $classes]) }}>
         @if ($icon)
             <i class="{{ $icon }}"></i>
         @endif
-        <span>{{ $label }}</span>{{ $slot }}
+        @if(!empty($label) && $variant !== 'icon')
+            <span>{{ $label }}</span>
+        @endif
+        {{ $slot }}
     </a>
 @else
-    <button type="{{ $type }}" @disabled($disabled) {{ $attributes->merge(['class' => $classes]) }}>
+    <button type="{{ $type }}" 
+            @disabled($disabled) 
+            @if($tooltip) title="{{ $tooltip }}" @endif
+            @if(!empty($style)) style="{{ $style }}" @endif
+            {{ $attributes->merge(['class' => $classes]) }}>
         @if ($icon)
             <i class="{{ $icon }}"></i>
         @endif
-        <span>{{ $label }}</span>{{ $slot }}
+        @if(!empty($label) && $variant !== 'icon')
+            <span>{{ $label }}</span>
+        @endif
+        {{ $slot }}
     </button>
 @endif

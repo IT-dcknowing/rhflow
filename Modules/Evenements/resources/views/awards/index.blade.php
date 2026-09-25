@@ -220,17 +220,18 @@
 
 <!-- Actions Rapides -->
 <x-quick-actions>
-    <x-quick-action icon="fas fa-plus-circle" label="Nouvelle récompense" disabled />
-
-    <x-slot:secondary>
-        <x-quick-action icon="fas fa-list" label="Voir toutes les récompenses"
+    <x-quick-action-group title="RÉCOMPENSES" icon="fas fa-trophy" color="primary" minWidth="220px">
+        <x-quick-action icon="fas fa-plus-circle" label="Nouvelle récompense" disabled />
+        <x-quick-action icon="fas fa-list" label="Toutes les récompenses"
             :href="route('company.evenements.awards.index')" variant="outline" color="primary" />
-    </x-slot:secondary>
+    </x-quick-action-group>
 
-    <x-slot:end>
-        <x-quick-action icon="fas fa-file-export" label="Exporter en Excel" href="#" variant="ghost" />
-        <x-quick-action icon="fas fa-cog" label="Paramètres" href="#" variant="ghost" />
-    </x-slot:end>
+    <x-quick-action-divider />
+
+    <x-quick-action-group title="OUTILS" icon="fas fa-cog" color="secondary" end>
+        <x-quick-action icon="fas fa-file-export" label="Exporter" href="#" variant="outline" color="secondary" />
+        <x-quick-action icon="fas fa-cog" label="Paramètres" href="#" variant="outline" color="secondary" />
+    </x-quick-action-group>
 </x-quick-actions>
 
 <!-- Modal d'Ajout Rapide -->

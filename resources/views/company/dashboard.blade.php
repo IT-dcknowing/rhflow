@@ -809,9 +809,15 @@
                         </div>
                         <div class="mt-3">
                             <h6 class="mb-1">Prochaine paie :</h6>
-                            <span class="badge bg-label-{{ $stats['is_payroll_late'] ? 'danger' : 'success' }} fs-6">
-                                {{ \Carbon\Carbon::parse($stats['next_payroll_date'])->translatedFormat('d F Y') }}
-                            </span>
+                            @if(!empty($stats['is_period_paid']))
+                                <span class="badge bg-label-info fs-6">
+                                    <i class="fas fa-check-circle me-1"></i>Payée le {{ \Carbon\Carbon::parse($stats['next_payroll_date'])->translatedFormat('d F Y') }}
+                                </span>
+                            @else
+                                <span class="badge bg-label-{{ $stats['is_payroll_late'] ? 'danger' : 'success' }} fs-6">
+                                    {{ \Carbon\Carbon::parse($stats['next_payroll_date'])->translatedFormat('d F Y') }}
+                                </span>
+                            @endif
                             {{-- La date seule prêtait à confusion quand plusieurs exercices
                                  sont ouverts : on nomme la période qu'elle concerne. --}}
                             @if(!empty($stats['next_payroll_periode']))
@@ -895,45 +901,49 @@
 
         <!-- Actions Rapides et Raccourcis -->
         <x-quick-actions>
-            <x-quick-action icon="fas fa-{{ $quickActions['monthly_employee']['icon'] }}"
-                label="{{ $quickActions['monthly_employee']['title'] }} ({{ $quickActions['monthly_employee']['subtitle'] }})"
-                :href="$quickActions['monthly_employee']['route']" />
+            {{-- Groupe 1 : Nouvel Employé --}}
+            <x-quick-action-group title="NOUVEL EMPLOYÉ" icon="fas fa-user-plus" color="primary" minWidth="220px">
+                <x-quick-action icon="fas fa-calendar-alt" label="Mensuel"
+                    :href="isModuleActive('employee') ? route('company.employees.create', ['type' => 1]) : '#'"
+                    variant="primary" />
+                <x-quick-action icon="fas fa-clock" label="Journalier"
+                    :href="isModuleActive('employee') ? route('company.employees.create', ['type' => 2]) : '#'"
+                    variant="outline" color="primary" />
+            </x-quick-action-group>
 
-            <x-quick-action icon="fas fa-{{ $quickActions['daily_employee']['icon'] }}"
-                label="{{ $quickActions['daily_employee']['title'] }} ({{ $quickActions['daily_employee']['subtitle'] }})"
-                :href="$quickActions['daily_employee']['route']" />
+            <x-quick-action-divider />
 
-            <x-quick-action icon="fas fa-{{ $quickActions['generate_payroll']['icon'] }}"
-                label="{{ $quickActions['generate_payroll']['title'] }} ({{ $quickActions['generate_payroll']['subtitle'] }})"
-                :href="$quickActions['generate_payroll']['route']" />
+            {{-- Groupe 2 : Paie --}}
+            <x-quick-action-group title="PAIE" icon="fas fa-dollar" color="success" minWidth="180px">
+                <x-quick-action icon="fas fa-file-invoice-dollar" label="Générer la paie"
+                    :href="isModuleActive('salary') ? route('company.paiesalaries.exercices.index') : '#'"
+                    variant="primary" color="success" />
+            </x-quick-action-group>
 
-            {{-- Deuxième ligne : actions secondaires à gauche. --}}
-            <x-slot:secondary>
-                <x-quick-action icon="fas fa-{{ $quickActions['approve_leaves']['icon'] }}"
-                    label="{{ $quickActions['approve_leaves']['title'] }}"
-                    :href="$quickActions['approve_leaves']['route']" variant="outline" color="warning" />
+            <x-quick-action-divider />
 
-                <x-quick-action icon="fas fa-{{ $quickActions['monthly_report']['icon'] }}"
-                    label="{{ $quickActions['monthly_report']['title'] }}"
-                    :href="$quickActions['monthly_report']['route']" variant="outline" />
-            </x-slot:secondary>
+            {{-- Groupe 3 : Gestion --}}
+            <x-quick-action-group title="GESTION" icon="fas fa-tasks" color="warning" minWidth="250px">
+                <x-quick-action icon="fas fa-calendar-check" label="Congés"
+                    :href="isModuleActive('leaves') ? route('company.leaves.index') : '#'"
+                    variant="outline" color="warning" />
+                <x-quick-action icon="fas fa-file-alt" label="Rapport mensuel"
+                    :href="isModuleActive('Declarations') ? route('company.declarations.livrepaie.mensuel') : '#'"
+                    variant="outline" color="secondary" />
+            </x-quick-action-group>
 
-            {{-- ... et actions de service sans cadre, repoussées à droite. --}}
-            <x-slot:end>
-                <x-quick-action icon="fas fa-{{ $quickActions['company_settings']['icon'] }}"
-                    label="{{ $quickActions['company_settings']['title'] }}"
-                    :href="$quickActions['company_settings']['route']" variant="ghost" />
+            <x-quick-action-divider />
 
-                <x-quick-action icon="fas fa-{{ $quickActions['support']['icon'] }}"
-                    label="{{ $quickActions['support']['title'] }}"
-                    :href="$quickActions['support']['route']" variant="ghost"
-                    :disabled="!($quickActions['support']['is_active'] ?? true)" />
-
-                <x-quick-action icon="fas fa-{{ $quickActions['analytics']['icon'] }}"
-                    label="{{ $quickActions['analytics']['title'] }}"
-                    :href="$quickActions['analytics']['route']" variant="ghost"
-                    :disabled="!($quickActions['analytics']['is_active'] ?? true)" />
-            </x-slot:end>
+            {{-- Groupe 4 : Outils --}}
+            <x-quick-action-group title="OUTILS" icon="fas fa-cog" color="secondary" end>
+                <x-quick-action icon="fas fa-chart-bar" title="Analytics & Statistiques"
+                    :href="isModuleActive('PaieSalaries') ? route('company.paiesalaries.dashboard') : '#'"
+                    variant="icon" color="secondary"
+                    :disabled="!isModuleActive('PaieSalaries')" />
+                <x-quick-action icon="fas fa-cog" title="Paramètres de l'entreprise"
+                    :href="route('company.settings.settings')"
+                    variant="icon" color="secondary" />
+            </x-quick-action-group>
         </x-quick-actions>
     </div>
 @endsection

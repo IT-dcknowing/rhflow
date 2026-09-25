@@ -370,36 +370,36 @@
 
         <!-- Actions Rapides -->
         <x-quick-actions>
-            <x-quick-action icon="fas fa-cog" label="Paramètres de l'entreprise"
-                :href="route('company.settings.settings')" />
+            <x-quick-action-group title="ORGANISATION & UTILISATEURS" icon="fas fa-users-cog" color="primary" minWidth="280px">
+                <x-quick-action icon="fas fa-cog" label="Paramètres généraux"
+                    :href="route('company.settings.settings')" variant="primary" />
+                <x-quick-action icon="fas fa-file-alt" label="Documents"
+                    :href="route('company.settings.documents')" variant="outline" color="primary" />
+                <x-quick-action icon="fas fa-users" label="Utilisateurs"
+                    :href="route('company.settings.users.index')" variant="outline" color="primary" />
+            </x-quick-action-group>
 
-            <x-quick-action icon="fas fa-file-alt" label="Documents d'entreprise"
-                :href="route('company.settings.documents')" />
+            <x-quick-action-divider />
 
-            <x-quick-action icon="fas fa-users-cog" label="Gestion des utilisateurs"
-                :href="route('company.settings.users.index')" />
-
-            <x-slot:secondary>
+            <x-quick-action-group title="RÉFÉRENTIELS RH" icon="fas fa-sliders-h" color="warning" minWidth="260px">
                 <x-quick-action icon="fas fa-calendar-alt" label="Types de congés"
                     :href="route('company.settings.leave-types.index')" variant="outline" color="warning" />
-
                 <x-quick-action icon="fas fa-dollar-sign" label="Types de prêts"
-                    :href="route('company.settings.loan-types.index')" variant="outline" />
-
+                    :href="route('company.settings.loan-types.index')" variant="outline" color="secondary" />
                 <x-quick-action icon="fas fa-map-marker-alt" label="Pointeuses"
-                    :href="route('company.settings.work-locations.index')" variant="outline" />
-            </x-slot:secondary>
+                    :href="route('company.settings.work-locations.index')" variant="outline" color="secondary" />
+            </x-quick-action-group>
 
-            <x-slot:end>
+            <x-quick-action-divider />
+
+            <x-quick-action-group title="STRUCTURE" icon="fas fa-sitemap" color="secondary" end>
                 <x-quick-action icon="fas fa-building" label="Sites"
-                    :href="route('company.settings.branches.index')" variant="ghost" />
+                    :href="route('company.settings.branches.index')" variant="outline" color="secondary" />
                 <x-quick-action icon="fas fa-sitemap" label="Services"
-                    :href="route('company.settings.departments.index')" variant="ghost" />
+                    :href="route('company.settings.departments.index')" variant="outline" color="secondary" />
                 <x-quick-action icon="fas fa-user-tie" label="Postes"
-                    :href="route('company.settings.designations.index')" variant="ghost" />
-                <x-quick-action icon="fas fa-clock" label="Présence"
-                    :href="route('company.settings.attendance-system.index')" variant="ghost" />
-            </x-slot:end>
+                    :href="route('company.settings.designations.index')" variant="outline" color="secondary" />
+            </x-quick-action-group>
         </x-quick-actions>
     </div>
 

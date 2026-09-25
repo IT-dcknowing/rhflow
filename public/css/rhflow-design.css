@@ -1445,16 +1445,14 @@ table td .btn-group > .btn-icon {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 36px;
+    min-height: 38px;
     padding: 0 16px;
     border-radius: 8px;
     font-family: var(--font-body);
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: .04em;
-    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 600;
     white-space: nowrap;
-    box-shadow: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: all .15s ease-in-out;
 }
 
@@ -1469,17 +1467,34 @@ table td .btn-group > .btn-icon {
     pointer-events: none;
 }
 
-/* Bouton plein : bleu royal vif identique à la maquette. */
+.btn.qa-btn-icon {
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    color: #6b7280;
+    border-color: #d1d5db;
+    background: #ffffff;
+}
+
+.btn.qa-btn-icon:hover {
+    color: var(--navy);
+    border-color: var(--navy);
+    background: #f8fafc;
+}
+
+/* Bouton plein : bleu royal / navy identique à la maquette. */
 .btn.qa-btn-primary.btn-primary {
-    background: #195ebd;
-    border-color: #195ebd;
+    background: var(--navy, #253e87);
+    border-color: var(--navy, #253e87);
     color: #fff;
 }
 
 .btn.qa-btn-primary.btn-primary:hover,
 .btn.qa-btn-primary.btn-primary:focus {
-    background: #134da0;
-    border-color: #134da0;
+    background: var(--navy-600, #1b306b);
+    border-color: var(--navy-600, #1b306b);
     color: #fff;
 }
 

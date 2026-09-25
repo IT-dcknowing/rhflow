@@ -227,17 +227,18 @@
 
 <!-- Actions Rapides -->
 <x-quick-actions>
-    <x-quick-action icon="fas fa-plus-circle" label="Nouvelle annonce" disabled />
-
-    <x-slot:secondary>
-        <x-quick-action icon="fas fa-list" label="Voir toutes les annonces"
+    <x-quick-action-group title="ANNONCES" icon="fas fa-bullhorn" color="primary" minWidth="220px">
+        <x-quick-action icon="fas fa-plus-circle" label="Nouvelle annonce" disabled />
+        <x-quick-action icon="fas fa-list" label="Toutes les annonces"
             :href="route('company.evenements.annonces.index')" variant="outline" color="primary" />
-    </x-slot:secondary>
+    </x-quick-action-group>
 
-    <x-slot:end>
-        <x-quick-action icon="fas fa-file-export" label="Exporter en Excel" href="#" variant="ghost" />
-        <x-quick-action icon="fas fa-cog" label="Paramètres" href="#" variant="ghost" />
-    </x-slot:end>
+    <x-quick-action-divider />
+
+    <x-quick-action-group title="OUTILS" icon="fas fa-cog" color="secondary" end>
+        <x-quick-action icon="fas fa-file-export" label="Exporter" href="#" variant="outline" color="secondary" />
+        <x-quick-action icon="fas fa-cog" label="Paramètres" href="#" variant="outline" color="secondary" />
+    </x-quick-action-group>
 </x-quick-actions>
 
 <!-- Delete Modal -->

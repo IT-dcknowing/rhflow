@@ -59,13 +59,29 @@ class CompanyController extends Controller
             if($company->industry == null){
                 return redirect()->route('company.settings.config');
             }
-            $periode = PaiePeriode::where('company_id', '=', $companyId)
-                ->where('statut', 'en_cours')
-                ->orderBy('date_fin', 'desc')
-                ->first() 
+            // Période affichée : on respecte le choix du sélecteur de période (session ou URL).
+            // Repli progressif : URL → session → contrôleur paie (exercice actif) → dernière période en_cours → dernière période.
+            $activePeriodeId = request('periode_id') ?? session('active_periode_id');
+            if (request('periode_id')) {
+                session(['active_periode_id' => request('periode_id')]);
+            }
+
+            $paieController = app(\Modules\PaieSalaries\Http\Controllers\PaieSalariesController::class);
+            $periode = ($activePeriodeId
+                    ? PaiePeriode::where('company_id', '=', $companyId)->where('id', $activePeriodeId)->first()
+                    : null)
+                ?? $paieController->getActivePeriode()
                 ?? PaiePeriode::where('company_id', '=', $companyId)
-                ->orderBy('date_fin', 'desc')
-                ->first();
+                    ->where('statut', 'en_cours')
+                    ->orderBy('date_fin', 'desc')
+                    ->first()
+                ?? PaiePeriode::where('company_id', '=', $companyId)
+                    ->orderBy('date_fin', 'desc')
+                    ->first();
+
+            if ($periode && !session('active_periode_id')) {
+                session(['active_periode_id' => $periode->id]);
+            }
             $events    = Event::where('company_id', '=', $companyId)->get();
                 $arrEvents = [];
 
@@ -259,11 +275,26 @@ class CompanyController extends Controller
                 // encore non payée.
                 $periodeAPayer = $periode;
 
-                $targetDate = $periodeAPayer
-                    ? ($periodeAPayer->date_paiement ?? $periodeAPayer->date_fin)
-                    : now()->addMonth()->endOfMonth();
+                $targetDate = null;
+                if ($periodeAPayer) {
+                    if (!empty($periodeAPayer->date_paiement) && (string)$periodeAPayer->date_paiement !== '0000-00-00') {
+                        $targetDate = $periodeAPayer->date_paiement;
+                    } elseif (!empty($periodeAPayer->date_fin) && (string)$periodeAPayer->date_fin !== '0000-00-00') {
+                        $targetDate = $periodeAPayer->date_fin;
+                    }
+                }
+                if (!$targetDate) {
+                    $targetDate = now()->addMonth()->endOfMonth();
+                }
+
                 $nextPayrollDays = (int)now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($targetDate)->startOfDay(), false);
                 $isPayrollLate = $nextPayrollDays < 0;
+                $isPeriodPaid = $periodeAPayer ? ($periodeAPayer->statut === 'payee') : false;
+
+                // Bulletins générés pour la période sélectionnée
+                $countPaylistPeriod = $periodeAPayer
+                    ? PaySlip::where('company_id', '=', $companyId)->where('periode_id', $periodeAPayer->id)->count()
+                    : $countPaylist;
 
                 $stats = [
                     // Effectifs
@@ -278,9 +309,9 @@ class CompanyController extends Controller
                         ->count(),
 
                     // Finances
-                    'total_salary' => PaySlip::where('company_id', $companyId)
-                        ->where('salary_month', 'like', now()->format('Y-m') . '%')
-                        ->sum('net_payble'),
+                    'total_salary' => $periodeAPayer
+                        ? PaySlip::where('company_id', $companyId)->where('periode_id', $periodeAPayer->id)->sum('net_payble')
+                        : PaySlip::where('company_id', $companyId)->where('salary_month', 'like', now()->format('Y-m') . '%')->sum('net_payble'),
                     'salary_trend' => 5.2,
                     
                     // Activité
@@ -289,15 +320,16 @@ class CompanyController extends Controller
                         ->whereMonth('notice_date', now()->month)
                         ->whereYear('notice_date', now()->year)
                         ->count(),
-                    'payroll_processed' => $countEmployee > 0 ? (int)(($countPaylist / $countEmployee) * 100) : 0,
-                    'pending_payroll' => $countEmployee > 0 ? max(0, 100 - (int)(($countPaylist / $countEmployee) * 100)) : 0,
-                    'generated_payrolls' => $countPaylist,
+                    'payroll_processed' => $countEmployee > 0 ? min(100, (int)(($countPaylistPeriod / $countEmployee) * 100)) : 0,
+                    'pending_payroll' => $countEmployee > 0 ? max(0, 100 - min(100, (int)(($countPaylistPeriod / $countEmployee) * 100))) : 0,
+                    'generated_payrolls' => $countPaylistPeriod,
                     'payroll_anomalies' => $countTimeSheet2,
 
                     // Échéance
                     'next_payroll_date' => $targetDate,
                     'next_payroll_days' => abs($nextPayrollDays),
                     'is_payroll_late' => $isPayrollLate,
+                    'is_period_paid' => $isPeriodPaid,
                     'next_payroll_periode' => $periodeAPayer ? $periodeAPayer->nom : null,
                     'periode_name' => $periode ? $periode->nom : 'N/A',
                 ];
